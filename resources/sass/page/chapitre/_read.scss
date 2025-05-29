@@ -1,0 +1,74 @@
+.roman-titre{
+  font-size: 50px;
+  font-weight: 700;
+  color: white;
+  padding: 10vh 15%;
+}
+
+.chapitre-titre{
+  font-size: 50px;
+  font-weight: 700;
+  color: $primary-color;
+  text-align: center;
+  padding: 25px 25px 0;
+}
+
+.chapitre-writer {
+  text-align: center;
+  font-size: 22px;
+}
+
+.chapitre-content {
+  padding: 0 5% 20px;
+  font-size: 20px;
+  line-height: 30px;
+  text-align: justify;
+  word-wrap: break-word;
+  white-space: pre-line;
+}
+
+.toolbar {
+  display: flex;
+  padding: 25px 5%;
+  height: 85px;
+
+  .toolbar-left, .toolbar-right {flex: 1;}
+
+  .toolbar-left{
+    display: flex;
+    align-items: center;
+
+    a{
+      display: inline-block;
+      height: 25px;
+      margin-right: 8px;
+    }
+
+    .link-config {
+      font-size: 22px;
+      color: black;
+    }
+  }
+}
+
+/* ---------- */
+/*   STICKY   */
+/* ---------- */
+.chapitre-content.sticky {margin-top: 85px}
+
+.toolbar.sticky {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: $primary-color
+}
+
+/* ---------------- */
+/*   MODE LECTURE   */
+/* ---------------- */
+.mode-lecture {
+  background: #5a544c;
+
+  .chapitre-content, .chapitre-writer {color: white;}
+}

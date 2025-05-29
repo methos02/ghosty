@@ -1,0 +1,64 @@
+.div-centrale{
+  display:flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.navbar-side{
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 5px 20px;
+
+  select {
+    border: none;
+    border-radius: 4px;
+  }
+
+  label{
+    margin: 0;
+    font-weight: 400;
+    color: #ffffff;
+  }
+
+  select:not(:disabled), option {color:black !important;}
+  select:disabled {cursor: not-allowed;}
+}
+
+.navbar-center{
+  display: flex;
+  width: 440px;
+  height: 40px;
+  line-height: 11px;
+  border-radius: 10px 10px 0 0;
+  background-color: #02b875;
+
+  a:first-child{border-top-left-radius: 10px}
+  a:last-child{border-top-right-radius: 10px}
+}
+
+.btn-switch {
+  color:white;
+  display: inline-block;
+  flex:1;
+  padding: 15px 0;
+  text-align: center;
+  background-color: #02b875;
+}
+
+.btn-switch:hover, .btn-switch:focus {color: #ffffff;}
+
+.visited {
+  background-color: #10a065;
+  color:white;
+  position: relative;
+}
+
+.visited::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  margin-left: -20px;
+  bottom: -15px;
+  border-style: solid;
+  border-width: 15px 15px 0 15px;
+  border-color: #10a065 transparent;
+}

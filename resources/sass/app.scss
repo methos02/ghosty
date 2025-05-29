@@ -1,0 +1,45 @@
+html, body{
+  font-family: 'Source Sans Pro', sans-serif;
+  button:focus {outline:0;}
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+a:link, a:hover, a:focus{ text-decoration: none !important;}
+
+.text-center {text-align: center;}
+
+@import "variables";
+@import "fonts";
+@import "flash";
+@import "~cropperjs/src/css/cropper.scss";
+
+@import "btn";
+@import "div_oeuvre";
+@import "form/form";
+
+@import "home/home";
+@import "home/div_centrale";
+
+@import "add/cover";
+@import "add/roman";
+
+@import "layout/page";
+@import "layout/nav_barre";
+@import "layout/footer";
+@import "layout/modal";
+@import "layout/alert";
+
+@import "page/div_info";
+@import "page/auth/auth";
+@import "page/auth/verify";
+@import "page/auth/reset";
+@import "page/principe";
+@import "page/profil";
+@import "page/notifs";
+@import "page/chapitre/read";
+
+@import "part/paginateur";
+@import "part/decompte";

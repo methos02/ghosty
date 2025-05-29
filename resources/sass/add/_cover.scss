@@ -1,0 +1,53 @@
+.input-cover {
+  position: relative;
+  width: 40%;
+
+  .cropper-btn{
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    bottom: 3%;
+  }
+}
+
+.cadre-add{
+  position: absolute;
+  top: 5%;
+  bottom: 5%;
+  left: 3%;
+  right: 3%;
+  border: 3px solid #02b875 !important;
+
+  .roman-genre{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-color: #02b875;
+    padding: 1px 5px;
+    font-weight: bold;
+    color: white;
+    font-size: 20px;
+  }
+}
+
+.div-cover-titre {
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.cover-titre {
+  color: white;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  text-shadow: #000000 1px 1px, #000000 -1px 1px, #000000 -1px -1px, #000000 1px -1px;
+}

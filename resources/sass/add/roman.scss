@@ -1,0 +1,35 @@
+.blue {
+  border: 2px solid blue;
+}
+
+.loader-add {
+  position: absolute;
+  top: 1px;
+  right: 13px;
+
+  img {
+    height: 40px;
+  }
+}
+
+#alert-change {
+  position: absolute;
+  z-index: 5;
+  background: lightgray;
+  padding: 10px;
+  top: 50px;
+  right: -100%;
+  left: 0;
+  border: gray 1px solid;
+  border-radius: 3px;
+}
+
+.arrow-up {
+  position: absolute;
+  top:-10px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid grey;
+}

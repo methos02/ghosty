@@ -1,0 +1,22 @@
+.div-decompte {
+  justify-content: center;
+}
+
+.decompte {
+  color:white;
+  font-size: 30px;
+  text-align: center;
+
+  .number {
+    color: #02b875;
+    background-color: white;
+    padding: 3px 6px;
+    font-weight: 700;
+    border-radius: 7px;
+    margin: 10px;
+  }
+
+  .intitule {
+    font-size: 12px;
+  }
+}

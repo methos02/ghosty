@@ -1,22 +1,23 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
-import { localeInit } from './src/services/locale/locale-init.js'
+import { localeVite } from './src/services/locale/init/locale-vite.js'
 import { fileURLToPath } from 'node:url'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig({
-  plugins: 
+  plugins:
   [
-    localeInit.vite(__dirname),
+    localeVite(__dirname),
     vue()
   ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '&': path.resolve(__dirname, './tests')
+      '&': path.resolve(__dirname, './tests'),
+      'vuemann': path.resolve(__dirname, '../vuemann/src')
     }
   },
   build: {

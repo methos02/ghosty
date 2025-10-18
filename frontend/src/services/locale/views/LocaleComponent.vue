@@ -1,10 +1,10 @@
 <script setup>
-import Dropdown from '@brugmann/vuemann/src/components/DropdownComponent.vue'
-import { locales } from '@brugmann/vuemann/src/config/locale-config.js'
+import Dropdown from 'vuemann/components/DropdownComponent.vue'
+import { locales } from '@/config/locale-config.js'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { t } from '@brugmann/vuemann/src/services/services-helper.js'
-import { localeFunctions } from '@brugmann/vuemann/src/services/locale/locale-functions.js'
+import { t } from '@/services/services-helper.js'
+import { localeFunctions } from 'vuemann/services/locale/locale-functions.js'
 
 const dropdown = ref()
 const { locale } = useI18n({ useScope: 'global' })

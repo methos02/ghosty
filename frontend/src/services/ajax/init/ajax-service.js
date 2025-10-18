@@ -1,7 +1,7 @@
-import { ajaxFunctions } from '@brugmann/vuemann/src/services/ajax/ajax-functions.js';
-import { abortManager } from '@brugmann/vuemann/src/services/ajax/src/abort-manager.js';
-import { Request } from '@brugmann/vuemann/src/services/ajax/src/request.js';
-import { httpClient } from '@brugmann/vuemann/src/services/ajax/src/http-client.js';
+import { ajaxFunctions } from '../src/ajax-functions.js';
+import { abortManager } from '../src/models/abort-manager.js';
+import { Request } from '../src/models/request.js';
+import { httpClient } from '../src/models/http-client.js';
 
 const req = async (route_name, datas = {}, options = {}) => {
   if(!httpClient.isDefine()) { ajaxFunctions.throwError('error_no_client') }

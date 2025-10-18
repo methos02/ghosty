@@ -1,4 +1,4 @@
-import { servicesM } from "@brugmann/vuemann/src/services/services-manager.js"
+import { servicesM } from "./services-manager.js"
 
 export const t = (text_key, params = {}) => {
   return locale.t(text_key, params)
@@ -6,7 +6,7 @@ export const t = (text_key, params = {}) => {
 
 export const locale = {
   current: () => servicesM.service('locale:getCurrentLocale'),
-  t: (text_key, params = {}) => servicesM.service('locale:t', [text_key, params]),
+  t: (text_key, params = {}) => servicesM.service('locale:tr', [text_key, params]),
 }
 
 export const auth = {

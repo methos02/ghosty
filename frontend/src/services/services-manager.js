@@ -14,12 +14,11 @@ const initServiceWithDependencies = async (app, serviceName, serviceConfig) => {
   if (serviceConfig.dependencies && serviceConfig.dependencies.length > 0) {
     for (const dependency of serviceConfig.dependencies) {
       if (initializedServices.has(dependency)) { continue }
-        // Initialiser automatiquement la dépendance manquante
-        if (servicesInit[dependency]) {
-          await initServiceWithDependencies(app, dependency, servicesInit[dependency])
-        } else {
-          console.error(`Dépendance ${dependency} non trouvée dans les services disponibles pour ${serviceName}`)
-        }
+      // Initialiser automatiquement la dépendance manquante
+      if (servicesInit[dependency]) {
+        await initServiceWithDependencies(app, dependency, servicesInit[dependency])
+      } else {
+        console.error(`Dépendance ${dependency} non trouvée dans les services disponibles pour ${serviceName}`)
       }
     }
   }

@@ -1,11 +1,19 @@
-import { servicesM } from "@brugmann/vuemann/src/services/services-manager.js"
+import { servicesM } from "@/services/services-manager.js"
 
 export const t = (text_key, params = {}) => {
-  return servicesM.service('locale:t', [text_key, params])
+  return servicesM.service('locale:tr', [text_key, params])
 }
 
 export const getCurrentLocale = () => {
   return servicesM.service('locale:getCurrentLocale')
+}
+
+export const req = async (route_name, datas = {}, options = {}) => {
+  return await servicesM.service('ajax:req', [route_name, datas, options])
+}
+
+export const error = message => {
+  console.error(message)
 }
 
 // export const currentUser = () => {
@@ -16,20 +24,12 @@ export const getCurrentLocale = () => {
 //   return servicesM.service('auth:hasRole', roleName)
 // }
 
-// export const req = async (route_name, datas = {}, options = {}) => {
-//   return await servicesM.service('ajax:req', [route_name, datas, options])
-// }
-
 // export const success = message => {
 //   return servicesM.service('flash:success', message)
 // }
 
 // export const successT = (key, params) => {
 //   return success(t(key, params))
-// }
-
-// export const error = message => {
-//   return servicesM.service('flash:error', message)
 // }
 
 // export const errorT = (key, params) => {

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import path from 'node:path'
 import fs from 'node:fs'
-import { locales } from '../../config/locale-config.js'
+import { locales } from '../../../config/locale-config.js'
 
 let translations
 

@@ -1,21 +1,17 @@
 import axios from 'axios'
-import { ConfigLoader } from '@brugmann/vuemann/src/config/config-loader.js'
-import { errorT, t } from '@brugmann/vuemann/src/services/services-helper.js'
-import { Request } from './src/request.js'
-import { httpClient } from '@brugmann/vuemann/src/services/ajax/src/http-client.js'
+import { ConfigLoader } from 'vuemann/config/config-loader.js'
+import { Request } from './models/request.js'
+import { httpClient } from './models/http-client.js'
 import { STATUS } from '../ajax-constants.js'
-import { error, log } from '../../services-helper.js'
+import { error, t } from '@/services/services-helper.js'
 
-const manageError = async error => {
-    if (error.code === 'ERR_CANCELED') { return { data: {}, status: 499 } }
-    if (error.response === undefined) { return { data: {error: 'error_back'}, status: 500 } }
+const manageError = async errorResponse => {
+    if (errorResponse.code === 'ERR_CANCELED') { return { data: {}, status: 499 } }
+    if (errorResponse.response === undefined) { return { data: {error: 'error_back'}, status: 500 } }
 
-    ajaxFunctionsInternal.showFlash(error)
-    if(Request.get('log') !== false && ![STATUS.UNAUTHORIZED, STATUS.NOT_FOUND, STATUS.FORBIDDEN].includes(error.response.status)) { 
-        await log.send(error.response.statusText, { module: 'ajax', response: error.response, request: { ...Request.get() }})
-    }
-    
-    return error.response
+    ajaxFunctionsInternal.showFlash(errorResponse)
+
+    return errorResponse.response
 }
 
 const throwError = (message, params = {}) => {
@@ -47,12 +43,17 @@ const resendRequest = requestConfig => {
 
 export const ajaxFunctions = { manageError, getRoute, defineApiUrl, resendRequest, throwError }
 
-const showFlash = error => {
-    if (Request.get('flash') === false || (Array.isArray(Request.get('no-flash')) && Request.get('no-flash').includes(error.response.status))) { return }
-    if(error.response.data?.detail !== undefined) { errorT(error.response.data?.detail); return }
-    
-    const error_message = error.response.status < STATUS.ERROR_SERVER ? 'error_front' : 'error_back' 
-    errorT(error_message)
+const showFlash = errorResponse => {
+    if (Request.get('flash') === false || (Array.isArray(Request.get('no-flash')) && Request.get('no-flash').includes(errorResponse.response.status))) { return }
+    if(errorResponse.response.data?.detail !== undefined) {
+        const message = t(errorResponse.response.data?.detail)
+        error(message)
+        return
+    }
+
+    const error_message = errorResponse.response.status < STATUS.ERROR_SERVER ? 'error_front' : 'error_back'
+    const message = t(error_message)
+    error(message)
 }
 
 const getRouteFromConfig = (route_name, api) => {

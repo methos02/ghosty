@@ -1,6 +1,6 @@
-import { abortManager } from '@brugmann/vuemann/src/services/ajax/src/abort-manager.js';
-import { Request } from '@brugmann/vuemann/src/services/ajax/src/request.js';
-import { servicesM } from '@brugmann/vuemann/src/services/services-manager.js';
+import { abortManager } from './abort-manager.js';
+import { Request } from './request.js';
+import { servicesM } from '@/services/services-manager.js';
 
 const headersDefault = {
   'X-Requested-With': 'XMLHttpRequest',

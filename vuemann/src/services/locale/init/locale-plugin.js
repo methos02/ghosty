@@ -1,6 +1,6 @@
 import { createI18n } from 'vue-i18n'
-import { localeFunctions } from '@brugmann/vuemann/src/services/locale/src/locale-functions.js'
-import { localeService } from '@brugmann/vuemann/src/services/locale/init/locale-service.js'
+import { localeFunctions } from '../src/locale-functions.js'
+import { localeService } from './locale-service.js'
 
 export const localePlugin = async () => {
   const locale = localeService.getCurrentLocale()

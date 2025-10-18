@@ -1,5 +1,27 @@
 <script setup>
+    import { ref } from 'vue';
     import Header from '@/views/layout/HeaderComponent.vue';
+    import SearchBar from '@/views/parts/SearchBar.vue';
+
+    const selectedSort = ref('Top 10');
+    const selectedGenre = ref('Tous');
+    const activeTab = ref('home');
+
+    const handleSortUpdate = (value) => {
+        selectedSort.value = value;
+    };
+
+    const handleGenreUpdate = (value) => {
+        selectedGenre.value = value;
+    };
+
+    const handleTabChange = (tab) => {
+        activeTab.value = tab;
+    };
+
+    const handleReadClick = () => {
+        console.log('Lire clicked');
+    };
 </script>
 
 <template>
@@ -14,6 +36,15 @@
                 Le principe
             </button>
         </div>
+        <SearchBar
+            :selected-sort="selectedSort"
+            :selected-genre="selectedGenre"
+            :active-tab="activeTab"
+            @update:sort="handleSortUpdate"
+            @update:genre="handleGenreUpdate"
+            @tab-change="handleTabChange"
+            @read-click="handleReadClick"
+        />
     </div>
 </template>
 <style lang="scss">

@@ -1,4 +1,4 @@
-import { locales } from '@brugmann/vuemann/src/config/locale-config.js'
+import { locales } from './locale-config.js'
 
 const configUser = {locales}
 

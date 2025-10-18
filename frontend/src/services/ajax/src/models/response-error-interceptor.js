@@ -1,5 +1,5 @@
-import { ajaxFunctions } from "@brugmann/vuemann/src/services/ajax/ajax-functions.js"
-import { servicesM } from "@brugmann/vuemann/src/services/services-manager.js"
+import { ajaxFunctions } from "../ajax-functions.js"
+import { servicesM } from "@/services/services-manager.js"
 import { Request } from "./request.js"
 import { STATUS } from "../../ajax-constants.js"
 

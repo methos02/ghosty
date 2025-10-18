@@ -1,6 +1,6 @@
-import { Request } from "@brugmann/vuemann/src/services/ajax/src/request.js";
-import { requestInterceptor } from "@brugmann/vuemann/src/services/ajax/src/request-interceptor.js";
-import { responseErrorInterceptor } from "@brugmann/vuemann/src/services/ajax/src/response-error-interceptor.js";
+import { Request } from "./request.js";
+import { requestInterceptor } from "./request-interceptor.js";
+import { responseErrorInterceptor } from "./response-error-interceptor.js";
 
 let client;
 const init = axios => {

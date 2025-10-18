@@ -1,0 +1,60 @@
+@use '../variables';
+
+:root {
+  --xs: #{variables.$xs};
+  --sm: #{variables.$sm};
+  --md: #{variables.$md};
+  --lg: #{variables.$lg};
+  --xl: #{variables.$xl};
+  --xxl: #{variables.$xxl};
+
+  --primary-100: #{variables.$primary-100};
+  --primary-300: #{variables.$primary-300};
+  --primary-400: #{variables.$primary-400};
+  --primary: #{variables.$primary};
+  --primary-600: #{variables.$primary-600};
+
+  --blue-300: #{variables.$blue-300};
+  --blue: #{variables.$blue};
+
+  --green-300: #{variables.$green-300};
+  --green: #{variables.$green};
+
+  --yellow: #{variables.$yellow};
+  --red: #{variables.$red};
+
+  --neutral-100: #{variables.$neutral-100};
+  --neutral-200: #{variables.$neutral-200};
+  --neutral-300: #{variables.$neutral-300};
+  --neutral-400: #{variables.$neutral-400};
+  --neutral-500: #{variables.$neutral-500};
+  --neutral-600: #{variables.$neutral-600};
+  --neutral-700: #{variables.$neutral-700};
+  --neutral-800: #{variables.$neutral-800};
+  --neutral-900: #{variables.$neutral-900};
+
+  --danger-300: #{variables.$danger-300};
+  --danger: #{variables.$danger};
+  --warning-300: #{variables.$warning-300};
+  --warning: #{variables.$warning};
+  --success-300: #{variables.$success-300};
+  --success: #{variables.$success};
+  --info-300: #{variables.$info-300};
+  --info: #{variables.$info};
+
+  --fs-300: #{variables.$fs-300};
+  --fs-400: #{variables.$fs-400};
+  --fs-600: #{variables.$fs-600};
+  --fs-700: #{variables.$fs-700};
+  --fs-800: #{variables.$fs-800};
+
+  --fs-icon-300: #{variables.$fs-icon-300};
+  --fs-icon-400: #{variables.$fs-icon-400};
+
+  --h1-fs: #{variables.$h1-fs};
+  --h2-fs: #{variables.$h2-fs};
+  --h3-fs: #{variables.$h3-fs};
+
+  --header-height: #{variables.$header-height};
+  --input-height: #{variables.$input-height};
+}

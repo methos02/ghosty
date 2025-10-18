@@ -1,0 +1,15 @@
+{
+  "changelog": {
+    "title": "Changelog",
+    "description": "Découvrez les dernières modifications et améliorations apportées à l'application.",
+    "back": "Retour",
+    "filters": {
+      "all": "Afficher tout",
+      "features": "Nouvelles fonctionnalités",
+      "bugs": "Corrections de bugs",
+      "optimizations": "Améliorations",
+      "updates": "Mises à jour",
+      "critical": "Critique"
+    }
+  }
+}

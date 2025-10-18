@@ -1,0 +1,234 @@
+{
+  "user_search": {
+    "switch_search_title": "Basculer entre recherche par nom d'utilisateur et nom complet",
+    "search_fullname_placeholder": "Rechercher par nom complet...",
+    "search_username_placeholder": "Rechercher par nom d'utilisateur...",
+    "users_found": "Utilisateurs trouvés : {count}",
+    "search_username_label": "Username de l'utilisateur",
+    "search_fullname_label": "Nom de l'utilisateur"
+  },
+  "breadcrumb": {
+    "home": "Accueil",
+    "separator": ">",
+    "current_page": "Page actuelle",
+    "errors": {
+      "type": "Les méthodes du file d'ariane ne sont disponibles qu'avec le type session",
+      "parents": "La configuration parents du file d'ariane est invalide.",
+      "route_unknown": "La route {route_name} est inconnue."
+    }
+  },
+  "changelog": {
+    "title": "Changelog",
+    "description": "Découvrez les dernières modifications et améliorations apportées à l'application.",
+    "back": "Retour",
+    "filters": {
+      "all": "Afficher tout",
+      "features": "Nouvelles fonctionnalités",
+      "bugs": "Corrections de bugs",
+      "optimizations": "Améliorations",
+      "updates": "Mises à jour",
+      "critical": "Critique"
+    }
+  },
+  "changelog-section": {
+    "version": "Version {version} - {date}",
+    "categories": {
+      "nouveautes": "Nouvelles fonctionnalités",
+      "bugs": "Corrections de bugs",
+      "optimisations": "Optimisations",
+      "updates": "Mises à jour",
+      "critique": "Mises à jour critiques"
+    }
+  },
+  "code_html": {
+    "copied": "Copié !"
+  },
+  "confirm_button": {
+    "valide": "Confirmer",
+    "cancel": "Annuler"
+  },
+  "dialog": {
+    "close": "Fermer la fenêtre popup"
+  },
+  "sidebar": {
+    "show": "Afficher le menu",
+    "hide": "Fermer le menu",
+    "homepage": "Page d'accueil"
+  },
+  "app": {
+    "logo": "logo de l'hôpital brugmann",
+    "intranet_link": "Lien vers l'intranet",
+    "documentation_link": "Documentation"
+  },
+  "paginator": {
+    "previous_page": "Page précédente",
+    "next_page": "Page suivante",
+    "loadmore_button": "Charger plus",
+    "loadmore_info": "Vous êtes sur la page {currentPage} sur {totalPage}"
+  },
+  "paginator_previous": "Précédent",
+  "paginator_next": "Suivant",
+  "paginator_page": "Page",
+  "paginator_of": "sur",
+  "paginator_loading": "Chargement...",
+  "paginator_no_more": "Aucun résultat supplémentaire",
+  "paginator_load_more": "Charger plus",
+  "v_api_page": "Les APIs",
+  "v_component_page": "Les components",
+  "v_config_page": "Les configurations",
+  "v_css_page": "Les styles",
+  "v_services_page": "Les services",
+  "v_commands_page": "Les commandes",
+  "v_debug": "Debug",
+  "v_helpers_page": "Les helpers",
+  "v_api_users_title": "API Users",
+  "v_api_users_description": "Cette section présente les composants et fonctionnalités liés à la gestion des utilisateurs.",
+  "v_api_users_components_title": "Composants disponibles",
+  "v_api_users_search_component": "UserSearch Component",
+  "v_api_users_search_title": "UserSearch Component - API Users",
+  "v_api_users_search_description": "Ce composant permet de rechercher des utilisateurs avec une interface de recherche interactive. Il offre la possibilité de rechercher par nom complet ou nom d'utilisateur, avec pagination infinie et affichage dans un dropdown. Ce composant fait partie de l'API Users de Vuemann.",
+  "v_api_users_search_properties_title": "Propriétés",
+  "v_api_users_search_methods_title": "Méthodes exposées",
+  "v_api_users_search_features_title": "Fonctionnalités",
+  "v_api_users_search_examples_title": "Exemples",
+  "v_api_users_search_code_title": "Code",
+  "v_api_users_search_demo_note": "Dans cette page de démonstration, les données utilisateurs sont simulées. Le composant utilise un callback personnalisé pour éviter d'avoir besoin des routes API protégées. Nom de famille disponible: Martin, Dubois.",
+  "app_name": "Vuemann",
+  "app_version": "Version",
+  "app_environment": "Environnement",
+  "app_debug": "Mode debug",
+  "app_logo": "logo de l'hôpital brugmann",
+  "app_intranet_link": "Lien vers l'intranet",
+  "app_documentation_link": "Documentation",
+  "date_format_error": "Format de date invalide",
+  "date_invalid": "La date est invalide",
+  "date_future": "La date doit être dans le futur",
+  "date_past": "La date doit être dans le passé",
+  "paginator_total_items": "Total d'éléments",
+  "paginator_items_per_page": "Éléments par page",
+  "paginator_go_to_page": "Aller à la page",
+  "paginator_page_info": "Page {current} sur {total}",
+  "utils_format_error": "Erreur de formatage",
+  "utils_validation_error": "Erreur de validation",
+  "utils_required_field": "Champ requis",
+  "utils_invalid_format": "Format invalide",
+  "input_date": {
+    "placeholder": "jj/mm/aaaa",
+    "calendar_title": "Ouvrir le calendrier",
+    "weekdays": {
+      "monday": "Lun",
+      "tuesday": "Mar",
+      "wednesday": "Mer",
+      "thursday": "Jeu",
+      "friday": "Ven",
+      "saturday": "Sam",
+      "sunday": "Dim"
+    },
+    "buttons": {
+      "today": "Aujourd'hui",
+      "clear": "Effacer"
+    },
+    "errors": {
+      "invalid_date": "La date renseignée est invalide"
+    }
+  },
+  "error_no_client": "Le client http n'a pas été initialisé",
+  "error_front": "Une erreur est survenue sur l'application, merci de prévenir le service informatique",
+  "error_back": "Une erreur est survenue dans le serveur, nous avons été notifiés de cette erreur.",
+  "error_empty_parameter": "Vous devez indiquer les paramètres de la route {route_name}.",
+  "error_unknow_parameter": "Le paramètre '{param_name}' n'éxiste pas dans la route {route_name}.",
+  "error_missing_parameter": "Certain paramètre de la route {route_name} n'ont pas été renseigné.",
+  "v_error_api_url": "L'url de l'api {api_name} est invalide.",
+  "v_route_unknow": "La route '{route_name}' est inconnue",
+  "v_route_method_undefined": "Problème de Config: la method de la route {route_name} n'a pas été renseignée.",
+  "v_route_api_undefined": "Problème de Config: l'apide la route {route_name} n'a pas été renseignée.",
+  "v_route_url_undefined": "Problème de Config: l'url de la route {route_name} n'a pas été renseignée.",
+  "v_error_method_unknow": "Problème de Config: la method {method} de la route {route_name} est inconnue.",
+  "login_title": "Connexion",
+  "login_password": "Mot de passe",
+  "login_button": "Connexion",
+  "login_error_credentials": "Le username et le mot de passe sont requis.",
+  "login_error_api_credentials": "Crédentials de l'api {api_name} incomplet dans le fichier de config app.",
+  "login_error_token": "Username ou mot de passe incorrect",
+  "access_error": "Vous devez être connecté pour accéder à cette page.",
+  "refresh_error": "Votre session a été déconnectée, merci de vous reconnecter.",
+  "unknown_api": "L'api {api} n'est pas définie dans le fichier de config de l'application.",
+  "logout": "Vous avez été déconnecté avec succès",
+  "flash_success": "Succès",
+  "flash_error": "Erreur",
+  "flash_warning": "Attention",
+  "flash_info": "Information",
+  "flash_close": "Fermer",
+  "field_required": "Le champ est requis",
+  "field_invalid": "Le champ est invalide",
+  "field_in": "La valeur doit être dans la liste {options}",
+  "field_min": "La valeur doit être au minimum de {min}",
+  "field_max": "La valeur doit être au maximum de {max}",
+  "date_not_past": "Cette date doit être passée",
+  "date_not_futur": "Cette date doit être dans le futur",
+  "niss_invalid": "Le numéro niss est invalide",
+  "niss_date": "Les 6 premiers chiffres sont invalide",
+  "biss_invalid": "Le numéro biss est invalide",
+  "biss_date": "Les 6 premiers chiffres sont invalide",
+  "field_size_equal": "La taille de ce champ doit être de {size}",
+  "field_size_min": "La taille de ce champ doit être au minimum de {size}",
+  "field_size_max": "La taille de ce champ doit être au maximum de {size}",
+  "field_email": "L'adresse email n'est pas valide",
+  "error_input_search_min": "Votre recherche doit faire au minimum {length} charactères",
+  "input_search": {
+    "error_min_length": "Le champ doit contenir au moins {length} caractères",
+    "error_search": "Erreur lors de la recherche"
+  },
+  "locale": {
+    "lang_change": "Changer la langue vers {lang}"
+  },
+  "lang_current": "Drapeau de la langue courante",
+  "lang_change": "Passer en {lang}",
+  "extract_params_missing_value": "Aucune valeure n'est associée à la clé {key} dans votre traduction.",
+  "extract_params_empty": "L'une de vos clé de traduction se fini par le signe = mais ne possède pas de paramètre.",
+  "log_level_debug": "Debug",
+  "log_level_info": "Information",
+  "log_level_warning": "Attention",
+  "log_level_error": "Erreur",
+  "log_level_fatal": "Fatal",
+  "error_route_path": "Il manque le path de votre route pour pouvoir l'ajouter au router",
+  "error_route_component": "Il manque le component de votre route {url} pour pouvoir l'ajouter au router",
+  "error_url_unknown": "L'url {url} est inconnue par le routeur.",
+  "error_route_unknown": "La route {route_name} est inconnue par le routeur.",
+  "app-component": {
+    "loading": "Chargement de l'application...",
+    "error": {
+      "title": "Erreur de l'application",
+      "description": "Une erreur s'est produite lors du chargement de l'application. Veuillez réessayer.",
+      "retry": "Réessayer",
+      "callback-undefined": "Le callback retourne undefined"
+    }
+  },
+  "debug_bar": {
+    "new_version_available": "Nouvelle version disponible",
+    "refresh_page": "Actualiser la page",
+    "test_mode": "mode test",
+    "different_modes_detected": "Des modes différents ont été detecté parmis les API.",
+    "check_console_details": "Consultez la console pour plus de détail.",
+    "version": "Version",
+    "changelog": "Liste des modifications"
+  },
+  "error_api_down": "L'API d'authentification {api} n'est pas en ligne",
+  "error_api_instance": "L'instance renvoyé par l'api {api} est invalide",
+  "ws_open": "WebSocket {route_name} connecté !",
+  "ws_close": "WebSocket {route_name} fermé !",
+  "ws_global_event": "{event} reçu pour la route {route_name}",
+  "ws_close_route_unknow": "La route {route_name} est inconnue et ne peut être fermée.",
+  "ws_reconnect_attempt": "Tentative de reconnection pour {route_name}...",
+  "ws_reconnection_stopped": "Reconnection automatique pour {route_name} arrêtée",
+  "ws_route_already_exist": "Route {route_name} déjà enregistrée.",
+  "ws_route_unknow": "Route {route_name} inconnue",
+  "ws_route_api_undefined": "Api de la route {route_name} inconnue",
+  "ws_route_url_undefined": "L'url de la route {route_name} n'est pas renseignée",
+  "ws_api_undefined": "L'api {api} est inconnue dans le ficher de config appConfig",
+  "ws_data_bad": "{route_name} : les données sont mal formatées. {data}",
+  "ws_data_no_event": "{route_name}: L'event est manquant",
+  "ws_event_already_exist": "L'évenement {event} est déjà enregistré.",
+  "ws_event_no": "Aucun événement enregistré pour la route {route_name}",
+  "ws_event_unknow": "Événement {event} inconnue pour la route {route_name}"
+} 

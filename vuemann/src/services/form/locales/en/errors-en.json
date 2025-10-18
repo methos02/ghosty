@@ -1,0 +1,20 @@
+{
+  "field_required": "This field is required",
+  "field_invalid": "This field is invalid",
+  "field_in": "The value must be in the list {options}",
+  "field_min": "The value must be at least {min}",
+  "field_max": "The value must be at most {max}",
+  "date_invalid": "The date is invalid",
+  "date_not_past": "This date must be in the past",
+  "date_not_futur": "This date must be in the future",
+  "niss_invalid": "The NISS number is invalid",
+  "niss_date": "The first 6 digits are invalid",
+  "biss_invalid": "The BISS number is invalid",
+  "biss_date": "The first 6 digits are invalid",
+  "field_size_equal": "The size of this field must be {size}",
+  "field_size_min": "The size of this field must be at least {size}",
+  "field_size_max": "The size of this field must be at most {size}",
+  "field_email": "The email address is not valid",
+
+  "error_input_search_min": "Your search must be at least {length} characters long"
+}

@@ -1,0 +1,6 @@
+{
+  "paginator_total_items": "Total d'éléments",
+  "paginator_items_per_page": "Éléments par page",
+  "paginator_go_to_page": "Aller à la page",
+  "paginator_page_info": "Page {current} sur {total}"
+} 

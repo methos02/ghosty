@@ -1,0 +1,6 @@
+{
+  "date_format_error": "Invalid date format",
+  "date_invalid": "Invalid date",
+  "date_future": "Date must be in the future",
+  "date_past": "Date must be in the past"
+} 

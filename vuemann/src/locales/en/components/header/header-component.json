@@ -1,0 +1,11 @@
+{
+  "sidebar": {
+    "show": "Show menu",
+    "hide": "Hide menu"
+  },
+  "app": {
+    "logo": "Brugmann Hospital logo",
+    "intranet_link": "Link to intranet",
+    "documentation_link": "Documentation"
+  }
+} 

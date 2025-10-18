@@ -1,0 +1,22 @@
+{
+  "input_date": {
+    "placeholder": "jj/mm/aaaa",
+    "calendar_title": "Ouvrir le calendrier",
+    "weekdays": {
+      "monday": "Lun",
+      "tuesday": "Mar", 
+      "wednesday": "Mer",
+      "thursday": "Jeu",
+      "friday": "Ven",
+      "saturday": "Sam",
+      "sunday": "Dim"
+    },
+    "buttons": {
+      "today": "Aujourd'hui",
+      "clear": "Effacer"
+    },
+    "errors": {
+      "invalid_date": "La date renseignée est invalide"
+    }
+  }
+}

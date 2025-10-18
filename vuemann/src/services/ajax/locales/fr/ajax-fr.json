@@ -1,0 +1,14 @@
+{
+  "error_no_client" : "Le client http n'a pas été initialisé",
+  "error_front": "Une erreur est survenue sur l'application, merci de prévenir le service informatique",
+  "error_back": "Une erreur est survenue dans le serveur, nous avons été notifiés de cette erreur.",
+  "error_empty_parameter": "Vous devez indiquer les paramètres de la route {route_name}.",
+  "error_unknow_parameter": "Le paramètre '{param_name}' n'éxiste pas dans la route {route_name}.",
+  "error_missing_parameter": "Certain paramètre de la route {route_name} n'ont pas été renseigné.",
+  "v_error_api_url": "L'url de l'api {api_name} est invalide.",
+  "v_route_unknow": "La route '{route_name}' est inconnue",
+  "v_route_method_undefined": "Problème de Config: la method de la route {route_name} n'a pas été renseignée.",
+  "v_route_api_undefined": "Problème de Config: l'apide la route {route_name} n'a pas été renseignée.",
+  "v_route_url_undefined": "Problème de Config: l'url de la route {route_name} n'a pas été renseignée.",
+  "v_error_method_unknow": "Problème de Config: la method {method} de la route {route_name} est inconnue."
+}

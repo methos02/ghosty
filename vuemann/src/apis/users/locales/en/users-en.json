@@ -1,0 +1,8 @@
+{
+  "user_search" : {
+    "search_username_label": "User username",
+    "search_fullname_label": "User full name",
+    "switch_search_title": "Switch between username and full name search",
+    "users_found": "Users found: {count}"
+  }
+} 

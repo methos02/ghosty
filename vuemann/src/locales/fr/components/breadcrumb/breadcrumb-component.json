@@ -1,0 +1,12 @@
+{
+  "breadcrumb": {
+    "home": "Accueil",
+    "separator": ">",
+    "current_page": "Page actuelle",
+    "errors" : {
+      "type": "Les méthodes du file d'ariane ne sont disponibles qu'avec le type session",
+      "parents": "La configuration parents du file d'ariane est invalide.",
+      "route_unknown": "La route {route_name} est inconnue."
+    }
+  }
+} 

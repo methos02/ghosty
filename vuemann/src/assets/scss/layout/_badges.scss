@@ -1,0 +1,27 @@
+@use 'sass:color';
+@use 'sass:map';
+
+.badge {
+  padding: 1px 10px;
+  border-radius: 25px;
+  font-size: var(--fs-300);
+  background-color: var(--neutral-300);
+  transition: background-color linear 300ms, color linear 300ms;
+}
+
+$badge_colors: (
+  "primary": var(--primary),
+  "danger": var(--danger),
+  "success": var(--success),
+  "info": var(--info),
+  "warning": var(--warning),
+  "blue-300": var(--blue-300),
+  "blue": var(--blue),
+);
+
+@each $name, $bg-color in $badge_colors {
+  .badge-#{$name} {
+    background-color: $bg-color ;
+    color: var(--neutral-100);
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"AppConfigComponent-BZJ7mzU0.js","sources":["../../src/views/configPage/AppConfigComponent.vue"],"sourcesContent":["<template>\r\n  <h1 class=\"fs-2rem fw-400 color-primary\">Fichier appConfig</h1>\r\n</template>\r\n"],"names":["_hoisted_1","_createElementBlock"],"mappings":"iEACMA,EAAA,CAAA,MAAM,8BAA8B,6BAAxCC,EAA+D,KAA/DD,EAAyC,mBAAiB"}

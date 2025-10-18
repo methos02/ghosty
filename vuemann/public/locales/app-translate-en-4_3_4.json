@@ -1,0 +1,201 @@
+{
+  "user_search": {
+    "switch_search_title": "Switch between username and full name search",
+    "search_fullname_placeholder": "Search by full name...",
+    "search_username_placeholder": "Search by username...",
+    "users_found": "Users found: {count}",
+    "search_username_label": "User username",
+    "search_fullname_label": "User full name"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "separator": ">",
+    "current_page": "Current page",
+    "errors": {
+      "type": "Breadcrumb methods are only available with the session type.",
+      "parents": "The breadcrumb parents configuration is invalid.",
+      "route_unknown": "The route {route_name} is unknown."
+    }
+  },
+  "changelog": {
+    "title": "Changelog",
+    "description": "Discover the latest changes and improvements made to the application.",
+    "back": "Back",
+    "filters": {
+      "all": "Show all",
+      "features": "New features",
+      "bugs": "Bug fixes",
+      "optimizations": "Improvements",
+      "updates": "Updates",
+      "critical": "Critical"
+    }
+  },
+  "changelog-section": {
+    "version": "Version {version} - {date}",
+    "categories": {
+      "nouveautes": "New Features",
+      "bugs": "Bug Fixes",
+      "optimisations": "Improvements",
+      "updates": "Updates",
+      "critique": "Critical Updates"
+    }
+  },
+  "code_html": {
+    "copied": "Copied!"
+  },
+  "confirm_button": {
+    "valide": "Confirm",
+    "cancel": "Cancel"
+  },
+  "dialog": {
+    "close": "Close the popup"
+  },
+  "sidebar": {
+    "show": "Show menu",
+    "hide": "Close menu",
+    "homepage": "Homepage"
+  },
+  "app": {
+    "logo": "Brugmann Hospital logo",
+    "intranet_link": "Link to intranet",
+    "documentation_link": "Documentation"
+  },
+  "paginator": {
+    "previous_page": "Previous page",
+    "next_page": "Next page",
+    "loadmore_button": "Load more",
+    "loadmore_info": "You are on page {currentPage} of {totalPage}"
+  },
+  "paginator_previous": "Previous",
+  "paginator_next": "Next",
+  "paginator_page": "Page",
+  "paginator_of": "of",
+  "paginator_loading": "Loading...",
+  "paginator_no_more": "No more results",
+  "paginator_load_more": "Load more",
+  "dev_sidebar_home": "Homepage",
+  "v_api_page": "APIs",
+  "v_component_page": "Components",
+  "v_config_page": "Configuration",
+  "v_css_page": "Styles",
+  "v_services_page": "Services",
+  "v_commands_page": "Commands",
+  "v_debug": "Debug",
+  "v_helpers_page": "Helpers",
+  "v_api_users_title": "API Users",
+  "v_api_users_description": "This section presents components and features related to user management.",
+  "v_api_users_components_title": "Available components",
+  "v_api_users_search_component": "UserSearch Component",
+  "v_api_users_search_title": "UserSearch Component - API Users",
+  "v_api_users_search_description": "This component allows searching for users with an interactive search interface. It offers the ability to search by full name or username, with infinite pagination and dropdown display. This component is part of the Vuemann Users API.",
+  "v_api_users_search_properties_title": "Properties",
+  "v_api_users_search_methods_title": "Exposed methods",
+  "v_api_users_search_features_title": "Features",
+  "v_api_users_search_examples_title": "Examples",
+  "v_api_users_search_code_title": "Code",
+  "v_api_users_search_demo_note": "In this demonstration page, user data is simulated. The component uses a custom callback to avoid needing protected API routes. Available surnames: Martin, Dubois.",
+  "app_name": "Vuemann",
+  "app_version": "Version",
+  "app_environment": "Environment",
+  "app_debug": "Debug mode",
+  "app_logo": "Brugmann Hospital logo",
+  "app_intranet_link": "Link to intranet",
+  "app_documentation_link": "Documentation",
+  "date_format_error": "Invalid date format",
+  "date_invalid": "The date is invalid",
+  "date_future": "Date must be in the future",
+  "date_past": "Date must be in the past",
+  "input_date": {
+    "placeholder": "dd/mm/yyyy",
+    "calendar_title": "Open calendar",
+    "weekdays": {
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat",
+      "sunday": "Sun"
+    },
+    "buttons": {
+      "today": "Today",
+      "clear": "Clear"
+    },
+    "errors": {
+      "invalid_date": "The entered date is invalid"
+    }
+  },
+  "login_title": "Login",
+  "login_password": "Password",
+  "login_button": "Login",
+  "login_error_credentials": "The username and password are required.",
+  "login_error_api_credentials": "API credentials for {api_name} are incomplete in the app configuration file.",
+  "login_error_token": "Incorrect username or password",
+  "access_error": "You must be logged in to access this page.",
+  "refresh_error": "Your session has been disconnected, please reconnect.",
+  "logout": "You have been successfully logged out",
+  "field_required": "This field is required",
+  "field_invalid": "This field is invalid",
+  "field_in": "The value must be in the list {options}",
+  "field_min": "The value must be at least {min}",
+  "field_max": "The value must be at most {max}",
+  "date_not_past": "This date must be in the past",
+  "date_not_futur": "This date must be in the future",
+  "niss_invalid": "The NISS number is invalid",
+  "niss_date": "The first 6 digits are invalid",
+  "biss_invalid": "The BISS number is invalid",
+  "biss_date": "The first 6 digits are invalid",
+  "field_size_equal": "The size of this field must be {size}",
+  "field_size_min": "The size of this field must be at least {size}",
+  "field_size_max": "The size of this field must be at most {size}",
+  "field_email": "The email address is not valid",
+  "error_input_search_min": "Your search must be at least {length} characters long",
+  "input_search": {
+    "error_min_length": "The field must contain at least {length} characters",
+    "error_search": "Error during search"
+  },
+  "locale": {
+    "lang_change": "Change language to {lang}"
+  },
+  "lang_current": "Huidige taalvlag",
+  "lang_change": "Overschakelen naar {lang}",
+  "extract_params_missing_value": "No value is associated with the key {key} in your translation.",
+  "extract_params_empty": "One of your translation keys ends with the = sign but has no parameter.",
+  "error_route_path": "The path of your route is missing to add it to the router.",
+  "error_route_component": "The component of your route {url} is missing to add it to the router.",
+  "error_url_unknown": "The URL {url} is unknown to the router.",
+  "error_route_unknown": "The route {route_name} is unknown to the router.",
+  "app-component": {
+    "loading": "Loading application...",
+    "error": {
+      "title": "Application Error",
+      "description": "An error occurred while loading the application. Please try again.",
+      "retry": "Retry",
+      "callback-undefined": "The callback returned undefined"
+    }
+  },
+  "debug_bar": {
+    "new_version_available": "New version available",
+    "refresh_page": "Refresh page",
+    "test_mode": "test mode",
+    "different_modes_detected": "Different modes have been detected among the APIs.",
+    "check_console_details": "Check the console for more details.",
+    "version": "Version",
+    "changelog": "List of changes"
+  },
+  "error_api_down": "Authnentification API {api} is not online",
+  "error_api_instance": "The instance returned by the API {api} is invalid",
+  "ws_open": "WebSocket {route_name} connected!",
+  "ws_global_event": "{event} received for route {route_name}",
+  "ws_close_route_unknow": "The route {route_name} is unknown and cannot be closed.",
+  "ws_route_already_exist": "Route {route_name} already registered.",
+  "ws_route_unknow": "Route {route_name} unknown",
+  "ws_route_api_undefined": "Api of route {route_name} unknown",
+  "ws_route_url_undefined": "The url of route {route_name} is not provided",
+  "ws_api_undefined": "The api {api} is unknown in the appConfig file",
+  "ws_data_bad": "{route_name}: the data is malformed. {data}",
+  "ws_data_no_event": "{route_name}: The event is missing",
+  "ws_event_already_exist": "The event {event} is already registered.",
+  "ws_event_no": "No event registered for route {route_name}",
+  "ws_event_unknow": "Event {event} unknown for route {route_name}"
+} 

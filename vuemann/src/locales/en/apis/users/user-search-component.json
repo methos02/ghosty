@@ -1,0 +1,8 @@
+{
+  "user_search": {
+    "switch_search_title": "Switch search type",
+    "search_fullname_placeholder": "Search by full name...",
+    "search_username_placeholder": "Search by username...",
+    "users_found": "{count} user(s) found"
+  }
+} 

@@ -1,0 +1,22 @@
+{
+  "input_date": {
+    "placeholder": "dd/mm/yyyy",
+    "calendar_title": "Open calendar",
+    "weekdays": {
+      "monday": "Mon",
+      "tuesday": "Tue", 
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat",
+      "sunday": "Sun"
+    },
+    "buttons": {
+      "today": "Today",
+      "clear": "Clear"
+    },
+    "errors": {
+      "invalid_date": "The entered date is invalid"
+    }
+  }
+}

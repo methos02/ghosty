@@ -1,0 +1,1 @@
+import{_ as o,c as e,o as c}from"./index-CFtw_ocM.js";const r={},n={class:"fs-2rem fw-400 color-primary"};function s(t,a){return c(),e("h1",n,"Fichier appConfig")}const f=o(r,[["render",s]]);export{f as default};

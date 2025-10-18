@@ -1,0 +1,4 @@
+{
+  "error_api_down": "Authenticatie API {api} is niet online",
+  "error_api_instance": "Het door de API {api} geretourneerde exemplaar is ongeldig"
+}

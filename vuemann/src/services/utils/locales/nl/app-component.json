@@ -1,0 +1,11 @@
+{
+  "app-component": {
+    "loading": "Applicatie laden...",
+    "error": {
+      "title": "Applicatiefout",
+      "description": "Er is een fout opgetreden bij het laden van de applicatie. Probeer het opnieuw.",
+      "retry": "Opnieuw proberen",
+      "callback-undefined": "De callback retourneert undefined"
+    }
+  }
+}

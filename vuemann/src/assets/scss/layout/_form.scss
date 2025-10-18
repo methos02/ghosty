@@ -1,0 +1,90 @@
+@use '../variables';
+
+.form-row {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+  width: 100%;
+  margin-bottom: 20px;
+
+  > *:not(.no-flex) { flex: 1; }
+
+  @media (min-width: variables.$md) {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 25px;
+  }
+
+  &.half {
+    @media (min-width: variables.$md) {
+      width: calc(50% - 12px);
+    }
+  }
+}
+
+.form-input {
+  padding: 15px 15px 0 15px;
+
+  &:is(textarea) {
+    padding: 17px 10px 0 10px;
+  }
+
+  &:focus + .form-label,
+  &.valid + .form-label,
+  &:not(:placeholder-shown, select) + .form-label {
+    top: 3px;
+    left: 12px;
+    font-size: 0.75rem;
+    color: var(--primary);
+  }
+}
+
+.form-label {
+  position: absolute;
+  top: 11px;
+  left: 16px;
+  color: #666;
+  font-size: 1rem;
+  pointer-events: none;
+  transition: 0.2s ease all;
+
+  &.required::after {
+    content: '*';
+    margin-left: 3px;
+    color: var(--danger);
+  }
+}
+
+.form-error {
+  color: var(--danger);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &:hover > * {
+    outline: 1px solid var(--primary);
+  }
+
+  .input, &:hover .input { border: 1px solid var(--neutral-300); }
+
+  @media (min-width: variables.$md) {
+    flex-direction: row;
+    gap: 0;
+
+    & > :first-child,
+    & > :first-child [class*='input'] {
+      border-radius: 5px 0 0 5px;
+    }
+    & > :last-child,
+    & > :last-child [class*='input'] {
+      border-radius: 0 5px 5px 0;
+      border-left: none;
+    }
+  }
+}

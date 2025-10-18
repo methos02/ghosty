@@ -1,0 +1,14 @@
+{
+  "login_title": "Login",
+  "login_password": "Password",
+  "login_button": "Login",
+
+  "login_error_credentials": "The username and password are required.",
+  "login_error_api_credentials" : "API credentials for {api_name} are incomplete in the app configuration file.",
+  "login_error_token": "Incorrect username or password",
+
+  "access_error": "You must be logged in to access this page.",
+  "refresh_error": "Your session has been disconnected, please reconnect.",
+
+    "logout": "You have been successfully logged out"
+}

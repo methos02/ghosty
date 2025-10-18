@@ -1,0 +1,61 @@
+@use 'sass:color';
+
+$xs: 320px;
+$sm: 576px;
+$md: 768px;
+$lg: 992px;
+$xl: 1200px;
+$xxl: 1400px;
+
+$primary-100: #e3c7dc;
+$primary-300: #9c4e89;
+$primary-400: #7a3d6b;
+$primary: #582C4D;
+$primary-600: color.adjust($primary, $lightness: -10%);
+
+$blue-300: #08baba;
+$blue: #2b4570;
+
+$green-300: #9be190;
+$green: #419a78;
+
+$yellow: #e6d458;
+
+$red: #D36380;
+
+$neutral-100: #ffffff;
+$neutral-200: #f8f7f5;
+$neutral-300: #ededed;
+$neutral-400: #d9d9d9;
+$neutral-500: #7e7e7e;
+$neutral-600: #4f4f51;
+$neutral-700: #444446;
+$neutral-800: #1f2932;
+$neutral-900: #000000;
+
+$danger-300: #ffe5e8;
+$danger: #c93545;
+$warning-300: #fdda78;
+$warning: #ffc31a;
+$success-300: #c8e6c5;
+$success: #49cb54;
+$info-300: #b6e9ff;
+$info: #5da2f6;
+
+$fs-300: 0.85rem;
+$fs-400: 0.9375rem;
+$fs-500: 1rem;
+$fs-600: 1.2rem;
+$fs-700: 1.35rem;
+$fs-800: 1.5rem;
+
+$fs-icon-300: 1.2rem;
+$fs-icon-400: 1.4rem;
+
+$h1-fs: 2rem;
+$h2-fs: 1.55rem;
+$h3-fs: 1.1rem;
+$h4-fs: 1rem;
+
+$header-height: 100px;
+$input-height: 45px;

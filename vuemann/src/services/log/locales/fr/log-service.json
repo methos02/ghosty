@@ -1,0 +1,7 @@
+{
+  "log_level_debug": "Debug",
+  "log_level_info": "Information",
+  "log_level_warning": "Attention",
+  "log_level_error": "Erreur",
+  "log_level_fatal": "Fatal"
+} 

@@ -1,0 +1,186 @@
+.input-date-component {
+    .calendar-button {
+        position: absolute;
+        inset: 0 0 0 auto;
+        cursor: pointer;
+        background: none;
+        border: none;
+        
+        i { 
+            color: var(--neutral-600);
+            transition: color 0.2s ease;
+        }
+        
+        &:hover i {
+            color: var(--primary);
+        }
+    }
+}
+
+.calendar-popup {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 320px;
+    background: var(--neutral-100);
+    border: 1px solid var(--neutral-300);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    padding: 16px;
+    margin-top: 4px;
+
+    .calendar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+
+        .nav-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            color: var(--neutral-600);
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: var(--neutral-100);
+                color: var(--primary);
+            }
+
+            i {
+                font-size: 14px;
+            }
+        }
+
+        .current-month {
+            font-weight: 600;
+            color: var(--neutral-800);
+            font-size: 16px;
+        }
+    }
+
+    .calendar-weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        margin-bottom: 8px;
+
+        span {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--neutral-600);
+            padding: 8px 4px;
+        }
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+
+        .calendar-day {
+            background: none;
+            border: none;
+            padding: 8px 4px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            color: var(--neutral-800);
+            transition: all 0.2s ease;
+            min-height: 32px;
+
+            &:hover:not(.disabled) {
+                background: var(--primary-100, #e3f2fd);
+            }
+
+            &.other-month {
+                color: var(--neutral-400);
+            }
+
+            &.today {
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            &.selected {
+                background: var(--primary);
+                color: white;
+                font-weight: 600;
+
+                &:hover {
+                    background: var(--primary);
+                }
+            }
+
+            &.disabled {
+                color: var(--neutral-300);
+                cursor: not-allowed;
+                
+                &:hover {
+                    background: none;
+                }
+            }
+        }
+    }
+
+    .calendar-footer {
+        margin-top: 16px;
+        padding-top: 12px;
+        border-top: 1px solid var(--neutral-200);
+        text-align: center;
+
+        .calendar-footer-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .today-button,
+        .clear-button {
+            background: none;
+            border: 1px solid var(--neutral-300);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--neutral-700);
+            transition: all 0.2s ease;
+
+            &:hover {
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+        }
+
+        .clear-button {
+            border-color: var(--neutral-400);
+            color: var(--neutral-600);
+
+            &:hover {
+                border-color: var(--danger, #dc3545);
+                color: var(--danger, #dc3545);
+            }
+        }
+    }
+}
+
+// Animation d'entrée pour la popup
+.calendar-popup {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

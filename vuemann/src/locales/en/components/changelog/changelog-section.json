@@ -1,0 +1,12 @@
+{
+  "changelog-section": {
+    "version": "Version {version} - {date}",
+    "categories": {
+      "nouveautes": "New Features",
+      "bugs": "Bug Fixes",
+      "optimisations": "Improvements",
+      "updates": "Updates",
+      "critique": "Critical Updates"
+    }
+  }
+} 

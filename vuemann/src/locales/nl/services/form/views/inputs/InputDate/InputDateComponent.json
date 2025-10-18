@@ -1,0 +1,22 @@
+{
+  "input_date": {
+    "placeholder": "dd/mm/jjjj",
+    "calendar_title": "Kalender openen",
+    "weekdays": {
+      "monday": "Ma",
+      "tuesday": "Di", 
+      "wednesday": "Wo",
+      "thursday": "Do",
+      "friday": "Vr",
+      "saturday": "Za",
+      "sunday": "Zo"
+    },
+    "buttons": {
+      "today": "Vandaag",
+      "clear": "Wissen"
+    },
+    "errors": {
+      "invalid_date": "De ingevoerde datum is ongeldig"
+    }
+  }
+}

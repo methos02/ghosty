@@ -1,0 +1,73 @@
+@use '../variables';
+
+.loader-spin {
+    content: "";
+    width: 15px;
+    height: 15px;
+    border: 3px solid variables.$primary;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loader {
+  max-width: 50px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.loader-bars:before,
+.loader-bars:after,
+.loader-bars span {
+  content: '';
+  display: block;
+  width: 8px;
+  background-color: #fff;
+  animation: grow 1.5s linear infinite;
+}
+  
+.loader-bars.loader.mini {
+  width: auto;
+
+  &:before,
+  &:after,
+  & span {
+    width: 4px;
+  }
+}
+  
+.loader-bars:before {
+  left: 0;
+}
+.loader-bars:after {
+  animation-delay: 0.5s;
+}
+.loader-bars span {
+  animation-delay: 1s;
+}
+
+@keyframes grow {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scaleY(1);
+    opacity: 1.6;
+  }
+
+  100% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "login_title": "Inloggen",
+  "login_password": "Wachtwoord",
+  "login_button": "Inloggen",
+
+  "login_error_credentials": "De gebruikersnaam en het wachtwoord zijn vereist.",
+  "login_error_api_credentials" : "API-referenties voor {api_name} zijn onvolledig in het configuratiebestand van de app.",
+  "login_error_token": "Onjuiste gebruikersnaam of wachtwoord",
+
+  "access_error": "U moet ingelogd zijn om toegang te krijgen tot deze pagina.",
+  "refresh_error": "Uw sessie is verbroken, maak alstublieft opnieuw verbinding.",
+
+  "logout": "U bent succesvol uitgelogd"
+}

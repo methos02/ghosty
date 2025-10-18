@@ -1,0 +1,12 @@
+{
+  "breadcrumb": {
+    "home": "Home",
+    "separator": ">",
+    "current_page": "Current page",
+    "errors": {
+      "type": "Breadcrumb methods are only available with the session type.",
+      "parents": "The breadcrumb parents configuration is invalid.",
+      "route_unknown": "The route {route_name} is unknown."
+    }
+  }
+} 

@@ -1,0 +1,6 @@
+{
+  "paginator": {
+    "loadmore_button": "Meer laden",
+    "loadmore_info": "U bent op pagina {currentPage} van {totalPage}"
+  }
+} 

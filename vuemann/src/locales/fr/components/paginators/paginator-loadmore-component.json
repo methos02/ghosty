@@ -1,0 +1,6 @@
+{
+  "paginator": {
+    "loadmore_button": "Charger plus",
+    "loadmore_info": "Vous êtes sur la page {currentPage} sur {totalPage}"
+  }
+} 

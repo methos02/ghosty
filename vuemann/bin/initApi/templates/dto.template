@@ -1,0 +1,5 @@
+const response = () => {
+  ...__FOLDER_NAME__
+}
+
+export const __UC_FOLDER_NAME__Dto = { response }

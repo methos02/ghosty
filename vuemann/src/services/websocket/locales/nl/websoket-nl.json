@@ -1,0 +1,15 @@
+{
+    "ws_open": "WebSocket {route_name} verbonden!",
+    "ws_global_event": "{event} ontvangen voor route {route_name}",
+    "ws_close_route_unknow": "De route {route_name} is onbekend en kan niet worden gesloten.",
+    "ws_route_already_exist": "Route {route_name} al geregistreerd.",
+    "ws_route_unknow": "Route {route_name} onbekend",
+    "ws_route_api_undefined": "Api van route {route_name} onbekend",
+    "ws_route_url_undefined": "De url van route {route_name} is niet ingevuld",
+    "ws_api_undefined": "De api {api} is onbekend in het appConfig-bestand",
+    "ws_data_bad": "{route_name}: de gegevens zijn misvormd. {data}",
+    "ws_data_no_event": "{route_name}: Het event ontbreekt",
+    "ws_event_already_exist": "Het evenement {event} is al geregistreerd.",
+    "ws_event_no": "Geen gebeurtenis geregistreerd voor route {route_name}",
+    "ws_event_unknow": "Gebeurtenis {event} onbekend voor route {route_name}"
+}

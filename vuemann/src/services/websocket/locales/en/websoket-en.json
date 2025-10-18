@@ -1,0 +1,15 @@
+{
+    "ws_open": "WebSocket {route_name} connected!",
+    "ws_global_event": "{event} received for route {route_name}",
+    "ws_close_route_unknow": "The route {route_name} is unknown and cannot be closed.",
+    "ws_route_already_exist": "Route {route_name} already registered.",
+    "ws_route_unknow": "Route {route_name} unknown",
+    "ws_route_api_undefined": "Api of route {route_name} unknown",
+    "ws_route_url_undefined": "The url of route {route_name} is not provided",
+    "ws_api_undefined": "The api {api} is unknown in the appConfig file",
+    "ws_data_bad": "{route_name}: the data is malformed. {data}",
+    "ws_data_no_event": "{route_name}: The event is missing",
+    "ws_event_already_exist": "The event {event} is already registered.",
+    "ws_event_no": "No event registered for route {route_name}",
+    "ws_event_unknow": "Event {event} unknown for route {route_name}"
+}

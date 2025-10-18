@@ -1,0 +1,201 @@
+{
+  "user_search": {
+    "switch_search_title": "Schakelen tussen gebruikersnaam en volledige naam zoeken",
+    "search_fullname_placeholder": "Zoeken op volledige naam...",
+    "search_username_placeholder": "Zoeken op gebruikersnaam...",
+    "users_found": "Gebruikers gevonden: {count}",
+    "search_username_label": "Gebruikersnaam van de gebruiker",
+    "search_fullname_label": "Volledige naam van de gebruiker"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "separator": ">",
+    "current_page": "Huidige pagina",
+    "errors": {
+      "type": "De functies van de kruimelpad zijn alleen beschikbaar met het sessietype.",
+      "parents": "De ouderconfiguratie van het kruimelpad is ongeldig.",
+      "route_unknown": "De route {route_name} is onbekend."
+    }
+  },
+  "changelog": {
+    "title": "Changelog",
+    "description": "Ontdek de laatste wijzigingen en verbeteringen die zijn aangebracht aan de applicatie.",
+    "back": "Terug",
+    "filters": {
+      "all": "Alles tonen",
+      "features": "Nieuwe functies",
+      "bugs": "Bugfixes",
+      "optimizations": "Verbeteringen",
+      "updates": "Updates",
+      "critical": "Kritiek"
+    }
+  },
+  "changelog-section": {
+    "version": "Versie {version} - {date}",
+    "categories": {
+      "nouveautes": "Nieuwe functies",
+      "bugs": "Bugfixes",
+      "optimisations": "Verbeteringen",
+      "updates": "Updates",
+      "critique": "Kritieke updates"
+    }
+  },
+  "code_html": {
+    "copied": "Gekopieerd!"
+  },
+  "confirm_button": {
+    "valide": "Bevestigen",
+    "cancel": "Annuleren"
+  },
+  "dialog": {
+    "close": "Popupvenster sluiten"
+  },
+  "sidebar": {
+    "show": "Menu weergeven",
+    "hide": "Menu sluiten",
+    "homepage": "Startpagina"
+  },
+  "app": {
+    "logo": "logo van het Brugmann-ziekenhuis",
+    "intranet_link": "Link naar intranet",
+    "documentation_link": "Documentatie"
+  },
+  "paginator": {
+    "previous_page": "Vorige pagina",
+    "next_page": "Volgende pagina",
+    "loadmore_button": "Meer laden",
+    "loadmore_info": "U bent op pagina {currentPage} van {totalPage}"
+  },
+  "paginator_previous": "Vorige",
+  "paginator_next": "Volgende",
+  "paginator_page": "Pagina",
+  "paginator_of": "van",
+  "paginator_loading": "Laden...",
+  "paginator_no_more": "Geen verdere resultaten",
+  "paginator_load_more": "Meer laden",
+  "dev_sidebar_home": "Startpagina",
+  "v_api_page": "API's",
+  "v_component_page": "Componenten",
+  "v_config_page": "Configuratie",
+  "v_css_page": "Stijlen",
+  "v_services_page": "Services",
+  "v_commands_page": "Commando's",
+  "v_debug": "Debug",
+  "v_helpers_page": "Helpers",
+  "v_api_users_title": "API Gebruikers",
+  "v_api_users_description": "Deze sectie presenteert componenten en functies gerelateerd aan gebruikersbeheer.",
+  "v_api_users_components_title": "Beschikbare componenten",
+  "v_api_users_search_component": "UserSearch Component",
+  "v_api_users_search_title": "UserSearch Component - API Gebruikers",
+  "v_api_users_search_description": "Deze component maakt het mogelijk om gebruikers te zoeken met een interactieve zoekinterface. Het biedt de mogelijkheid om te zoeken op volledige naam of gebruikersnaam, met oneindige paginering en dropdown weergave. Deze component maakt deel uit van de Vuemann Gebruikers API.",
+  "v_api_users_search_properties_title": "Eigenschappen",
+  "v_api_users_search_methods_title": "Blootgestelde methoden",
+  "v_api_users_search_features_title": "Functies",
+  "v_api_users_search_examples_title": "Voorbeelden",
+  "v_api_users_search_code_title": "Code",
+  "v_api_users_search_demo_note": "Op deze demonstratiepagina worden gebruikersgegevens gesimuleerd. De component gebruikt een aangepaste callback om beschermde API-routes te vermijden. Beschikbare achternamen: Martin, Dubois.",
+  "app_name": "Vuemann",
+  "app_version": "Versie",
+  "app_environment": "Omgeving",
+  "app_debug": "Debug modus",
+  "app_logo": "logo van het Brugmann-ziekenhuis",
+  "app_intranet_link": "Link naar intranet",
+  "app_documentation_link": "Documentatie",
+  "date_format_error": "Ongeldig datumformaat",
+  "date_invalid": "De datum is ongeldig",
+  "date_future": "Datum moet in de toekomst liggen",
+  "date_past": "Datum moet in het verleden liggen",
+  "input_date": {
+    "placeholder": "dd/mm/jjjj",
+    "calendar_title": "Kalender openen",
+    "weekdays": {
+      "monday": "Ma",
+      "tuesday": "Di",
+      "wednesday": "Wo",
+      "thursday": "Do",
+      "friday": "Vr",
+      "saturday": "Za",
+      "sunday": "Zo"
+    },
+    "buttons": {
+      "today": "Vandaag",
+      "clear": "Wissen"
+    },
+    "errors": {
+      "invalid_date": "De ingevoerde datum is ongeldig"
+    }
+  },
+  "login_title": "Inloggen",
+  "login_password": "Wachtwoord",
+  "login_button": "Inloggen",
+  "login_error_credentials": "De gebruikersnaam en het wachtwoord zijn vereist.",
+  "login_error_api_credentials": "API-referenties voor {api_name} zijn onvolledig in het configuratiebestand van de app.",
+  "login_error_token": "Onjuiste gebruikersnaam of wachtwoord",
+  "access_error": "U moet ingelogd zijn om toegang te krijgen tot deze pagina.",
+  "refresh_error": "Uw sessie is verbroken, maak alstublieft opnieuw verbinding.",
+  "logout": "U bent succesvol uitgelogd",
+  "field_required": "Dit veld is verplicht",
+  "field_invalid": "Dit veld is ongeldig",
+  "field_in": "De waarde moet in de lijst {options} staan",
+  "field_min": "De waarde moet minimaal {min} zijn",
+  "field_max": "De waarde mag maximaal {max} zijn",
+  "date_not_past": "Deze datum moet in het verleden liggen",
+  "date_not_futur": "Deze datum moet in de toekomst liggen",
+  "niss_invalid": "Het NISS-nummer is ongeldig",
+  "niss_date": "De eerste 6 cijfers zijn ongeldig",
+  "biss_invalid": "Het BISS-nummer is ongeldig",
+  "biss_date": "De eerste 6 cijfers zijn ongeldig",
+  "field_size_equal": "De grootte van dit veld moet {size} zijn",
+  "field_size_min": "De grootte van dit veld moet minimaal {size} zijn",
+  "field_size_max": "De grootte van dit veld mag maximaal {size} zijn",
+  "field_email": "Het e-mailadres is niet geldig",
+  "error_input_search_min": "Uw zoekopdracht moet minstens {length} tekens lang zijn",
+  "input_search": {
+    "error_min_length": "Het veld moet ten minste {length} tekens bevatten",
+    "error_search": "Fout tijdens zoeken"
+  },
+  "locale": {
+    "lang_change": "Taal wijzigen naar {lang}"
+  },
+  "lang_current": "Current Language Flag",
+  "lang_change": "Switch to {lang}",
+  "extract_params_missing_value": "Geen waarde is gekoppeld aan de sleutel {key} in uw vertaling.",
+  "extract_params_empty": "Een van uw vertaalsleutels eindigt met het teken = maar heeft geen parameter.",
+  "error_route_path": "Het pad van je route ontbreekt om het aan de router toe te voegen.",
+  "error_route_component": "De component van je route {url} ontbreekt om het aan de router toe te voegen.",
+  "error_url_unknown": "De URL {url} is onbekend bij de router.",
+  "error_route_unknown": "De route {route_name} is onbekend bij de router.",
+  "app-component": {
+    "loading": "Applicatie laden...",
+    "error": {
+      "title": "Applicatiefout",
+      "description": "Er is een fout opgetreden bij het laden van de applicatie. Probeer het opnieuw.",
+      "retry": "Opnieuw proberen",
+      "callback-undefined": "De callback retourneert undefined"
+    }
+  },
+  "debug_bar": {
+    "new_version_available": "Nieuwe versie beschikbaar",
+    "refresh_page": "Pagina vernieuwen",
+    "test_mode": "test modus",
+    "different_modes_detected": "Verschillende modi zijn gedetecteerd onder de API's.",
+    "check_console_details": "Controleer de console voor meer details.",
+    "version": "Versie",
+    "changelog": "Lijst van wijzigingen"
+  },
+  "error_api_down": "Authenticatie API {api} is niet online",
+  "error_api_instance": "Het door de API {api} geretourneerde exemplaar is ongeldig",
+  "ws_open": "WebSocket {route_name} verbonden!",
+  "ws_global_event": "{event} ontvangen voor route {route_name}",
+  "ws_close_route_unknow": "De route {route_name} is onbekend en kan niet worden gesloten.",
+  "ws_route_already_exist": "Route {route_name} al geregistreerd.",
+  "ws_route_unknow": "Route {route_name} onbekend",
+  "ws_route_api_undefined": "Api van route {route_name} onbekend",
+  "ws_route_url_undefined": "De url van route {route_name} is niet ingevuld",
+  "ws_api_undefined": "De api {api} is onbekend in het appConfig-bestand",
+  "ws_data_bad": "{route_name}: de gegevens zijn misvormd. {data}",
+  "ws_data_no_event": "{route_name}: Het event ontbreekt",
+  "ws_event_already_exist": "Het evenement {event} is al geregistreerd.",
+  "ws_event_no": "Geen gebeurtenis geregistreerd voor route {route_name}",
+  "ws_event_unknow": "Gebeurtenis {event} onbekend voor route {route_name}"
+} 

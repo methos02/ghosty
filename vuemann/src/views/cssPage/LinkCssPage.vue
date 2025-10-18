@@ -1,0 +1,35 @@
+<template>
+  <h1 class="h1">Liens</h1>
+  <p>
+    Vuemann intègre un ensemble de class pour styliser ou simuler un lien.
+  </p>
+  <h2 class="h2">Style générale</h2>
+  <p>
+    La classe <span class="badge-code">link-underline</span> permet de souligner le lien au survole. La classe <span class="badge-code">link-bg</span>
+    va changer la couleur de fond au survole.
+  </p>
+  <div class="f-center g-25">
+    <button type="button" class="link-underline">link underline</button>
+    <button type="button" class="link-bg">link bg</button>
+  </div>
+  <h2 class="h2">Classes utilitaires</h2>
+  <p>
+    Voici trois classes qui vont permettre de styliser vos éléments pour simuler des liens.
+  </p>
+  <ul class="list ml-25">
+    <li>
+      <span class="fw-700">underline</span>: souligne l'élément
+    </li>
+    <li>
+      <span class="fw-700">underline-hover</span>: souligne l'élément au survole
+    </li>
+    <li>
+      <span class="fw-700">pointer</span>: affiche un pointer au survole de l'élément
+    </li>
+  </ul>
+  <div class="f-center g-25">
+    <button type="button" class="underline">underline</button>
+    <button type="button" class="underline-hover">underline hover</button>
+    <button type="button" class="pointer">pointer</button>
+  </div>
+</template>

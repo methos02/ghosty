@@ -1,0 +1,8 @@
+{
+  "user_search" : {
+    "search_username_label": "Gebruikersnaam van de gebruiker",
+    "search_fullname_label": "Volledige naam van de gebruiker",
+    "switch_search_title": "Schakelen tussen gebruikersnaam en volledige naam zoeken",
+    "users_found": "Gebruikers gevonden: {count}"
+  }
+} 

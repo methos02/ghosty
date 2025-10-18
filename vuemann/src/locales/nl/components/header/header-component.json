@@ -1,0 +1,11 @@
+{
+  "sidebar": {
+    "show": "Menu tonen",
+    "hide": "Menu verbergen"
+  },
+  "app": {
+    "logo": "logo van het Brugmann-ziekenhuis",
+    "intranet_link": "Link naar intranet",
+    "documentation_link": "Documentatie"
+  }
+} 

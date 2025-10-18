@@ -1,0 +1,4 @@
+{
+  "error_api_down": "Authnentification API {api} is not online",
+  "error_api_instance": "The instance returned by the API {api} is invalid"
+}

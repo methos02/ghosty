@@ -1,0 +1,11 @@
+{
+  "debug_bar": {
+    "new_version_available": "New version available",
+    "refresh_page": "Refresh page",
+    "test_mode": "test mode",
+    "different_modes_detected": "Different modes have been detected among the APIs.",
+    "check_console_details": "Check the console for more details.",
+    "version": "Version",
+    "changelog": "List of changes"
+  }
+} 

@@ -1,0 +1,11 @@
+{
+  "sidebar": {
+    "show": "Afficher le menu",
+    "hide": "Fermer le menu"
+  },
+  "app": {
+    "logo": "logo de l'hôpital brugmann",
+    "intranet_link": "Lien vers l'intranet",
+    "documentation_link": "Documentation"
+  }
+} 

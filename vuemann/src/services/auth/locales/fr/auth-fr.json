@@ -1,0 +1,15 @@
+{
+  "login_title": "Connexion",
+  "login_password": "Mot de passe",
+  "login_button": "Connexion",
+
+  "login_error_credentials": "Le username et le mot de passe sont requis.",
+  "login_error_api_credentials" : "Crédentials de l'api {api_name} incomplet dans le fichier de config app.",
+  "login_error_token": "Username ou mot de passe incorrect",
+
+  "access_error": "Vous devez être connecté pour accéder à cette page.",
+  "refresh_error": "Votre session a été déconnectée, merci de vous reconnecter.",
+  "unknown_api": "L'api {api} n'est pas définie dans le fichier de config de l'application.",
+
+  "logout": "Vous avez été déconnecté avec succès"
+}

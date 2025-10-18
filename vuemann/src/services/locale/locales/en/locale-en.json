@@ -1,0 +1,6 @@
+{
+    "lang_current": "Huidige taalvlag",
+    "lang_change": "Overschakelen naar {lang}",
+    "extract_params_missing_value" : "No value is associated with the key {key} in your translation.",
+    "extract_params_empty" : "One of your translation keys ends with the = sign but has no parameter."
+}

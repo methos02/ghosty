@@ -1,0 +1,65 @@
+@use 'sass:color';
+@use 'sass:map';
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 3px 15px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 300ms, color 300ms;
+
+  &[disabled] {
+    background-color: var(--neutral-500);
+  }
+}
+
+.btn-icon:focus {
+  outline: 1px solid var(--primary-300);
+  border-radius: 5px;
+
+  i {
+    color: var(--primary-300);
+  }
+}
+
+$btn_colors: (
+  "primary": (
+    bg: var(--primary),
+    bg-hover: var(--primary-400)
+  ),
+  "danger": ( bg: var(--danger)),
+  "success": ( bg: var(--success)),
+  "info": ( bg: var(--info)),
+  "warning":( bg: var(--warning)),
+  "blue": (
+    bg: var(--blue-300),
+    bg-hover: var(--blue)
+  ),
+);
+
+@each $name, $param in $btn_colors {
+  .btn-#{$name} {
+    background-color: map.get($param, bg) ;
+    color: if(map.has-key($param, color), map.get($param, color), var(--neutral-100));
+
+    &:hover:not([disabled]), &.active {
+      background-color: if(map.has-key($param, bg-hover), map.get($param, bg-hover), color-mix(in oklch, map.get($param, bg) 85%, black));
+      color: if(map.has-key($param, color), map.get($param, color), var(--neutral-100));
+    }
+  }
+
+  .btn-#{$name}-alt {
+    background-color: if(map.has-key($param, color), map.get($param, color), var(--neutral-100));
+    border: 1px solid map.get($param, bg);
+    color: map.get($param, bg);
+
+    &:hover:not([disabled]), &.active {
+      background-color: map.get($param, bg);
+      color: if(map.has-key($param, color-hover), map.get($param, color-hover), var(--neutral-100));
+    }
+  }
+}

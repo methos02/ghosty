@@ -1,0 +1,25 @@
+@use 'sass:map';
+@use '../variables';
+
+$titles : (
+  "h1": variables.$h1-fs, 
+  "h2": variables.$h2-fs, 
+  "h3": variables.$h3-fs,
+  "h4": variables.$h4-fs,
+);
+
+@each $title, $size in $titles {
+  .#{$title} {
+    font-size: $size;
+    font-weight: 400;
+  
+    & * {
+      font-size: $size;
+    }
+  }
+}
+
+.h1 { color: var(--primary-400);}
+.h2 { color: var(--red);}
+.h3 { color: var(--blue-300);}
+.h4 { color: var(--green);}

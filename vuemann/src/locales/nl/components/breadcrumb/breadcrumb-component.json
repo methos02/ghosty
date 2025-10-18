@@ -1,0 +1,12 @@
+{
+  "breadcrumb": {
+    "home": "Home",
+    "separator": ">",
+    "current_page": "Huidige pagina",
+    "errors": {
+      "type": "De functies van de kruimelpad zijn alleen beschikbaar met het sessietype.",
+      "parents": "De ouderconfiguratie van het kruimelpad is ongeldig.",
+      "route_unknown": "De route {route_name} is onbekend."
+    }
+  }
+} 

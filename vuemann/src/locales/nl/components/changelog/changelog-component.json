@@ -1,0 +1,15 @@
+{
+  "changelog": {
+    "title": "Changelog",
+    "description": "Ontdek de laatste wijzigingen en verbeteringen die zijn aangebracht aan de applicatie.",
+    "back": "Terug",
+    "filters": {
+      "all": "Alles tonen",
+      "features": "Nieuwe functies",
+      "bugs": "Bugfixes",
+      "optimizations": "Verbeteringen",
+      "updates": "Updates",
+      "critical": "Kritiek"
+    }
+  }
+} 

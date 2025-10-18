@@ -1,0 +1,8 @@
+{
+  "user_search": {
+    "switch_search_title": "Zoektype wijzigen",
+    "search_fullname_placeholder": "Zoeken op volledige naam...",
+    "search_username_placeholder": "Zoeken op gebruikersnaam...",
+    "users_found": "{count} gebruiker(s) gevonden"
+  }
+} 

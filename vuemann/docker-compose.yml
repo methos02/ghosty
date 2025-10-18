@@ -1,0 +1,9 @@
+version: '3'
+services:
+  vuemann:
+    restart: always
+    build: .
+    image: registrymann.chu-brugmann.be:5000/apps/vuemann:latest
+    container_name: vuemann
+    ports:
+      - "8081:8080"

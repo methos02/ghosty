@@ -1,0 +1,1 @@
+.dialog{overflow:visible}.dialog-close{background-color:var(--neutral-100);display:flex;justify-content:center;align-items:center;width:25px;height:25px;border-radius:100%;cursor:pointer;transition:background-color .3s linear}.dialog-close:hover{background-color:var(--neutral-400)}.dialog-close i{font-size:1.4rem}.dialog::backdrop{background:linear-gradient(#000000bf,#000000bf)}

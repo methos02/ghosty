@@ -1,0 +1,6 @@
+{
+    "lang_current" : "Drapeau de la langue courante",
+    "lang_change": "Passer en {lang}",
+    "extract_params_missing_value" : "Aucune valeure n'est associée à la clé {key} dans votre traduction.",
+    "extract_params_empty" : "L'une de vos clé de traduction se fini par le signe = mais ne possède pas de paramètre."
+}

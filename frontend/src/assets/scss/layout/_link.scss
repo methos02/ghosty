@@ -1,0 +1,26 @@
+@use '../variables';
+
+.link-underline {
+  color: variables.$primary-300;
+
+  &:hover { 
+    text-decoration: underline;
+  }
+}
+
+.link-bg {
+  color: variables.$neutral-800;
+  background-color: transparent;
+  transition: color linear 350ms, background-color linear 350ms;
+
+  &:hover { background-color: variables.$primary;  }
+  &:hover, &:hover * { color: variables.$neutral-100; }
+}
+
+.underline, .underline-hover:hover  {
+  text-decoration: underline;
+}
+
+.pointer {
+  cursor: pointer;
+}

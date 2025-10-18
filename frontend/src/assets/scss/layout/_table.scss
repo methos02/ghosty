@@ -1,0 +1,69 @@
+@use '../variables';
+
+.t {
+  &-default {
+    th, td {
+      text-align: left;
+      
+      &:not(:first-child) {
+        text-align: center;
+      }
+    }
+  }
+
+  &-primary thead, &-default thead {
+    background-color: variables.$primary;
+    color: variables.$neutral-100;
+  }
+
+  &-space, &-default {   
+    th, td {
+      padding: 10px 5px;
+      
+      &:first-child { padding-left: 10px; }
+      &:last-child { padding-right: 10px; }
+    }
+  }
+
+  &-responsive, &-default {
+    @media (max-width: variables.$sm) {
+      thead {
+        display: none;
+      }
+
+      tr {
+        display: block;
+        margin-bottom: 0.625rem;
+        padding: 0.35rem;
+        border: 1px solid variables.$neutral-500;
+      }
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.625rem;
+        font-size: 0.8rem;
+        text-align: right;
+        &:not(:last-child) {
+          border-bottom: 1px solid variables.$neutral-500;
+        }
+      }
+
+      td::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  &-colored, &-default {
+    tr:nth-child(even) {
+      background-color: variables.$neutral-300;
+    }
+  }
+
+  &-vertical-center { vertical-align: middle;}
+}

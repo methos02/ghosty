@@ -1,0 +1,105 @@
+@use '../variables';
+
+.hide { opacity: 0 !important; }
+
+.text-center { text-align: center; }
+.text-justify { text-align: justify; }
+.text-end { text-align: right; }
+
+.p-relative { position: relative; }
+
+.fs-2rem { font-size: 2rem; }
+.fs-3rem { font-size: 3rem; }
+.fs-4rem { font-size: 4rem; }
+.fs-5rem { font-size: 5rem; }
+
+.fs-300 { font-size: var(--fs-300) }
+.fs-400 { font-size: var(--fs-400) }
+.fs-600 { font-size: var(--fs-600); }
+.fs-700 { font-size: var(--fs-700); }
+.fs-800 { font-size: var(--fs-800); }
+
+.fs-icon-300 { font-size: var(--fs-icon-300); }
+.fs-icon-400 { font-size: var(--fs-icon-400); }
+
+.fw-400 { font-weight: 400; }
+.fw-500 { font-weight: 500; }
+.fw-700 { font-weight: 700; }
+
+.radius-5 { border-radius: 5px; }
+.radius-10 { border-radius: 10px; }
+.radius-15 { border-radius: 15px; }
+
+.h-100 { height: 100%; }
+.w-100 { width: 100%; }
+.w-50 { width: 50%; }
+.w-25 { width: 25%; }
+
+.w-xl { 
+  width: min(100%, variables.$xl); 
+  margin-inline: auto;
+}
+
+@for $i from 0 through 10 {
+  .m-#{$i * 5} { margin: #{$i * 5}px; }
+  .mx-#{$i * 5} { margin-inline: #{$i * 5}px; }
+  .my-#{$i * 5} { margin-block: #{$i * 5}px; }
+  .mt-#{$i * 5} { margin-top: #{$i * 5}px; }
+  .mb-#{$i * 5} { margin-bottom: #{$i * 5}px; }
+  .mr-#{$i * 5} { margin-right: #{$i * 5}px; }
+  .ml-#{$i * 5} { margin-left: #{$i * 5}px; }
+
+  .p-#{$i * 5} { padding: #{$i * 5}px; }
+  .px-#{$i * 5} { padding-inline: #{$i * 5}px; }
+  .py-#{$i * 5} { padding-block: #{$i * 5}px; }
+  .pt-#{$i * 5} { padding-top: #{$i * 5}px; }
+  .pb-#{$i * 5} { padding-bottom: #{$i * 5}px; }
+  .pr-#{$i * 5} { padding-right: #{$i * 5}px; }
+  .pl-#{$i * 5} { padding-left: #{$i * 5}px; }
+
+  .g-#{$i * 5} { gap: #{$i * 5}px; }
+}
+
+.children-stripe > *:nth-child(even) {
+  background-color: variables.$neutral-400;
+}
+
+.image-responsive {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  
+  &.round {
+    border-radius: 100%;
+  }
+}
+
+.truncate-line {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.children-separed > *:nth-child(n+2)::before {
+  content : '-';
+  margin-inline: 5px;
+}
+
+.badge-code {
+  background-color: #f8f9fa;
+  border: 1px solid variables.$neutral-300;
+  padding: 0 7px;
+  border-radius: 5px;
+}
+
+.div-code {
+  background-color: #f8f9fa;
+  border: 1px solid variables.$neutral-300;
+  padding: 10px 10px 15px;
+  border-radius: 5px;
+  white-space: pre;
+}
+
+.b-shadow {
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 8px;
+}

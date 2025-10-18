@@ -1,0 +1,66 @@
+@use '../variables';
+
+.d-none {
+  display: none;
+}
+.d-block {
+  display: block;
+}
+.d-flex {
+  display: flex;
+}
+
+.f-column {
+  display: flex;
+  flex-direction: column;
+}
+.f-column-reverse {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+@media (max-width: variables.$md) {
+  .f-column-md {
+    display: flex;
+    flex-direction: column;
+  }
+  .f-column-reverse-md {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+}
+
+.f-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.f-equal {
+  display: flex;
+  
+  > * {
+    flex: 1;
+  }
+}
+
+$prefix : ('center' : center, 'between' : space-between, 'around' : space-around, 'start' : flex-start, "end" : flex-end);
+
+@each $name, $value in $prefix {
+  .j-#{$name} { justify-content: $value; }
+  .a-#{$name} { align-items: $value; }
+}
+
+@media (min-width: variables.$md) {
+  @each $name, $value in $prefix {
+    .j-#{$name}-md { justify-content: $value; }
+    .a-#{$name}-md { align-items: $value; }
+  }
+}
+
+.f-wrap {
+  flex-wrap: wrap;
+}
+.flex-1 {
+  flex: 1;
+}

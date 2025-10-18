@@ -1,0 +1,9 @@
+/node_modules
+/dist
+/build
+/public
+/tests
+/vendor
+/LICENSE
+/CHANGELOG.md
+.env

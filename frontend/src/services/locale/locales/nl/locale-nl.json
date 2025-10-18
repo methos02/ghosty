@@ -1,0 +1,6 @@
+{
+    "lang_current": "Current Language Flag",
+    "lang_change": "Switch to {lang}",
+    "extract_params_missing_value" : "Geen waarde is gekoppeld aan de sleutel {key} in uw vertaling.",
+    "extract_params_empty" : "Een van uw vertaalsleutels eindigt met het teken = maar heeft geen parameter."
+}

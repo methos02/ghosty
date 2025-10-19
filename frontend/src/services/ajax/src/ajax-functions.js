@@ -3,7 +3,7 @@ import { ConfigLoader } from 'vuemann/config/config-loader.js'
 import { Request } from './models/request.js'
 import { httpClient } from './models/http-client.js'
 import { STATUS } from '../ajax-constants.js'
-import { error, t } from '@/services/services-helper.js'
+import { flash, t } from '@/services/services-helper.js'
 
 const manageError = async errorResponse => {
     if (errorResponse.code === 'ERR_CANCELED') { return { data: {}, status: 499 } }
@@ -16,7 +16,7 @@ const manageError = async errorResponse => {
 
 const throwError = (message, params = {}) => {
     const errorMessage = t(message, params)
-    error(errorMessage)
+    flash.error(errorMessage)
     throw new Error(errorMessage)
 }
 
@@ -47,13 +47,13 @@ const showFlash = errorResponse => {
     if (Request.get('flash') === false || (Array.isArray(Request.get('no-flash')) && Request.get('no-flash').includes(errorResponse.response.status))) { return }
     if(errorResponse.response.data?.detail !== undefined) {
         const message = t(errorResponse.response.data?.detail)
-        error(message)
+        flash.error(message)
         return
     }
 
     const error_message = errorResponse.response.status < STATUS.ERROR_SERVER ? 'error_front' : 'error_back'
     const message = t(error_message)
-    error(message)
+    flash.error(message)
 }
 
 const getRouteFromConfig = (route_name, api) => {

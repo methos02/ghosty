@@ -1,5 +1,5 @@
 import { getRouter } from "@/services/router/init/router-plugin.js";
-import { useRouterStore } from "@/services/router/src/router-store.js";
+import { routerStore } from "@/services/router/src/router-store.js";
 import { flash } from "@/services/services-helper.js";
 import { ConfigLoader } from "@/config/config-loader.js";
 
@@ -55,9 +55,9 @@ const push = async route => {
 }
 
 const redirectAfterLogin = async () => {
-    const routerStore = useRouterStore()
-    await routerService.push(routerStore.urlIntented)
-    routerStore.urlIntented = '/'
+    const { urlIntented } = routerStore.get()
+    await routerService.push(urlIntented)
+    routerStore.setUrlIntented('/')
 }
 
 export const routerService = {

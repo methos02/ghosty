@@ -1,96 +1,87 @@
-import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export const useFormStore = defineStore('form', () => {
-  const errors = ref({})
-  const options = ref({})
-  
-  return { errors, options }
-})
+// État global (hors fonction = partagé entre tous les composants)
+const errors = ref({})
+const options = ref({})
 
-let store
+// Fonction get() pour compatibilité avec l'ancien code
 const get = () => {
-  if(store === undefined) { store = useFormStore() }
-  return store
+  return {
+    errors: errors.value,
+    options: options.value
+  }
 }
 
-const hasOption = optionName => {
-  if(store === undefined) { store = useFormStore() }
-  return store.options[optionName] !== undefined
+const hasOption = (optionName) => {
+  return options.value[optionName] !== undefined
 }
 
 const getOptions = () => {
-  if(store === undefined) { store = useFormStore() }
-  return store.options
+  return options.value
 }
 
-const getOption = optionName => {
-  if(store === undefined) { store = useFormStore() }
-  return store.options[optionName]
+const getOption = (optionName) => {
+  return options.value[optionName]
 }
 
 const setOption = (optionName, optionValue) => {
-  if(store === undefined) { store = useFormStore() }
-  store.options[optionName] = optionValue
+  options.value[optionName] = optionValue
 }
 
 const clearOptions = () => {
-  if(store === undefined) { store = useFormStore() }
-  store.options = {}
+  options.value = {}
 }
 
-const setOptions = options => {
-  if(store === undefined) { store = useFormStore() }
-  store.options = options
+const setOptions = (newOptions) => {
+  options.value = newOptions
 }
 
-const hasError = inputName => {
-  if(store === undefined) { store = useFormStore() }
-  if(inputName === undefined) { return Object.keys(store.errors).length > 0 }
-  
-  return store.errors[inputName] !== undefined
+const hasError = (inputName) => {
+  if (inputName === undefined) {
+    return Object.keys(errors.value).length > 0
+  }
+
+  return errors.value[inputName] !== undefined
 }
 
 const getErrors = () => {
-  if(store === undefined) { store = useFormStore() }
-  return store.errors
+  return errors.value
 }
 
-const getError = inputName => {
-  if(store === undefined) { store = useFormStore() }
-  return store.errors[inputName]
+const getError = (inputName) => {
+  return errors.value[inputName]
 }
 
 const addError = (inputName, errorKey) => {
-  if(store === undefined) { store = useFormStore() }
+  let finalInputName = inputName
 
-  if(formStore.hasOption('form')) { inputName = `${formStore.getOption('form')}.${inputName}` }
+  if (hasOption('form')) {
+    finalInputName = `${getOption('form')}.${inputName}`
+  }
 
-  store.errors[inputName] = errorKey
+  errors.value[finalInputName] = errorKey
 }
 
-const clearError = inputName => {
-  if(store === undefined) { store = useFormStore() }
-  delete store.errors[inputName]
+const clearError = (inputName) => {
+  delete errors.value[inputName]
 }
 
-const clearErrors = () => {  
-  if(store === undefined) { store = useFormStore() }
-  store.errors = {}
+const clearErrors = () => {
+  errors.value = {}
 }
 
-export const formStore = { 
-  get, 
-  addError, 
-  clearError, 
-  clearErrors, 
-  setOption, 
-  setOptions, 
-  getOption, 
+export const formStore = {
+  get,
+  addError,
+  clearError,
+  clearErrors,
+  setOption,
+  setOptions,
+  getOption,
   hasOption,
-  getOptions, 
-  getErrors, 
-  getError, 
+  getOptions,
+  getErrors,
+  getError,
   hasError,
   clearOptions
 }

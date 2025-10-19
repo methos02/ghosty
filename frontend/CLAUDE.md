@@ -335,6 +335,41 @@ export const useNovels = () => {
 - Logique métier complexe
 - Validation de données
 
+### 📦 Composables de Services (Pattern Alternatif)
+
+Pour les services infrastructure (form, flash, utils, router), le pattern est légèrement différent :
+
+```javascript
+// src/services/flash/src/flash-store.js
+import { ref } from 'vue'
+
+// État global (hors fonction = partagé)
+const flashes = ref([])
+
+const addMessage = (content, type = 'error') => {
+  flashes.value.push({ content, type, id: generateId() })
+}
+
+const removeFlash = (flash_id) => {
+  const index = flashes.value.findIndex(f => f.id === flash_id)
+  flashes.value.splice(index, 1)
+}
+
+// Export objet helper (pas de fonction use{Name})
+export const flashStore = {
+  addMessage,
+  removeFlash,
+  flashes
+}
+```
+
+**Différences avec composables classiques** :
+- ✅ Fichiers `*-store.js` dans `services/`
+- ✅ Export objet helper (ex: `flashStore`, `formStore`)
+- ✅ Pas de wrapper `use{Name}()`
+- ✅ Utilisation : `import { flashStore } from '@/services/flash/src/flash-store.js'`
+- ✅ **Pas de Pinia** : Pattern Vue natif avec `ref()` hors fonction
+
 ### 6. Composant Vue
 
 Présentation et interaction utilisateur :

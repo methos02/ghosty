@@ -1,5 +1,5 @@
 import { localeFunctions } from "vuemann/services/locale/src/locale-functions.js"
-import { error } from "@/services/services-helper.js"
+import { flash } from "@/services/services-helper.js"
 
 const localeDefault = 'fr'
 
@@ -24,7 +24,7 @@ export const localeService = { tr, getCurrentLocale }
 
 const extractParams = params => {
   if(params === "") {
-    error('extract_params_empty')
+    flash.error('extract_params_empty')
     return {}
   }
 
@@ -34,7 +34,7 @@ const extractParams = params => {
     const finalValue = value.join('=');
 
     if(finalValue === "") {
-      error(`extract_params_missing_value: ${key}`)
+      flash.error(`extract_params_missing_value: ${key}`)
       continue
     }
 

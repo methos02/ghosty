@@ -1,18 +1,17 @@
 import { ConfigLoader } from '@/config/config-loader.js'
 import { createRouter, createWebHistory } from "vue-router";
 import { routerFunctions } from '@/services/router/src/router-functions.js';
-import { getServiceRoutes } from '@/services/services-routes.js';
 
 let router
 export const routerPlugin = () => {
     if(router !== undefined) { return router }
     
-    const routes = [...ConfigLoader.get('routes', []), ...getServiceRoutes()]
+    const routes = [...ConfigLoader.get('routes', [])]
 
     router = createRouter({
         history: createWebHistory(),
         routes: routes,
-        scrollBehavior (to, from, savedPosition) {
+        scrollBehavior (to, _from, savedPosition) {
           if (to.hash) {
             return { el: to.hash, behavior: 'smooth' }
           }

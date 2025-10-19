@@ -51,8 +51,15 @@ const extractUniqueIds = (items, key) => {
 }
 
 const loadController = async (controllerName, key, method = 'byIds') => {
-  const controllerModule = await import(`/src/apis/${controllerName}/controllers/${controllerName}-controller.js`)
+  const controllers = import.meta.glob('/src/apis/*/controllers/*-controller.js')
+  const controllerPath = `/src/apis/${controllerName}/controllers/${controllerName}-controller.js`
 
+  const loadControllerModule = controllers[controllerPath]
+  if (!loadControllerModule) {
+    throw new Error(`[utils.hydrate] Controller not found at path "${controllerPath}". Available controllers: ${Object.keys(controllers).join(', ')}`)
+  }
+
+  const controllerModule = await loadControllerModule()
   const controllerKey = Object.keys(controllerModule).find((k) => k.toLowerCase().includes('controller'))
   if (!controllerKey) {
     throw new Error(`[utils.hydrate] Controller not found in module for key "${key}". Controller name: "${controllerName}". Available exports: ${Object.keys(controllerModule).join(', ')}`)

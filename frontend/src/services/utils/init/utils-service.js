@@ -1,34 +1,32 @@
 import { req } from '@/services/services-helper.js'
-import { useUtilsStore } from '@/services/utils/src/utils-store.js'
-import { storeToRefs } from 'pinia'
+import { utilsStore } from '@/services/utils/src/utils-store.js'
 import { ConfigLoader } from '@/config/config-loader.js'
 import { STATUS } from '@/services/ajax/ajax-constants.js'
 import { HydrateFunctions } from '@/services/utils/src/utils-hydrate.js'
 
 const apiStatus = async () => {
-  const utilsStore = useUtilsStore()
-  const { instances } = storeToRefs(utilsStore)
+  const { errorsGlobal } = utilsStore.get()
   const apis = Object.entries(ConfigLoader.get('app.apis', {}))
   .filter(api => api[1].status !== false)
   .map(([key]) => key);
 
   for (const api of apis) {
     const response = await req('api.status', { flash: false, api })
-    
+
     if (response.status !== STATUS.SUCCESS) {
-      utilsStore.errorsGlobal.push(`error_api_down:api=${api}`)
+      utilsStore.addErrorGlobal(`error_api_down:api=${api}`)
       continue
     }
 
     if (!['production', 'test'].includes(response.data.instance)) {
-      utilsStore.errorsGlobal.push(`error_api_instance:api=${api}`)
+      utilsStore.addErrorGlobal(`error_api_instance:api=${api}`)
       continue
     }
-    
-    instances.value[api] = response.data.instance
+
+    utilsStore.setInstance(api, response.data.instance)
   }
 
-  return utilsStore.errorsGlobal.length === 0
+  return errorsGlobal.length === 0
 }
 
 const isDeprecated = message => {

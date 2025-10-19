@@ -1,39 +1,69 @@
-import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { APP_STATUS } from '@/services/utils/utils-constants.js'
 
-export const useUtilsStore = defineStore('utils', () => {
-  const instances = ref({})
-  const errorGlobal = ref()
-  const errorsGlobal = ref([])
-  const needUpdate = ref(false)
-  const appStatus = ref(APP_STATUS.LOADING)
+// État global (hors fonction = partagé entre tous les composants)
+const instances = ref({})
+const errorGlobal = ref()
+const errorsGlobal = ref([])
+const needUpdate = ref(false)
+const appStatus = ref(APP_STATUS.LOADING)
 
-  return { 
-    instances, 
-    errorGlobal, 
-    errorsGlobal, 
-    needUpdate, 
-    appStatus, 
-  }
-})
-
-let store
+// Fonction get() pour compatibilité avec l'ancien code
 const get = () => {
-  if(store === undefined) { store = useUtilsStore() }
-  return store
+  return {
+    instances: instances.value,
+    errorGlobal: errorGlobal.value,
+    errorsGlobal: errorsGlobal.value,
+    needUpdate: needUpdate.value,
+    appStatus: appStatus.value
+  }
 }
 
 const setAppStatus = (newStatus) => {
-  utilsStore.get().appStatus = newStatus
+  appStatus.value = newStatus
 }
 
 const getAppStatus = () => {
-  return utilsStore.get().appStatus
+  return appStatus.value
 }
 
-export const utilsStore = { 
-  get, 
-  setAppStatus, 
-  getAppStatus 
+const setErrorGlobal = (error) => {
+  errorGlobal.value = error
+}
+
+const addErrorGlobal = (error) => {
+  errorsGlobal.value.push(error)
+}
+
+const clearErrorsGlobal = () => {
+  errorsGlobal.value = []
+}
+
+const setNeedUpdate = (value) => {
+  needUpdate.value = value
+}
+
+const setInstance = (key, instance) => {
+  instances.value[key] = instance
+}
+
+const getInstance = (key) => {
+  return instances.value[key]
+}
+
+const hasInstance = (key) => {
+  return instances.value[key] !== undefined
+}
+
+export const utilsStore = {
+  get,
+  setAppStatus,
+  getAppStatus,
+  setErrorGlobal,
+  addErrorGlobal,
+  clearErrorsGlobal,
+  setNeedUpdate,
+  setInstance,
+  getInstance,
+  hasInstance
 }

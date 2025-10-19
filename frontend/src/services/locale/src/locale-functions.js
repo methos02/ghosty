@@ -20,20 +20,20 @@ const loadLocaleMessages = async locale => {
 export const localeFunctions = { setTranslater, getTranslater, vueTranslate, loadLocaleMessages }
 
 const getLocaleMessage = async (locale) => {
-  const version = await getAppVersion();
+  const version = await getAppVersion()
 
-    try {
-      // Code pour Node.js (tests)
-      const { default: path } = await import("node:path");
-      const { readFile } = await import("node:fs/promises");
-      const filePath = path.resolve("public/locales", `app-translate-${locale}-${version}.json`);
-      const data = await readFile(filePath, "utf8");
-      return JSON.parse(data);
-    
-    } catch {
-      // Code pour le navigateur
-      return await fetch(`/locales/app-translate-${locale}-${version}.json`).then((response) => response.json())
-    }  
+  try {
+    // Code pour Node.js (tests)
+    const { default: path } = await import("node:path");
+    const { readFile } = await import("node:fs/promises");
+    const filePath = path.resolve("public/locales", `app-translate-${locale}-${version}.json`);
+    const data = await readFile(filePath, "utf8");
+    return JSON.parse(data);
+
+  } catch {
+    // Code pour le navigateur
+    return await fetch(`/locales/app-translate-${locale}-${version}.json`).then((response) => response.json())
+  }
 }
 
 const getAppVersion = async () => {

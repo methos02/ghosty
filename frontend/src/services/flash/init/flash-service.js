@@ -1,7 +1,6 @@
-import { useFlashStore } from '@/services/flash/src/flash-store.js'
+import { flashStore } from '@/services/flash/src/flash-store.js'
 
 export const error = message => {
-  const flashStore = useFlashStore()
   flashStore.addMessage(message, 'error')
   // eslint-disable-next-line no-console
   console.error(message)
@@ -9,12 +8,10 @@ export const error = message => {
 }
 
 export const success = message => {
-  const flashStore = useFlashStore()
   flashStore.addMessage(message, 'success')
 }
 
 export const warning = message => {
-  const flashStore = useFlashStore()
   flashStore.addMessage(message, 'warning')
 }
 

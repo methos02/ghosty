@@ -10,7 +10,7 @@
   import { AjaxHelpers } from '@/services/ajax/ajax-helpers.js'
   import { servicesM } from '@/services/services-manager.js'
   import { ConfigLoader } from '@/config/config-loader.js'
-  import { useRouterStore } from '@/services/router/src/router-store.js'
+  import { routerStore } from '@/services/router/src/router-store.js'
   
   const props = defineProps({ cb: { type: Function, default: undefined } })
   
@@ -38,9 +38,9 @@
   }
 
   const executeCallback = async () => {
-    if(props.cb === undefined) {  
+    if(props.cb === undefined) {
       utilsStore.setAppStatus(APP_STATUS.LOADED)
-      return { status: STATUS.SUCCESS } 
+      return { status: STATUS.SUCCESS }
     }
 
     utilsStore.setAppStatus(APP_STATUS.LOADING)
@@ -53,29 +53,28 @@
       return { status: STATUS.ERROR_SERVER, error: errorMessage }
     }
 
-    if(result.status !== STATUS.SUCCESS && !AjaxHelpers.isAuthError(result.status)) { 
+    if(result.status !== STATUS.SUCCESS && !AjaxHelpers.isAuthError(result.status)) {
       utilsStore.setAppStatus(APP_STATUS.ERROR)
-      flash.error(result.error) 
+      flash.error(result.error)
       return result
     }
-  
+
     utilsStore.setAppStatus(APP_STATUS.LOADED)
     return result
   }
 
   const handleLoginSuccess = async () => {
-    await executeCallback() 
+    await executeCallback()
     document.removeEventListener('login-success', handleLoginSuccess)
   }
 
   onMounted(async () => {
     // Ajouter l'event listener dès le montage du composant
     document.addEventListener('login-success', handleLoginSuccess)
-    
+
     const authResult = await validateAuthentication()
     if(authResult === false) {
-      const routerStore = useRouterStore()
-      routerStore.urlIntented = route.current().value.fullPath
+      routerStore.setUrlIntented(route.current().value.fullPath)
       routerService.push('login')
       return
     }

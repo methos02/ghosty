@@ -1,32 +1,36 @@
 let services = {}
 let initializedServices = new Set()
-let servicesInit = {}
+let servicesInitConfig = {}
 
 const initServices = async (app, servicesInit) => {
-  servicesInit = servicesInit
+  servicesInitConfig = servicesInit
   for (const [serviceName, serviceInit] of Object.entries(servicesInit)) {
     await initServiceWithDependencies(app, serviceName, serviceInit)
   }
 }
 
 const initServiceWithDependencies = async (app, serviceName, serviceConfig) => {
+  if (initializedServices.has(serviceName)) { return }
+
   // Vérifier et initialiser les dépendances
   if (serviceConfig.dependencies && serviceConfig.dependencies.length > 0) {
     for (const dependency of serviceConfig.dependencies) {
       if (initializedServices.has(dependency)) { continue }
-      // Initialiser automatiquement la dépendance manquante
-      if (servicesInit[dependency]) {
-        await initServiceWithDependencies(app, dependency, servicesInit[dependency])
+
+      if (servicesInitConfig[dependency]) {
+        await initServiceWithDependencies(app, dependency, servicesInitConfig[dependency])
       } else {
         console.error(`Dépendance ${dependency} non trouvée dans les services disponibles pour ${serviceName}`)
       }
     }
   }
-  
+
   // Initialiser le plugin s'il existe
   if (serviceConfig.plugin) {
     try {
-      const plugin = await serviceConfig.plugin()
+      const plugin = typeof serviceConfig.plugin === 'function'
+        ? await serviceConfig.plugin()
+        : serviceConfig.plugin
       if (plugin) {
         app.use(plugin)
       }
@@ -34,7 +38,7 @@ const initServiceWithDependencies = async (app, serviceName, serviceConfig) => {
       console.error(`Erreur lors de l'initialisation du plugin pour ${serviceName}:`, error)
     }
   }
-  
+
   // Ajouter le service à la variable services
   if (serviceConfig.services) {
     services[serviceName + 'Service'] = serviceConfig.services
@@ -58,12 +62,12 @@ const service = (service, method_params)  => {
 
   if( method === undefined ) { return sericesManagerInternal.serviceDefault(service_name, service_method, method_params) }
 
-  return method_params === false 
-    ? sericesManagerInternal.serviceMethod(service_name, service_method)() 
+  return method_params === false
+    ? sericesManagerInternal.serviceMethod(service_name, service_method)()
     : sericesManagerInternal.serviceMethod(service_name, service_method)(...method_params)
 }
 
-export const servicesM = { initServices, hasService, getServices, service } 
+export const servicesM = { initServices, hasService, getServices, service }
 
 const serviceMethod = (service_name, service_method) => {
   service_name = sericesManagerInternal.formatServiceName(service_name)
@@ -89,7 +93,7 @@ const serviceDefault = (service_name, service_method, method_params) =>  {
   if( servicesDefault[service_name][service_method] === undefined ) { return console.log(`default service ${service_name} n'a pas la méthode ${service_method}`) }
   /* eslint-enable no-console */
 
-  return method_params === false 
+  return method_params === false
     ? servicesDefault[service_name][service_method]()
     : servicesDefault[service_name][service_method](...method_params)
 }

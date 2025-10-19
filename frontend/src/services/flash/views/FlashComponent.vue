@@ -1,9 +1,7 @@
 <script setup>
-import { useFlashStore } from '../src/flash-store'
-import { storeToRefs } from 'pinia'
+import { flashStore } from '../src/flash-store'
 
-const flashStore = useFlashStore()
-const { flashes } = storeToRefs(flashStore)
+const { flashes } = flashStore
 </script>
 
 <template>

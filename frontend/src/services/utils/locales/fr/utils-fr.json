@@ -1,0 +1,4 @@
+{
+  "error_api_down": "L'API d'authentification {api} n'est pas en ligne",
+  "error_api_instance": "L'instance renvoyé par l'api {api} est invalide"
+}

@@ -1,0 +1,6 @@
+{
+  "input_search": {
+    "error_min_length": "Le champ doit contenir au moins {length} caractères",
+    "error_search": "Erreur lors de la recherche"
+  }
+} 

@@ -6,6 +6,7 @@ import { routes } from './config/routes-config.js'
 import { ajaxInit } from './services/ajax/ajax-init.js'
 import { localeInit } from './services/locale/locale-init.js'
 import { servicesM } from './services/services-manager.js'
+import { utilsInit } from './services/utils/utils-init.js'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -33,7 +34,11 @@ const app = createApp(App)
 const initApp = async () => {
   await servicesM.initServices(app, {
     locale: localeInit,  // locale doit être initialisé en premier car ajax en dépend
-    ajax: ajaxInit
+    ajax: ajaxInit,
+    utils: utilsInit,
+    flash: flashInit,
+    form: formInit,
+    router: routerInit
   })
   
   app.use(router)

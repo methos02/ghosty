@@ -1,0 +1,6 @@
+{
+    "error_route_path": "Het pad van je route ontbreekt om het aan de router toe te voegen.",
+    "error_route_component": "De component van je route {url} ontbreekt om het aan de router toe te voegen.",
+    "error_url_unknown": "De URL {url} is onbekend bij de router.",
+    "error_route_unknown": "De route {route_name} is onbekend bij de router."
+}

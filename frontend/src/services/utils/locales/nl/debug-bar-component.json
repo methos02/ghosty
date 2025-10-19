@@ -1,0 +1,11 @@
+{
+  "debug_bar": {
+    "new_version_available": "Nieuwe versie beschikbaar",
+    "refresh_page": "Pagina vernieuwen",
+    "test_mode": "test modus",
+    "different_modes_detected": "Verschillende modi zijn gedetecteerd onder de API's.",
+    "check_console_details": "Controleer de console voor meer details.",
+    "version": "Versie",
+    "changelog": "Lijst van wijzigingen"
+  }
+} 

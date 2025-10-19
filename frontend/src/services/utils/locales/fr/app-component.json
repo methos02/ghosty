@@ -1,0 +1,11 @@
+{
+  "app-component": {
+    "loading": "Chargement de l'application...",
+    "error": {
+      "title": "Erreur de l'application",
+      "description": "Une erreur s'est produite lors du chargement de l'application. Veuillez réessayer.",
+      "retry": "Réessayer",
+      "callback-undefined": "Le callback retourne undefined"
+    }
+  }
+}

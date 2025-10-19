@@ -1,0 +1,20 @@
+{
+  "field_required": "Le champ est requis",
+  "field_invalid": "Le champ est invalide",
+  "field_in": "La valeur doit être dans la liste {options}",
+  "field_min": "La valeur doit être au minimum de {min}",
+  "field_max": "La valeur doit être au maximum de {max}",
+  "date_invalid": "La date est invalide",
+  "date_not_past": "Cette date doit être passée",
+  "date_not_futur": "Cette date doit être dans le futur",
+  "niss_invalid": "Le numéro niss est invalide",
+  "niss_date": "Les 6 premiers chiffres sont invalide",
+  "biss_invalid": "Le numéro biss est invalide",
+  "biss_date": "Les 6 premiers chiffres sont invalide",
+  "field_size_equal": "La taille de ce champ doit être de {size}",
+  "field_size_min": "La taille de ce champ doit être au minimum de {size}",
+  "field_size_max": "La taille de ce champ doit être au maximum de {size}",
+  "field_email": "L'adresse email n'est pas valide",
+
+  "error_input_search_min" : "Votre recherche doit faire au minimum {length} charactères"
+}

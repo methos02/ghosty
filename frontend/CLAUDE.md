@@ -713,6 +713,7 @@ export const apis = {
 - `req()` UNIQUEMENT dans repositories
 - Composables pour état partagé uniquement
 - Tests avec mock minimal (repositories seulement)
+- **Convention classes CSS** : Classes BEM spécifiques avant `|`, puis classes utilitaires après
 
 ### ❌ À ÉVITER
 - `req()` hors des repositories
@@ -723,6 +724,25 @@ export const apis = {
 - `else` ou `else if` en JavaScript
 - `vi.mock()` (utiliser `vi.spyOn()`)
 - Tester les repositories directement
+
+### 📐 Convention de Nommage des Classes CSS
+
+Pour améliorer la lisibilité, séparer les classes BEM spécifiques des classes utilitaires avec le pipe `|` :
+
+```vue
+<!-- ✅ CORRECT : Classes BEM avant | puis utilitaires après -->
+<div class="search-bar__container | d-flex a-center g-10 bg-neutral-900">
+<button class="search-bar__tab | pointer fs-600 color-primary">
+
+<!-- ❌ INCORRECT : Classes mélangées -->
+<div class="d-flex search-bar__container a-center g-10">
+<button class="pointer search-bar__tab fs-600">
+```
+
+**Avantages :**
+- Identification rapide des classes spécifiques au composant
+- Séparation visuelle claire entre logique métier et utilitaires
+- Facilite la maintenance et la compréhension du code
 
 ## Liens Utiles
 

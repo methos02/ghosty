@@ -11,13 +11,6 @@ const compileLocales = projectDirectory => {
   for (const locale of Object.keys(locales)) {
     translations = {}
 
-    //récupérer les locales globales dans le dossier locales et vuemann globale
-    const globalLocales = [`./node_modules/@brugmann/vuemann/src/locales/${locale}`, `./src/locales/${locale}`]
-    for (const localesPath of globalLocales) {
-      if (!fs.existsSync(localesPath)) { continue }
-      addLocale(path.resolve(projectDirectory, localesPath));
-    }
-
     //récupérer les locales de chaques services
     addLocaleFromPaths(projectDirectory, locale)
     const packageJsonPath = path.resolve(projectDirectory, 'package.json');
@@ -39,7 +32,7 @@ const compileLocales = projectDirectory => {
 }
 
 const addLocaleFromPaths = (projectDirectory, locale) => {
-  const paths = ['./node_modules/@brugmann/vuemann/src/services', './src/services', './node_modules/@brugmann/vuemann/src/apis', './src/apis']
+  const paths = ['./src/services']
   for (const localesPath of paths) {
     const localesPathResolved = path.resolve(projectDirectory, localesPath)
     if (!fs.existsSync(localesPathResolved)) { continue }

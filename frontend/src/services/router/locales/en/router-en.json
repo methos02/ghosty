@@ -1,0 +1,6 @@
+{
+    "error_route_path": "The path of your route is missing to add it to the router.",
+    "error_route_component": "The component of your route {url} is missing to add it to the router.",
+    "error_url_unknown": "The URL {url} is unknown to the router.",
+    "error_route_unknown": "The route {route_name} is unknown to the router."
+}

@@ -1,0 +1,20 @@
+{
+  "field_required": "Dit veld is verplicht",
+  "field_invalid": "Dit veld is ongeldig",
+  "field_in": "De waarde moet in de lijst {options} staan",
+  "field_min": "De waarde moet minimaal {min} zijn",
+  "field_max": "De waarde mag maximaal {max} zijn",
+  "date_invalid": "De datum is ongeldig",
+  "date_not_past": "Deze datum moet in het verleden liggen",
+  "date_not_futur": "Deze datum moet in de toekomst liggen",
+  "niss_invalid": "Het NISS-nummer is ongeldig",
+  "niss_date": "De eerste 6 cijfers zijn ongeldig",
+  "biss_invalid": "Het BISS-nummer is ongeldig",
+  "biss_date": "De eerste 6 cijfers zijn ongeldig",
+  "field_size_equal": "De grootte van dit veld moet {size} zijn",
+  "field_size_min": "De grootte van dit veld moet minimaal {size} zijn",
+  "field_size_max": "De grootte van dit veld mag maximaal {size} zijn",
+  "field_email": "Het e-mailadres is niet geldig",
+
+  "error_input_search_min" : "Uw zoekopdracht moet minstens {length} tekens lang zijn"
+}

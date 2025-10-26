@@ -1,0 +1,70 @@
+[
+    {
+        "id": 1,
+        "name": "Science Fiction"
+    },
+    {
+        "id": 2,
+        "name": "Horreur"
+    },
+    {
+        "id": 3,
+        "name": "Aventure"
+    },
+    {
+        "id": 4,
+        "name": "Héroique Fantasie"
+    },
+    {
+        "id": 5,
+        "name": "Romance"
+    },
+    {
+        "id": 6,
+        "name": "Policier"
+    },
+    {
+        "id": 7,
+        "name": "Thriller"
+    },
+    {
+        "id": 8,
+        "name": "Enfant"
+    },
+    {
+        "id": 9,
+        "name": "Sport"
+    },
+    {
+        "id": 10,
+        "name": "Jeux vidéo"
+    },
+    {
+        "id": 11,
+        "name": "Fan Fiction"
+    },
+    {
+        "id": 12,
+        "name": "Péplum"
+    },
+    {
+        "id": 13,
+        "name": "Comique"
+    },
+    {
+        "id": 14,
+        "name": "Fiction historique"
+    },
+    {
+        "id": 15,
+        "name": "Dramatique"
+    },
+    {
+        "id": 16,
+        "name": "Poésie"
+    },
+    {
+        "id": 17,
+        "name": "Animalier"
+    }
+]

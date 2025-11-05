@@ -32,20 +32,9 @@ const compileLocales = projectDirectory => {
 }
 
 const addLocaleFromPaths = (projectDirectory, locale) => {
-  const paths = ['./src/services']
-  for (const localesPath of paths) {
-    const localesPathResolved = path.resolve(projectDirectory, localesPath)
-    if (!fs.existsSync(localesPathResolved)) { continue }
-
-    const elements = fs.readdirSync(localesPathResolved, { withFileTypes: true });
-    for (const element of elements) {
-      if (!element.isDirectory()) { continue }
-
-      const localePath = path.resolve(`${element.parentPath}/${element.name}/locales/${locale}` )
-      if (!fs.existsSync(localePath)) { continue }
-
-      addLocale(localePath)
-    }
+  const directLocalePath = path.resolve(projectDirectory, `./src/locales/${locale}`)
+  if (fs.existsSync(directLocalePath)) {
+    addLocale(directLocalePath)
   }
 }
 

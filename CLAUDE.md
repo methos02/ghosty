@@ -76,6 +76,58 @@ ghosty/
 - Mapping pages PHP → composants Vue
 - Schéma de base de données
 
+## Workflow Git Worktree (OBLIGATOIRE)
+
+### ⚠️ Procédure pour Nouvelles Features
+
+**Avant toute implémentation de feature** :
+
+1. **Vérifier la branche courante** :
+   ```bash
+   git branch --show-current
+   ```
+
+2. **Si sur `master`** → Créer un worktree :
+   ```bash
+   # Créer un worktree pour la feature
+   git worktree add ../ghosty-feature-{nom} -b feature/{nom}
+
+   # Se déplacer dans le worktree
+   cd ../ghosty-feature-{nom}
+   ```
+
+3. **Si déjà dans un worktree** → Continuer normalement
+
+4. **Implémenter la feature** dans le worktree isolé
+
+5. **Nettoyage après merge** :
+   ```bash
+   # Retourner au répertoire principal
+   cd ../ghosty
+
+   # Supprimer le worktree
+   git worktree remove ../ghosty-feature-{nom}
+   ```
+
+**Règles** :
+- ✅ Toujours vérifier la branche avant d'implémenter
+- ✅ JAMAIS de développement direct sur `master`
+- ✅ Un worktree = Une feature isolée
+- ✅ Supprimer le worktree après merge
+
+### Commandes Git Worktree Utiles
+
+```bash
+# Lister tous les worktrees
+git worktree list
+
+# Supprimer un worktree
+git worktree remove {path}
+
+# Nettoyer les worktrees orphelins
+git worktree prune
+```
+
 ## Commandes Essentielles
 
 ### Frontend (Vue 3)

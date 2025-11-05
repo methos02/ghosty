@@ -1,70 +1,58 @@
 <script setup>
 import { ref } from 'vue'
+import DropdownComponent from '@/components/DropdownComponent.vue'
+import { useSearchNovels } from '@/composables/useSearchNovels.js'
 
-// Props
-const props = defineProps({
-  selectedSort: {
-    type: String,
-    default: 'Top 10'
-  },
-  selectedGenre: {
-    type: String,
-    default: 'Tous'
-  },
-  activeTab: {
-    type: String,
-    default: 'home'
-  }
+const activeTab = defineModel('activeTab', {
+  type: String,
+  default: 'home'
 })
 
-// Emits
-const emit = defineEmits(['update:sort', 'update:genre', 'tab-change', 'read-click'])
+const { selectedSort, selectedGenre, setSort, setGenre } = useSearchNovels()
 
-// État local
-const sortMenuOpen = ref(false)
-const genreMenuOpen = ref(false)
+const sortDropdown = ref(null)
+const genreDropdown = ref(null)
 
-const toggleSortMenu = () => {
-  sortMenuOpen.value = !sortMenuOpen.value
-  genreMenuOpen.value = false
+const sortOptions = ['Top 10', 'Récents', 'Populaires', 'Alphabétique']
+const genreOptions = ['Tous', 'Fantasy', 'Science-Fiction', 'Romance', 'Thriller', 'Horreur']
+
+const selectSort = (option) => {
+  setSort(option)
+  sortDropdown.value?.hide()
 }
 
-const toggleGenreMenu = () => {
-  genreMenuOpen.value = !genreMenuOpen.value
-  sortMenuOpen.value = false
-}
-
-const selectSort = (value) => {
-  emit('update:sort', value)
-  sortMenuOpen.value = false
-}
-
-const selectGenre = (value) => {
-  emit('update:genre', value)
-  genreMenuOpen.value = false
-}
-
-const changeTab = (tab) => {
-  emit('tab-change', tab)
-}
-
-const handleRead = () => {
-  emit('read-click')
+const selectGenre = (option) => {
+  setGenre(option)
+  genreDropdown.value?.hide()
 }
 </script>
 
 <template>
   <div class="search-bar | d-flex a-end j-center p-relative w-100">
     <!-- Partie gauche : Trier par -->
-    <div class="search-bar__container | d-flex a-center g-10">
+    <div class="search-bar__side | left d-flex a-center g-10">
       <span class="search-bar__label | color-neutral-100">Trier par</span>
-      <button
-        class="search-bar__select | bg-neutral-100 bg-neutral-300-hover radius-10 d-flex a-center j-between px-5 pointer"
-        @click="toggleSortMenu"
-      >
-        <span class="search-bar__select-text | fs-300 flex-1">{{ selectedSort }}</span>
-        <i class="search-bar__icon | fas fa-chevron-down d-flex a-center j-center"></i>
-      </button>
+      <DropdownComponent ref="sortDropdown" orientation="left">
+        <template #button>
+          <button class="search-bar__select | bg-neutral-100 bg-neutral-300-hover radius-10 d-flex a-center j-between px-5 pointer">
+            <span class="search-bar__select-text | fs-300 flex-1">{{ selectedSort }}</span>
+            <i class="search-bar__icon | fas fa-chevron-down d-flex a-center j-center"></i>
+          </button>
+        </template>
+        <template #items>
+          <div class="dropdown-menu">
+            <button
+              v-for="option in sortOptions"
+              :key="option"
+              class="dropdown-item | py-5 px-10 pointer"
+              :class="{ 'dropdown-item--active': selectedSort === option }"
+              @click="selectSort(option)"
+            >
+              {{ option }}
+            </button>
+          </div>
+        </template>
+      </DropdownComponent>
     </div>
 
     <!-- Partie centrale : Onglets + Bouton Lire -->
@@ -74,14 +62,14 @@ const handleRead = () => {
         <button
           class="search-bar__tab"
           :class="{ 'search-bar__tab--active' : activeTab === 'home' }"
-          @click="changeTab('home')"
+          @click="activeTab = 'home'"
         >
           Accueil
         </button>
         <button
           class="search-bar__tab"
           :class="{ 'search-bar__tab--active' : activeTab === 'search' }"
-          @click="changeTab('search')"
+          @click="activeTab = 'search'"
         >
           Recherche
         </button>
@@ -90,39 +78,49 @@ const handleRead = () => {
       <!-- Bouton Lire -->
       <button
         class="search-bar__read | flex-1 w-100 text-center pointer color-neutral-100 fs-700 fw-400 bg-primary-700-hover bg-primary py-10"
-        @click="handleRead"
       >
         Lire
       </button>
     </div>
 
     <!-- Partie droite : Genre -->
-    <div class="search-bar__container | d-flex a-center g-10">
+    <div class="search-bar__side | right d-flex a-center g-10">
       <span class="search-bar__label | color-neutral-100">Genre</span>
-      <button
-        class="search-bar__select | bg-neutral-100 bg-neutral-300-hover radius-10 d-flex a-center j-between px-5 pointer"
-        @click="toggleGenreMenu"
-      >
-        <span class="fs-300 flex-1">{{ selectedGenre }}</span>
-        <i class="search-bar__icon | fas fa-chevron-down d-flex a-center j-center"></i>
-      </button>
+      <DropdownComponent ref="genreDropdown" orientation="right">
+        <template #button>
+          <button class="search-bar__select | bg-neutral-100 bg-neutral-300-hover radius-10 d-flex a-center j-between px-5 pointer">
+            <span class="search-bar__select-text | fs-300 flex-1">{{ selectedGenre }}</span>
+            <i class="search-bar__icon | fas fa-chevron-down d-flex a-center j-center"></i>
+          </button>
+        </template>
+        <template #items>
+          <div class="dropdown-menu">
+            <button
+              v-for="option in genreOptions"
+              :key="option"
+              class="dropdown-item | py-5 px-10 pointer"
+              :class="{ 'dropdown-item--active': selectedGenre === option }"
+              @click="selectGenre(option)"
+            >
+              {{ option }}
+            </button>
+          </div>
+        </template>
+      </DropdownComponent>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-// Exception Vuemann : Dimensions et styles spécifiques à la SearchBar
 .search-bar {
-  &__section {
-    height: 40px;
-  }
-
-  &__container {
+  &__side {
     height: 40px;
     padding-left: 24px;
     padding-right: 12px;
     background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 10px 10px 0 0;
+    
+    &.left { border-radius: 10px 0 0 0;}
+    &.right {border-radius: 0 10px 0 0;}
   }
 
   &__label {
@@ -134,7 +132,7 @@ const handleRead = () => {
 
   &__select {
     height: 24px;
-    width: 100px;
+    width: 125px;
     border: none;
     transition: background-color 0.3s;
   }
@@ -173,6 +171,29 @@ const handleRead = () => {
 
   &__read {
     border-radius: 10px 10px 0 0;
+  }
+}
+
+.dropdown-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-item {
+  background: white;
+  border: none;
+  text-align: left;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--neutral-200);
+  }
+
+  &--active {
+    background-color: var(--primary-100);
+    color: var(--primary-700);
+    font-weight: 500;
   }
 }
 </style>

@@ -209,71 +209,141 @@ export const NovelDto = { fromShow, toList }
 
 ### 3. Repository
 
-SEUL endroit pour appels API :
+**⚠️ RÈGLE CRITIQUE : AUCUNE LOGIQUE DANS LE REPOSITORY**
+
+Le repository a **UN SEUL rôle** : faire l'appel API et retourner la réponse brute. Point final.
+
+**❌ INTERDIT dans le repository** :
+- Try/catch
+- Vérification de `response.status`
+- Transformation de données (même pas `{ page }` → créer un objet)
+- Gestion d'erreurs
+- Logique métier
+- Conditions if/else
+- Valeurs par défaut sur les paramètres
+
+**✅ AUTORISÉ UNIQUEMENT** :
+- Appel à `req()`
+- Retour direct de la réponse
+- Passage transparent des paramètres reçus
+
+**⚠️ IMPORTANT** : Les paramètres doivent être passés TELS QUELS au `req()`, sans transformation. C'est le **controller** qui crée l'objet de paramètres, pas le repository.
 
 ```javascript
 // src/apis/ghosty/repositories/novel-repository.js
 import { req } from '@/services/services-helper.js'
 
-const list = async (filters = {}) => {
-  return await req('novel.list', { params: filters })
+// ✅ CORRECT - Paramètres passés tels quels
+const list = async (params) => {
+  return await req('novel.list', params)
+}
+
+// ❌ INCORRECT - Ne pas créer d'objet { page } ici
+const list = async (page = 1) => {
+  return await req('novel.list', { page })  // ❌ Transformation interdite
 }
 
 const getById = async (id) => {
-  return await req('novel.show', { params: { id } })
+  return await req('novel.show', { id })
 }
 
 const create = async (data) => {
-  return await req('novel.create', { data })
+  return await req('novel.create', data)
 }
 
 const update = async (id, data) => {
-  return await req('novel.update', { params: { id }, data })
+  return await req('novel.update', { id, ...data })
 }
 
 const destroy = async (id) => {
-  return await req('novel.destroy', { params: { id } })
+  return await req('novel.destroy', { id })
 }
 
 export const NovelRepository = { list, getById, create, update, destroy }
 ```
 
+**❌ MAUVAIS EXEMPLE (NE PAS FAIRE)** :
+```javascript
+// ❌ PAS DE LOGIQUE ICI !
+const list = async (filters = {}) => {
+  try {  // ❌ Pas de try/catch
+    const response = await req('novel.list', filters)
+
+    if (response.status !== STATUS.SUCCESS) {  // ❌ Pas de vérification
+      return { status: STATUS.ERROR, error: '...' }  // ❌ Pas de gestion d'erreur
+    }
+
+    return {  // ❌ Pas de transformation
+      data: response.data?.data || response.data
+    }
+  } catch (error) {  // ❌ Pas de catch
+    return { status: STATUS.ERROR }
+  }
+}
+```
+
 ### 4. Controller
 
-Orchestrer Repository + DTO :
+**✅ TOUTE LA LOGIQUE EST ICI**
+
+Le controller contient **TOUTE la logique** :
+- Vérification du statut de la réponse
+- Gestion des erreurs
+- Extraction et transformation des données (response.data?.data)
+- Transformation via DTOs
+- Construction de la réponse finale
 
 ```javascript
 // src/apis/ghosty/controllers/novel-controller.js
 import { NovelRepository } from '@/apis/ghosty/repositories/novel-repository.js'
 import { NovelDto } from '@/apis/ghosty/dtos/novel-dto.js'
-import { STATUS } from '@/config/constants.js'
+import { STATUS } from '@/services/ajax/ajax-constants.js'
 
 const list = async (filters = {}) => {
-  // 1. Transformation filtres
+  // 1. Transformation filtres (si nécessaire)
   const apiFilters = NovelDto.toList(filters)
 
-  // 2. Appel repository
+  // 2. Appel repository (qui retourne la réponse brute)
   const response = await NovelRepository.list(apiFilters)
+
+  // 3. Vérification du statut (LOGIQUE ICI, PAS DANS LE REPO)
   if (response.status !== STATUS.SUCCESS) {
-    return response
+    return {
+      status: STATUS.ERROR,
+      error: response.error || 'Erreur lors du chargement'
+    }
   }
 
-  // 3. Transformation données
+  // 4. Extraction des données (Laravel retourne { data: [...], meta: {...} })
+  const data = response.data?.data || response.data
+  const meta = response.data?.meta || response.meta
+
+  // 5. Transformation via DTO
   return {
-    novels: response.data.map(novel => NovelDto.fromShow(novel)),
-    status: STATUS.SUCCESS
+    status: STATUS.SUCCESS,
+    novels: NovelDto.fromList(data),
+    pagination: {
+      page: meta.current_page,
+      total: meta.total,
+      size: meta.per_page,
+      lastPage: meta.last_page
+    }
   }
 }
 
 const getById = async (id) => {
   const response = await NovelRepository.getById(id)
+
   if (response.status !== STATUS.SUCCESS) {
-    return response
+    return {
+      status: STATUS.ERROR,
+      error: response.error || 'Erreur lors du chargement'
+    }
   }
 
   return {
-    novel: NovelDto.fromShow(response.data),
-    status: STATUS.SUCCESS
+    status: STATUS.SUCCESS,
+    novel: NovelDto.fromShow(response.data)
   }
 }
 
@@ -756,9 +826,84 @@ export const apis = {
 - Logique métier dans composables
 - CSS custom sans vérifier classes Vuemann
 - Strings hardcodés (utiliser `t()`)
-- `else` ou `else if` en JavaScript
+- **`else` ou `else if` en JavaScript** (voir section ci-dessous)
 - `vi.mock()` (utiliser `vi.spyOn()`)
 - Tester les repositories directement
+
+### 🚫 JAMAIS de `else` ou `else if` - Utiliser Early Return
+
+**RÈGLE ABSOLUE** : En JavaScript/Vue, **JAMAIS** utiliser `else` ou `else if`. Toujours utiliser des **guard clauses** avec **early return**.
+
+**Pourquoi ?**
+- Code plus lisible et linéaire
+- Moins d'indentation
+- Logique plus claire (cas d'erreur en premier)
+- Facilite la maintenance
+
+**❌ MAUVAIS - Avec else** :
+```javascript
+const loadNovels = async (append = false) => {
+  const response = await NovelController.list()
+
+  if (append) {
+    novels.value = [...novels.value, ...response.novels]
+  } else {
+    novels.value = response.novels
+  }
+
+  isLoading.value = false
+}
+```
+
+**✅ CORRECT - Avec early return** :
+```javascript
+const loadNovels = async (append = false) => {
+  const response = await NovelController.list()
+
+  if (append) {
+    novels.value = [...novels.value, ...response.novels]
+    isLoading.value = false
+    return
+  }
+
+  novels.value = response.novels
+  isLoading.value = false
+}
+```
+
+**Autres exemples** :
+
+```javascript
+// ❌ MAUVAIS
+if (user.isAdmin) {
+  return 'Admin'
+} else if (user.isModerator) {
+  return 'Moderator'
+} else {
+  return 'User'
+}
+
+// ✅ CORRECT
+if (user.isAdmin) return 'Admin'
+if (user.isModerator) return 'Moderator'
+return 'User'
+```
+
+```javascript
+// ❌ MAUVAIS
+if (response.status !== STATUS.SUCCESS) {
+  return { error: response.error }
+} else {
+  return { data: response.data }
+}
+
+// ✅ CORRECT
+if (response.status !== STATUS.SUCCESS) {
+  return { error: response.error }
+}
+
+return { data: response.data }
+```
 
 ### 📐 Convention de Nommage des Classes CSS
 

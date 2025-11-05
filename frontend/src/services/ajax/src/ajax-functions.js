@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ConfigLoader } from 'vuemann/config/config-loader.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 import { Request } from './models/request.js'
 import { httpClient } from './models/http-client.js'
 import { STATUS } from '../ajax-constants.js'

@@ -101,9 +101,13 @@ backend/
 │   │   ├── 2024_01_01_000006_create_notifications_table.php
 │   │   └── 2024_01_01_000007_create_reports_table.php
 │   ├── seeders/
-│   │   ├── GenresSeeder.php
+│   │   ├── GenresSeeder.php         # ⚠️ Lit database/data/genres.json
+│   │   ├── NovelSeeder.php          # ⚠️ Lit database/data/novels.json
 │   │   ├── UsersSeeder.php
 │   │   └── DatabaseSeeder.php
+│   ├── data/                         # ⚠️ Données JSON pour seeders
+│   │   ├── genres.json              # Liste des genres (17 genres)
+│   │   └── novels.json              # Romans de test (20 romans)
 │   └── factories/
 │       ├── UserFactory.php
 │       └── NovelFactory.php
@@ -270,6 +274,147 @@ INDEX idx_status (status)
 3. `works`
 4. `votes`, `comments`
 5. `notifications`, `reports`
+
+## Seeders et Données de Test
+
+### ⚠️ Architecture des Seeders : JSON Externe
+
+**RÈGLE IMPORTANTE** : Les seeders NE DOIVENT PAS contenir de données hardcodées dans le code PHP. Toutes les données doivent être stockées dans des fichiers JSON dans `database/data/`.
+
+**Pourquoi ?**
+- Lisibilité : Le seeder reste simple et lisible
+- Maintenabilité : Facile de modifier les données sans toucher au code
+- Séparation : Logique (seeder) séparée des données (JSON)
+
+### Structure des Seeders
+
+```
+database/
+├── data/                      # ⚠️ Données JSON UNIQUEMENT
+│   ├── genres.json           # 17 genres (id, name)
+│   └── novels.json           # 20 romans de test (title, genre_id, cover_url)
+└── seeders/
+    ├── GenresSeeder.php      # Lit genres.json
+    ├── NovelSeeder.php       # Lit novels.json
+    └── DatabaseSeeder.php    # Appelle tous les seeders
+```
+
+### Exemple : GenresSeeder
+
+**database/data/genres.json** :
+```json
+[
+    { "id": 1, "name": "Science Fiction" },
+    { "id": 2, "name": "Horreur" },
+    { "id": 3, "name": "Aventure" }
+]
+```
+
+**database/seeders/GenresSeeder.php** :
+```php
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+class GenresSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $jsonPath = database_path('data/genres.json');
+        $genres = json_decode(file_get_contents($jsonPath), true);
+
+        DB::table('genres')->truncate();
+
+        foreach ($genres as $genre) {
+            DB::table('genres')->insert([
+                'id' => $genre['id'],
+                'name' => $genre['name'],
+                'slug' => Str::slug($genre['name']),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+}
+```
+
+### Exemple : NovelSeeder
+
+**database/data/novels.json** :
+```json
+[
+    {
+        "title": "Nuit virage",
+        "genre_id": 2,
+        "cover_url": "https://images.unsplash.com/photo-xxx"
+    },
+    {
+        "title": "Destin Croisé",
+        "genre_id": 5,
+        "cover_url": "https://images.unsplash.com/photo-yyy"
+    }
+]
+```
+
+**database/seeders/NovelSeeder.php** :
+```php
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class NovelSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $jsonPath = database_path('data/novels.json');
+        $novels = json_decode(file_get_contents($jsonPath), true);
+
+        DB::table('novels')->truncate();
+
+        foreach ($novels as $novel) {
+            DB::table('novels')->insert([
+                'title' => $novel['title'],
+                'genre_id' => $novel['genre_id'],
+                'cover_url' => $novel['cover_url'],
+                'is_favorite' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+}
+```
+
+### DatabaseSeeder
+
+**database/seeders/DatabaseSeeder.php** :
+```php
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $this->call([
+            GenresSeeder::class,
+            NovelSeeder::class,
+            // UsersSeeder::class,
+            // etc.
+        ]);
+    }
+}
+```
 
 ## Développement d'une API
 

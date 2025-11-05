@@ -2,6 +2,8 @@
   "novel": {
     "loading": "Chargement des romans...",
     "error_load": "Erreur lors du chargement des romans",
-    "empty": "Aucun roman disponible"
+    "empty": "Aucun roman disponible",
+    "load_more": "Charger plus",
+    "no_more": "Vous avez vu tous les romans disponibles"
   }
 }

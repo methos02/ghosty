@@ -1,12 +1,12 @@
 const fromShow = (novel) => {
   return {
-    id: novel.nov_id,
-    title: novel.nov_title,
-    coverUrl: novel.nov_cover_url,
-    isFavorite: novel.nov_is_favorite,
+    id: novel.id,
+    title: novel.title,
+    coverUrl: novel.cover_url,
+    isFavorite: novel.is_favorite,
     genre: {
-      id: novel.nov_id_genre,
-      label: novel.nov_genre_label
+      id: novel.genre.id,
+      label: novel.genre.name
     }
   }
 }

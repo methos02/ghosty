@@ -2,6 +2,21 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ RÈGLE CRITIQUE : Consultation des CLAUDE.md Spécifiques
+
+**AVANT de travailler sur le frontend ou le backend, tu DOIS impérativement consulter le fichier CLAUDE.md spécifique correspondant** :
+
+- **Travail sur le frontend** → Lire **[frontend/CLAUDE.md](frontend/CLAUDE.md)** en priorité
+- **Travail sur le backend** → Lire **[backend/CLAUDE.md](backend/CLAUDE.md)** en priorité
+
+Ces fichiers contiennent des règles architecturales et conventions spécifiques qui NE SONT PAS dans ce fichier général.
+
+**Exemples de règles critiques** :
+- **Backend** : Architecture des seeders avec JSON externe (JAMAIS de données hardcodées)
+- **Frontend** : Architecture Controllers → Repositories → API (JAMAIS d'appels directs)
+
+**Ce fichier (racine) ne donne qu'une vue d'ensemble**. Les détails techniques sont dans les CLAUDE.md spécifiques.
+
 ## Project Overview
 
 **Ghosty** est une plateforme collaborative permettant aux auteurs de créer des romans interactifs chapitre par chapitre, avec un système de vote communautaire pour choisir les meilleures suites proposées.

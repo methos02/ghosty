@@ -1,11 +1,7 @@
-import { novelsDatas } from '@/apis/novels/datas/novels-datas.js'
-import { STATUS } from '@/services/ajax/ajax-constants.js'
+import { req } from '@/services/services-helper.js'
 
-const list = async () => {
-  return {
-    status: STATUS.SUCCESS,
-    data: novelsDatas
-  }
+const list = async (options) => {
+  return await req('novel.list', options)
 }
 
 export const NovelRepository = {

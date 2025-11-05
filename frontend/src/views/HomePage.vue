@@ -1,13 +1,18 @@
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, computed } from 'vue'
     import Header from '@/views/layout/HeaderComponent.vue'
     import SearchBar from '@/views/parts/SearchBar.vue'
     import NovelCard from '@/views/parts/NovelCard.vue'
+    import PaginatorComponent from '@/components/PaginatorComponent.vue'
     import { useSearchNovels } from '@/composables/useSearchNovels.js'
     import { t } from '@/services/services-helper.js'
 
     const activeTab = ref('home')
-    const { novels, isLoading, errorMessage, loadNovels } = useSearchNovels()
+    const { novels, isLoading, errorMessage, loadNovels, pagination } = useSearchNovels()
+
+    const handlePaginatorLoad = async (page, size) => {
+        await loadNovels(page, true)
+    }
 
     onMounted(async () => {
         if (novels.value.length > 0) return
@@ -30,7 +35,7 @@
         </div>
 
         <div class="novels-container | w-xl py-40 px-20">
-            <div v-if="isLoading" class="d-flex j-center p-30">
+            <div v-if="isLoading && novels.length === 0" class="d-flex j-center p-30">
                 <span class="fs-500 color-neutral-700">{{ t('novel.loading') }}</span>
             </div>
 
@@ -38,9 +43,16 @@
                 <span class="color-danger fs-500">{{ errorMessage }}</span>
             </div>
 
-            <div v-if="novels.length > 0" class="novels-grid">
-                <NovelCard v-for="novel in novels" :key="novel.id" :novel="novel" />
-            </div>
+            <PaginatorComponent
+                v-if="novels.length > 0"
+                type="infinite"
+                :params="pagination"
+                :cb="handlePaginatorLoad"
+            >
+                <div class="novels-grid">
+                    <NovelCard v-for="novel in novels" :key="novel.id" :novel="novel" />
+                </div>
+            </PaginatorComponent>
         </div>
     </div>
 </template>
@@ -83,4 +95,5 @@
         gap: 24px;
     }
 }
+
 </style>

@@ -1,0 +1,51 @@
+{
+  "auth": {
+    "login_title": "Connexion",
+    "login_email": "Email",
+    "login_email_placeholder": "votre@email.com",
+    "login_password": "Mot de passe",
+    "login_password_placeholder": "••••••••",
+    "login_button": "Se connecter",
+    "login_loading": "Chargement...",
+    "register_switch": "Inscription",
+
+    "register_title": "Inscription",
+    "register_pseudo": "Pseudo",
+    "register_pseudo_placeholder": "Votre pseudo",
+    "register_email": "Email",
+    "register_email_placeholder": "votre@email.com",
+    "register_password": "Mot de passe",
+    "register_password_placeholder": "••••••••",
+    "register_password_confirmation": "Confirmer le mot de passe",
+    "register_password_confirmation_placeholder": "••••••••",
+    "register_terms": "J'accepte les conditions d'utilisation",
+    "register_terms_error": "Vous devez accepter les conditions d'utilisation",
+    "register_button": "S'inscrire",
+    "register_loading": "Chargement...",
+    "login_switch": "Connexion",
+
+    "login_error_email_required": "L'email est requis",
+    "login_error_email_invalid": "L'email n'est pas valide",
+    "login_error_password_required": "Le mot de passe est requis",
+
+    "register_error_pseudo_required": "Le pseudo est requis",
+    "register_error_pseudo_min": "Le pseudo doit contenir au moins 3 caractères",
+    "register_error_pseudo_max": "Le pseudo ne peut pas dépasser 50 caractères",
+    "register_error_email_required": "L'email est requis",
+    "register_error_email_invalid": "L'email n'est pas valide",
+    "register_error_password_required": "Le mot de passe est requis",
+    "register_error_password_min": "Le mot de passe doit contenir au moins 8 caractères",
+    "register_error_password_confirmation_required": "La confirmation du mot de passe est requise",
+    "register_error_password_confirmation_match": "Les mots de passe ne correspondent pas",
+
+    "login_error_credentials": "Le username et le mot de passe sont requis.",
+    "login_error_api_credentials": "Crédentials de l'api {api_name} incomplet dans le fichier de config app.",
+    "login_error_token": "Username ou mot de passe incorrect",
+
+    "access_error": "Vous devez être connecté pour accéder à cette page.",
+    "refresh_error": "Votre session a été déconnectée, merci de vous reconnecter.",
+    "unknown_api": "L'api {api} n'est pas définie dans le fichier de config de l'application.",
+
+    "logout": "Vous avez été déconnecté avec succès"
+  }
+}

@@ -3,7 +3,7 @@ import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 import { STATUS } from '@/services/ajax/ajax-constants.js'
 
 const list = async (page = 1) => {
-  const response = await NovelRepository.list({ page })
+  const response = await NovelRepository.list({ params: { page } })
 
   if (response.status !== STATUS.SUCCESS) {
     return {
@@ -16,9 +16,7 @@ const list = async (page = 1) => {
     status: STATUS.SUCCESS,
     novels: NovelDto.fromList(response.data.data),
     pagination: {
-      page: response.data.meta.current_page,
-      total: response.data.meta.total,
-      size: response.data.meta.per_page,
+      nextPage : response.data.meta.current_page + 1,
       lastPage: response.data.meta.last_page
     }
   }

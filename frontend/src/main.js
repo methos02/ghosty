@@ -8,9 +8,11 @@ import { utilsInit } from './services/utils/utils-init.js'
 import { flashInit } from './services/flash/flash-init.js'
 import { formInit } from './services/form/form-init.js'
 import { routerInit } from './services/router/router-init.js'
+import { authInit } from './services/auth/auth-init.js'
 const app = createApp(App)
 
 await servicesM.initServices(app, {
+  auth: authInit,
   locale: localeInit,
   ajax: ajaxInit,
   utils: utilsInit,

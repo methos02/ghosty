@@ -62,6 +62,12 @@ const addError = (inputName, errorKey) => {
   errors.value[finalInputName] = errorKey
 }
 
+const addErrors = (errorsObject) => {
+  Object.entries(errorsObject).forEach(([inputName, errorKey]) => {
+    addError(inputName, errorKey)
+  })
+}
+
 const clearError = (inputName) => {
   delete errors.value[inputName]
 }
@@ -73,6 +79,7 @@ const clearErrors = () => {
 export const formStore = {
   get,
   addError,
+  addErrors,
   clearError,
   clearErrors,
   setOption,

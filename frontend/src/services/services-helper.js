@@ -10,8 +10,18 @@ export const locale = {
 }
 
 export const auth = {
-  user: () => servicesM.service('auth:currentUser'),
+  user: () => servicesM.service('auth:getCurrentUser'),
+  isAuthenticated: () => servicesM.service('auth:isAuthenticated'),
   hasRole: (roleName) => servicesM.service('auth:hasRole', roleName),
+  login: (email, password) => servicesM.service('auth:login', [email, password]),
+  register: (datas) => servicesM.service('auth:register', [datas]),
+  logout: () => servicesM.service('auth:logout'),
+  fetchCurrentUser: () => servicesM.service('auth:fetchCurrentUser'),
+  showLoginDialog: () => servicesM.service('auth:showLoginDialog'),
+  showRegisterDialog: () => servicesM.service('auth:showRegisterDialog'),
+  openLoginDialog: () => servicesM.service('auth:openLoginDialog'),
+  openRegisterDialog: () => servicesM.service('auth:openRegisterDialog'),
+  closeDialogs: () => servicesM.service('auth:closeDialogs'),
 }
 
 export const req = async (route_name, datas = {}, options = {}) => {
@@ -35,21 +45,10 @@ export const form = {
   getError : (input_name) => servicesM.service('form:getError', [input_name]),
   hasError : (input_name) => servicesM.service('form:hasError', [input_name]),
   addError : (input_name, error) => servicesM.service('form:addError', [input_name, error]),
+  addErrors : (errors) => servicesM.service('form:addErrors', [errors]),
   clearError : (input_name) => servicesM.service('form:clearError', [input_name]),
   clearErrors : () => servicesM.service('form:clearErrors'),
-}
-
-export const log = {
-  send : (error, context) => servicesM.service('log:send', [error, context]),
-}
-
-export const ws = {
-  open : route_name => servicesM.service('websocket:open', [route_name]),
-  register : (route_name, event, callBack) => servicesM.service('websocket:register', [route_name, event, callBack]),
-  registerPrevent : (route_name, event, event_datas) => servicesM.service('websocket:registerPrevent', [route_name, event, event_datas]),
-  hasPrevent : (route_name, event) => servicesM.service('websocket:hasPrevent', [route_name, event]),
-  getPrevent : (route_name, event) => servicesM.service('websocket:getPrevent', [route_name, event]),
-  close : route_name => servicesM.service('websocket:close', [route_name]),
+  mapFields : (validationErrors, mapping) => servicesM.service('form:mapFields', [validationErrors, mapping]),
 }
 
 export const router = {

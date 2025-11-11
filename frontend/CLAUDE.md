@@ -404,6 +404,7 @@ export const useNovels = () => {
 - Appels API (`req()`)
 - Logique métier complexe
 - Validation de données
+- **États temporaires UI** (loading, error) - à gérer localement dans les composants
 
 ### 📦 Composables de Services (Pattern Alternatif)
 
@@ -439,6 +440,69 @@ export const flashStore = {
 - ✅ Pas de wrapper `use{Name}()`
 - ✅ Utilisation : `import { flashStore } from '@/services/flash/src/flash-store.js'`
 - ✅ **Pas de Pinia** : Pattern Vue natif avec `ref()` hors fonction
+
+**⚠️ IMPORTANT - États de Session vs États Temporaires** :
+
+Les stores (composables/services) doivent **UNIQUEMENT** contenir des **états de session persistants** :
+- ✅ **user** - L'utilisateur connecté
+- ✅ **token** - Le token d'authentification
+- ✅ **novels** - Liste des romans chargés
+- ✅ **flashes** - Messages flash globaux
+- ✅ **isAuthenticated** - Computed basé sur user/token
+
+Les stores ne doivent **JAMAIS** contenir des **états temporaires UI** liés à une action spécifique :
+- ❌ **loading** - État de chargement d'une action (login, register, etc.)
+- ❌ **error** - Message d'erreur d'une action spécifique
+- ❌ **isSubmitting** - État de soumission d'un formulaire
+
+**Pourquoi ?**
+- États temporaires sont liés au **cycle de vie d'une action**, pas à la session
+- Doivent être gérés **localement** dans les composants qui les déclenchent
+- Les fonctions retournent `{ status, error }` pour que le composant gère l'UI
+
+**Exemple correct** :
+
+```javascript
+// ✅ Store : État de session uniquement
+const user = ref(null)
+const token = ref(null)
+
+export const authStore = {
+  user: readonly(user),
+  token: readonly(token),
+  setUser: (userData) => { user.value = userData },
+  clear: () => { user.value = null; token.value = null }
+}
+
+// ✅ Fonction : Retourne status/error
+const login = async (email, password) => {
+  const response = await AuthController.login(email, password)
+
+  if (response.status !== STATUS.SUCCESS) {
+    return { status: STATUS.ERROR, error: response.error }
+  }
+
+  authStore.setUser(response.user)
+  return { status: STATUS.SUCCESS }
+}
+
+// ✅ Composant : Gère loading/error localement
+const isLoading = ref(false)
+const errorMessage = ref('')
+
+const handleLogin = async () => {
+  isLoading.value = true
+  errorMessage.value = ''
+
+  const result = await auth.login(email.value, password.value)
+
+  if (result.status !== STATUS.SUCCESS) {
+    errorMessage.value = result.error
+  }
+
+  isLoading.value = false
+}
+```
 
 ### 6. Composant Vue
 
@@ -811,7 +875,8 @@ export const apis = {
 
 ### ✅ À FAIRE
 - Utiliser `t()` pour TOUS les textes affichés
-- Utiliser classes SCSS Vuemann au maximum (95%+)
+- **Utiliser classes SCSS Vuemann au MAXIMUM (95%+)** - Toujours vérifier si une classe existe avant d'écrire du CSS custom
+- Utiliser les classes de boutons Vuemann (`btn`, `btn-primary`, `btn-primary-alt`, etc.) plutôt que créer des styles custom
 - Early return dans toutes les fonctions
 - Props typées dans composants Vue
 - Logique métier en fichiers `.js` natifs
@@ -824,6 +889,7 @@ export const apis = {
 - `req()` hors des repositories
 - Logique métier dans composants Vue
 - Logique métier dans composables
+- **États temporaires dans les stores** (loading, error) - doivent être gérés localement dans les composants
 - CSS custom sans vérifier classes Vuemann
 - Strings hardcodés (utiliser `t()`)
 - **`else` ou `else if` en JavaScript** (voir section ci-dessous)
@@ -904,6 +970,49 @@ if (response.status !== STATUS.SUCCESS) {
 
 return { data: response.data }
 ```
+
+```javascript
+// ❌ MAUVAIS - Setter avec else
+setUser: (userData) => {
+  user.value = userData
+  if (userData) {
+    localStorage.setItem('auth_user', JSON.stringify(userData))
+  } else {
+    localStorage.removeItem('auth_user')
+  }
+}
+
+// ✅ CORRECT - Méthodes séparées (plus explicite)
+setUser: (userData) => {
+  user.value = userData
+  localStorage.setItem('auth_user', JSON.stringify(userData))
+},
+
+unsetUser: () => {
+  user.value = null
+  localStorage.removeItem('auth_user')
+}
+```
+
+**⚠️ TEMPLATES VUE** : Cette règle s'applique aussi aux templates Vue.
+
+**❌ MAUVAIS - Avec v-else** :
+```vue
+<div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+<div v-else class="content">{{ content }}</div>
+```
+
+**✅ CORRECT - Avec v-if explicite** :
+```vue
+<div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+<div v-if="!errorMessage" class="content">{{ content }}</div>
+```
+
+**Pourquoi ?**
+- Plus explicite et facile à comprendre
+- Condition visible directement
+- Pas de dépendance implicite à l'ordre des éléments
+- Cohérent avec le JavaScript
 
 ### 📐 Convention de Nommage des Classes CSS
 

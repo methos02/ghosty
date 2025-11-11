@@ -1,7 +1,7 @@
 export const app = {
   apis: {
     ghosty: {
-      url: 'http://localhost:8000/api/',
+      url: import.meta.env[`VITE_GHOSTY_API_URL`],
       status: false,
       auth: false
     }

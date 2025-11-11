@@ -1,23 +1,20 @@
 <script setup>
-    import { ref, onMounted, computed } from 'vue'
-    import Header from '@/views/layout/HeaderComponent.vue'
-    import SearchBar from '@/views/parts/SearchBar.vue'
-    import NovelCard from '@/views/parts/NovelCard.vue'
-    import PaginatorComponent from '@/components/PaginatorComponent.vue'
-    import { useSearchNovels } from '@/composables/useSearchNovels.js'
-    import { t } from '@/services/services-helper.js'
+import { ref, onMounted } from 'vue'
+import Header from '@/views/layout/HeaderComponent.vue'
+import SearchBar from '@/views/parts/SearchBar.vue'
+import NovelCard from '@/views/parts/NovelCard.vue'
+import PaginatorInfinite from '@/components/paginators/PaginatorInfiniteComponent.vue'
+import { useSearchNovels } from '@/composables/useSearchNovels.js'
+import { t } from '@/services/services-helper.js'
 
-    const activeTab = ref('home')
-    const { novels, isLoading, errorMessage, loadNovels, pagination } = useSearchNovels()
+const activeTab = ref('home')
+const { novels, pagination, loadMore, loadNovels } = useSearchNovels()
 
-    const handlePaginatorLoad = async (page, size) => {
-        await loadNovels(page, true)
-    }
-
-    onMounted(async () => {
-        if (novels.value.length > 0) return
+onMounted(async () => {
+    if (novels.value.length === 0) {
         await loadNovels()
-    })
+    }
+})
 </script>
 
 <template>
@@ -34,28 +31,16 @@
             <SearchBar v-model:activeTab="activeTab" />
         </div>
 
-        <div class="novels-container | w-xl py-40 px-20">
-            <div v-if="isLoading && novels.length === 0" class="d-flex j-center p-30">
-                <span class="fs-500 color-neutral-700">{{ t('novel.loading') }}</span>
-            </div>
-
-            <div v-if="errorMessage" class="bg-danger-100 p-15 radius-10">
-                <span class="color-danger fs-500">{{ errorMessage }}</span>
-            </div>
-
-            <PaginatorComponent
-                v-if="novels.length > 0"
-                type="infinite"
-                :params="pagination"
-                :cb="handlePaginatorLoad"
-            >
+        <PaginatorInfinite :cb="loadMore" :params="pagination" :options="{observe: 'window'}">
+            <div class="novels-container | w-xl py-40 px-20">
                 <div class="novels-grid">
                     <NovelCard v-for="novel in novels" :key="novel.id" :novel="novel" />
                 </div>
-            </PaginatorComponent>
-        </div>
+            </div>
+        </PaginatorInfinite>
     </div>
 </template>
+
 <style lang="scss">
 .home-page {
     min-height: 100vh;

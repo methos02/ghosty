@@ -3,11 +3,13 @@ import { ConfigLoader } from '@/config/config-loader.js'
 import { Request } from './models/request.js'
 import { httpClient } from './models/http-client.js'
 import { STATUS } from '../ajax-constants.js'
+import { AjaxHelpers } from '../ajax-helpers.js'
 import { flash, t } from '@/services/services-helper.js'
 
 const manageError = async errorResponse => {
     if (errorResponse.code === 'ERR_CANCELED') { return { data: {}, status: 499 } }
     if (errorResponse.response === undefined) { return { data: {error: 'error_back'}, status: 500 } }
+    if (AjaxHelpers.isValidationError(errorResponse.response.status)) { return ajaxFunctionsInternal.handleValidationError(errorResponse.response) }
 
     ajaxFunctionsInternal.showFlash(errorResponse)
 
@@ -18,6 +20,16 @@ const throwError = (message, params = {}) => {
     const errorMessage = t(message, params)
     flash.error(errorMessage)
     throw new Error(errorMessage)
+}
+
+const handleValidationError = errorResponse => {
+    return {
+        ...errorResponse,
+        data: {
+            ...errorResponse.data,
+            validationErrors: AjaxHelpers.formatValidationErrors(errorResponse.data.errors)
+        }
+    }
 }
 
 const getRoute = (route_name, api) => {
@@ -64,4 +76,4 @@ const getRouteFromConfig = (route_name, api) => {
     return {...ConfigLoader.get(`routesApi.global`)[route_name], global : true, name: route_name}
 }
 
-export const ajaxFunctionsInternal = { showFlash, getRouteFromConfig }
+export const ajaxFunctionsInternal = { showFlash, getRouteFromConfig, handleValidationError }

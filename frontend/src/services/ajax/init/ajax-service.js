@@ -1,19 +1,21 @@
-import { ajaxFunctions } from '../src/ajax-functions.js';
-import { abortManager } from '../src/models/abort-manager.js';
-import { Request } from '../src/models/request.js';
-import { httpClient } from '../src/models/http-client.js';
+import { ajaxFunctions } from '@/services/ajax/src/ajax-functions.js';
+import { abortManager } from '@/services/ajax/src/models/abort-manager.js';
+import { Request } from '@/services/ajax/src/models/request.js';
+import { httpClient } from '@/services/ajax/src/models/http-client.js';
 
-const req = async (route_name, datas = {}, options = {}) => {
+const req = async (route_name, options = {}) => {
   if(!httpClient.isDefine()) { ajaxFunctions.throwError('error_no_client') }
-  const route = ajaxFunctions.getRoute(route_name, datas['api'] ?? options['api'])
-  Request.set(route, datas, options)
-  
+  const route = ajaxFunctions.getRoute(route_name, options['api'])
+  const requestId = Request.init(route, options)
+
   abortManager.setAbort(Request.get('abort'))
 
-  const url = ajaxServiceInternal.generateUrlFromRoute(route)
-  const response = await httpClient[route.method](url, datas).catch(async error => await ajaxFunctions.manageError(error))
+  Request.set({ url : ajaxServiceInternal.generateUrlFromRoute(requestId) }, requestId)
+  const response = await httpClient[route.method](requestId).catch(async error => await ajaxFunctions.manageError(error))
 
-  return { api: Request.get('api'), route: Request.get('route'), ...response }
+  const result = { api: Request.get('api', requestId), route: Request.get('route.name', requestId), ...response }
+  Request.remove(requestId)
+  return result
 }
 
 const generateUrlFromRouteName = (route_name, params = {}, api) => {
@@ -23,52 +25,64 @@ const generateUrlFromRouteName = (route_name, params = {}, api) => {
     route.api = api
   }
 
-  Request.set(route, {params})
+  const requestId = Request.init(route, {params})
 
-  const url = ajaxServiceInternal.generateUrlFromRoute(route)
-  if(Request.get('params') === undefined || Object.keys(Request.get('params')).length === 0) { return url }
-
-  return url + `?${new URLSearchParams(Request.get('params')).toString()}`
+  const url = ajaxServiceInternal.generateUrlFromRoute(requestId)
+  const requestParams = Request.get('params', requestId)
+  Request.remove(requestId)
+  
+  if(requestParams === undefined || Object.keys(requestParams).length === 0) { return url }
+  return url + `?${new URLSearchParams(requestParams).toString()}`
 }
 
 const generateSubdirectoryFromRouteName = (route_name, params = {}) => {
   const route = ajaxFunctions.getRoute(route_name)
-  Request.set(route, {params})
+  const requestId = Request.init(route, {params})
 
-  return ajaxServiceInternal.generateSubdirectoryFromRoute(route)
+  const result = ajaxServiceInternal.generateSubdirectoryFromRoute(requestId)
+  Request.remove(requestId)
+  return result
 }
 
 export const ajaxService = { req, generateSubdirectoryFromRouteName, generateUrlFromRouteName }
 
-const generateUrlFromRoute = (route) => {
-  const api_url = ajaxFunctions.defineApiUrl(Request.get('api'), Request.get('api_url'))
-  const url_subdirectory = ajaxServiceInternal.generateSubdirectoryFromRoute(route)
-  return api_url + url_subdirectory
+const generateUrlFromRoute = (requestId) => {
+  const apiUrl = ajaxFunctions.defineApiUrl(Request.get('api', requestId), Request.get('api_url', requestId))
+  const urlSubdirectory = ajaxServiceInternal.generateSubdirectoryFromRoute(requestId)
+  return apiUrl + urlSubdirectory
 }
 
-const generateSubdirectoryFromRoute = (route) => {
-  let url = route.url.trim('/')
+const generateSubdirectoryFromRoute = (requestId) => {
+  let url = Request.get('route.url', requestId).trim('/')
 
-  const hasParams = Request.get('params') !== undefined && Object.keys(Request.get('params')).length > 0
-  if (url.includes('{') && !hasParams) { ajaxFunctions.throwError('error_empty_parameter', { route_name : route.name }) }
+  const hasParams = Request.get('params', requestId) !== undefined && Object.keys(Request.get('params', requestId)).length > 0
+  if (url.includes('{') && !hasParams) { ajaxFunctions.throwError('error_empty_parameter', { route_name : Request.get('route.name', requestId) }) }
   if(!hasParams) { return url }
 
-  for (const parameter_name of Object.keys(Request.get('params'))) {
-    if (!url.includes(`{${parameter_name}}`)) { continue }
+  url = ajaxServiceInternal.injectParameters(url, requestId)
 
-    url = ajaxServiceInternal.injectParameter(url, parameter_name)
+  if (url.includes('{')) { ajaxFunctions.throwError('error_missing_parameter', { route_name : Request.get('route.name', requestId) }) }
+
+  return url
+}
+
+const injectParameters = (url, requestId) => {
+  const parameters = Request.get('params', requestId)
+  if(parameters === undefined) { return url }
+
+  for (const parameter_name in parameters) {
+    if (!url.includes(`{${parameter_name}}`)) { continue }
+    
+    url = url.replace(`{${parameter_name}}`, parameters[parameter_name])
+    delete parameters[parameter_name]
   }
 
-  if (url.includes('{')) { ajaxFunctions.throwError('error_missing_parameter', { route_name : route.name }) }
-
+  Request.set({ params: parameters }, requestId)
   return url
 }
 
-const injectParameter = (url, parameter_name) => {
-  url = url.replace(`{${parameter_name}}`, Request.get('params')[parameter_name])
-  if (Request.get('params') !== undefined) { delete Request.get('params')[parameter_name] }
-
-  return url
+export const ajaxServiceInternal = { 
+  injectParameters, 
+  generateUrlFromRoute, 
+  generateSubdirectoryFromRoute 
 }
-
-export const ajaxServiceInternal = { injectParameter, generateUrlFromRoute, generateSubdirectoryFromRoute }

@@ -1,6 +1,6 @@
-import { Request } from "./request.js";
-import { requestInterceptor } from "./request-interceptor.js";
-import { responseErrorInterceptor } from "./response-error-interceptor.js";
+import { Request } from "@/services/ajax/src/models/request.js";
+import { requestInterceptor } from "@/services/ajax/src/models/request-interceptor.js";
+import { responseErrorInterceptor } from "@/services/ajax/src/models/response-error-interceptor.js";
 
 let client;
 const init = axios => {
@@ -11,27 +11,35 @@ const init = axios => {
   return client
 }
 
-const get = async url => { 
+const get = async requestId => { 
+  const url = Request.get('url', requestId)
   return await client.get(url, {
-    params : Request.get('params'),
+    params : Request.get('params', requestId),
+    requestId,
     paramsSerializer: httpClient.customParamsSerializer
   })
 }
 
-const post = async (url, data = {}) => {
-  return await client.post(url, data)
+const post = async (requestId) => {
+  const url = Request.get('url', requestId)
+  const body = Request.get('body', requestId) ?? {}
+  return await client.post(url, body, { requestId, params : Request.get('params', requestId) })
 }
 
-const put = async (url, data = {}) => {
-  return await client.put(url, data)
+const put = async (requestId) => {
+  const url = Request.get('url', requestId)
+  const body = Request.get('body', requestId) ?? {}
+  return await client.put(url, body, { requestId, params : Request.get('params', requestId) })
 }
 
-const patch = async (url, data = {}) => {
-  return await client.patch(url, data, Request.get())
-
+const patch = async (requestId) => {
+  const url = Request.get('url', requestId)
+  const body = Request.get('body', requestId) ?? {}
+  return await client.patch(url, body, { requestId, params : Request.get('params', requestId) })
 }
-const deleteReq = async url => {
-  return await client.delete(url, Request.get())
+const deleteReq = async requestId => {
+  const url = Request.get('url', requestId)
+  return await client.delete(url, { requestId, params : Request.get('params', requestId) })
 }
 
 const set = clientInstance => {

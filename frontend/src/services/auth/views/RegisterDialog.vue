@@ -56,6 +56,7 @@ const close = () => {
             :label="t('auth.register_pseudo')"
             :required="true"
             autocomplete="username"
+            form="register"
           />
         </div>
 
@@ -67,6 +68,7 @@ const close = () => {
             :label="t('auth.register_email')"
             :required="true"
             autocomplete="email"
+            form="register"
           />
         </div>
 
@@ -78,6 +80,7 @@ const close = () => {
             :label="t('auth.register_password')"
             :required="true"
             autocomplete="new-password"
+            form="register"
           />
         </div>
 
@@ -89,6 +92,7 @@ const close = () => {
             :label="t('auth.register_password_confirmation')"
             :required="true"
             autocomplete="new-password"
+            form="register"
           />
         </div>
 

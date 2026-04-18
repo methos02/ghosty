@@ -1,26 +1,60 @@
-let request = {};
+import { utilsH } from "@/helpers/utils-helper.js";
 
-const set = (route, datas, options) => {
-    request = { api: route.api, route: route.name, ...(['post', 'patch', 'put'].includes(route.method) ? options : datas) }
-    RequestFunctions.cleanParametersRequest()
-    return request
+const request = {};
+
+const init = (route, options) => {
+  const requestId = RequestFunctions.generateRequestId()
+
+  request[requestId] = {
+    id: requestId,
+    api: route.api,
+    route: route,
+    ...options
+  }
+
+  RequestFunctions.cleanParametersRequest(requestId)
+  return requestId
 }
 
-const get = key => {
-    if(key !== undefined) { return request[key] }
-    return request
-}
-
-const cleanParametersRequest = () => {
-  for (const parameter_name in Request.get('params')) {
-    if (Request.get('params')[parameter_name] === '') { delete Request.get('params')[parameter_name] }
+const set = (datas, requestId) => {
+  for (const key in datas) {
+    request[requestId][key] = datas[key]
   }
 }
 
-export const Request = {
-    set, get
+const get = (key, requestId) => {
+  if(key === undefined) { return request }
+  if(requestId === undefined) { return request[key] }    
+  if(request[requestId] === undefined) { throw new Error(`Request ${requestId} not found`) }
+  return utilsH.getNestedProperty(request[requestId], key)
 }
 
+const remove = requestId => {
+  delete request[requestId]
+}
+
+const cleanParametersRequest = (requestId) => {
+  const params = Request.get('params', requestId)
+
+  for (const parameter_name in params) {
+    if (params[parameter_name] === '') { delete params[parameter_name] }
+  }
+
+  Request.set({ params }, requestId)
+}
+
+export const Request = {
+  init, get, set, remove
+}
+
+let reqCounter = 0; 
+const LENGTH = 36;
+const generateRequestId = () => {
+  return (reqCounter++).toString(LENGTH)
+}
+
+
 export const RequestFunctions = {
-    cleanParametersRequest
+    cleanParametersRequest,
+    generateRequestId
 }

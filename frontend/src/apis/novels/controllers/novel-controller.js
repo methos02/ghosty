@@ -3,14 +3,9 @@ import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 import { STATUS } from '@/services/ajax/ajax-constants.js'
 
 const list = async (page = 1) => {
-  const response = await NovelRepository.list({ params: { page } })
-
-  if (response.status !== STATUS.SUCCESS) {
-    return {
-      status: STATUS.ERROR,
-      error: response.error || 'Erreur lors du chargement des romans'
-    }
-  }
+  const params = NovelDto.toListParams(page)
+  const response = await NovelRepository.list({ params })
+  if (response.status !== STATUS.SUCCESS) { return response }
 
   return {
     status: STATUS.SUCCESS,
@@ -22,6 +17,18 @@ const list = async (page = 1) => {
   }
 }
 
+const getBySlug = async (slug) => {
+  const params = NovelDto.toShowParams(slug)
+  const response = await NovelRepository.getBySlug({ params })
+  if (response.status !== STATUS.SUCCESS) { return response }
+
+  return {
+    status: STATUS.SUCCESS,
+    novel: NovelDto.fromShow(response.data)
+  }
+}
+
 export const NovelController = {
-  list
+  list,
+  getBySlug
 }

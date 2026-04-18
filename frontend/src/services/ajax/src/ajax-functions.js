@@ -1,35 +1,29 @@
 import axios from 'axios'
 import { ConfigLoader } from '@/config/config-loader.js'
-import { Request } from './models/request.js'
-import { httpClient } from './models/http-client.js'
-import { STATUS } from '../ajax-constants.js'
-import { AjaxHelpers } from '../ajax-helpers.js'
 import { flash, t } from '@/services/services-helper.js'
+import { Request } from '@/services/ajax/src/models/request.js'
+import { httpClient } from '@/services/ajax/src/models/http-client.js'
+import { STATUS } from '@/services/ajax/ajax-constants.js'
 
-const manageError = async errorResponse => {
-    if (errorResponse.code === 'ERR_CANCELED') { return { data: {}, status: 499 } }
-    if (errorResponse.response === undefined) { return { data: {error: 'error_back'}, status: 500 } }
-    if (AjaxHelpers.isValidationError(errorResponse.response.status)) { return ajaxFunctionsInternal.handleValidationError(errorResponse.response) }
+const manageError = async (error, fallbackRequestId) => {
+    const requestId = error.config?.requestId ?? fallbackRequestId
+    if (Request.get('empty404', requestId) && error.response.status === STATUS.NOT_FOUND) {
+        return { data: [],  status: STATUS.SUCCESS }
+    }
 
-    ajaxFunctionsInternal.showFlash(errorResponse)
+    if (error.code === 'ERR_CANCELED') { return { data: {}, status: 499 } }
+    if (error.response === undefined) { return { data: {error: 'error_back'}, status: 500 } }
 
-    return errorResponse.response
+    ajaxFunctionsInternal.showFlash(error, requestId)
+    await ajaxFunctionsInternal.logError(error, requestId)
+
+    return error.response
 }
 
 const throwError = (message, params = {}) => {
     const errorMessage = t(message, params)
     flash.error(errorMessage)
     throw new Error(errorMessage)
-}
-
-const handleValidationError = errorResponse => {
-    return {
-        ...errorResponse,
-        data: {
-            ...errorResponse.data,
-            validationErrors: AjaxHelpers.formatValidationErrors(errorResponse.data.errors)
-        }
-    }
 }
 
 const getRoute = (route_name, api) => {
@@ -47,7 +41,7 @@ const getRoute = (route_name, api) => {
 const defineApiUrl = (api_name, api_url) => {
     if(api_url === undefined && ConfigLoader.get(`app.apis.${api_name}.url`) === undefined) { ajaxFunctions.throwError('v_error_api_url', { api_name }) }
     return api_url ?? ConfigLoader.get(`app.apis.${api_name}.url`)
-} 
+}
 
 const resendRequest = requestConfig => {
     return axios(requestConfig)
@@ -55,17 +49,12 @@ const resendRequest = requestConfig => {
 
 export const ajaxFunctions = { manageError, getRoute, defineApiUrl, resendRequest, throwError }
 
-const showFlash = errorResponse => {
-    if (Request.get('flash') === false || (Array.isArray(Request.get('no-flash')) && Request.get('no-flash').includes(errorResponse.response.status))) { return }
-    if(errorResponse.response.data?.detail !== undefined) {
-        const message = t(errorResponse.response.data?.detail)
-        flash.error(message)
-        return
-    }
+const showFlash = (error, requestId) => {
+    if (Request.get('flash', requestId) === false || (Array.isArray(Request.get('no-flash', requestId)) && Request.get('no-flash', requestId).includes(error.response.status))) { return }
+    if(error.response.data?.detail !== undefined) { flash.error(error.response.data?.detail); return }
 
-    const error_message = errorResponse.response.status < STATUS.ERROR_SERVER ? 'error_front' : 'error_back'
-    const message = t(error_message)
-    flash.error(message)
+    const error_message = error.response.status < STATUS.ERROR_SERVER ? 'error_front' : 'error_back'
+    flash.errorT(error_message)
 }
 
 const getRouteFromConfig = (route_name, api) => {
@@ -76,4 +65,4 @@ const getRouteFromConfig = (route_name, api) => {
     return {...ConfigLoader.get(`routesApi.global`)[route_name], global : true, name: route_name}
 }
 
-export const ajaxFunctionsInternal = { showFlash, getRouteFromConfig, handleValidationError }
+export const ajaxFunctionsInternal = { showFlash, getRouteFromConfig }

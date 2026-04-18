@@ -59,6 +59,10 @@ const hasRole = (role) => {
   return authStore.hasRole(role)
 }
 
+const getAccessToken = (api) => {
+  return authStore.token.value
+}
+
 export const authFunctions = {
   login,
   register,
@@ -66,5 +70,6 @@ export const authFunctions = {
   fetchCurrentUser,
   getCurrentUser,
   isAuthenticated,
-  hasRole
+  hasRole,
+  getAccessToken
 }

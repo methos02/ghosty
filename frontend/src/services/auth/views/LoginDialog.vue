@@ -56,6 +56,7 @@ const close = () => {
             :label="t('auth.login_email')"
             :required="true"
             autocomplete="email"
+            form="login"
           />
         </div>
 
@@ -67,6 +68,7 @@ const close = () => {
             :label="t('auth.login_password')"
             :required="true"
             autocomplete="current-password"
+            form="login"
           />
         </div>
 

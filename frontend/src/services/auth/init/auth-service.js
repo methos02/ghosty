@@ -9,6 +9,7 @@ export const authService = {
   isAuthenticated: authFunctions.isAuthenticated,
   hasRole: authFunctions.hasRole,
   fetchCurrentUser: authFunctions.fetchCurrentUser,
+  getAccessToken: authFunctions.getAccessToken,
   showLoginDialog: authStore.showLoginDialog,
   showRegisterDialog: authStore.showRegisterDialog,
   openLoginDialog: authStore.openLoginDialog,

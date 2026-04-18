@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
 import SearchBar from '@/views/parts/SearchBar.vue'
 import NovelCard from '@/views/parts/NovelCard.vue'
+import NovelDetailDialog from '@/views/novels/NovelDetailDialog.vue'
 import PaginatorInfinite from '@/components/paginators/PaginatorInfiniteComponent.vue'
 import { useSearchNovels } from '@/composables/useSearchNovels.js'
 import { t } from '@/services/services-helper.js'
@@ -34,10 +35,16 @@ onMounted(async () => {
         <PaginatorInfinite :cb="loadMore" :params="pagination" :options="{observe: 'window'}">
             <div class="novels-container | w-xl py-40 px-20">
                 <div class="novels-grid">
-                    <NovelCard v-for="novel in novels" :key="novel.id" :novel="novel" />
+                    <NovelCard
+                      v-for="novel in novels"
+                      :key="novel.id"
+                      :novel="novel"
+                    />
                 </div>
             </div>
         </PaginatorInfinite>
+
+        <NovelDetailDialog />
     </div>
 </template>
 

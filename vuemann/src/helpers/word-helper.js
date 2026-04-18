@@ -1,12 +1,29 @@
-const capitalize = string => {
+const sanitize = (string) => {
     if (typeof string !== 'string' || string.length === 0) { return '' }
+    return string.trim().replaceAll(/\s+/g, ' ')
+}
 
+const uppercase = (string) => {
+    if (typeof string !== 'string' || string.length === 0) { return '' }
+    return string.toUpperCase()
+}
+
+const capitalize = (string) => {
+    if (typeof string !== 'string' || string.length === 0) { return '' }
     return string[0].toUpperCase() + string.toLowerCase().slice(1)
 }
 
-const normalize = string => {
-    // eslint-disable-next-line unicorn/prefer-string-replace-all
-    return string.normalize("NFD").replace(/[\u0300-\u036F]/g, "").toLowerCase();
+const upperSanitize = (string) => {
+    return wordHelper.uppercase(wordHelper.sanitize(string))
 }
 
-export const wordHelper = { capitalize, normalize }
+const capiSanitize = (string) => {
+    return wordHelper.capitalize(wordHelper.sanitize(string))
+}
+
+const normalize = (string) => {
+    // eslint-disable-next-line unicorn/prefer-string-replace-all
+    return string.normalize('NFD').replace(/[\u0300-\u036F]/g, '').toLowerCase()
+}
+
+export const wordHelper = { sanitize, uppercase, capitalize, upperSanitize, capiSanitize, normalize }

@@ -1,19 +1,7 @@
-const getGenreIconClass = genre => {
-    if(!genre) { return '' }
-    if(genre.toLowerCase() === "f") { return "fa-solid fa-venus" }
-    return genre.toLowerCase() === "m" ? "fa-solid fa-mars" : "fa-solid fa-neuter"
-}
-
-const isRecursivelyIncluded = (subset, object) => {
-    if (typeof subset !== 'object' || subset === null) { return subset === object }
-    
-    return Object.keys(subset).every(key => key in object && utilsH.isRecursivelyIncluded(subset[key], object[key]));
-};
-
 const copyObject = object => {
     const cloned = {};
     for (const key in object) {
-        if (object[key] !== undefined && object[key].constructor === Object) {
+        if (object[key] !== undefined && object[key] !== null && object[key].constructor === Object) {
             cloned[key] = copyObject(object[key]);
             continue
         }
@@ -21,10 +9,6 @@ const copyObject = object => {
         cloned[key] = object[key]
     }
     return cloned;
-}
-const HUNDRED = 100
-const percentOf = (part, total) => {
-    return (part / total) * HUNDRED
 }
 
 const getNestedProperty = (object, key) => {
@@ -35,9 +19,9 @@ const getNestedProperty = (object, key) => {
 
     let result = object
     for (const keyPart of key.split('.')) {
-        if(result[keyPart] === undefined) { 
-            result = undefined; 
-            break; 
+        if(result[keyPart] === undefined) {
+            result = undefined;
+            break;
         }
 
         result = result[keyPart]
@@ -46,11 +30,33 @@ const getNestedProperty = (object, key) => {
     return result
 }
 
-export const utilsH = { 
-    isRecursivelyIncluded, 
-    copyObject, 
-    percentOf, 
-    getGenreIconClass,
-    getNestedProperty 
+const isRecursivelyIncluded = (subset, object) => {
+    if (typeof subset !== 'object' || subset === null) { return subset === object }
+
+    return Object.keys(subset).every(key => key in object && utilsH.isRecursivelyIncluded(subset[key], object[key]));
+};
+
+const HUNDRED = 100
+const percentOf = (part, total) => {
+    return (part / total) * HUNDRED
 }
-  
+
+const voidToEmpty = (data, exclude = []) => {
+    const result = {}
+    for (const [key, value] of Object.entries(data)) {
+        if (exclude.includes(key)) {
+            result[key] = value
+            continue
+        }
+        result[key] = value ?? ''
+    }
+    return result
+}
+
+export const utilsH = {
+    copyObject,
+    getNestedProperty,
+    isRecursivelyIncluded,
+    percentOf,
+    voidToEmpty
+}

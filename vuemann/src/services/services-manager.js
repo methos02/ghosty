@@ -1,125 +1,97 @@
-let services = {}
-let servicesConfig = {}
+/* eslint-disable no-console */
+const state = {
+  services: {},
+}
+
+const getServices = () => Object.keys(state.services)
+
+const hasService = serviceName => {
+  return state.services[servicesManagerInternal.formatServiceName(serviceName)] !== undefined
+}
+
+const register = (serviceName, serviceMethods) => {
+  state.services[servicesManagerInternal.formatServiceName(serviceName)] = serviceMethods
+}
 
 const resetServices = () => {
-  services = {}
-  servicesConfig = {}
+  state.services = {}
 }
 
-const initServices = async (app, servicesInit) => {
-  servicesConfig = servicesInit
+const service = (serviceKey, methodParams) => {
+  const [serviceName, serviceMethod] = serviceKey.split(':')
+  const method = servicesManagerInternal.serviceMethod(serviceName, serviceMethod)
+  const formattedParams = servicesManagerInternal.formatMethodParams(methodParams)
 
-  for (const [serviceName, serviceInit] of Object.entries(servicesInit)) {
-    if(services[serviceName + 'Service'] !== undefined) { continue }
-    await initService(app, serviceName, serviceInit)
-  }
-}
-
-const initializing = new Set()
-const initService = async (app, serviceName, serviceConfig) => {  
-  if (serviceConfig.dependencies && serviceConfig.dependencies.length > 0) {
-    await initDependencies(app, serviceName, serviceConfig)
+  if (method === undefined) {
+    return servicesManagerInternal.serviceDefault(serviceName, serviceMethod, formattedParams)
   }
 
-  if (serviceConfig.services) {
-    services[serviceName + 'Service'] = serviceConfig.services
+  return formattedParams === false ? method() : method(...formattedParams)
+}
+
+export const servicesM = {
+  getServices,
+  hasService,
+  register,
+  resetServices,
+  service,
+}
+
+const formatMethodParams = methodParams => {
+  if (methodParams === undefined) {
+    return false
+  }
+  return Array.isArray(methodParams) ? methodParams : [methodParams]
+}
+
+const formatServiceName = serviceName => {
+  return serviceName.endsWith('Service') ? serviceName : serviceName + 'Service'
+}
+
+const serviceDefault = (serviceName, serviceMethod, methodParams) => {
+  if (servicesDefault[serviceName] === undefined) {
+    return console.log(`default service ${serviceName} est inconnu`)
   }
 
-  if (serviceConfig.plugin) {
-    app.use(await serviceConfig.plugin())
+  if (servicesDefault[serviceName][serviceMethod] === undefined) {
+    return console.log(`default service ${serviceName} n'a pas la méthode ${serviceMethod}`)
   }
 
-  initializing.delete(serviceName)
+  return methodParams === false
+    ? servicesDefault[serviceName][serviceMethod]()
+    : servicesDefault[serviceName][serviceMethod](...methodParams)
 }
 
-const initDependencies = async (app, serviceName, serviceConfig) => {
-  if (initializing.has(serviceName)) {
-    throw new Error(`Dépendance circulaire détectée : ${serviceName} est en cours d'initialisation`)
-  }
-
-  initializing.add(serviceName)
-  
-  for (const dependency of serviceConfig.dependencies) {
-    if (services[dependency + 'Service'] !== undefined) { continue }
-
-    if(servicesConfig[dependency] === undefined) {
-      throw new Error(`Dépendance ${dependency} non trouvée dans les services disponibles pour ${serviceName}`)
-    }
-
-    if (initializing.has(dependency)) {
-      throw new Error(`Dépendance circulaire détectée : ${dependency} est en cours d'initialisation`)
-    }
-
-    await initService(app, dependency, servicesConfig[dependency])
-  }
-}
-
-const hasService = service_name => {
-  service_name = sericesManagerInternal.formatServiceName(service_name)
-  return services[service_name] !== undefined
-}
-
-const getServices = () => {
-  return Object.keys(services)
-}
-
-const service = (service, method_params)  => {
-  const [service_name, service_method] = service.split(':')
-  const method = sericesManagerInternal.serviceMethod(service_name, service_method)
-  method_params = sericesManagerInternal.formatMethodParams(method_params)
-
-  if( method === undefined ) { return sericesManagerInternal.serviceDefault(service_name, service_method, method_params) }
-
-  return method_params === false 
-    ? sericesManagerInternal.serviceMethod(service_name, service_method)() 
-    : sericesManagerInternal.serviceMethod(service_name, service_method)(...method_params)
-}
-
-export const servicesM = { initServices, hasService, getServices, service, resetServices } 
-
-const serviceMethod = (service_name, service_method) => {
-  service_name = sericesManagerInternal.formatServiceName(service_name)
-
-  if (services[service_name] === undefined) { return sericesManagerInternal.serviceError(service_name) }
-  // eslint-disable-next-line no-console
-  if (services[service_name][service_method] === undefined) { return console.error( `méthode ${service_method} inconnue dans le service ${service_name}` ) }
-
-  return services[service_name][service_method]
-}
-
-/* eslint-disable no-console */
-const serviceError = service_name => {
+const serviceError = serviceName => {
   console.error(servicesM.getServices())
   console.trace()
-  console.error(`service ${service_name} inconnu`)
-}
-/* eslint-enable no-console */
-
-const serviceDefault = (service_name, service_method, method_params) =>  {
-  /* eslint-disable no-console */
-  if( servicesDefault[service_name] === undefined ) { return console.log(`default service ${service_name} est inconnu`) }
-  if( servicesDefault[service_name][service_method] === undefined ) { return console.log(`default service ${service_name} n'a pas la méthode ${service_method}`) }
-  /* eslint-enable no-console */
-
-  return method_params === false 
-    ? servicesDefault[service_name][service_method]()
-    : servicesDefault[service_name][service_method](...method_params)
+  console.error(`service ${serviceName} inconnu`)
 }
 
-const formatServiceName = (service_name) => {
-  return service_name.endsWith('Service') ? service_name :  service_name + 'Service'
+const serviceMethod = (serviceName, methodName) => {
+  const formattedName = servicesManagerInternal.formatServiceName(serviceName)
+
+  if (state.services[formattedName] === undefined) {
+    return servicesManagerInternal.serviceError(formattedName)
+  }
+
+  if (state.services[formattedName][methodName] === undefined) {
+    return console.error(`méthode ${methodName} inconnue dans le service ${formattedName}`)
+  }
+
+  return state.services[formattedName][methodName]
 }
 
-const formatMethodParams = method_params => {
-  if(method_params === undefined) { return false }
-  return Array.isArray(method_params) ? method_params : [method_params]
+export const servicesManagerInternal = {
+  formatMethodParams,
+  formatServiceName,
+  serviceDefault,
+  serviceError,
+  serviceMethod,
 }
 
-export const sericesManagerInternal = { serviceMethod, serviceError, serviceDefault, formatServiceName, formatMethodParams }
-
-/* eslint-disable no-console */
 export const servicesDefault = {
-  locale: { t: text_key => text_key },
+  locale: { t: textKey => textKey },
   flash: {
     success: message => console.log(message),
     error: message => console.log(message),

@@ -1,7 +1,12 @@
 {
   "error_no_client" : "Le client http n'a pas été initialisé",
-  "error_front": "Une erreur est survenue sur l'application, merci de prévenir le service informatique",
-  "error_back": "Une erreur est survenue dans le serveur, nous avons été notifiés de cette erreur.",
+  "error_bad_request": "La requête est invalide.",
+  "error_forbidden": "Vous n'avez pas les droits pour effectuer cette action.",
+  "error_not_found": "La ressource demandée n'a pas été trouvée.",
+  "error_conflict": "La ressource a été modifiée par un autre utilisateur. Veuillez rafraîchir et réessayer.",
+  "error_unprocessable": "Les données envoyées sont invalides.",
+  "error_server": "Une erreur est survenue sur le serveur, nous avons été notifiés.",
+  "error_unknown": "Une erreur est survenue.",
   "error_empty_parameter": "Vous devez indiquer les paramètres de la route {route_name}.",
   "error_unknow_parameter": "Le paramètre '{param_name}' n'éxiste pas dans la route {route_name}.",
   "error_missing_parameter": "Certain paramètre de la route {route_name} n'ont pas été renseigné.",
@@ -10,5 +15,6 @@
   "v_route_method_undefined": "Problème de Config: la method de la route {route_name} n'a pas été renseignée.",
   "v_route_api_undefined": "Problème de Config: l'apide la route {route_name} n'a pas été renseignée.",
   "v_route_url_undefined": "Problème de Config: l'url de la route {route_name} n'a pas été renseignée.",
-  "v_error_method_unknow": "Problème de Config: la method {method} de la route {route_name} est inconnue."
+  "v_error_method_unknow": "Problème de Config: la method {method} de la route {route_name} est inconnue.",
+  "api_forbidden_for_user": "Vous n'avez pas accès à cette API."
 }

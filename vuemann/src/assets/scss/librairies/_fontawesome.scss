@@ -1,2 +1,8 @@
-.fa-venus { color: #f58b9d }
-.fa-mars { color: #007AFF }
+@use '@fortawesome/fontawesome-free/css/all.min.css';
+
+.fa-venus {
+  color: #f58b9d;
+}
+.fa-mars {
+  color: #007aff;
+}

@@ -1,0 +1,14 @@
+{
+  "stepper": {
+    "confirm_cancel_message": "Weet u zeker dat u wilt annuleren? Alle niet-opgeslagen gegevens gaan verloren."
+  },
+  "common": {
+    "cancel": "Annuleren",
+    "previous": "Vorige",
+    "next": "Volgende",
+    "submit": "Verzenden",
+    "confirm_cancel": "Bevestig annulering",
+    "yes": "Ja",
+    "no": "Nee"
+  }
+}

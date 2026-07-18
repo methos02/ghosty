@@ -1,11 +1,12 @@
 <script setup>
 import { ref } from 'vue'
+import { pixelHelper } from '@brugmann/vuemann/src/helpers/pixel-helper.js'
 
 const props = defineProps({
-  type : { type: String, default: 'bars'},
-  cb: { type: Function, default: undefined},
-  click: { type: Function, default: undefined }, 
-  params : { type: Array, default: []},
+  type: { type: String, default: 'bars' },
+  cb: { type: Function, default: undefined },
+  click: { type: Function, default: undefined },
+  params: { type: Array, default: [] },
   infinite: { type: Boolean, default: false },
   buttonClasses: { type: String, default: undefined },
   buttonType: { type: String, default: 'button' },
@@ -13,63 +14,88 @@ const props = defineProps({
 
 const validateProps = () => {
   if (!props.click && !props.cb) {
-    throw new Error("La propriété cb ou click doivent être renseigné");
+    throw new Error('La propriété cb ou click doivent être renseigné')
   }
-};
+}
 
-validateProps();
+validateProps()
 
 const button = ref()
 const loading = ref(false)
-const size = ref({ width: undefined, height: undefined })
+const sizeDefault = { width: undefined, height: undefined }
+const size = ref({ ...sizeDefault })
 
 const clickEvent = async () => {
-  if (props.click === undefined) { return }
+  if (loading.value || props.click === undefined) {
+    return
+  }
   setLoad(true)
   await props.click(...props.params)
-  if(!props.infinite) { setLoad(false) }
+  if (!props.infinite) {
+    setLoad(false)
+  }
 }
 
-const runCallBack = async () => {
+const runCallback = async () => {
+  if (loading.value) {
+    return
+  }
   setLoad(true)
   await props.cb(...props.params)
-  if(!props.infinite) { setLoad(false) }
+  if (!props.infinite) {
+    setLoad(false)
+  }
 }
 
-const setLoad = state => { 
-  if(size.value.height === undefined) { defineButtonSize() }
-  loading.value = state 
+const setLoad = state => {
+  if (state === true) {
+    defineButtonSize()
+  }
+  if (state === false) {
+    size.value = { ...sizeDefault }
+  }
+
+  loading.value = state
 }
 
-const EXTRA_PADDING = 5;
-const defineButtonSize = ()=> {
-  const styles = globalThis.getComputedStyle(button.value);
+const defineButtonSize = () => {
+  const styles = globalThis.getComputedStyle(button.value)
 
-  const buttonWidth = Number.parseFloat(styles.borderRightWidth) + Number.parseFloat(styles.borderLeftWidth) + button.value.clientWidth
-  const buttonHeight = Number.parseFloat(styles.borderTopWidth) + Number.parseFloat(styles.borderBottomWidth) + button.value.clientHeight
+  const buttonWidth =
+    pixelHelper.pxToNumber(styles.borderRightWidth) +
+    pixelHelper.pxToNumber(styles.borderLeftWidth) +
+    button.value.clientWidth
 
-  if(buttonHeight === 0) { return }
+  const buttonHeight =
+    pixelHelper.pxToNumber(styles.borderTopWidth) +
+    pixelHelper.pxToNumber(styles.borderBottomWidth) +
+    button.value.clientHeight
 
-  size.value = { 
-    height: buttonHeight + 'px', 
-    width: (buttonWidth + EXTRA_PADDING) + 'px' 
-  } 
+  if (buttonHeight === 0) {
+    return
+  }
+
+  size.value = {
+    height: pixelHelper.numberToPx(buttonHeight),
+    width: pixelHelper.numberToPx(buttonWidth),
+  }
 }
 
-defineExpose({ setLoad, runCallBack })
+defineExpose({ setLoad, runCallback })
 </script>
 <template>
   <div class="loader_container">
-    <button 
+    <button
       v-if="type === 'bars'"
-      ref="button" 
-      @click="clickEvent" 
+      ref="button"
+      @click="clickEvent"
       class="loader-tabs"
-      :class="buttonClasses ?? 'btn btn-primary'" 
+      :class="buttonClasses ?? 'btn btn-primary btn-primary-400-active'"
       :type="buttonType"
+      :disabled="loading"
       :style="{ height: size.height, width: size.width }"
     >
-      <slot v-if="!loading" ></slot>
+      <slot v-if="!loading"></slot>
       <span
         v-if="loading"
         class="loader loader-bars"
@@ -78,16 +104,17 @@ defineExpose({ setLoad, runCallBack })
         <span></span>
       </span>
     </button>
-    <button 
+    <button
       v-if="type === 'icon'"
-      ref="button" 
-      @click="clickEvent" 
+      ref="button"
+      @click="clickEvent"
       class="loader-icon | pointer f-center"
-      :class="buttonClasses" 
+      :class="buttonClasses"
       :type="buttonType"
+      :disabled="loading"
       :style="{ height: size.height, width: size.width }"
     >
-      <slot v-if="!loading" ></slot>
+      <slot v-if="!loading"></slot>
       <span
         v-if="loading"
         class="loader-spin"
@@ -97,4 +124,3 @@ defineExpose({ setLoad, runCallBack })
     </button>
   </div>
 </template>
-

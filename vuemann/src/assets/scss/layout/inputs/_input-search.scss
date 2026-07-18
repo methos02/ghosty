@@ -1,8 +1,6 @@
-@use '../../variables';
-
 .input-search {
   position: relative;
-  
+
   &.searching::after {
     content: ' ';
     position: absolute;
@@ -10,7 +8,7 @@
     right: 10px;
     width: 15px;
     height: 15px;
-    border: 3px solid variables.$primary;
+    border: 3px solid var(--primary);
     border-bottom-color: transparent;
     border-radius: 50%;
     display: inline-block;
@@ -26,4 +24,8 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+.dropdown-items li.input-search--selected {
+  background-color: var(--primary-200);
 }

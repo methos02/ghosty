@@ -1,18 +1,28 @@
-let abortController
+const state = {
+  abortController: undefined,
+}
 
 const setAbort = abort_option => {
-    if (abort_option === undefined) { return }
+  if (abort_option === undefined) {
+    return
+  }
 
-    if (abortController !== undefined) { abortController.abort() }
-    abortController = new AbortController()
+  if (state.abortController !== undefined) {
+    state.abortController.abort()
+  }
+  state.abortController = new AbortController()
 }
 
 const getAbort = () => {
-    return abortController
+  return state.abortController
 }
 
 const abortSignal = () => {
-    return abortController.signal
+  return state.abortController.signal
 }
 
-export const abortManager = {setAbort, getAbort, abortSignal}
+export const abortManager = {
+  setAbort,
+  getAbort,
+  abortSignal,
+}

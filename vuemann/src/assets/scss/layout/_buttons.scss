@@ -1,5 +1,5 @@
-@use 'sass:color';
 @use 'sass:map';
+@use '../variables' as vars;
 
 .btn {
   display: inline-flex;
@@ -10,56 +10,98 @@
   border-radius: 50px;
   border: none;
   cursor: pointer;
-  transition: background-color 300ms, color 300ms;
+  transition:
+    background-color 300ms,
+    color 300ms;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-300);
+    outline-offset: 2px;
+  }
 
   &[disabled] {
     background-color: var(--neutral-500);
+    cursor: not-allowed;
   }
 }
 
-.btn-icon:focus {
-  outline: 1px solid var(--primary-300);
-  border-radius: 5px;
+.btn-icon {
+  cursor: pointer;
 
   i {
+    color: var(--primary);
+    font-size: var(--fs-600);
+    transition: color 300ms;
+  }
+
+  &:hover i,
+  &:focus i {
     color: var(--primary-300);
+  }
+
+  &:focus {
+    outline: 1px solid var(--primary-300);
+    border-radius: 5px;
   }
 }
 
-$btn_colors: (
-  "primary": (
-    bg: var(--primary),
-    bg-hover: var(--primary-400)
-  ),
-  "danger": ( bg: var(--danger)),
-  "success": ( bg: var(--success)),
-  "info": ( bg: var(--info)),
-  "warning":( bg: var(--warning)),
-  "blue": (
-    bg: var(--blue-300),
-    bg-hover: var(--blue)
-  ),
-);
+@each $name, $bg in vars.$btn_colors {
+  $text: map.get(vars.$btn_text_colors, $name) or var(--neutral-100);
+  $hover: map.get(vars.$btn_hover_colors, $name) or color-mix(in oklch, $bg 85%, black);
 
-@each $name, $param in $btn_colors {
   .btn-#{$name} {
-    background-color: map.get($param, bg) ;
-    color: if(map.has-key($param, color), map.get($param, color), var(--neutral-100));
+    background-color: $bg;
+    color: $text;
 
-    &:hover:not([disabled]), &.active {
-      background-color: if(map.has-key($param, bg-hover), map.get($param, bg-hover), color-mix(in oklch, map.get($param, bg) 85%, black));
-      color: if(map.has-key($param, color), map.get($param, color), var(--neutral-100));
+    &:hover:not([disabled]),
+    &.active {
+      background-color: $hover;
     }
   }
 
   .btn-#{$name}-alt {
-    background-color: if(map.has-key($param, color), map.get($param, color), var(--neutral-100));
-    border: 1px solid map.get($param, bg);
-    color: map.get($param, bg);
+    background-color: var(--neutral-100);
+    border: 1px solid $bg;
+    color: $bg;
 
-    &:hover:not([disabled]), &.active {
-      background-color: map.get($param, bg);
-      color: if(map.has-key($param, color-hover), map.get($param, color-hover), var(--neutral-100));
+    &:hover:not([disabled]),
+    &.active {
+      background-color: $bg;
+      color: $text;
+    }
+  }
+
+  .btn-ghost-#{$name} {
+    background-color: var(--neutral-400);
+    color: var(--neutral-800);
+
+    &:hover:not([disabled]),
+    &.active {
+      background-color: $bg;
+      color: $text;
+    }
+  }
+
+  .btn-#{$name}-active {
+    &:hover:not([disabled]),
+    &.active {
+      background-color: $bg;
+      color: $text;
+    }
+  }
+
+  .btn-icon.btn-icon-#{$name} {
+    i {
+      color: $bg;
+    }
+
+    &:hover i,
+    &:focus i {
+      color: $hover;
+    }
+
+    &:focus {
+      outline: 1px solid $hover;
     }
   }
 }

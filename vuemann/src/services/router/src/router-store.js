@@ -1,8 +1,8 @@
-import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export const useRouterStore = defineStore('router', () => {
-  const urlIntented = ref('/')
+// State global partagé
+const urlIntented = ref('/')
 
+export const useRouterStore = () => {
   return { urlIntented }
-})
+}

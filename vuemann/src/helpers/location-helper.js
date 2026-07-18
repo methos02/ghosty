@@ -5,17 +5,17 @@ const getPathname = () => globalThis.location.pathname
 const getSearch = () => globalThis.location.search
 
 const reload = () => {
-    globalThis.location.reload()
+  globalThis.location.reload()
 }
 
 const setHref = url => {
-    globalThis.location.href = url
+  globalThis.location.assign(url)
 }
 
 export const locationHelper = {
-    getHash,
-    getPathname,
-    getSearch,
-    reload,
-    setHref
+  getHash,
+  getPathname,
+  getSearch,
+  reload,
+  setHref,
 }

@@ -1,12 +1,14 @@
-let translater
+const state = {
+  translater: undefined,
+}
 
-const setTranslater = translater_instance =>  {
-  translater = translater_instance
-  return translater
+const setTranslater = translater_instance => {
+  state.translater = translater_instance
+  return state.translater
 }
 
 const getTranslater = () => {
-  return translater
+  return state.translater
 }
 
 const vueTranslate = (message, params) => {
@@ -14,38 +16,22 @@ const vueTranslate = (message, params) => {
 }
 
 const loadLocaleMessages = async locale => {
-  translater.global.setLocaleMessage(locale, await getLocaleMessage(locale))
+  state.translater.global.setLocaleMessage(locale, await getLocaleMessage(locale))
 }
 
-export const localeFunctions = { setTranslater, getTranslater, vueTranslate, loadLocaleMessages }
-
-const getLocaleMessage = async (locale) => {
-  const version = await getAppVersion();
-
-    try {
-      // Code pour Node.js (tests)
-      const { default: path } = await import("node:path");
-      const { readFile } = await import("node:fs/promises");
-      const filePath = path.resolve("public/locales", `app-translate-${locale}-${version}.json`);
-      const data = await readFile(filePath, "utf8");
-      return JSON.parse(data);
-    
-    } catch {
-      // Code pour le navigateur
-      return await fetch(`/locales/app-translate-${locale}-${version}.json`).then((response) => response.json())
-    }  
+export const localeFunctions = {
+  setTranslater,
+  getTranslater,
+  vueTranslate,
+  loadLocaleMessages,
 }
 
-const getAppVersion = async () => {
-  try {
-    // Toujours lire la vraie version depuis package.json pour avoir les bons fichiers
-    const { readFile } = await import("node:fs/promises");
-    const data = await readFile("package.json", "utf8");
-    const packageJson = JSON.parse(data);
-    return packageJson.version.replaceAll('.', '_');
-  } catch {
-    // Fallback: utiliser la variable globale définie par Vite (navigateur uniquement)
-    return __APP_VERSION__.replaceAll('.', '_');
-  }
+const getLocaleMessage = async locale => {
+  const version = getAppVersion()
+  const response = await fetch(`/locales/app-translate-${locale}-${version}.json`)
+  return response.json()
 }
-  
+
+const getAppVersion = () => {
+  return __APP_VERSION__.replaceAll('.', '_')
+}

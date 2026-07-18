@@ -1,8 +1,0 @@
-{
-  "user_search" : {
-    "search_username_label": "Username de l'utilisateur",
-    "search_fullname_label": "Nom de l'utilisateur",
-    "switch_search_title": "Basculer entre recherche par nom d'utilisateur et nom complet",
-    "users_found": "Utilisateurs trouvés : {count}"
-  }
-} 

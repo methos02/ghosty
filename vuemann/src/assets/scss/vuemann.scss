@@ -2,6 +2,8 @@
 @use 'layout/reset';
 
 @use 'components/loader';
+@use '@brugmann/vuemann/src/components/tabs/tabs.scss';
+@use '@brugmann/vuemann/src/components/stepper/stepper.scss';
 
 @use 'layout/table';
 @use 'layout/title';

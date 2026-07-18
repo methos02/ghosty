@@ -2,9 +2,8 @@
 
 .container {
   margin-inline: 85px;
-  min-height: calc(100vh - variables.$header-height - 50px);
+  min-height: calc(100vh - var(--header-height) - 50px);
   padding: 25px 15px;
-
 
   @media (max-width: variables.$xxl) {
     margin-inline: 15px;
@@ -13,8 +12,8 @@
 
 .container-merged {
   width: 100%;
-  max-width: variables.$xl;
-  min-height: calc(100vh - variables.$header-height);
+  max-width: var(--xl);
+  min-height: calc(100vh - var(--header-height));
 
   margin-inline: auto;
   padding: 25px 15px;

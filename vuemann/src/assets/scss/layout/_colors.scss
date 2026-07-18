@@ -1,43 +1,44 @@
-$colors : (
-  "primary-100" : var(--primary-100),
-  "primary-300" : var(--primary-300),
-  "primary-400" : var(--primary-400),
-  "primary" : var(--primary),
-  "primary-600" : var(--primary-600),
-
-  "success" : var(--success),
-  "danger-300" : var(--danger-300),
-  "danger" : var(--danger),
-  "warning" : var(--warning),
-  "info" : var(--info),
-  
-  "blue-300" : var(--blue-300),
-  "blue" : var(--blue),
-
-  "green-300" : var(--green-300),
-  "green" : var(--green),
-  
-  "yellow" : var(--yellow),
-
-  "red" : var(--red),
-  
-  "neutral-100" : var(--neutral-100),
-  "neutral-200" : var(--neutral-200),
-  "neutral-300" : var(--neutral-300),
-  "neutral-400" : var(--neutral-400),
-  "neutral-500" : var(--neutral-500),
-  "neutral-600" : var(--neutral-600),
-  "neutral-700" : var(--neutral-700),
-  "neutral-800" : var(--neutral-800),
-  "neutral-900" : var(--neutral-900),
+$colors: (
+  'primary-100': var(--primary-100),
+  'primary-200': var(--primary-200),
+  'primary-300': var(--primary-300),
+  'primary-400': var(--primary-400),
+  'primary': var(--primary),
+  'primary-600': var(--primary-600),
+  'success': var(--success),
+  'danger': var(--danger),
+  'danger-400': var(--danger-400),
+  'danger-300': var(--danger-300),
+  'danger-200': var(--danger-200),
+  'warning': var(--warning),
+  'info': var(--info),
+  'blue-300': var(--blue-300),
+  'blue': var(--blue),
+  'green-300': var(--green-300),
+  'green': var(--green),
+  'yellow': var(--yellow),
+  'yellow-300': var(--yellow-300),
+  'red': var(--red),
+  'red-300': var(--red-300),
+  'neutral-100': var(--neutral-100),
+  'neutral-200': var(--neutral-200),
+  'neutral-300': var(--neutral-300),
+  'neutral-400': var(--neutral-400),
+  'neutral-500': var(--neutral-500),
+  'neutral-600': var(--neutral-600),
+  'neutral-700': var(--neutral-700),
+  'neutral-800': var(--neutral-800),
+  'neutral-900': var(--neutral-900),
 );
 
 @each $color_name, $color in $colors {
-  .color-#{$color_name}, .color-#{$color_name}-hover:hover {
-    color: $color
+  .color-#{$color_name},
+  .color-#{$color_name}-hover:hover {
+    color: $color;
   }
 
-  .bg-#{$color_name}, .bg-#{$color_name}-hover:hover { 
+  .bg-#{$color_name},
+  .bg-#{$color_name}-hover:hover {
     background-color: $color;
   }
 

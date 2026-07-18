@@ -6,22 +6,28 @@
   border-radius: 25px;
   font-size: var(--fs-300);
   background-color: var(--neutral-300);
-  transition: background-color linear 300ms, color linear 300ms;
+  transition:
+    background-color linear 300ms,
+    color linear 300ms;
 }
 
 $badge_colors: (
-  "primary": var(--primary),
-  "danger": var(--danger),
-  "success": var(--success),
-  "info": var(--info),
-  "warning": var(--warning),
-  "blue-300": var(--blue-300),
-  "blue": var(--blue),
+  'primary': var(--primary),
+  'danger': var(--danger),
+  'success': var(--success),
+  'info': var(--info),
+  'warning': var(--warning),
+  'blue-300': var(--blue-300),
+  'blue': var(--blue),
+  'red': var(--red),
+  'green-300': var(--green-300),
+  'green': var(--green),
+  'yellow': var(--yellow),
 );
 
 @each $name, $bg-color in $badge_colors {
   .badge-#{$name} {
-    background-color: $bg-color ;
+    background-color: $bg-color;
     color: var(--neutral-100);
   }
 }

@@ -1,0 +1,14 @@
+{
+  "stepper": {
+    "confirm_cancel_message": "Êtes-vous sûr de vouloir annuler ? Toutes les données non enregistrées seront perdues."
+  },
+  "common": {
+    "cancel": "Annuler",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "submit": "Envoyer",
+    "confirm_cancel": "Confirmer l'annulation",
+    "yes": "Oui",
+    "no": "Non"
+  }
+}

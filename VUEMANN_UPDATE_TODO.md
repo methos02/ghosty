@@ -18,16 +18,16 @@
 
 ## 0. Préparation
 
-- [ ] Préparer un worktree git dédié à la mise à jour Vuemann (branche `feature/vuemann-update`)
-- [ ] Comparer les `package.json` / dépendances entre l'ancienne et la nouvelle version de Vuemann
+- [x] Préparer un worktree git dédié à la mise à jour Vuemann (branche `feature/vuemann-update`)
+- [x] Comparer les `package.json` / dépendances entre l'ancienne et la nouvelle version de Vuemann
 
 ---
 
 ## 1. Fichiers racine et helpers
 
-- [ ] Mettre à jour les fichiers racine de Vuemann (`App.vue`, `main.js`, `vuemann-vite.js`)
-- [ ] Mettre à jour les helpers existants (`date-helper`, `utils-helper`, `word-helper`)
-- [ ] Ajouter les nouveaux helpers : `locale-helper.js`, `location-helper.js`, `toc-helper.js`
+- [x] ~~Mettre à jour les fichiers racine de Vuemann (`App.vue`, `main.js`, `vuemann-vite.js`)~~ — **droppés** : démo uniquement (App.vue/main.js) et features inutiles pour Ghosty (vuemann-vite.js)
+- [x] Mettre à jour les helpers existants (`date-helper`, `utils-helper`, `word-helper`) — propagation `utils-helper` vers `frontend/src/helpers/` avec filtrage strict (que les fonctions appelées)
+- [x] Ajouter les nouveaux helpers : `locale-helper.js`, `location-helper.js` — ~~`toc-helper.js`~~ droppé (TOC sans sens pour un site de romans)
 
 ---
 
@@ -55,9 +55,9 @@
   - `breadcrumb/`, `changelog/`, `paginators/`, `deprecated/`
 - [ ] Ajouter les nouveaux composants :
   - `DelayedLoaderComponent.vue`
-  - `DocumentationComponent.vue`
+  - ~~`DocumentationComponent.vue`~~ — **droppé** (pas de doc dans un site de romans)
   - `SkeletonLoader.vue`
-  - `TableOfContentsComponent.vue`
+  - ~~`TableOfContentsComponent.vue`~~ — **droppé** (TOC sans sens pour Ghosty)
   - `stepper/StepperComponent.vue` (+ `stepper.scss`, `use-stepper-keyboard-navigation.js`)
   - `tabs/TabsComponent.vue` + `TabItemComponent.vue` (+ `tabs.scss`)
 
@@ -94,10 +94,7 @@
 ## 7. Configuration
 
 - [ ] Mettre à jour la config : `app-config.js`, `config-loader.js`, `route-config.js`, `routes-api-config.js`
-- [ ] Ajouter la nouvelle config `documentations/` :
-  - `general.js`
-  - `pages/auth.js`
-  - `pages/auth-keycloak.js`
+- [ ] ~~Ajouter la nouvelle config `documentations/`~~ — **droppé** (pas de doc dans Ghosty)
 
 ---
 
@@ -109,9 +106,7 @@
 - [ ] **Supprimer** les vues obsolètes : `CommandsPage.vue`, `commandsPage/InitApiPage.vue`
 - [ ] Ajouter les nouvelles vues :
   - `ConventionsPage.vue`
-  - `Documentation/AuthDocumentPage.vue`
-  - `Documentation/ComponentsDocumentPage.vue`
-  - `Documentation/HomeDocumentPage.vue`
+  - ~~`Documentation/AuthDocumentPage.vue`, `ComponentsDocumentPage.vue`, `HomeDocumentPage.vue`~~ — **droppées** (pas de doc dans Ghosty)
   - `apiPage/BeidCardReaderPage.vue` (si beid intégré)
   - `componentsPage/DelayedLoaderPage.vue`
   - `componentsPage/SkeletonLoaderPage.vue`

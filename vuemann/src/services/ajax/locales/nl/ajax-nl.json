@@ -1,0 +1,20 @@
+{
+  "error_no_client" : "De HTTP-client is niet geïnitialiseerd",
+  "error_bad_request": "Het verzoek is ongeldig.",
+  "error_forbidden": "U heeft geen toestemming om deze actie uit te voeren.",
+  "error_not_found": "De gevraagde bron werd niet gevonden.",
+  "error_conflict": "De bron is door een andere gebruiker gewijzigd. Vernieuw de pagina en probeer het opnieuw.",
+  "error_unprocessable": "De ingediende gegevens zijn ongeldig.",
+  "error_server": "Er is een serverfout opgetreden, we zijn op de hoogte gebracht.",
+  "error_unknown": "Er is een fout opgetreden.",
+  "error_empty_parameter": "U moet de parameters van de route {route_name} opgeven.",
+  "error_unknow_parameter": "De parameter '{param_name}' bestaat niet in de route {route_name}.",
+  "error_missing_parameter": "Bepaalde parameters van de route {route_name} zijn niet ingevuld.",
+  "v_error_api_url": "De URL van de API {api_name} is ongeldig.",
+  "v_route_unknow": "De route '{route_name}' is onbekend",
+  "v_route_method_undefined": "Configuratieprobleem: de methode van de route {route_name} is niet opgegeven.",
+  "v_route_api_undefined": "Configuratieprobleem: de API van de route {route_name} is niet opgegeven.",
+  "v_route_url_undefined": "Configuratieprobleem: de URL van de route {route_name} is niet opgegeven.",
+  "v_error_method_unknow": "Configuratieprobleem: de methode {method} van de route {route_name} is onbekend.",
+  "api_forbidden_for_user": "U heeft geen toegang tot deze API."
+}

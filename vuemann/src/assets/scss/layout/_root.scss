@@ -9,6 +9,7 @@
   --xxl: #{variables.$xxl};
 
   --primary-100: #{variables.$primary-100};
+  --primary-200: #{variables.$primary-200};
   --primary-300: #{variables.$primary-300};
   --primary-400: #{variables.$primary-400};
   --primary: #{variables.$primary};
@@ -20,7 +21,10 @@
   --green-300: #{variables.$green-300};
   --green: #{variables.$green};
 
+  --yellow-300: #{variables.$yellow-300};
   --yellow: #{variables.$yellow};
+
+  --red-300: #{variables.$red-300};
   --red: #{variables.$red};
 
   --neutral-100: #{variables.$neutral-100};
@@ -33,10 +37,14 @@
   --neutral-800: #{variables.$neutral-800};
   --neutral-900: #{variables.$neutral-900};
 
+  --danger-200: #{variables.$danger-200};
   --danger-300: #{variables.$danger-300};
+  --danger-400: #{variables.$danger-400};
   --danger: #{variables.$danger};
+  --warning-100: #{variables.$warning-100};
   --warning-300: #{variables.$warning-300};
   --warning: #{variables.$warning};
+  --success-100: #{variables.$success-100};
   --success-300: #{variables.$success-300};
   --success: #{variables.$success};
   --info-300: #{variables.$info-300};
@@ -44,6 +52,7 @@
 
   --fs-300: #{variables.$fs-300};
   --fs-400: #{variables.$fs-400};
+  --fs-500: #{variables.$fs-500};
   --fs-600: #{variables.$fs-600};
   --fs-700: #{variables.$fs-700};
   --fs-800: #{variables.$fs-800};
@@ -54,6 +63,7 @@
   --h1-fs: #{variables.$h1-fs};
   --h2-fs: #{variables.$h2-fs};
   --h3-fs: #{variables.$h3-fs};
+  --h4-fs: #{variables.$h4-fs};
 
   --header-height: #{variables.$header-height};
   --input-height: #{variables.$input-height};

@@ -1,74 +1,89 @@
 <script setup>
-import {ref, onMounted} from "vue";
-import DialogComponent from "@brugmann/vuemann/src/components/DialogComponent.vue";
-import { flash, t } from "@brugmann/vuemann/src/services/services-helper.js";
+import { ref, onMounted } from 'vue'
+import DialogComponent from '@brugmann/vuemann/src/components/DialogComponent.vue'
+import { flash, t } from '@brugmann/vuemann/src/shortcuts/services-shortcut.js'
 
 const props = defineProps({
-  icon : { type: String, default: ''},
-  text : { type: String, default: ''},
-  cb : { type: Function, required: true},
-  params : { type: Array, default: []},
-  question : { type: String, default: '' }
+  icon: { type: String, default: '' },
+  text: { type: String, default: '' },
+  cb: { type: Function, required: true },
+  params: { type: Array, default: [] },
+  question: { type: String, default: '' },
 })
 
 onMounted(() => {
-  if(props.text !== '' && props.icon !== '') { flash.error('ConfirmIconComponent: text and icon cannot be used together'); }
+  if (props.text !== '' && props.icon !== '') {
+    flash.error('ConfirmIconComponent: text and icon cannot be used together')
+  }
 })
 
 const dialog = ref()
 const state = ref('init')
 
-const runCallBack = async () => {
-  if(props.question !== '') { dialog.value.close() }
-  
+const runCallback = async () => {
+  if (props.question !== '') {
+    dialog.value.close()
+  }
+
   state.value = 'loading'
   await props.cb(...props.params)
-  state.value = 'init' 
+  state.value = 'init'
 }
 
 const clickEvent = () => {
   state.value = 'confirm'
-  
-  if(props.question !== '') { dialog.value.show() }
+
+  if (props.question !== '') {
+    dialog.value.show()
+  }
 }
 </script>
 
 <template>
   <div class="confirm-icon | f-center">
     <button
-        v-if="state === 'init' || (state === 'confirm' && question !== '')"
-        type="button"
-        class="button-confirm | link-default pointer"
-        data-confirm
-        @click="clickEvent"
+      v-if="state === 'init' || (state === 'confirm' && question !== '')"
+      type="button"
+      class="button-confirm | link-default pointer"
+      data-confirm
+      @click="clickEvent"
     >
-      <i v-if="icon !== '' && text === ''" :class="icon"></i>
-      <span 
+      <i
+        v-if="icon !== '' && text === ''"
+        :class="icon"
+      ></i>
+      <span
         v-if="text !== '' && icon === ''"
         class="pointer underline-hover"
       >
         {{ text }}
       </span>
     </button>
-    <div v-if="state === 'confirm' && question === ''" class="f-center g-5">
+    <div
+      v-if="state === 'confirm' && question === ''"
+      class="f-center g-5"
+    >
       <button
-          type="button"
-          class="confirm-icon_button | pointer"
-          data-valid
-          @click="runCallBack"
+        type="button"
+        class="confirm-icon_button | pointer"
+        data-valid
+        @click="runCallback"
       >
         <i class="confirm-icon_icon | success fa-solid fa-check"></i>
       </button>
       <button
-          type="button"
-          data-cancel
-          class="confirm-icon_button | pointer"
-          @click="state = 'init'"
+        type="button"
+        data-cancel
+        class="confirm-icon_button | pointer"
+        @click="state = 'init'"
       >
         <i class="confirm-icon_icon | danger fa-solid fa-xmark"></i>
       </button>
     </div>
-    <div v-if="state === 'loading'" class="row-center">
+    <div
+      v-if="state === 'loading'"
+      class="row-center"
+    >
       <span class="loader-spin"></span>
     </div>
     <DialogComponent
@@ -85,7 +100,7 @@ const clickEvent = () => {
           type="button"
           class="btn btn-success pointer"
           data-valide
-          @click="runCallBack"
+          @click="runCallback"
         >
           <i class="fa-solid fa-check mr-5"></i>
           {{ t('confirm_button.valide') }}
@@ -109,10 +124,15 @@ const clickEvent = () => {
   height: 25px;
 
   .button-confirm {
-    i { color: var(--primary); }
+    i {
+      color: var(--primary);
+    }
 
-    &:hover, &:focus {
-      i { color: var(--primary-300); }
+    &:hover,
+    &:focus {
+      i {
+        color: var(--primary-300);
+      }
     }
 
     &:focus {
@@ -123,10 +143,14 @@ const clickEvent = () => {
 
   &_icon {
     font-size: 1.4rem;
-    transition: color linear 200ms;  
+    transition: color linear 200ms;
 
-    &.success:hover { color: var(--success); }
-    &.danger:hover { color: var(--danger); }
+    &.success:hover {
+      color: var(--success);
+    }
+    &.danger:hover {
+      color: var(--danger);
+    }
   }
 }
 </style>

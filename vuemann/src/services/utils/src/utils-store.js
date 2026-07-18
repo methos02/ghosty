@@ -1,39 +1,57 @@
-import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { APP_STATUS } from '@brugmann/vuemann/src/services/utils/utils-constants.js'
+import { APP_STATUS } from '@brugmann/vuemann/src/constants/utils-constants.js'
 
-export const useUtilsStore = defineStore('utils', () => {
-  const instances = ref({})
-  const errorGlobal = ref()
-  const errorsGlobal = ref([])
-  const needUpdate = ref(false)
-  const appStatus = ref(APP_STATUS.LOADING)
+const defaultLoadingSentence = 'app-component.loading'
 
-  return { 
-    instances, 
-    errorGlobal, 
-    errorsGlobal, 
-    needUpdate, 
-    appStatus, 
-  }
-})
+const errorGlobal = ref()
+const errorsGlobal = ref([])
+const needUpdate = ref(false)
+const appStatus = ref(APP_STATUS.INIT)
+const loadingSentence = ref(defaultLoadingSentence)
 
-let store
-const get = () => {
-  if(store === undefined) { store = useUtilsStore() }
-  return store
-}
-
-const setAppStatus = (newStatus) => {
-  utilsStore.get().appStatus = newStatus
+const setAppStatus = newStatus => {
+  appStatus.value = newStatus
 }
 
 const getAppStatus = () => {
-  return utilsStore.get().appStatus
+  return appStatus.value
 }
 
-export const utilsStore = { 
-  get, 
-  setAppStatus, 
-  getAppStatus 
+const setLoadingSentence = sentence => {
+  loadingSentence.value = sentence
 }
+
+const getLoadingSentence = () => {
+  return loadingSentence.value
+}
+
+const resetLoadingSentence = () => {
+  loadingSentence.value = defaultLoadingSentence
+}
+
+const setAppError = error => {
+  errorGlobal.value = error
+}
+
+const getAppError = () => {
+  return errorGlobal.value
+}
+
+export const utilsStore = {
+  setAppStatus,
+  getAppStatus,
+  setLoadingSentence,
+  getLoadingSentence,
+  resetLoadingSentence,
+  setAppError,
+  getAppError,
+}
+
+export const useUtilsStore = () => ({
+  errorGlobal,
+  errorsGlobal,
+  needUpdate,
+  appStatus,
+  loadingSentence,
+  utilsStore,
+})

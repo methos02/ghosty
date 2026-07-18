@@ -5,7 +5,9 @@
       "title": "Erreur de l'application",
       "description": "Une erreur s'est produite lors du chargement de l'application. Veuillez réessayer.",
       "retry": "Réessayer",
-      "callback-undefined": "Le callback retourne undefined"
+      "callback-undefined": "Le callback retourne undefined",
+      "dynamic-import": "Une nouvelle version est disponible. Veuillez recharger l'application.",
+      "api-unreachable": "Impossible de joindre le serveur : {apis}"
     }
   }
 }

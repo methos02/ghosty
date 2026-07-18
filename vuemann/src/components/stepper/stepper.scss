@@ -1,0 +1,123 @@
+.stepper {
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 25px 20px;
+    background-color: var(--neutral-100, #ffffff);
+    border-radius: 5px;
+    box-shadow: -2px 2px 5px 0px rgba(0, 0, 0, 0.25);
+  }
+
+  &__steps-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+
+  &__step-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+
+  &__step-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+    min-width: 100px;
+  }
+
+  &__step {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__step-circle {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    i {
+      font-size: 2rem;
+    }
+  }
+
+  &__step-container--neutral &__step-circle {
+    background-color: var(--neutral-300);
+    color: var(--neutral-100);
+  }
+
+  &__step-container--colored &__step-circle {
+    background-color: var(--primary);
+    color: var(--neutral-100);
+
+    &:hover {
+      background-color: var(--primary-300);
+    }
+  }
+
+  &__step-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--neutral-500);
+    text-align: center;
+    margin: 0;
+    max-width: 100px;
+    line-height: 13px;
+  }
+
+  &__step-container--with-line::before {
+    content: '';
+    width: 100px;
+    height: 2px;
+    margin: 0 10px;
+    align-self: flex-start;
+    margin-top: 24px;
+    transition: all 0.3s ease;
+    background-color: var(--neutral-300);
+  }
+
+  &__step-container--colored::before {
+    background-color: var(--primary);
+  }
+
+  &__step-container--clickable &__step-wrapper {
+    cursor: pointer;
+  }
+
+  &__content {
+    margin-top: 20px;
+  }
+
+  &__card {
+    background-color: var(--neutral-100);
+    border-radius: 5px;
+    box-shadow: -2px 2px 5px 0px rgba(0, 0, 0, 0.25);
+    padding: 30px;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid var(--neutral-300);
+  }
+
+  &__actions-right {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+}

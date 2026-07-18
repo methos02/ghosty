@@ -1,40 +1,94 @@
-import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { flashFunctions } from './flash-functions.js'
-import { UTILS } from '../../utils/utils-constants.js'
+import { flashFunctions } from '@brugmann/vuemann/src/services/flash/src/flash-functions.js'
+import { UTILS } from '@brugmann/vuemann/src/constants/utils-constants.js'
 
-export const useFlashStore = defineStore('flash', () => {
-  const flashes = ref([])
-  const autoDelete = 4000
+const flashes = ref([])
+const autoDelete = 4000
 
-  const addMessage = (content, type = 'error') => {
-    const flash_id = flashFunctions.generateFlashId()
-    flashes.value.push({ content, type, id: flash_id, autodelete: true })
+const getFlashIndex = flash_id => {
+  return flashes.value.findIndex(flash => flash.id === flash_id)
+}
 
-    const flash_index = getFlashIndex(flash_id)
-    if (flash_index === UTILS.FIND_NOT_FOUND) { return }
+const autoRemoveFlash = flash => {
+  setTimeout(() => {
+    flash.autodelete ? removeFlash(flash.id) : autoRemoveFlash(flash)
+  }, autoDelete)
+}
 
-    autoRemoveFlash(flashes.value[flash_index])
+const removeFlash = flash_id => {
+  const flash_index = getFlashIndex(flash_id)
+  if (flash_index === UTILS.FIND_NOT_FOUND) {
+    return
   }
 
-  const getFlashIndex = flash_id => {
-    return flashes.value.findIndex(flash => flash.id === flash_id)
+  flashes.value[flash_index].hide = true
+  const DELAY_MS = 350
+  setTimeout(() => flashes.value.splice(flash_index, 1), DELAY_MS)
+}
+
+const addFlash = (content, type = 'error') => {
+  const flash_id = flashFunctions.generateFlashId()
+  flashes.value.push({
+    content,
+    type,
+    id: flash_id,
+    autodelete: true,
+  })
+
+  const flash_index = getFlashIndex(flash_id)
+  if (flash_index === UTILS.FIND_NOT_FOUND) {
+    return
   }
 
-  const autoRemoveFlash = flash => {
-    setTimeout(() => {
-      flash.autodelete ? removeFlash(flash.id) : autoRemoveFlash(flash)
-    }, autoDelete)
+  autoRemoveFlash(flashes.value[flash_index])
+}
+
+const error = message => {
+  addFlash(message, 'error')
+  return false
+}
+
+const success = message => {
+  addFlash(message, 'success')
+}
+
+const warning = message => {
+  addFlash(message, 'warning')
+}
+
+const getFlashes = () => {
+  return flashes.value
+}
+
+const getFlash = flash_id => {
+  const flash_index = getFlashIndex(flash_id)
+  if (flash_index === UTILS.FIND_NOT_FOUND) {
+    return void 0
   }
+  return flashes.value[flash_index]
+}
 
-  const removeFlash = flash_id => {
-    const flash_index = getFlashIndex(flash_id)
-    if (flash_index === UTILS.FIND_NOT_FOUND) { return }
+const hasFlash = flash_id => {
+  return getFlashIndex(flash_id) !== UTILS.FIND_NOT_FOUND
+}
 
-    flashes.value[flash_index].hide = true
-    const DELAY_MS = 350
-    setTimeout(() => flashes.value.splice(flash_index, 1), DELAY_MS)
-  }
+const clearFlashes = () => {
+  flashes.value = []
+}
 
-  return { flashes, addMessage, removeFlash }
+export const flashStore = {
+  error,
+  success,
+  warning,
+  getFlashes,
+  getFlash,
+  hasFlash,
+  addFlash,
+  removeFlash,
+  clearFlashes,
+}
+
+export const useFlashStore = () => ({
+  flashes,
+  flashStore,
 })

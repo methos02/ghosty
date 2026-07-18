@@ -5,7 +5,9 @@
       "title": "Applicatiefout",
       "description": "Er is een fout opgetreden bij het laden van de applicatie. Probeer het opnieuw.",
       "retry": "Opnieuw proberen",
-      "callback-undefined": "De callback retourneert undefined"
+      "callback-undefined": "De callback retourneert undefined",
+      "dynamic-import": "Er is een nieuwe versie beschikbaar. Herlaad de applicatie.",
+      "api-unreachable": "Kan de server niet bereiken: {apis}"
     }
   }
 }

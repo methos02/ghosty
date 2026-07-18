@@ -1,8 +1,11 @@
-import { logService } from './init/log-service.js'
-import { logPlugin } from './init/log-plugin.js'
+import { logService } from '@brugmann/vuemann/src/services/log/log-service.js'
+import { logPlugin } from '@brugmann/vuemann/src/services/log/src/log-plugin.js'
+import { logRoutes } from '@brugmann/vuemann/src/services/log/src/log-routes.js'
 
 export const logInit = {
-  dependencies: ['ajax'],
+  dependencies: ['flash'],
+  plugin: logPlugin,
+  routes: logRoutes,
   services: logService,
-  plugin: logPlugin
+  vuemann: true,
 }

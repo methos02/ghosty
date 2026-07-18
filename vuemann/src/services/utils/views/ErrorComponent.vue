@@ -1,25 +1,30 @@
 <script setup>
 import { useUtilsStore } from '@brugmann/vuemann/src/services/utils/src/utils-store.js'
 import { servicesM } from '@brugmann/vuemann/src/services/services-manager.js'
-import { t } from '@brugmann/vuemann/src/services/services-helper'
+import { t } from '@brugmann/vuemann/src/shortcuts/services-shortcut'
 
-const utilsStore = useUtilsStore()
+const { errorGlobal, errorsGlobal } = useUtilsStore()
 
-if (!utilsStore.errorGlobal && utilsStore.errorsGlobal.length === 0) { servicesM.service('router:push', 'home') }
+if (!errorGlobal.value && errorsGlobal.value.length === 0) {
+  servicesM.service('router:push', 'home')
+}
 </script>
 
 <template>
-  <div id="container-error" class="f-center flex-1">
-    <p 
-      v-if="utilsStore.errorGlobal !== undefined"
-      class="h1 color-primary" 
+  <div
+    id="container-error"
+    class="f-center flex-1"
+  >
+    <p
+      v-if="errorGlobal !== undefined"
+      class="h1 color-primary"
       data-error
     >
-      {{ t(utilsStore.errorGlobal) }}
+      {{ t(errorGlobal) }}
     </p>
     <p
       class="h1 color-primary"
-      v-for="(error, key) in utilsStore.errorsGlobal"
+      v-for="(error, key) in errorsGlobal"
       data-error
       :key="key"
     >

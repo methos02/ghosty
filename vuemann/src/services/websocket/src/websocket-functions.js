@@ -1,43 +1,58 @@
 import { ConfigLoader } from '@brugmann/vuemann/src/config/config-loader.js'
-import { flash } from "@brugmann/vuemann/src/services/services-helper.js"
+import { flash } from '@brugmann/vuemann/src/shortcuts/services-shortcut.js'
 
-const getRoute = route_name => {
-    const route = websocketFunctionsInternal.getRouteFromConfig(route_name)
-    if(typeof route === "string") { return flash.errorT(route, { route_name }) }
-    return route
+const getRoute = routeApiName => {
+  const route = websocketFunctionsInternal.getRouteFromConfig(routeApiName)
+  if (typeof route === 'string') {
+    return flash.errorT(route, { routeApiName })
+  }
+  return route
 }
 
-const generateUrlFromRoute = route_name => {
-    const route = websocketFunctionsInternal.getRouteFromConfig(route_name)
-    if(typeof route === "string") { return flash.errorT(route, { route_name }) }
-    
-    const api = ConfigLoader.get(`app.apis.${route.api}`)
-    if(api === undefined) { return flash.errorT('ws_api_undefined', { api : route.api }) }
+const generateUrlFromRoute = routeApiName => {
+  const route = websocketFunctionsInternal.getRouteFromConfig(routeApiName)
+  if (typeof route === 'string') {
+    return flash.errorT(route, { routeApiName })
+  }
 
-    const api_url = api.url.replace('http', 'ws')
+  const api = ConfigLoader.find(`app.apis.${route.api}`)
+  if (api === undefined) {
+    return flash.errorT('ws_api_undefined', { api: route.api })
+  }
 
-    return api_url + route.url
+  const api_url = api.url.replace('http', 'ws')
+
+  return api_url + route.url
 }
 
 const getJsonFromData = content => {
-    try {        
-        return JSON.parse(content)
-    } catch {
-        return false
-    }
+  try {
+    return JSON.parse(content)
+  } catch {
+    return false
+  }
 }
 
+export const websocketFunctions = {
+  getRoute,
+  generateUrlFromRoute,
+  getJsonFromData,
+}
 
-export const websocketFunctions = { getRoute , generateUrlFromRoute , getJsonFromData }
+const getRouteFromConfig = routeApiName => {
+  const route = ConfigLoader.find(`routesApi`, {})[routeApiName]
 
-const getRouteFromConfig = route_name => {
-    const route = ConfigLoader.get(`routesApi`, {})[route_name]
+  if (route === undefined) {
+    return 'ws_route_unknow'
+  }
+  if (route.api === undefined) {
+    return 'ws_route_api_undefined'
+  }
+  if (route.url === undefined) {
+    return 'ws_route_url_undefined'
+  }
 
-    if(route === undefined) { return 'ws_route_unknow' }
-    if(route.api === undefined) { return 'ws_route_api_undefined' }
-    if(route.url === undefined) { return 'ws_route_url_undefined' }
-
-    return {...route, name: route_name }
+  return { ...route, name: routeApiName }
 }
 
 export const websocketFunctionsInternal = { getRouteFromConfig }

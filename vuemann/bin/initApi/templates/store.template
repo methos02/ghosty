@@ -1,5 +1,0 @@
-import { defineStore } from 'pinia'
-
-export const use__UC_FOLDER_NAME__Store = defineStore('__FOLDER_NAME__', () => {
-  return {  }
-})

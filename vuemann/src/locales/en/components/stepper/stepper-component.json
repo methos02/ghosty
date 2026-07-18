@@ -1,0 +1,14 @@
+{
+  "stepper": {
+    "confirm_cancel_message": "Are you sure you want to cancel? All unsaved data will be lost."
+  },
+  "common": {
+    "cancel": "Cancel",
+    "previous": "Previous",
+    "next": "Next",
+    "submit": "Submit",
+    "confirm_cancel": "Confirm cancellation",
+    "yes": "Yes",
+    "no": "No"
+  }
+}

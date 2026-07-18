@@ -1,6 +1,7 @@
 {
   "input_search": {
     "error_min_length": "Het veld moet ten minste {length} tekens bevatten",
-    "error_search": "Fout tijdens zoeken"
+    "error_search": "Fout tijdens zoeken",
+    "no_result": "Geen resultaten gevonden"
   }
 } 

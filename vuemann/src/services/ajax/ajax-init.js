@@ -1,8 +1,7 @@
-import { ajaxService } from '@brugmann/vuemann/src/services/ajax/init/ajax-service.js'
-import { ajaxPlugin } from '@brugmann/vuemann/src/services/ajax/init/ajax-plugin.js'
+import { ajaxService } from '@brugmann/vuemann/src/services/ajax/ajax-service.js'
 
-export const ajaxInit =  {
-    dependencies: ['locale'],
-    services: ajaxService,
-    plugin: ajaxPlugin
+export const ajaxInit = {
+  dependencies: ['locale'],
+  services: ajaxService,
+  vuemann: true,
 }

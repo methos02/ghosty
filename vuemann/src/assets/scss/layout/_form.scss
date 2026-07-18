@@ -8,7 +8,9 @@
   width: 100%;
   margin-bottom: 20px;
 
-  > *:not(.no-flex) { flex: 1; }
+  > *:not(.no-flex) {
+    flex: 1;
+  }
 
   @media (min-width: variables.$md) {
     flex-direction: row;
@@ -30,13 +32,18 @@
     padding: 17px 10px 0 10px;
   }
 
+  &:disabled + .form-label,
+  &[readonly] + .form-label {
+    color: var(--neutral-500);
+  }
+
   &:focus + .form-label,
   &.valid + .form-label,
   &:not(:placeholder-shown, select) + .form-label {
     top: 3px;
     left: 12px;
     font-size: 0.75rem;
-    color: var(--primary);
+    color: var(--neutral-600);
   }
 }
 
@@ -44,7 +51,7 @@
   position: absolute;
   top: 11px;
   left: 16px;
-  color: #666;
+  color: var(--neutral-600);
   font-size: 1rem;
   pointer-events: none;
   transition: 0.2s ease all;
@@ -59,7 +66,6 @@
 .form-error {
   color: var(--danger);
   font-size: 12px;
-  margin-top: 2px;
 }
 
 .form-group {
@@ -71,7 +77,10 @@
     outline: 1px solid var(--primary);
   }
 
-  .input, &:hover .input { border: 1px solid var(--neutral-300); }
+  .input,
+  &:hover .input {
+    border: 1px solid var(--neutral-400);
+  }
 
   @media (min-width: variables.$md) {
     flex-direction: row;
@@ -86,5 +95,40 @@
       border-radius: 0 5px 5px 0;
       border-left: none;
     }
+  }
+}
+
+// Static label - label stays above input, doesn't float
+.label-static {
+  .form-label {
+    position: static;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.875rem;
+    color: var(--neutral-900);
+  }
+
+  .form-input,
+  &.form-input {
+    padding: 10px 15px;
+
+    &:is(textarea) {
+      padding: 10px;
+    }
+  }
+}
+
+// No label - input without label, removes extra top padding
+.no-label {
+  &.form-input {
+    padding: 10px 15px;
+
+    &:is(textarea) {
+      padding: 10px;
+    }
+  }
+
+  &.input {
+    padding: 0 25px 0 10px;
   }
 }

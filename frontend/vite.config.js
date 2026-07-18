@@ -24,6 +24,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '&': path.resolve(__dirname, './tests'),
+      '@brugmann/vuemann/src': path.resolve(__dirname, '../vuemann/src'),
       'vuemann': path.resolve(__dirname, '../vuemann/src')
     }
   },

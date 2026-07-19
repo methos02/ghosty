@@ -56,3 +56,50 @@ $h3-fs: 1.1rem;
 $h4-fs: 1rem;
 
 $header-height: 100px;
+$input-height: 45px;
+
+// Maps boutons partagées — valeurs en CSS custom properties (résolues au runtime navigateur)
+$btn_colors: (
+  'primary': var(--primary),
+  'primary-300': var(--primary-300),
+  'primary-400': var(--primary-400),
+  'primary-700': var(--primary-700),
+  'danger': var(--danger),
+  'danger-300': var(--danger-300),
+  'success': var(--success),
+  'success-300': var(--success-300),
+  'info': var(--info),
+  'info-300': var(--info-300),
+  'warning': var(--warning),
+  'warning-300': var(--warning-300),
+  'blue': var(--blue),
+  'blue-300': var(--blue-300),
+  'green': var(--green),
+  'green-300': var(--green-300),
+  'red': var(--red),
+  'yellow': var(--yellow),
+);
+
+$btn_hover_colors: (
+  'primary': var(--primary-400),
+  'primary-300': var(--primary),
+  'primary-400': var(--primary),
+  'primary-700': var(--primary),
+  'danger-300': var(--danger),
+  'success-300': var(--success),
+  'info-300': var(--info),
+  'warning-300': var(--warning),
+  'blue-300': var(--blue),
+  'green-300': var(--green),
+);
+
+$btn_text_colors: (
+  'primary-300': var(--neutral-800),
+  'warning': var(--neutral-800),
+  'warning-300': var(--neutral-800),
+  'yellow': var(--neutral-800),
+  'success-300': var(--neutral-800),
+  'danger-300': var(--neutral-800),
+  'info-300': var(--neutral-800),
+  'green-300': var(--neutral-800),
+);

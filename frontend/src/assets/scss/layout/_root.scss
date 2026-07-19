@@ -44,6 +44,7 @@
 
   --fs-300: #{variables.$fs-300};
   --fs-400: #{variables.$fs-400};
+  --fs-500: #{variables.$fs-500};
   --fs-600: #{variables.$fs-600};
   --fs-700: #{variables.$fs-700};
   --fs-800: #{variables.$fs-800};
@@ -54,6 +55,8 @@
   --h1-fs: #{variables.$h1-fs};
   --h2-fs: #{variables.$h2-fs};
   --h3-fs: #{variables.$h3-fs};
+  --h4-fs: #{variables.$h4-fs};
 
   --header-height: #{variables.$header-height};
+  --input-height: #{variables.$input-height};
 }

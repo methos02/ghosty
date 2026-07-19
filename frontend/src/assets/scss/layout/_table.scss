@@ -2,30 +2,46 @@
 
 .t {
   &-default {
-    th, td {
+    th,
+    td {
       text-align: left;
-      
-      &:not(:first-child) {
+
+      &:not(:first-child):not(.t-left) {
         text-align: center;
       }
     }
   }
 
-  &-primary thead, &-default thead {
-    background-color: variables.$primary;
-    color: variables.$neutral-100;
+  &-primary thead th,
+  &-default thead th {
+    background-color: var(--primary);
+    color: var(--neutral-100);
   }
 
-  &-space, &-default {   
-    th, td {
+  &-default thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    box-shadow: 0 1px 0 0 var(--primary);
+  }
+
+  &-space,
+  &-default {
+    th,
+    td {
       padding: 10px 5px;
-      
-      &:first-child { padding-left: 10px; }
-      &:last-child { padding-right: 10px; }
+
+      &:first-child {
+        padding-left: 10px;
+      }
+      &:last-child {
+        padding-right: 10px;
+      }
     }
   }
 
-  &-responsive, &-default {
+  &-responsive,
+  &-default {
     @media (max-width: variables.$sm) {
       thead {
         display: none;
@@ -35,7 +51,7 @@
         display: block;
         margin-bottom: 0.625rem;
         padding: 0.35rem;
-        border: 1px solid variables.$neutral-500;
+        border: 1px solid var(--neutral-500);
       }
 
       td {
@@ -46,7 +62,7 @@
         font-size: 0.8rem;
         text-align: right;
         &:not(:last-child) {
-          border-bottom: 1px solid variables.$neutral-500;
+          border-bottom: 1px solid var(--neutral-500);
         }
       }
 
@@ -59,11 +75,14 @@
     }
   }
 
-  &-colored, &-default {
+  &-colored,
+  &-default {
     tr:nth-child(even) {
-      background-color: variables.$neutral-300;
+      background-color: var(--neutral-300);
     }
   }
 
-  &-vertical-center { vertical-align: middle;}
+  &-vertical-center {
+    vertical-align: middle;
+  }
 }

@@ -9,17 +9,32 @@
 
   &.invalide {
     border: 1px solid var(--danger);
-  } 
-
-  &[disabled] {
-    background-color: var(--neutral-200);
   }
 
-  &:hover,
-  &:focus {
+  &[disabled],
+  &[readonly] {
+    background-color: var(--neutral-200);
+    border-color: var(--neutral-300);
+    color: var(--neutral-500);
+    cursor: not-allowed;
+  }
+
+  &:hover {
     border: 1px solid var(--primary);
   }
 
+  &:focus {
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 188, 125, 0.15);
+  }
+
+  &[disabled]:hover,
+  &[disabled]:focus,
+  &[readonly]:hover,
+  &[readonly]:focus {
+    border: 1px solid var(--neutral-300);
+    box-shadow: none;
+  }
 }
 
 textarea.input {
@@ -40,9 +55,11 @@ textarea.input {
     appearance: none;
     padding: 10px 23px 0 15px;
 
-    option { 
-      color: var(--neutral-900); 
-      &.placeholder { color: var(--neutral-600); }
+    option {
+      color: var(--neutral-900);
+      &.placeholder {
+        color: var(--neutral-600);
+      }
     }
   }
 

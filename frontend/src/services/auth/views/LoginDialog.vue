@@ -25,7 +25,7 @@ const handleLogin = async () => {
   const validation = validateLoginForm(datas.value)
   if (!validation.valid) { return }
 
-  const response = await auth.login(datas.value.email, datas.value.password)
+  const response = await auth.login(datas.value)
   if (response.status !== STATUS.SUCCESS) { return }
 
   authDialogs.closeDialogs()

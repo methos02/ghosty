@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
 import SearchBar from '@/views/parts/SearchBar.vue'
 import NovelCard from '@/views/parts/NovelCard.vue'
@@ -9,13 +9,7 @@ import { useSearchNovels } from '@/composables/useSearchNovels.js'
 import { t } from '@/services/shortcuts/services-shortcut.js'
 
 const activeTab = ref('home')
-const { novels, pagination, loadMore, loadNovels } = useSearchNovels()
-
-onMounted(async () => {
-    if (novels.value.length === 0) {
-        await loadNovels()
-    }
-})
+const { novels, pagination, loadMore } = useSearchNovels()
 </script>
 
 <template>
@@ -32,7 +26,11 @@ onMounted(async () => {
             <SearchBar v-model:activeTab="activeTab" />
         </div>
 
-        <PaginatorInfinite :cb="loadMore" :params="pagination" :options="{observe: 'window'}">
+        <PaginatorInfinite 
+            :cb="loadMore" 
+            :params="pagination" 
+            :options="{observe: 'window'}"
+        >
             <div class="novels-container | w-xl py-40 px-20">
                 <div class="novels-grid">
                     <NovelCard

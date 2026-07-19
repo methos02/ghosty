@@ -24,7 +24,7 @@ const loadMore = async () => {
 onMounted(() => {
     const target = props.options.observe === 'window' ? window : document.querySelector(props.options.observe)
     const distance = props.options.distance || 10
-    useInfiniteScroll(target, loadMore, { distance, immediate: false })
+    useInfiniteScroll(target, loadMore, { distance })
 })
 </script>
 

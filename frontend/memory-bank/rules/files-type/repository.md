@@ -34,20 +34,20 @@ The repository owns the raw API shape, so here it may read/write **snake_case** 
 
 ```js
 // GOOD - repository writes the snake_case key the real API will return; the DTO maps it downstream
-const getTeam = async (options) => {
-  const response = await req('iris_academy.organisation_unit.users', { ...options, empty404: true })
-  // ⚠️ MOCK API - remove when iris_academy.organisation_unit.certification_status exists
-  if (response.data?.organisation_unit) {
-    response.data.organisation_unit.certification_status =
-      CertificationRepository.getStatus(response.data.organisation_unit.id)
+const getNovel = async (options) => {
+  const response = await req('ghosty.novel.show', { ...options, empty404: true })
+  // ⚠️ MOCK API - remove when ghosty.novel.publication_status exists
+  if (response.data?.novel) {
+    response.data.novel.publication_status =
+      PublicationRepository.getStatus(response.data.novel.id)
   }
   return response
 }
 
 // BAD - enrichment leaked into the controller; must be ripped out (and the DTO reworked) when the API ships
-const getTeam = async (slug) => {
-  const response = await TeamController.show(slug)
-  response.data.certificationStatus = CertificationRepository.getStatus(response.data.id)
+const getNovel = async (slug) => {
+  const response = await NovelController.show(slug)
+  response.data.publicationStatus = PublicationRepository.getStatus(response.data.id)
   return response
 }
 ```

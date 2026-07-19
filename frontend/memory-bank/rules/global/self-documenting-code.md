@@ -92,10 +92,10 @@ When you change what a function does, resync its name in the same change — a n
 
 ```js
 // BAD - feeds the "reports" route but the name still claims "pending changes"
-const toPendingChangesByOrganisationUnits = (ids) => ({ params: { organisationUnitIds: ids } })
+const toPendingChangesByGenres = (ids) => ({ params: { genreIds: ids } })
 
 // GOOD - the name says what the route returns
-const toReportsByOrganisationUnits = (ids) => ({ params: { organisationUnitIds: ids } })
+const toReportsByGenres = (ids) => ({ params: { genreIds: ids } })
 ```
 
 ## Non-obvious algorithm: a doc, and one pointer line

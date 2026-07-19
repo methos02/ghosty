@@ -30,9 +30,9 @@ Two naming clarifications:
 // GOOD - from{Action}: defaults for untrusted API data
 const fromShow = (data) => ({
   id: data.position_id,
-  department: {
-    id: data.organisation_unit?.id,
-    name: data.organisation_unit?.name
+  genre: {
+    id: data.genre?.id,
+    name: data.genre?.name
   },
   function: data.function?.name,
   tags: data.tags ?? []
@@ -49,8 +49,8 @@ const toCreate = (formData) => ({
 // BAD - generic name "fromApi"
 const fromApi = (data) => ({
   id: data.position_id,
-  department: data.organisation_unit?.name,
-  departmentId: data.organisation_unit?.id
+  genre: data.genre?.name,
+  genreId: data.genre?.id
 })
 
 // BAD - redundant defaults on validated data (inflates complexity)
@@ -103,7 +103,7 @@ const fromShow = (data) => {
   return {
     id: safe.id,
     name: safe.name,
-    department: safe.department,
+    genre: safe.genre,
     tags: safe.tags ?? []
   }
 }
@@ -112,7 +112,7 @@ const fromShow = (data) => {
 const fromShow = (data) => ({
   id: data.id,
   name: data.name ?? '',
-  department: data.department ?? '',
+  genre: data.genre ?? '',
   tags: data.tags ?? []
 })
 ```
@@ -194,19 +194,19 @@ Create a plural method that maps through the singular one. The calling layer (co
 const fromSearch = (data) => ({
   id: data.id,
   name: data.name,
-  parent: data.parent_organisation_unit_id ? { id: data.parent_organisation_unit_id } : undefined
+  parent: data.parent_gen_id ? { id: data.parent_gen_id } : undefined
 })
 
 const fromSearches = (datas) => datas.map(data => fromSearch(data))
 
 // BAD - singular DTO in controller loop
-for (const unitApi of response.data) {
-  const unit = Dto.fromSearch(unitApi)
-  units.push(unit)
+for (const genreApi of response.data) {
+  const genre = Dto.fromSearch(genreApi)
+  genres.push(genre)
 }
 
 // GOOD - plural DTO call in controller
-const units = Dto.fromSearches(response.data)
+const genres = Dto.fromSearches(response.data)
 ```
 
 ## Display formatting belongs in the DTO
@@ -237,10 +237,10 @@ This sets the default, not a lock: a consumer with its own ordering need (a tabl
 
 ```js
 // BAD - default order applied in the store mutation or a view computed
-setAll = (units) => { organisationUnits.value = units.toSorted(byName) }
+setAll = (genres) => { genres.value = genres.toSorted(byName) }
 
 // GOOD - default order in the DTO list mapper, via a helper
-const fromIndex = (datas) => OrganisationUnitHelper.orderByName((datas ?? []).map(fromShow))
+const fromIndex = (datas) => GenreHelper.orderByName((datas ?? []).map(fromShow))
 ```
 
 ## No defensive fallbacks for required fields

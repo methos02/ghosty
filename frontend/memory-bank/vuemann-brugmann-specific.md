@@ -86,11 +86,13 @@ plan-applier, rule-optimizer) + `commands/` (8: apply-plan, apply-rule, correct-
 `glab` → `gh` (GitLab CLI → GitHub CLI, correct `gh issue`/`gh pr` syntax), "GitLab"/"MR" → "GitHub"/"PR",
 default branch `main` → **`master`** (Ghosty's default). Vuemann-context auto-detection kept (auto-skips in Ghosty).
 
-**Domain examples rewritten (2026-07-18):** all hospital/Brugmann-domain examples across the memory-bank
-(rules, docs, commands) were replaced with the Ghosty domain — Hospitalization→Novel, Intervention→Chapter,
-Surgery→Proposition, Patient→Reader, Practitioner/Opera→Author, Speciality→Genre, Operation→Work,
-BoxOccupation→Novel; GUMS/keycloak/auth-keycloak example references genericized. Verified: zero
-hospital/Brugmann-domain terms remain (full sweep clean).
+**Domain examples rewritten (2026-07-18):** all Brugmann-domain examples across the memory-bank
+(rules, docs, commands) were replaced with the Ghosty domain. Two domains cleaned:
+- Hospital: Hospitalization→Novel, Intervention→Chapter, Surgery→Proposition, Patient→Reader,
+  Practitioner/Opera→Author, Speciality→Genre, Operation→Work, BoxOccupation→Novel.
+- IRIS Academy / certification: organisation_unit→Genre, team→Novel, certification→publication,
+  iris_academy→ghosty.
+GUMS/keycloak/auth-keycloak example references genericized. Verified: zero Brugmann-domain terms remain (full sweep clean).
 
 **Intentionally kept:** `doc/services/form.md` documents the `niss`/`inami` Belgian validators — those
 validators still exist in `vuemann/src/services/form/src/defaultTests/` (listed as candidates, not removed).

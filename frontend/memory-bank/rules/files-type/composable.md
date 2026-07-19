@@ -39,9 +39,9 @@ A composable must NOT map raw API/service data into a view-model — API-field s
 
 ```js
 // BAD - composable maps raw API fields into a view-model (the DTO's job)
-units.value = response.data.map(unit => ({ id: unit.id, name: unit.organisation_unit_name, count: 0, status: 'idle' }))
+genres.value = response.data.map(genre => ({ id: genre.id, name: genre.gen_name, count: 0, status: 'idle' }))
 
 // GOOD - DTO maps the API fields; composable adds the client state it owns
-units.value = ChangeReportDto.fromManagedUnits(response.data)
-  .map(unit => ({ ...unit, count: 0, status: 'idle', changed: [], unchanged: [] }))
+genres.value = ChangeReportDto.fromManagedGenres(response.data)
+  .map(genre => ({ ...genre, count: 0, status: 'idle', changed: [], unchanged: [] }))
 ```

@@ -36,24 +36,24 @@ const response = await Repository.register({ body: data })
 When a list/search result contains reference IDs, use `HydrateFunctions.hydrate()`. Never write manual fetch loops with caching.
 
 Requirements:
-- DTO maps reference to `{ id: X }` (e.g., `parent: { id: unit.parent_organisation_unit_id }`)
+- DTO maps reference to `{ id: X }` (e.g., `parent: { id: genre.parent_gen_id }`)
 - Target controller exposes `byIds(ids)`
 - Controller registered via `HydrateFunctions.registerController()` in `main.js`
 
 ```js
 // BAD - manual fetch loop with cache
 const parentsCache = {}
-for (const unit of units) {
-  if (parentsCache[unit.parentId] === undefined) {
-    parentsCache[unit.parentId] = await getById(unit.parentId)
+for (const genre of genres) {
+  if (parentsCache[genre.parentId] === undefined) {
+    parentsCache[genre.parentId] = await getById(genre.parentId)
   }
-  unit.parent = parentsCache[unit.parentId]
+  genre.parent = parentsCache[genre.parentId]
 }
 
 // GOOD - declarative hydrate
-const units = Dto.fromSearches(response.data)
-const hydrated = await HydrateFunctions.hydrate(units, ['parent'], {
-  parent: { controller: 'organisationUnit' }
+const genres = Dto.fromSearches(response.data)
+const hydrated = await HydrateFunctions.hydrate(genres, ['parent'], {
+  parent: { controller: 'genre' }
 })
 ```
 
@@ -65,15 +65,15 @@ When the endpoint returns nothing meaningful (`204 No Content`, bare status), th
 
 ```js
 // BAD - hardcoded result, re-types the value just sent; drifts if the backend transforms it
-const cancel = async (team) => {
-  await Repository.updateStatus(Dto.toStatus(team.id, 'to_recertify'))
-  return { status: STATUS.SUCCESS, certificationStatus: 'to_recertify' }
+const cancel = async (novel) => {
+  await Repository.updateStatus(Dto.toStatus(novel.id, 'draft'))
+  return { status: STATUS.SUCCESS, publicationStatus: 'draft' }
 }
 
 // GOOD - read the persisted value back from the response via the DTO
-const cancel = async (team) => {
-  const response = await Repository.updateStatus(Dto.toStatus(team.id, 'to_recertify'))
+const cancel = async (novel) => {
+  const response = await Repository.updateStatus(Dto.toStatus(novel.id, 'draft'))
   if (response.status !== STATUS.SUCCESS) { return response }
-  return { status: STATUS.SUCCESS, certificationStatus: Dto.fromStatus(response.data) }
+  return { status: STATUS.SUCCESS, publicationStatus: Dto.fromStatus(response.data) }
 }
 ```

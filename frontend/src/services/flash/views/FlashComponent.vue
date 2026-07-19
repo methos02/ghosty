@@ -1,22 +1,46 @@
 <script setup>
-import { flashStore } from '../src/flash-store'
+import { ref, watch } from 'vue'
+import { flash as flashHelper } from '@/services/shortcuts/services-shortcut.js'
 
-const { flashes } = flashStore
+const { flashes } = flashHelper
+const container = ref()
+
+watch(
+  () => flashes.value.length,
+  (newLength, oldLength) => {
+    if (newLength <= oldLength) {
+      return
+    }
+    if (container.value.matches(':popover-open')) {
+      container.value.hidePopover()
+    }
+    container.value.showPopover()
+  },
+)
 </script>
 
 <template>
-  <div class="container-flash">
+  <div
+    ref="container"
+    popover="manual"
+    class="container-flash"
+  >
     <div
       v-for="flash in flashes"
       :key="flash.id"
-      :class="
-        `flash flash-${flash.type}` + (flash.hide !== undefined ? ' hide' : '')
-      "
+      class="flash"
+      :class="{
+        [`flash-${flash.type}`]: true,
+        hide: flash.hide !== undefined,
+      }"
       @mouseenter="flash.autodelete = false"
       @mouseleave="flash.autodelete = true"
       :data-flash="flash.id"
     >
-      <button class="flash-close" @click="flashStore.removeFlash(flash.id)">
+      <button
+        class="flash-close"
+        @click="flashHelper.removeFlash(flash.id)"
+      >
         <i class="fa-solid fa-xmark"></i>
       </button>
       <p>
@@ -26,14 +50,19 @@ const { flashes } = flashStore
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use 'sass:map';
-@use '../../../assets/scss/_variables';
 
 .container-flash {
   position: fixed;
-  top: 75px;
-  right: -500px;
+  inset: 75px -500px auto auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  overflow: visible;
+  width: auto;
+  height: auto;
   z-index: 100;
 }
 
@@ -74,20 +103,20 @@ const { flashes } = flashStore
 
 $flash_colors: (
   error: (
-    bg: variables.$danger-300,
-    color: variables.$danger,
+    bg: var(--danger-300),
+    color: var(--danger),
   ),
   success: (
-    bg: variables.$success-300,
-    color: variables.$success,
+    bg: var(--success-100),
+    color: var(--success),
   ),
   info: (
-    bg: variables.$info-300,
-    color: variables.$info,
+    bg: var(--info-300),
+    color: var(--info),
   ),
   warning: (
-    bg: variables.$warning-300,
-    color: variables.$warning,
+    bg: var(--warning-100),
+    color: var(--warning),
   ),
 );
 

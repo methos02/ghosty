@@ -1,18 +1,9 @@
 import { ref } from 'vue'
 
-// État global (hors fonction = partagé entre tous les composants)
 const errors = ref({})
 const options = ref({})
 
-// Fonction get() pour compatibilité avec l'ancien code
-const get = () => {
-  return {
-    errors: errors.value,
-    options: options.value
-  }
-}
-
-const hasOption = (optionName) => {
+const hasOption = optionName => {
   return options.value[optionName] !== undefined
 }
 
@@ -20,7 +11,7 @@ const getOptions = () => {
   return options.value
 }
 
-const getOption = (optionName) => {
+const getOption = optionName => {
   return options.value[optionName]
 }
 
@@ -32,11 +23,11 @@ const clearOptions = () => {
   options.value = {}
 }
 
-const setOptions = (newOptions) => {
+const setOptions = newOptions => {
   options.value = newOptions
 }
 
-const hasError = (inputName) => {
+const hasError = inputName => {
   if (inputName === undefined) {
     return Object.keys(errors.value).length > 0
   }
@@ -48,27 +39,25 @@ const getErrors = () => {
   return errors.value
 }
 
-const getError = (inputName) => {
+const getError = inputName => {
   return errors.value[inputName]
 }
 
 const addError = (inputName, errorKey) => {
-  let finalInputName = inputName
-
-  if (hasOption('form')) {
-    finalInputName = `${getOption('form')}.${inputName}`
+  if (formStore.hasOption('form')) {
+    inputName = `${formStore.getOption('form')}.${inputName}`
   }
 
-  errors.value[finalInputName] = errorKey
+  errors.value[inputName] = errorKey
 }
 
-const addErrors = (errorsObject) => {
-  Object.entries(errorsObject).forEach(([inputName, errorKey]) => {
+const addErrors = errorsObject => {
+  for (const [inputName, errorKey] of Object.entries(errorsObject)) {
     addError(inputName, errorKey)
-  })
+  }
 }
 
-const clearError = (inputName) => {
+const clearError = inputName => {
   delete errors.value[inputName]
 }
 
@@ -77,7 +66,6 @@ const clearErrors = () => {
 }
 
 export const formStore = {
-  get,
   addError,
   addErrors,
   clearError,
@@ -90,5 +78,11 @@ export const formStore = {
   getErrors,
   getError,
   hasError,
-  clearOptions
+  clearOptions,
 }
+
+export const useFormStore = () => ({
+  errors,
+  options,
+  formStore,
+})

@@ -1,6 +1,6 @@
 import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
-import { STATUS } from '@/services/ajax/ajax-constants.js'
+import { STATUS } from '@/constants/ajax-constants.js'
 
 const list = async (page = 1) => {
   const params = NovelDto.toListParams(page)

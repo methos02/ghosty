@@ -1,15 +1,74 @@
-import { STATUS } from '@/services/ajax/ajax-constants.js'
-import { FormHelper } from '@/services/form/form-helper.js'
+import { STATUS } from '@/constants/ajax-constants.js'
+import { FormHelper } from '@/helpers/form-helper.js'
+import { utilsH } from '@/helpers/utils-helper.js'
+
+const controllerRegistry = new Map()
+
+const buildEntitiesMap = results => {
+  const entitiesByKey = {}
+
+  for (const { key, entities, entityKey = 'id' } of results) {
+    entitiesByKey[key] = new Map(
+      entities.map(entity => [utilsH.getNestedProperty(entity, entityKey), entity]),
+    )
+  }
+
+  return entitiesByKey
+}
+
+const clearControllers = () => {
+  controllerRegistry.clear()
+}
+
+const extractUniqueIds = (items, key) => {
+  const ids = []
+
+  for (const item of items) {
+    if (item[key] === null || item[key] === undefined) {
+      throw new Error(`[utils.hydrate] Item "${key}" is required and cannot be empty`)
+    }
+
+    if (FormHelper.isEmpty(item[key].id)) {
+      continue
+    }
+
+    ids.push(item[key].id)
+  }
+
+  return [...new Set(ids)]
+}
 
 const hydrate = async (data, keys, config = {}) => {
   if (!data || data.length === 0) {
-    throw new Error('[utils.hydrate] Data is required and cannot be empty')
+    return []
   }
 
-  const results = await Promise.all(keys.map((key) => HydrateFunctions.hydrateKey(data, key, config[key] ?? {})))
+  const results = await Promise.all(
+    keys.map(key => HydrateFunctions.hydrateKey(data, key, config[key] ?? {})),
+  )
   const entitiesByKey = HydrateFunctions.buildEntitiesMap(results)
 
-  return data.map((item) => HydrateFunctions.hydrateItem(item, keys, entitiesByKey))
+  return data.map(item => HydrateFunctions.hydrateItem(item, keys, entitiesByKey))
+}
+
+const hydrateItem = (item, keys, entitiesByKey) => {
+  const hydratedItem = { ...item }
+
+  for (const key of keys) {
+    if (hydratedItem[key] === null || hydratedItem[key] === undefined) {
+      continue
+    }
+    if (hydratedItem[key].id === undefined) {
+      throw new Error(`[utils.hydrate] Item "${key}" need to have an id`)
+    }
+
+    const entity = entitiesByKey[key].get(hydratedItem[key].id)
+    if (entity) {
+      hydratedItem[key] = entity
+    }
+  }
+
+  return hydratedItem
 }
 
 const hydrateKey = async (data, key, config) => {
@@ -30,78 +89,45 @@ const hydrateKey = async (data, key, config) => {
     return { key, entities: [] }
   }
 
-  return { key, entities: result.data }
-}
+  const entityKey = config.entityKey ?? 'id'
 
-const extractUniqueIds = (items, key) => {
-  const ids = []
-
-  for (const item of items) {
-    if (FormHelper.isEmpty(item[key])) {
-      throw new Error(`[utils.hydrate] Item "${key}" is required and cannot be empty`)
-    }
-
-    const id = item[key].id
-    if (FormHelper.isEmpty(id)) { continue }
-
-    ids.push(id)
+  return {
+    key,
+    entities: result.data,
+    entityKey,
   }
-
-  return [...new Set(ids)]
 }
 
 const loadController = async (controllerName, key, method = 'byIds') => {
-  const controllers = import.meta.glob('/src/apis/*/controllers/*-controller.js')
-  const controllerPath = `/src/apis/${controllerName}/controllers/${controllerName}-controller.js`
+  const controller = controllerRegistry.get(controllerName)
 
-  const loadControllerModule = controllers[controllerPath]
-  if (!loadControllerModule) {
-    throw new Error(`[utils.hydrate] Controller not found at path "${controllerPath}". Available controllers: ${Object.keys(controllers).join(', ')}`)
+  if (!controller) {
+    throw new Error(
+      `[utils.hydrate] Controller "${controllerName}" not registered. Use utils.registerController('${controllerName}', YourController) in your project setup.`,
+    )
   }
 
-  const controllerModule = await loadControllerModule()
-  const controllerKey = Object.keys(controllerModule).find((k) => k.toLowerCase().includes('controller'))
-  if (!controllerKey) {
-    throw new Error(`[utils.hydrate] Controller not found in module for key "${key}". Controller name: "${controllerName}". Available exports: ${Object.keys(controllerModule).join(', ')}`)
-  }
-
-  const controller = controllerModule[controllerKey]
-  if (!controller[method] || typeof controller[method] !== 'function') {
-    throw new Error(`[utils.hydrate] Controller "${controllerKey}" does not have a "${method}" method. Available methods: ${Object.keys(controller).join(', ')}`)
+  const handler = controller[method]
+  if (!handler || typeof handler !== 'function') {
+    throw new Error(
+      `[utils.hydrate] Controller "${controllerName}" does not have a "${method}" method. Available methods: ${Object.keys(controller).join(', ')}`,
+    )
   }
 
   return controller
 }
 
-const buildEntitiesMap = (results) => {
-  const entitiesByKey = {}
-
-  for (const { key, entities } of results) {
-    entitiesByKey[key] = new Map(entities.map((entity) => [entity.id, entity]))
-  }
-
-  return entitiesByKey
-}
-
-const hydrateItem = (item, keys, entitiesByKey) => {
-  const hydratedItem = { ...item }
-
-  for (const key of keys) {
-    const entity = entitiesByKey[key].get(hydratedItem[key].id)
-
-    if (entity) {
-      hydratedItem[key] = entity
-    }
-  }
-
-  return hydratedItem
+const registerController = (name, controller) => {
+  controllerRegistry.set(name, controller)
 }
 
 export const HydrateFunctions = {
-  hydrate,
-  hydrateKey,
-  extractUniqueIds,
-  loadController,
   buildEntitiesMap,
-  hydrateItem
+  clearControllers,
+  extractUniqueIds,
+  hydrate,
+  hydrateItem,
+  hydrateKey,
+  loadController,
+  registerController,
 }

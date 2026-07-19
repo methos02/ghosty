@@ -1,10 +1,10 @@
-import { localeService } from './init/locale-service.js'
-import { localePlugin } from './init/locale-plugin.js'
-import { localeVite } from './init/locale-vite.js'
+import { localeService } from '@/services/locale/locale-service.js'
+import { localePlugin } from '@/services/locale/src/locale-plugin.js'
+import { useLocaleStore } from '@/services/locale/src/locale-store.js'
 
 export const localeInit = {
-    dependencies: [],
-    services: localeService,
-    plugin: localePlugin,
-    vite: localeVite
+  dependencies: [],
+  plugin: localePlugin,
+  services: localeService,
+  store: useLocaleStore(),
 }

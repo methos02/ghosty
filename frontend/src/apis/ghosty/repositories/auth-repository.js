@@ -1,4 +1,4 @@
-import { req } from '@/services/services-helper.js'
+import { req } from '@/services/shortcuts/services-shortcut.js'
 
 const register = async (data) => {
   return await req('auth.register', { body: data })

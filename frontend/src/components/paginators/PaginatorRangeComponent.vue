@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from "vue";
-import { paginatorHelper as paginatorH } from "@brugmann/vuemann/src/helpers/paginator-helper.js";
+import { paginatorHelper as paginatorH } from "@/helpers/paginator-helper.js";
 import { utilsH } from "../../helpers/utils-helper.js";
 
 const props = defineProps({ 

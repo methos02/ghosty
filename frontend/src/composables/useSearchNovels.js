@@ -1,6 +1,6 @@
 import { ref, readonly } from 'vue'
 import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
-import { STATUS } from '@/services/ajax/ajax-constants.js'
+import { STATUS } from '@/constants/ajax-constants.js'
 
 const selectedSort = ref('Top 10')
 const selectedGenre = ref('Tous')

@@ -1,15 +1,20 @@
 <script setup>
-import { utilsStore } from '@/services/utils/src/utils-store.js'
+import { useUtilsStore } from '@/services/utils/src/utils-store.js'
 import { servicesM } from '@/services/services-manager.js'
-import { t } from '@/services/services-helper'
+import { t } from '@/services/shortcuts/services-shortcut'
 
-const { errorGlobal, errorsGlobal } = utilsStore.get()
+const { errorGlobal, errorsGlobal } = useUtilsStore()
 
-if (!errorGlobal && errorsGlobal.length === 0) { servicesM.service('router:push', 'home') }
+if (!errorGlobal.value && errorsGlobal.value.length === 0) {
+  servicesM.service('router:push', 'home')
+}
 </script>
 
 <template>
-  <div id="container-error" class="f-center flex-1">
+  <div
+    id="container-error"
+    class="f-center flex-1"
+  >
     <p
       v-if="errorGlobal !== undefined"
       class="h1 color-primary"

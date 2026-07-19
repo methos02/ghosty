@@ -50,5 +50,7 @@ export const authStore = {
   hasRole: (role) => {
     if (!user.value?.roles) return false
     return user.value.roles.includes(role)
-  }
+  },
+
+  getCurrentUser: () => user.value ?? null,
 }

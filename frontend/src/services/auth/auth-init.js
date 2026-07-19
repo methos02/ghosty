@@ -1,4 +1,4 @@
-import { authService } from './init/auth-service.js'
+import { authService } from '@/services/auth/auth-service.js'
 
 export const authInit = {
   dependencies: [],

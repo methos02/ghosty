@@ -1,8 +1,8 @@
 import { AuthRepository } from '@/apis/ghosty/repositories/auth-repository.js'
 import { AuthDto } from '@/apis/ghosty/dtos/auth-dto.js'
 import { AuthErrorDto } from '@/apis/ghosty/dtos/auth-error-dto.js'
-import { STATUS } from '@/services/ajax/ajax-constants.js'
-import { form } from '@/services/services-helper.js'
+import { STATUS } from '@/constants/ajax-constants.js'
+import { form } from '@/services/shortcuts/services-shortcut.js'
 
 const register = async (datas) => {
   const data = AuthDto.toRegister(datas)

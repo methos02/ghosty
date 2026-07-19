@@ -1,8 +1,8 @@
-import { flashService } from './init/flash-service.js'
-import { flashPlugin } from './init/flash-plugin.js'
+import { flashPlugin } from '@/services/flash/src/flash-plugin.js'
+import { useFlashStore } from '@/services/flash/src/flash-store.js'
 
 export const flashInit = {
-    dependencies: [],
-    services: flashService,
-    plugin: flashPlugin
+  dependencies: [],
+  plugin: flashPlugin,
+  store: useFlashStore(),
 }

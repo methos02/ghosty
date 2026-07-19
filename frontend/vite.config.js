@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
-import { localeVite } from './src/services/locale/init/locale-vite.js'
+import { localeVite } from './src/services/locale/src/locale-vite.js'
 import { fileURLToPath } from 'node:url'
 import { readFileSync } from 'fs'
 
@@ -23,9 +23,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '&': path.resolve(__dirname, './tests'),
-      '@brugmann/vuemann/src': path.resolve(__dirname, '../vuemann/src'),
-      'vuemann': path.resolve(__dirname, '../vuemann/src')
+      '&': path.resolve(__dirname, './tests')
     }
   },
   build: {

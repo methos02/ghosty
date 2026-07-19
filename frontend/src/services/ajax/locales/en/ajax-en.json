@@ -1,0 +1,20 @@
+{
+  "error_no_client" : "The HTTP client has not been initialized",
+  "error_bad_request": "The request is invalid.",
+  "error_forbidden": "You do not have permission to perform this action.",
+  "error_not_found": "The requested resource was not found.",
+  "error_conflict": "The resource has been modified by another user. Please refresh and try again.",
+  "error_unprocessable": "The submitted data is invalid.",
+  "error_server": "A server error occurred, we have been notified.",
+  "error_unknown": "An error occurred.",
+  "error_empty_parameter": "You must specify the parameters for the route {route_name}.",
+  "error_unknow_parameter": "The parameter '{param_name}' does not exist in the route {route_name}.",
+  "error_missing_parameter": "Some parameters for the route {route_name} have not been provided.",
+  "v_error_api_url": "The API URL {api_name} is invalid.",
+  "v_route_unknow": "The route '{route_name}' is unknown",
+  "v_route_method_undefined": "Config issue: the method for route {route_name} has not been specified.",
+  "v_route_api_undefined": "Config issue: the API for route {route_name} has not been specified.",
+  "v_route_url_undefined": "Config issue: the URL for route {route_name} has not been specified.",
+  "v_error_method_unknow": "Config issue: the method {method} for route {route_name} is unknown.",
+  "api_forbidden_for_user": "You do not have access to this API."
+}

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
-import { STATUS } from '@/services/ajax/ajax-constants.js'
+import { STATUS } from '@/constants/ajax-constants.js'
 
 const props = defineProps({
     cb: { type: Function, required: true },

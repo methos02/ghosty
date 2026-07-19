@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { t } from '@/services/services-helper.js'
-import { STATUS } from '@/services/ajax/ajax-constants.js'
+import { t } from '@/services/shortcuts/services-shortcut.js'
+import { STATUS } from '@/constants/ajax-constants.js'
 import { WorkController } from '@/apis/works/controllers/work-controller.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import DialogComponent from '@/components/DialogComponent.vue'

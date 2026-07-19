@@ -1,25 +1,14 @@
 import { ref } from 'vue'
-import { APP_STATUS } from '@/services/utils/utils-constants.js'
+import { APP_STATUS } from '@/constants/utils-constants.js'
 
-// État global (hors fonction = partagé entre tous les composants)
-const instances = ref({})
+const defaultLoadingSentence = 'app-component.loading'
+
 const errorGlobal = ref()
 const errorsGlobal = ref([])
-const needUpdate = ref(false)
-const appStatus = ref(APP_STATUS.LOADING)
+const appStatus = ref(APP_STATUS.INIT)
+const loadingSentence = ref(defaultLoadingSentence)
 
-// Fonction get() pour compatibilité avec l'ancien code
-const get = () => {
-  return {
-    instances: instances.value,
-    errorGlobal: errorGlobal.value,
-    errorsGlobal: errorsGlobal.value,
-    needUpdate: needUpdate.value,
-    appStatus: appStatus.value
-  }
-}
-
-const setAppStatus = (newStatus) => {
+const setAppStatus = newStatus => {
   appStatus.value = newStatus
 }
 
@@ -27,43 +16,40 @@ const getAppStatus = () => {
   return appStatus.value
 }
 
-const setErrorGlobal = (error) => {
+const setLoadingSentence = sentence => {
+  loadingSentence.value = sentence
+}
+
+const getLoadingSentence = () => {
+  return loadingSentence.value
+}
+
+const resetLoadingSentence = () => {
+  loadingSentence.value = defaultLoadingSentence
+}
+
+const setAppError = error => {
   errorGlobal.value = error
 }
 
-const addErrorGlobal = (error) => {
-  errorsGlobal.value.push(error)
-}
-
-const clearErrorsGlobal = () => {
-  errorsGlobal.value = []
-}
-
-const setNeedUpdate = (value) => {
-  needUpdate.value = value
-}
-
-const setInstance = (key, instance) => {
-  instances.value[key] = instance
-}
-
-const getInstance = (key) => {
-  return instances.value[key]
-}
-
-const hasInstance = (key) => {
-  return instances.value[key] !== undefined
+const getAppError = () => {
+  return errorGlobal.value
 }
 
 export const utilsStore = {
-  get,
   setAppStatus,
   getAppStatus,
-  setErrorGlobal,
-  addErrorGlobal,
-  clearErrorsGlobal,
-  setNeedUpdate,
-  setInstance,
-  getInstance,
-  hasInstance
+  setLoadingSentence,
+  getLoadingSentence,
+  resetLoadingSentence,
+  setAppError,
+  getAppError,
 }
+
+export const useUtilsStore = () => ({
+  errorGlobal,
+  errorsGlobal,
+  appStatus,
+  loadingSentence,
+  utilsStore,
+})

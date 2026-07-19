@@ -1,4 +1,4 @@
-import { form } from '@/services/services-helper.js'
+import { form } from '@/services/shortcuts/services-shortcut.js'
 
 export const validateLoginForm = (datas) => {
   const rules = {

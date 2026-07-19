@@ -1,6 +1,6 @@
 import { WorkRepository } from '@/apis/works/repositories/work-repository.js'
 import { WorkDto } from '@/apis/works/dtos/work-dto.js'
-import { STATUS } from '@/services/ajax/ajax-constants.js'
+import { STATUS } from '@/constants/ajax-constants.js'
 
 const list = async (filters = {}) => {
   const response = await WorkRepository.list({ params: filters })

@@ -1,4 +1,4 @@
-import { form } from '@/services/services-helper.js'
+import { form } from '@/services/shortcuts/services-shortcut.js'
 
 const registerFields = (validationErrors) => {
   return form.mapFields(validationErrors, {

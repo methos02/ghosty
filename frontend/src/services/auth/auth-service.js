@@ -1,0 +1,30 @@
+import { authFunctions } from '@/services/auth/src/auth-functions.js'
+import { useAuth } from '@/services/auth/src/useAuth.js'
+import { STATUS } from '@/constants/ajax-constants.js'
+
+const authDialogs = useAuth()
+
+// Ghosty (JWT mono-API, pas de refresh-token) : stubs alignés sur ce que la nouvelle
+// archi attend d'un service auth (ajax-service, router-functions, AppComponent).
+const isApiSkipped = () => false
+const refreshToken = async () => ({ status: STATUS.UNAUTHORIZED })
+const routesAuthCheck = async () => ({ status: STATUS.SUCCESS })
+
+export const authService = {
+  login: authFunctions.login,
+  register: authFunctions.register,
+  logout: authFunctions.logout,
+  getCurrentUser: authFunctions.getCurrentUser,
+  isAuthenticated: authFunctions.isAuthenticated,
+  hasRole: authFunctions.hasRole,
+  fetchCurrentUser: authFunctions.fetchCurrentUser,
+  getAccessToken: authFunctions.getAccessToken,
+  isApiSkipped,
+  refreshToken,
+  routesAuthCheck,
+  showLoginDialog: authDialogs.openLoginDialog,
+  showRegisterDialog: authDialogs.openRegisterDialog,
+  openLoginDialog: authDialogs.openLoginDialog,
+  openRegisterDialog: authDialogs.openRegisterDialog,
+  closeDialogs: authDialogs.closeDialogs,
+}

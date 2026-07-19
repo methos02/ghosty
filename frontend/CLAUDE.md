@@ -61,7 +61,7 @@ frontend/src/
 │   ├── ajax/                 # Service HTTP (req)
 │   ├── locale/               # Service i18n (t)
 │   ├── services-manager.js   # Gestionnaire central
-│   └── services-helper.js    # Helpers (t, req, error)
+│   └── shortcuts/            # API (t, req, flash, auth, form) via services-shortcut.js
 ├── config/                    # Configuration
 │   ├── routes-config.js      # Routes Vue Router
 │   └── routes-api-config.js  # Endpoints API
@@ -128,31 +128,42 @@ frontend/src/
 
 ### Initialisation dans main.js
 
-```javascript
-import { servicesM } from './services/services-manager.js'
-import { localeInit } from './services/locale/locale-init.js'
-import { ajaxInit } from './services/ajax/ajax-init.js'
+Le bootstrap utilise le **quartet** `services-init` / `services-manager` / `services-stores` / `services-routes-registry` (voir memory *Vuemann architecture*). Les dépendances entre services sont résolues automatiquement (ordre de déclaration indifférent).
 
-await servicesM.initServices(app, {
-  locale: localeInit,  // Doit être en premier (ajax en dépend)
-  ajax: ajaxInit
+```javascript
+import { servicesInit } from '@/services/services-init.js'
+import { BOOT_STATUS } from '@/constants/boot-status.js'
+// + imports des *Init (auth, locale, ajax, flash, form, router, utils)
+
+const boot = await servicesInit.initServices(app, {
+  auth: authInit, locale: localeInit, ajax: ajaxInit,
+  flash: flashInit, form: formInit, router: routerInit, utils: utilsInit,
 })
+
+if (boot.status === BOOT_STATUS.SUCCESS) {
+  app.mount('#app')
+}
 ```
 
-### Helpers Disponibles
+> ⚠️ Le système de **contrats** Vuemann est volontairement retiré. Les services `log`/`websocket`/`auth-keycloak` sont exclus (stubs no-op côté shortcuts).
+
+### Helpers Disponibles (shortcuts)
+
+L'API (`t`, `req`, `flash`, `auth`, `form`, …) est fournie par les **shortcuts**. Importer directement depuis `@/services/shortcuts/services-shortcut.js`.
 
 ```javascript
-import { t, req, error } from '@/services/services-helper.js'
+import { t, req, flash } from '@/services/shortcuts/services-shortcut.js'
 
 // ✅ t() - Traductions (dans tous les fichiers)
 const title = t('novels.title')
 
-// ✅ req() - Requêtes HTTP (UNIQUEMENT dans repositories)
+// ✅ req(routeName, options) - Requêtes HTTP (UNIQUEMENT dans repositories)
+//    params d'URL -> options.params ; corps -> options.body
 const response = await req('novel.list', { params: { status: 'active' } })
 
-// ✅ error() - Afficher une erreur (dans controllers/services)
+// ✅ flash.error() / flash.errorT() - message d'erreur
 if (response.status !== STATUS.SUCCESS) {
-  error(response.error)
+  flash.errorT('errors.load_failed')
 }
 ```
 
@@ -231,7 +242,7 @@ Le repository a **UN SEUL rôle** : faire l'appel API et retourner la réponse b
 
 ```javascript
 // src/apis/ghosty/repositories/novel-repository.js
-import { req } from '@/services/services-helper.js'
+import { req } from '@/services/shortcuts/services-shortcut.js'
 
 // ✅ CORRECT - Paramètres passés tels quels
 const list = async (params) => {
@@ -512,7 +523,7 @@ Présentation et interaction utilisateur :
 <!-- src/views/HomePage.vue -->
 <script setup>
 import { ref, onMounted } from 'vue'
-import { t } from '@/services/services-helper.js'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 import { useNovels } from '@/composables/useNovels.js'
 import { NovelController } from '@/apis/ghosty/controllers/novel-controller.js'
 import { STATUS } from '@/config/constants.js'
@@ -677,7 +688,7 @@ Documenter chaque exception :
 ### Système t() de Vuemann
 
 ```javascript
-import { t } from '@/services/services-helper.js'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 
 // Utilisation dans composants
 const title = t('novels.title')
@@ -786,7 +797,7 @@ describe('NovelController', () => {
 // tests/views/HomePage.test.js
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
-import { t } from '@/services/services-helper.js'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 import HomePage from '@/views/HomePage.vue'
 import { NovelController } from '@/apis/ghosty/controllers/novel-controller.js'
 import { STATUS } from '@/config/constants.js'

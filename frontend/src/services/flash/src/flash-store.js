@@ -1,54 +1,94 @@
 import { ref } from 'vue'
-import { flashFunctions } from './flash-functions.js'
-import { UTILS } from '../../utils/utils-constants.js'
+import { flashFunctions } from '@/services/flash/src/flash-functions.js'
+import { UTILS } from '@/constants/utils-constants.js'
 
-// État global (hors fonction = partagé entre tous les composants)
 const flashes = ref([])
 const autoDelete = 4000
 
-const getFlashIndex = (flash_id) => {
+const getFlashIndex = flash_id => {
   return flashes.value.findIndex(flash => flash.id === flash_id)
 }
 
-const removeFlash = (flash_id) => {
+const autoRemoveFlash = flash => {
+  setTimeout(() => {
+    flash.autodelete ? removeFlash(flash.id) : autoRemoveFlash(flash)
+  }, autoDelete)
+}
+
+const removeFlash = flash_id => {
   const flash_index = getFlashIndex(flash_id)
-  if (flash_index === UTILS.FIND_NOT_FOUND) return
+  if (flash_index === UTILS.FIND_NOT_FOUND) {
+    return
+  }
 
   flashes.value[flash_index].hide = true
   const DELAY_MS = 350
   setTimeout(() => flashes.value.splice(flash_index, 1), DELAY_MS)
 }
 
-const autoRemoveFlash = (flash) => {
-  setTimeout(() => {
-    if (flash.autodelete) {
-      removeFlash(flash.id)
-    } else {
-      autoRemoveFlash(flash)
-    }
-  }, autoDelete)
-}
-
-const addMessage = (content, type = 'error') => {
+const addFlash = (content, type = 'error') => {
   const flash_id = flashFunctions.generateFlashId()
-  flashes.value.push({ content, type, id: flash_id, autodelete: true })
+  flashes.value.push({
+    content,
+    type,
+    id: flash_id,
+    autodelete: true,
+  })
 
   const flash_index = getFlashIndex(flash_id)
-  if (flash_index === UTILS.FIND_NOT_FOUND) return
+  if (flash_index === UTILS.FIND_NOT_FOUND) {
+    return
+  }
 
   autoRemoveFlash(flashes.value[flash_index])
 }
 
-// Fonction get() pour compatibilité avec l'ancien code
-const get = () => {
-  return {
-    flashes: flashes.value
+const error = message => {
+  addFlash(message, 'error')
+  return false
+}
+
+const success = message => {
+  addFlash(message, 'success')
+}
+
+const warning = message => {
+  addFlash(message, 'warning')
+}
+
+const getFlashes = () => {
+  return flashes.value
+}
+
+const getFlash = flash_id => {
+  const flash_index = getFlashIndex(flash_id)
+  if (flash_index === UTILS.FIND_NOT_FOUND) {
+    return void 0
   }
+  return flashes.value[flash_index]
+}
+
+const hasFlash = flash_id => {
+  return getFlashIndex(flash_id) !== UTILS.FIND_NOT_FOUND
+}
+
+const clearFlashes = () => {
+  flashes.value = []
 }
 
 export const flashStore = {
-  get,
-  addMessage,
+  error,
+  success,
+  warning,
+  getFlashes,
+  getFlash,
+  hasFlash,
+  addFlash,
   removeFlash,
-  flashes
+  clearFlashes,
 }
+
+export const useFlashStore = () => ({
+  flashes,
+  flashStore,
+})

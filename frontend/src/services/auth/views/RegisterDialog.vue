@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { auth, t, form } from '@/services/services-helper.js'
-import { STATUS } from '@/services/ajax/ajax-constants.js'
+import { auth, t, form } from '@/services/shortcuts/services-shortcut.js'
+import { STATUS } from '@/constants/ajax-constants.js'
 import DialogComponent from '@/components/DialogComponent.vue'
 import LoaderComponent from '@/components/LoaderComponent.vue'
 import InputComponent from '@/services/form/views/inputs/InputComponent.vue'

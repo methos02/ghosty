@@ -1,5 +1,5 @@
 import { AuthController } from '@/apis/ghosty/controllers/auth-controller.js'
-import { STATUS } from '@/services/ajax/ajax-constants.js'
+import { STATUS } from '@/constants/ajax-constants.js'
 import { authStore } from './auth-store.js'
 
 const login = async (datas) => {
@@ -60,7 +60,7 @@ const hasRole = (role) => {
 }
 
 const getAccessToken = (api) => {
-  return authStore.token.value
+  return authStore.token.value ?? null
 }
 
 export const authFunctions = {

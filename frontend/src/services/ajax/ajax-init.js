@@ -1,8 +1,6 @@
-import { ajaxService } from '@/services/ajax/init/ajax-service.js'
-import { ajaxPlugin } from '@/services/ajax/init/ajax-plugin.js'
+import { ajaxService } from '@/services/ajax/ajax-service.js'
 
-export const ajaxInit =  {
-    dependencies: ['locale'],
-    services: ajaxService,
-    plugin: ajaxPlugin
+export const ajaxInit = {
+  dependencies: ['locale'],
+  services: ajaxService,
 }

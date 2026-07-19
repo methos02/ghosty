@@ -2,7 +2,7 @@
 import LoginDialog from '@/services/auth/views/LoginDialog.vue'
 import RegisterDialog from '@/services/auth/views/RegisterDialog.vue'
 import { useAuth } from '@/services/auth/src/useAuth.js'
-import { auth } from '@/services/services-helper.js'
+import { auth } from '@/services/shortcuts/services-shortcut.js'
 import { authStore } from '@/services/auth/src/auth-store.js'
 
 const authDialogs = useAuth()

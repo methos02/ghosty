@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { t } from '@/services/services-helper.js'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 
 const props = defineProps({
     params : { type: Object, required: true },

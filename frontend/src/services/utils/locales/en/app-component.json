@@ -5,7 +5,8 @@
       "title": "Application Error",
       "description": "An error occurred while loading the application. Please try again.",
       "retry": "Retry",
-      "callback-undefined": "The callback returned undefined"
+      "callback-undefined": "The callback returned undefined",
+      "dynamic-import": "A new version is available. Please reload the application."
     }
   }
 }

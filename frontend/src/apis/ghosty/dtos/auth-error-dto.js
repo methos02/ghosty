@@ -2,17 +2,17 @@ import { form } from '@/services/shortcuts/services-shortcut.js'
 
 const registerFields = (validationErrors) => {
   return form.mapFields(validationErrors, {
-    'pseudo': 'pseudo',
-    'email': 'email',
-    'password': 'password',
-    'password_confirmation': 'passwordConfirmation'
+    'pseudo': 'register.pseudo',
+    'email': 'register.email',
+    'password': 'register.password',
+    'password_confirmation': 'register.passwordConfirmation'
   })
 }
 
 const loginFields = (validationErrors) => {
   return form.mapFields(validationErrors, {
-    'email': 'email',
-    'password': 'password'
+    'email': 'login.email',
+    'password': 'login.password'
   })
 }
 

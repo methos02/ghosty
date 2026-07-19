@@ -10,6 +10,7 @@ import {
 } from '@/constants/ajax-constants.js'
 
 const SILENT_ERROR_STATUSES = new Set([STATUS.UNAUTHORIZED, STATUS.NOT_FOUND, STATUS.FORBIDDEN])
+const NO_FLASH_STATUSES = new Set([STATUS.UNPROCESSABLE_ENTITY])
 
 const manageError = async (error, fallbackRequestId) => {
   if (error.code === 'ERR_CANCELED') {
@@ -86,6 +87,10 @@ const resolveErrorKey = (status, requestId) => {
 }
 
 const showFlash = (error, requestId) => {
+  if (NO_FLASH_STATUSES.has(error.response.status)) {
+    return
+  }
+
   if (Request.get('flash', requestId) === false) {
     return
   }

@@ -37,7 +37,7 @@ const mapFields = (validationErrors, mapping) => {
   const mapped = {}
   for (const [field, message] of Object.entries(validationErrors)) {
     const frontendField = mapping[field] ?? field
-    mapped[frontendField] = message
+    mapped[frontendField] = Array.isArray(message) ? message[0] : message
   }
   return mapped
 }

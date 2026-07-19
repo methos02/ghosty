@@ -35,15 +35,15 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['Identifiants incorrects'],
+                'email' => ['Adresse e-mail ou mot de passe incorrect'],
             ]);
         }
 
         if ($user->isBanned()) {
             throw ValidationException::withMessages([
-                'email' => ['Compte banni jusqu\'au ' . $user->banned_until->format('d/m/Y')],
+                'email' => ['Compte banni jusqu\'au '.$user->banned_until->format('d/m/Y')],
             ]);
         }
 

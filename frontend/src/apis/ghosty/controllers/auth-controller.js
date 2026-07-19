@@ -8,8 +8,8 @@ const register = async (datas) => {
   const data = AuthDto.toRegister(datas)
   const response = await AuthRepository.register(data)
 
-  if (response.status === STATUS.VALIDATION_ERROR) {
-    form.addErrors(AuthErrorDto.registerFields(response.data.validationErrors))
+  if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
+    form.addErrors(AuthErrorDto.registerFields(response.data.errors))
     return { status: STATUS.ERROR }
   }
 
@@ -26,8 +26,8 @@ const login = async (datas) => {
   const data = AuthDto.toLogin(datas)
   const response = await AuthRepository.login(data)
 
-  if (response.status === STATUS.VALIDATION_ERROR) {
-    form.addErrors(AuthErrorDto.loginFields(response.data.validationErrors))
+  if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
+    form.addErrors(AuthErrorDto.loginFields(response.data.errors))
     return { status: STATUS.ERROR }
   }
 

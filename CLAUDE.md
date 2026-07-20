@@ -21,11 +21,11 @@ Ces fichiers contiennent des règles architecturales et conventions spécifiques
 
 **Ghosty** est une plateforme collaborative permettant aux auteurs de créer des romans interactifs chapitre par chapitre, avec un système de vote communautaire pour choisir les meilleures suites proposées.
 
-**Migration en cours** : Passage d'un legacy PHP 5.6/jQuery/Bootstrap 3 (2016) vers une stack moderne **Vue 3 + Laravel 12 + Vuemann**.
+**Migration en cours** : Passage d'un legacy PHP 5.6/jQuery/Bootstrap 3 (2016) vers une stack moderne **Vue 3 + Laravel 13 + Vuemann**.
 
 - **Type**: Application web collaborative
 - **Stack Frontend**: Vue 3 (Composition API) + Vuemann 4.2.0
-- **Stack Backend**: Laravel 12 (à développer)
+- **Stack Backend**: Laravel 13 (à développer)
 - **Hébergement**: O2Switch (mutualisé)
 
 ## Structure du Projet
@@ -42,7 +42,7 @@ ghosty/
 │   │   ├── assets/    # SCSS, images, fonts
 │   │   └── main.js    # Point d'entrée
 │   └── CLAUDE.md      # Documentation frontend spécifique
-├── backend/           # API Laravel 12 (VIDE - À DÉVELOPPER)
+├── backend/           # API Laravel 13 (VIDE - À DÉVELOPPER)
 │   └── CLAUDE.md      # Documentation backend spécifique
 ├── vuemann/           # Framework Vuemann (dépendance)
 │   └── CLAUDE.md      # Documentation Vuemann
@@ -62,7 +62,7 @@ ghosty/
 - Configuration et routing
 - Développement des composants
 
-### Backend (Laravel 12)
+### Backend (Laravel 13)
 📄 **Voir [backend/CLAUDE.md](backend/CLAUDE.md)** pour :
 - Architecture API Laravel
 - Models, Controllers, Resources
@@ -329,7 +329,7 @@ php artisan test
 - [ ] Tests Vitest
 
 ### 📋 À Faire (Backend)
-- [ ] Setup Laravel 12
+- [ ] Setup Laravel 13
 - [ ] Migrations base de données
 - [ ] Models Eloquent + Relations
 - [ ] API Controllers REST
@@ -349,7 +349,7 @@ php artisan test
 
 ### Documentation Interne
 - **[frontend/CLAUDE.md](frontend/CLAUDE.md)** : Vue 3 + Vuemann
-- **[backend/CLAUDE.md](backend/CLAUDE.md)** : Laravel 12
+- **[backend/CLAUDE.md](backend/CLAUDE.md)** : Laravel 13
 - **[vuemann/CLAUDE.md](vuemann/CLAUDE.md)** : Framework Vuemann
 - **[CLAUDE_BEST_PRACTICES.md](CLAUDE_BEST_PRACTICES.md)** : Bonnes pratiques complètes
 - **[AUDIT_MIGRATION.md](AUDIT_MIGRATION.md)** : Audit legacy + plan migration
@@ -358,8 +358,8 @@ php artisan test
 - [Vue 3 Documentation](https://vuejs.org/)
 - [Vue Router 4](https://router.vuejs.org/)
 - [Vitest](https://vitest.dev/)
-- [Laravel 12 Documentation](https://laravel.com/docs/12.x)
-- [Laravel Sanctum](https://laravel.com/docs/12.x/sanctum)
+- [Laravel 13 Documentation](https://laravel.com/docs/13.x)
+- [Laravel Sanctum](https://laravel.com/docs/13.x/sanctum)
 
 ## Aide et Support
 
@@ -373,4 +373,4 @@ Pour toute question sur :
 
 **Version** : 1.0
 **Date** : 2025-10-18
-**Projet** : Ghosty - Migration vers Vue 3 + Laravel 12
+**Projet** : Ghosty - Migration vers Vue 3 + Laravel 13

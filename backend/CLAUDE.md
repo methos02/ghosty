@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 
 ## Vue d'Ensemble
 
-**Backend Ghosty** : API REST Laravel 12 fournissant les endpoints pour l'application frontend Vue 3.
+**Backend Ghosty** : API REST Laravel 13 fournissant les endpoints pour l'application frontend Vue 3.
 
-- **Framework** : Laravel 12
-- **PHP** : 8.2+
+- **Framework** : Laravel 13
+- **PHP** : 8.3+
 - **Base de données** : MySQL 8.0
 - **ORM** : Eloquent
 - **Authentification** : Laravel Sanctum
@@ -1115,16 +1115,16 @@ chmod -R 775 /home/user/laravel_app/bootstrap/cache
 - **[../AUDIT_MIGRATION.md](../AUDIT_MIGRATION.md)** : Audit legacy + schéma DB
 
 ### Documentation Externe
-- [Laravel 12 Documentation](https://laravel.com/docs/12.x)
-- [Laravel Sanctum](https://laravel.com/docs/12.x/sanctum)
-- [Eloquent ORM](https://laravel.com/docs/12.x/eloquent)
+- [Laravel 13 Documentation](https://laravel.com/docs/13.x)
+- [Laravel Sanctum](https://laravel.com/docs/13.x/sanctum)
+- [Eloquent ORM](https://laravel.com/docs/13.x/eloquent)
 - [Pest PHP](https://pestphp.com/)
 
 ---
 
 **Version** : 1.0
 **Date** : 2025-10-18
-**Backend** : Laravel 12 (À développer)
+**Backend** : Laravel 13 (À développer)
 
 ===
 

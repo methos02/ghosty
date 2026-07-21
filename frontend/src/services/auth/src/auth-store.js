@@ -15,7 +15,7 @@ export const authStore = {
   user: readonly(user),
   token: readonly(token),
 
-  isAuthenticated: computed(() => !!user.value && !!token.value),
+  isAuthenticated: computed(() => Boolean(user.value) && Boolean(token.value)),
   isAuthor: computed(() => user.value?.roles?.includes('author') || false),
   isModerator: computed(() => user.value?.roles?.includes('moderator') || false),
   isAdmin: computed(() => user.value?.roles?.includes('admin') || false),
@@ -26,7 +26,7 @@ export const authStore = {
   },
 
   unsetUser: () => {
-    user.value = null
+    user.value = undefined
     localStorage.removeItem('auth_user')
   },
 
@@ -36,21 +36,21 @@ export const authStore = {
   },
 
   unsetToken: () => {
-    token.value = null
+    token.value = undefined
     localStorage.removeItem('auth_token')
   },
 
   clear: () => {
-    user.value = null
-    token.value = null
+    user.value = undefined
+    token.value = undefined
     localStorage.removeItem('auth_token')
     localStorage.removeItem('auth_user')
   },
 
   hasRole: (role) => {
-    if (!user.value?.roles) return false
+    if (!user.value?.roles) {return false}
     return user.value.roles.includes(role)
   },
 
-  getCurrentUser: () => user.value ?? null,
+  getCurrentUser: () => user.value ?? undefined,
 }

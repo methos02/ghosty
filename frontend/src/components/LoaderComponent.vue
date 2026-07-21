@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { pixelHelper } from '@/helpers/pixel-helper.js'
 
 const props = defineProps({
   type: { type: String, default: 'bars' },
@@ -7,7 +8,7 @@ const props = defineProps({
   cb: { type: Function, default: undefined },
   params: { type: Array, default: () => [] },
   infinite: { type: Boolean, default: false },
-  buttonClasses: { type: String, default: '' },
+  buttonClasses: { type: String, default: 'btn btn-primary' },
   buttonType: { type: String, default: 'button' },
   disabled: { type: Boolean, default: false }
 })
@@ -29,8 +30,7 @@ const execute = async () => {
   try {
     await callback.value(...props.params)
   } finally {
-    if (props.infinite) { return }
-    setLoad(false)
+    if (!props.infinite) { setLoad(false) }
   }
 }
 
@@ -47,15 +47,19 @@ const defineButtonSize = () => {
   if (!button.value) { return }
 
   const styles = globalThis.getComputedStyle(button.value)
-  const buttonWidth = Number.parseFloat(styles.borderRightWidth) + Number.parseFloat(styles.borderLeftWidth) + button.value.clientWidth
-  const buttonHeight = Number.parseFloat(styles.borderTopWidth) + Number.parseFloat(styles.borderBottomWidth) + button.value.clientHeight
+  const buttonWidth = pixelHelper.pxToNumber(styles.borderRightWidth) + pixelHelper.pxToNumber(styles.borderLeftWidth) + button.value.clientWidth
+  const buttonHeight = pixelHelper.pxToNumber(styles.borderTopWidth) + pixelHelper.pxToNumber(styles.borderBottomWidth) + button.value.clientHeight
 
   if (buttonHeight === 0) { return }
 
-  size.value = { height: buttonHeight + 'px', width: (buttonWidth + EXTRA_PADDING) + 'px' }
+  size.value = { height: pixelHelper.numberToPx(buttonHeight), width: pixelHelper.numberToPx(buttonWidth + EXTRA_PADDING) }
 }
 
-defineExpose({ setLoad, loading, runCallback })
+defineExpose({
+setLoad,
+loading,
+runCallback
+})
 </script>
 <template>
   <button

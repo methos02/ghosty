@@ -13,7 +13,7 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 
 const loadMore = async () => {
-    if (isLoading.value || errorMessage.value || props.params.nextPage > props.params.lastPage) return
+    if (isLoading.value || errorMessage.value || props.params.nextPage > props.params.lastPage) {return}
 
     isLoading.value = true
     const response = await props.cb()
@@ -21,9 +21,11 @@ const loadMore = async () => {
     isLoading.value = false
 }
 
+const DEFAULT_DISTANCE = 10
+
 onMounted(() => {
-    const target = props.options.observe === 'window' ? window : document.querySelector(props.options.observe)
-    const distance = props.options.distance || 10
+    const target = props.options.observe === 'window' ? globalThis : document.querySelector(props.options.observe)
+    const distance = props.options.distance || DEFAULT_DISTANCE
     useInfiniteScroll(target, loadMore, { distance })
 })
 </script>

@@ -6,8 +6,8 @@ import { STATUS } from '@/constants/ajax-constants.js'
 export const responseErrorInterceptor = async error => {
   const requestId = error.config?.requestId
   if (
-    error.response === undefined ||
     requestId === undefined ||
+    error.response === undefined ||
     Request.get('retryRefresh', requestId) === false
   ) {
     throw error

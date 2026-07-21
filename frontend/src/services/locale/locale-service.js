@@ -2,13 +2,14 @@ import { localeFunctions } from '@/services/locale/src/locale-functions.js'
 import { flash } from '@/services/shortcuts/services-shortcut.js'
 
 const localeDefault = 'fr'
+const MAX_PARTS = 2
 
 const t = (textKey, params = {}) => {
   if (!textKey.includes(':')) {
     return localeFunctions.vueTranslate(textKey, params)
   }
 
-  const [key, rawParams] = textKey.split(':')
+  const [key, rawParams] = textKey.split(':', MAX_PARTS)
   return localeFunctions.vueTranslate(key, localeServiceInternal.extractParams(rawParams))
 }
 

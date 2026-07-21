@@ -1,5 +1,5 @@
 import { authFunctions } from '@/services/auth/src/auth-functions.js'
-import { useAuth } from '@/services/auth/src/useAuth.js'
+import { useAuth } from '@/services/auth/src/use-auth.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 
 const authDialogs = useAuth()

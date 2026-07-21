@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+const MAX_PARTS = 2
+
 const state = {
   services: {},
 }
@@ -18,7 +20,7 @@ const resetServices = () => {
 }
 
 const service = (serviceKey, methodParams) => {
-  const [serviceName, serviceMethod] = serviceKey.split(':')
+  const [serviceName, serviceMethod] = serviceKey.split(':', MAX_PARTS)
   const method = servicesManagerInternal.serviceMethod(serviceName, serviceMethod)
   const formattedParams = servicesManagerInternal.formatMethodParams(methodParams)
 

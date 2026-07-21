@@ -3,7 +3,12 @@ import { routes } from '@/config/routes-config.js'
 import { routesApi } from '@/config/routes-api-config.js'
 import { app } from '@/config/app-config.js'
 
-const configUser = { locales, routes, routesApi, app }
+const configUser = {
+locales,
+routes,
+routesApi,
+app
+}
 
 const init = configs => {
   Object.assign(configUser, configs)

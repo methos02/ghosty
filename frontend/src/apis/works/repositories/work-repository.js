@@ -8,7 +8,22 @@ const getById = async (options) => {
   return await req('work.show', options)
 }
 
+const create = async (options) => {
+  return await req('work.create', options)
+}
+
+const update = async (options) => {
+  return await req('work.update', options)
+}
+
+const vote = async (options) => {
+  return await req('work.vote', options)
+}
+
 export const WorkRepository = {
   list,
-  getById
+  getById,
+  create,
+  update,
+  vote,
 }

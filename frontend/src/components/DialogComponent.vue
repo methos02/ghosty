@@ -38,7 +38,11 @@ const toggleDialog = state => {
   dialog.value.open ? closeDialog() : showDialog()
 } 
 
-defineExpose({ show: showDialog, close: closeDialog, toggle: toggleDialog })
+defineExpose({
+show: showDialog,
+close: closeDialog,
+toggle: toggleDialog
+})
 
 const closeFromBackground = event => {
   if (event.currentTarget === event.target && props.closeBg === true) { closeDialog() }

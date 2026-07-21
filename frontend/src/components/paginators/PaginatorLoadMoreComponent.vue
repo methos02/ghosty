@@ -1,14 +1,13 @@
 <script setup>
 import { computed } from "vue";
 import { t } from '@/services/shortcuts/services-shortcut.js'
-
-const percentOf = (value, total) => Math.round((value / total) * 100);
+import { utilsH } from '@/helpers/utils-helper.js'
 
 const props = defineProps({
     params : { type: Object, required: true }
 })
 
-const progress = computed(() => percentOf(props.params.page, props.params.lastPage))
+const progress = computed(() => Math.round(utilsH.percentOf(props.params.page, props.params.lastPage)))
 
 const emit = defineEmits(['p-loadmore']);
 const handlePageClick = (page) => {

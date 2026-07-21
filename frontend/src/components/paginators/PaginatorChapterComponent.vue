@@ -15,19 +15,19 @@ watch(() => props.currentChapter, (newChapter) => {
 })
 
 const goToPrevious = () => {
-  if (props.currentChapter <= 1) return
+  if (props.currentChapter <= 1) {return}
   emit('p-chapter', { chapter: props.currentChapter - 1 })
 }
 
 const goToNext = () => {
-  if (props.currentChapter >= props.totalChapters) return
+  if (props.currentChapter >= props.totalChapters) {return}
   emit('p-chapter', { chapter: props.currentChapter + 1 })
 }
 
 const handleInputChange = () => {
   const value = parseInt(inputChapter.value)
 
-  if (isNaN(value)) {
+  if (Number.isNaN(value)) {
     inputChapter.value = props.currentChapter
     return
   }

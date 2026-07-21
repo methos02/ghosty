@@ -25,9 +25,31 @@ const toShowParams = (id) => {
   return { id }
 }
 
+const toCreate = (workData) => {
+  return {
+    title: workData.title,
+    content: workData.content,
+    novel_id: workData.novelId,
+  }
+}
+
+const toUpdate = (workData) => {
+  return {
+    title: workData.title,
+    content: workData.content,
+  }
+}
+
+const toVote = (value) => {
+  return { value }
+}
+
 export const WorkDto = {
   fromList,
   fromShow,
   toChapterFilters,
-  toShowParams
+  toShowParams,
+  toCreate,
+  toUpdate,
+  toVote,
 }

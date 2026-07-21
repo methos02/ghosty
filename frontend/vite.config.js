@@ -1,14 +1,14 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path'
+import path from 'node:path'
 import { localeVite } from './src/services/locale/src/locale-vite.js'
 import { fileURLToPath } from 'node:url'
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const packageJson = JSON.parse(readFileSync('./package.json', 'utf-8'))
+const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'))
 const appVersion = packageJson.version
 
 export default defineConfig({

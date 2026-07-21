@@ -27,7 +27,7 @@ export const validateRegisterForm = (datas) => {
     passwordConfirmation: {
       rules: 'required|password_match',
       tests: {
-        password_match: (value, datas) => value !== datas.password ? 'password_match' : ''
+        password_match: (value, datas) => value === datas.password ? '' : 'password_match'
       },
       errors: {
         required: 'auth.register_error_password_confirmation_required',
@@ -37,7 +37,7 @@ export const validateRegisterForm = (datas) => {
     acceptTerms: {
       rules: 'terms_accepted',
       tests: {
-        terms_accepted: (value) => !value ? 'terms_accepted' : ''
+        terms_accepted: (value) => value ? '' : 'terms_accepted'
       },
       errors: {
         terms_accepted: 'auth.register_terms_error'

@@ -2,8 +2,8 @@ import { ref, readonly } from 'vue'
 
 const novels = ref([])
 const isLoading = ref(false)
-const selectedNovel = ref(null)
-const currentChapter = ref(null)
+const selectedNovel = ref()
+const currentChapter = ref()
 
 export const useNovelStore = () => {
   const setNovels = (newNovels) => {
@@ -19,8 +19,8 @@ export const useNovelStore = () => {
   }
 
   const clearSelectedNovel = () => {
-    selectedNovel.value = null
-    currentChapter.value = null
+    selectedNovel.value = undefined
+    currentChapter.value = undefined
   }
 
   const setCurrentChapter = (chapter) => {

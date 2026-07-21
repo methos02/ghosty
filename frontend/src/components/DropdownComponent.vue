@@ -32,7 +32,11 @@ const toggle = state => {
 }
 
 const emit = defineEmits(['hide', 'show'])
-defineExpose({show, hide, toggle})
+defineExpose({
+show,
+hide,
+toggle
+})
 </script>
 
 <template>

@@ -1,5 +1,6 @@
 import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
+import { PaginationDto } from '@/apis/shared/dtos/pagination-dto.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 
 const list = async (page = 1) => {
@@ -10,10 +11,7 @@ const list = async (page = 1) => {
   return {
     status: STATUS.SUCCESS,
     novels: NovelDto.fromList(response.data.data),
-    pagination: {
-      nextPage : response.data.meta.current_page + 1,
-      lastPage: response.data.meta.last_page
-    }
+    pagination: PaginationDto.fromMeta(response.data.meta),
   }
 }
 
@@ -24,11 +22,11 @@ const getBySlug = async (slug) => {
 
   return {
     status: STATUS.SUCCESS,
-    novel: NovelDto.fromShow(response.data)
+    novel: NovelDto.fromShow(response.data),
   }
 }
 
 export const NovelController = {
   list,
-  getBySlug
+  getBySlug,
 }

@@ -15,7 +15,7 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 
 const loadChapter = async (chapterNumber = 1) => {
-  if (!selectedNovel.value) return
+  if (!selectedNovel.value) {return}
 
   isLoading.value = true
   errorMessage.value = ''
@@ -34,12 +34,12 @@ const loadChapter = async (chapterNumber = 1) => {
 }
 
 const handleChapterChange = ({ chapter }) => {
-  if (chapter === currentChapterNumber.value) return
+  if (chapter === currentChapterNumber.value) {return}
   loadChapter(chapter)
 }
 
 const readCurrentChapter = () => {
-  console.log('Lire le chapitre:', currentChapter.value)
+  // TODO: naviguer vers la lecture du chapitre courant
 }
 
 const handleDialogClose = () => {
@@ -50,14 +50,14 @@ const handleDialogClose = () => {
 
 watch(selectedNovel, async (novel) => {
   if (!novel) {
-    if (dialog.value) dialog.value.close()
+    if (dialog.value) {dialog.value.close()}
     return
   }
 
   currentChapterNumber.value = 1
   errorMessage.value = ''
 
-  if (dialog.value) dialog.value.show()
+  if (dialog.value) {dialog.value.show()}
   await loadChapter(1)
 })
 </script>
@@ -93,8 +93,8 @@ watch(selectedNovel, async (novel) => {
 
           <PaginatorChapterComponent
             v-if="selectedNovel.chaptersCount > 0"
-            :current-chapter="currentChapterNumber"
-            :total-chapters="selectedNovel.chaptersCount"
+            :currentChapter="currentChapterNumber"
+            :totalChapters="selectedNovel.chaptersCount"
             @p-chapter="handleChapterChange"
           />
         </div>
@@ -109,7 +109,7 @@ watch(selectedNovel, async (novel) => {
               Résumé - {{ currentChapterNumber }}. {{ currentChapter.title }}
             </h3>
 
-            <div class="novel-detail-dialog__summary | fs-400 color-neutral-700" v-html="currentChapter.content"></div>
+            <div class="novel-detail-dialog__summary | fs-400 color-neutral-700">{{ currentChapter.content }}</div>
 
             <button
               type="button"

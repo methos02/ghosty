@@ -1,9 +1,4 @@
 import { servicesM } from '@/services/services-manager.js'
-import { authStore as _authStore } from '@/services/auth/src/auth-store.js'
-
-// Auth custom Ghosty (JWT + dialogs), incompatible avec l'auth Keycloak de Vuemann.
-// Le store est le composable custom, consommé aussi directement par HeaderComponent.
-export const authStore = _authStore
 
 export const auth = {
   user: () => servicesM.service('auth:getCurrentUser'),
@@ -20,3 +15,5 @@ export const auth = {
   openRegisterDialog: () => servicesM.service('auth:openRegisterDialog'),
   closeDialogs: () => servicesM.service('auth:closeDialogs'),
 }
+
+export {authStore} from '@/services/auth/src/auth-store.js'

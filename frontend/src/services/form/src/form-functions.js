@@ -47,7 +47,7 @@ const getName = test => {
   if (!test.includes(':')) {
     return test
   }
-  const [test_name] = test.split(':')
+  const [test_name] = test.split(':', 1)
   return test_name
 }
 

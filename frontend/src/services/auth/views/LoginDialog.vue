@@ -5,7 +5,7 @@ import { STATUS } from '@/constants/ajax-constants.js'
 import DialogComponent from '@/components/DialogComponent.vue'
 import LoaderComponent from '@/components/LoaderComponent.vue'
 import InputComponent from '@/services/form/views/inputs/InputComponent.vue'
-import { useAuth } from '../src/useAuth.js'
+import { useAuth } from '../src/use-auth.js'
 import { validateLoginForm } from '../formRequest/login-form-request.js'
 
 const authDialogs = useAuth()
@@ -77,8 +77,8 @@ const close = () => {
             <LoaderComponent
               ref="loginButton"
               :cb="handleLogin"
-              button-type="submit"
-              button-classes="btn btn-primary flex-1"
+              buttonType="submit"
+              buttonClasses="btn btn-primary flex-1"
             >
               {{ t('auth.login_button') }}
             </LoaderComponent>

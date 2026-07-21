@@ -103,7 +103,7 @@ const generateSubdirectoryFromRoute = requestId => {
   const hasParams =
     Request.get('params', requestId) !== undefined &&
     Object.keys(Request.get('params', requestId)).length > 0
-  if (url.includes('{') && !hasParams) {
+  if (!hasParams && url.includes('{')) {
     ajaxFunctions.throwError('error_empty_parameter', {
       routeName: Request.get('route.name', requestId),
     })

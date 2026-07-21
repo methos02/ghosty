@@ -31,7 +31,10 @@ export const useSearchNovels = () => {
     }
 
     const loadMore = async () => {
-        if (pagination.value.nextPage > pagination.value.lastPage) return { status: STATUS.SUCCESS }
+        if (pagination.value.nextPage > pagination.value.lastPage) {
+            return { status: STATUS.SUCCESS }
+        }
+        
         return await loadNovels(pagination.value.nextPage)
     }
 

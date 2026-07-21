@@ -59,9 +59,7 @@ const hasRole = (role) => {
   return authStore.hasRole(role)
 }
 
-const getAccessToken = (api) => {
-  return authStore.token.value ?? null
-}
+const getAccessToken = () => authStore.token.value ?? undefined
 
 export const authFunctions = {
   login,

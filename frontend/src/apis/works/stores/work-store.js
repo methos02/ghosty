@@ -1,6 +1,6 @@
 import { ref, readonly } from 'vue'
 
-const currentWork = ref(null)
+const currentWork = ref()
 const works = ref([])
 
 export const useWorkStore = () => {
@@ -13,7 +13,7 @@ export const useWorkStore = () => {
   }
 
   const clearCurrentWork = () => {
-    currentWork.value = null
+    currentWork.value = undefined
   }
 
   return {

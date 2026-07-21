@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import DropdownComponent from '@/components/DropdownComponent.vue'
-import { useSearchNovels } from '@/composables/useSearchNovels.js'
+import { useSearchNovels } from '@/composables/use-search-novels.js'
 
 const activeTab = defineModel('activeTab', {
   type: String,
@@ -10,8 +10,8 @@ const activeTab = defineModel('activeTab', {
 
 const { selectedSort, selectedGenre, setSort, setGenre } = useSearchNovels()
 
-const sortDropdown = ref(null)
-const genreDropdown = ref(null)
+const sortDropdown = ref()
+const genreDropdown = ref()
 
 const sortOptions = ['Top 10', 'Récents', 'Populaires', 'Alphabétique']
 const genreOptions = ['Tous', 'Fantasy', 'Science-Fiction', 'Romance', 'Thriller', 'Horreur']

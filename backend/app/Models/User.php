@@ -3,15 +3,23 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Sanctum\PersonalAccessToken;
 
+/**
+ * @mixin IdeHelperUser
+ */
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    /**
+     * @use HasApiTokens<PersonalAccessToken>
+     * @use HasFactory<UserFactory>
+     */
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'pseudo',
@@ -30,6 +38,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $attributes = [
+        'roles' => '["reader"]',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -44,8 +56,11 @@ class User extends Authenticatable
 
     // Role constants
     const ROLE_READER = 'reader';
+
     const ROLE_AUTHOR = 'author';
+
     const ROLE_MODERATOR = 'moderator';
+
     const ROLE_ADMIN = 'admin';
 
     // Helper methods
@@ -69,12 +84,19 @@ class User extends Authenticatable
         return $this->hasRole(self::ROLE_ADMIN);
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-01-modele-de-ban-utilisateur.md
+     *
+     * @phpstan-assert-if-true !null $this->banned_until
+     */
     public function isBanned(): bool
     {
-        if (!$this->banned_until) {
+        $bannedUntil = $this->banned_until;
+
+        if (! $bannedUntil) {
             return false;
         }
 
-        return $this->banned_until->isFuture();
+        return $bannedUntil->isFuture();
     }
 }

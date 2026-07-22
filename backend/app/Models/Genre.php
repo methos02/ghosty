@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * @mixin IdeHelperGenre
+ */
 class Genre extends Model
 {
     protected $fillable = [
@@ -15,7 +18,7 @@ class Genre extends Model
     {
         parent::boot();
 
-        static::creating(function ($genre) {
+        static::creating(function (Genre $genre): void {
             if (empty($genre->slug)) {
                 $genre->slug = Str::slug($genre->name);
             }

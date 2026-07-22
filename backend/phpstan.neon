@@ -1,0 +1,19 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: max
+
+    paths:
+        - app
+        - config
+        - database
+        - routes
+        - tests
+
+    tmpDir: storage/framework/cache/phpstan
+
+    scanFiles:
+        - _ide_helper_models.php
+
+    checkModelProperties: true

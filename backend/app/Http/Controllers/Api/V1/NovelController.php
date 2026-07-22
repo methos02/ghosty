@@ -3,18 +3,15 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\NovelResource;
+use App\Http\Resources\Collections\NovelCollection;
 use App\Models\Novel;
 
 class NovelController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): NovelCollection
     {
         $novels = Novel::with('genre')->paginate(15);
 
-        return NovelResource::collection($novels);
+        return new NovelCollection($novels);
     }
 }

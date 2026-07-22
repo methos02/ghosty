@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Novel;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class NovelSeeder extends Seeder
 {
@@ -13,8 +13,8 @@ class NovelSeeder extends Seeder
      */
     public function run(): void
     {
-        $jsonPath = database_path('data/novels.json');
-        $novels = json_decode(file_get_contents($jsonPath), true);
+        /** @var array<int, array{title: string, genre_id: int, cover_url: string}> $novels */
+        $novels = File::json(database_path('data/novels.json'));
 
         DB::table('novels')->truncate();
 

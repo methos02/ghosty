@@ -38,6 +38,7 @@ class GenreControllerTest extends TestCase
 
         $response->assertStatus(200);
 
+        /** @var array<int, array{name: string}> $data */
         $data = $response->json('data');
         $this->assertEquals('Aventure', $data[0]['name']);
         $this->assertEquals('Horreur', $data[1]['name']);

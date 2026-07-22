@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class GenresSeeder extends Seeder
@@ -13,8 +14,8 @@ class GenresSeeder extends Seeder
      */
     public function run(): void
     {
-        $jsonPath = database_path('data/genres.json');
-        $genres = json_decode(file_get_contents($jsonPath), true);
+        /** @var array<int, array{id: int, name: string}> $genres */
+        $genres = File::json(database_path('data/genres.json'));
 
         DB::table('genres')->truncate();
 

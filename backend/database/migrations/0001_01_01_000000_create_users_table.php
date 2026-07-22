@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->json('roles')->default(json_encode(['reader']));
+            $table->json('roles');
             $table->string('avatar')->nullable();
             $table->boolean('notifications_enabled')->default(true);
             $table->string('firstname')->nullable();
@@ -24,7 +24,8 @@ return new class extends Migration
             $table->integer('new_messages_count')->default(0);
             $table->date('banned_until')->nullable();
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

@@ -19,8 +19,8 @@ class AuthController extends Controller
         $user = User::create([
             'pseudo' => $request->pseudo,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => User::ROLE_READER,
+            'password' => Hash::make($request->string('password')->toString()),
+            'roles' => [User::ROLE_READER],
         ]);
 
         $token = $user->createToken('auth-token')->plainTextToken;
@@ -35,7 +35,7 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->string('password')->toString(), $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Adresse e-mail ou mot de passe incorrect'],
             ]);
@@ -57,7 +57,9 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        /** @var User $user */
+        $user = $request->user();
+        $user->currentAccessToken()->delete();
 
         return response()->json([
             'message' => 'Déconnecté avec succès',

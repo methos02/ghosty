@@ -12,7 +12,9 @@
         "laravel/tinker": "^3.0"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.7",
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.10",
         "laravel/boost": "^2.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
@@ -50,6 +52,8 @@
             "@php artisan config:clear --ansi",
             "@php artisan test"
         ],
+        "stan": "phpstan analyse --memory-limit=1G",
+        "ide-helper": "@php artisan ide-helper:models --write-mixin --no-interaction",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

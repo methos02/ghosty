@@ -6,51 +6,51 @@ const selectedSort = ref('Top 10')
 const selectedGenre = ref('Tous')
 const novels = ref([])
 const pagination = ref({
-    nextPage: 1,
-    lastPage: 1
+  nextPage: 1,
+  lastPage: 1,
 })
 
 export const useSearchNovels = () => {
-    const setSort = (value) => {
-        selectedSort.value = value
+  const setSort = value => {
+    selectedSort.value = value
+  }
+
+  const setGenre = value => {
+    selectedGenre.value = value
+  }
+
+  const loadNovels = async (page = 1) => {
+    const response = await NovelController.list(page)
+    if (response.status !== STATUS.SUCCESS) {
+      return response
     }
 
-    const setGenre = (value) => {
-        selectedGenre.value = value
+    novels.value.push(...response.novels)
+    pagination.value = response.pagination
+    return response
+  }
+
+  const loadMore = async () => {
+    if (pagination.value.nextPage > pagination.value.lastPage) {
+      return { status: STATUS.SUCCESS }
     }
 
-    const loadNovels = async (page = 1) => {
-        const response = await NovelController.list(page)
-        if (response.status !== STATUS.SUCCESS) {
-            return response
-        }
+    return await loadNovels(pagination.value.nextPage)
+  }
 
-        novels.value.push(...response.novels)
-        pagination.value = response.pagination
-        return response
-    }
+  const hasMore = () => {
+    return pagination.value.nextPage <= pagination.value.lastPage
+  }
 
-    const loadMore = async () => {
-        if (pagination.value.nextPage > pagination.value.lastPage) {
-            return { status: STATUS.SUCCESS }
-        }
-        
-        return await loadNovels(pagination.value.nextPage)
-    }
-
-    const hasMore = () => {
-        return pagination.value.nextPage <= pagination.value.lastPage
-    }
-
-    return {
-        selectedSort: readonly(selectedSort),
-        selectedGenre: readonly(selectedGenre),
-        novels: readonly(novels),
-        pagination: readonly(pagination),
-        setSort,
-        setGenre,
-        loadNovels,
-        loadMore,
-        hasMore
-    }
+  return {
+    selectedSort: readonly(selectedSort),
+    selectedGenre: readonly(selectedGenre),
+    novels: readonly(novels),
+    pagination: readonly(pagination),
+    setSort,
+    setGenre,
+    loadNovels,
+    loadMore,
+    hasMore,
+  }
 }

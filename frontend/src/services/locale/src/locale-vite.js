@@ -57,10 +57,7 @@ const collectServiceTranslations = (projectDirectory, locale, translations) => {
 }
 
 const collectGlobalTranslations = (projectDirectory, locale, translations) => {
-  const globalLocales = [
-    `./node_modules/vuemann/locales/${locale}`,
-    `./src/locales/${locale}`,
-  ]
+  const globalLocales = [`./node_modules/vuemann/locales/${locale}`, `./src/locales/${locale}`]
 
   for (const localesPath of globalLocales) {
     const resolvedPath = path.resolve(projectDirectory, localesPath)

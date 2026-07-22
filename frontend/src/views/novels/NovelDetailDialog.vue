@@ -15,7 +15,9 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 
 const loadChapter = async (chapterNumber = 1) => {
-  if (!selectedNovel.value) {return}
+  if (!selectedNovel.value) {
+    return
+  }
 
   isLoading.value = true
   errorMessage.value = ''
@@ -34,7 +36,9 @@ const loadChapter = async (chapterNumber = 1) => {
 }
 
 const handleChapterChange = ({ chapter }) => {
-  if (chapter === currentChapterNumber.value) {return}
+  if (chapter === currentChapterNumber.value) {
+    return
+  }
   loadChapter(chapter)
 }
 
@@ -48,16 +52,20 @@ const handleDialogClose = () => {
   errorMessage.value = ''
 }
 
-watch(selectedNovel, async (novel) => {
+watch(selectedNovel, async novel => {
   if (!novel) {
-    if (dialog.value) {dialog.value.close()}
+    if (dialog.value) {
+      dialog.value.close()
+    }
     return
   }
 
   currentChapterNumber.value = 1
   errorMessage.value = ''
 
-  if (dialog.value) {dialog.value.show()}
+  if (dialog.value) {
+    dialog.value.show()
+  }
   await loadChapter(1)
 })
 </script>
@@ -69,11 +77,17 @@ watch(selectedNovel, async (novel) => {
     @dialog-close="handleDialogClose"
   >
     <div class="novel-detail-dialog | w-full">
-      <div v-if="errorMessage && !selectedNovel" class="novel-detail-dialog__error | bg-danger-100 p-15 radius-10 color-danger">
+      <div
+        v-if="errorMessage && !selectedNovel"
+        class="novel-detail-dialog__error | bg-danger-100 p-15 radius-10 color-danger"
+      >
         {{ errorMessage }}
       </div>
 
-      <div v-if="selectedNovel" class="novel-detail-dialog__content | d-flex g-20">
+      <div
+        v-if="selectedNovel"
+        class="novel-detail-dialog__content | d-flex g-20"
+      >
         <div class="novel-detail-dialog__left">
           <div class="novel-detail-dialog__cover | overflow-clip radius-4">
             <img
@@ -81,7 +95,7 @@ watch(selectedNovel, async (novel) => {
               :src="selectedNovel.coverUrl"
               :alt="selectedNovel.title"
               class="w-full h-full"
-              style="object-fit: cover; object-position: center;"
+              style="object-fit: cover; object-position: center"
             />
             <div
               v-if="!selectedNovel.coverUrl"
@@ -100,16 +114,24 @@ watch(selectedNovel, async (novel) => {
         </div>
 
         <div class="novel-detail-dialog__right | d-flex f-column g-15">
-          <div v-if="isLoading" class="d-flex j-center p-30">
+          <div
+            v-if="isLoading"
+            class="d-flex j-center p-30"
+          >
             <span>{{ t('common.loading') }}</span>
           </div>
 
-          <div v-if="!isLoading && currentChapter" class="d-flex f-column g-15">
+          <div
+            v-if="!isLoading && currentChapter"
+            class="d-flex f-column g-15"
+          >
             <h3 class="fs-500 fw-400 color-neutral-900">
               Résumé - {{ currentChapterNumber }}. {{ currentChapter.title }}
             </h3>
 
-            <div class="novel-detail-dialog__summary | fs-400 color-neutral-700">{{ currentChapter.content }}</div>
+            <div class="novel-detail-dialog__summary | fs-400 color-neutral-700">
+              {{ currentChapter.content }}
+            </div>
 
             <button
               type="button"
@@ -120,7 +142,10 @@ watch(selectedNovel, async (novel) => {
             </button>
           </div>
 
-          <div v-if="!isLoading && errorMessage && !currentChapter" class="bg-danger-100 p-15 radius-10 color-danger">
+          <div
+            v-if="!isLoading && errorMessage && !currentChapter"
+            class="bg-danger-100 p-15 radius-10 color-danger"
+          >
             {{ errorMessage }}
           </div>
         </div>

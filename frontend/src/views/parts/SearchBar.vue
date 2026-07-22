@@ -5,7 +5,7 @@ import { useSearchNovels } from '@/composables/use-search-novels.js'
 
 const activeTab = defineModel('activeTab', {
   type: String,
-  default: 'home'
+  default: 'home',
 })
 
 const { selectedSort, selectedGenre, setSort, setGenre } = useSearchNovels()
@@ -16,12 +16,12 @@ const genreDropdown = ref()
 const sortOptions = ['Top 10', 'Récents', 'Populaires', 'Alphabétique']
 const genreOptions = ['Tous', 'Fantasy', 'Science-Fiction', 'Romance', 'Thriller', 'Horreur']
 
-const selectSort = (option) => {
+const selectSort = option => {
   setSort(option)
   sortDropdown.value?.hide()
 }
 
-const selectGenre = (option) => {
+const selectGenre = option => {
   setGenre(option)
   genreDropdown.value?.hide()
 }
@@ -32,9 +32,14 @@ const selectGenre = (option) => {
     <!-- Partie gauche : Trier par -->
     <div class="search-bar__side | left d-flex a-center g-10">
       <span class="search-bar__label | color-neutral-100">Trier par</span>
-      <DropdownComponent ref="sortDropdown" orientation="left">
+      <DropdownComponent
+        ref="sortDropdown"
+        orientation="left"
+      >
         <template #button>
-          <button class="search-bar__select | bg-neutral-100 bg-neutral-300-hover radius-10 d-flex a-center j-between px-5 pointer">
+          <button
+            class="search-bar__select | bg-neutral-100 bg-neutral-300-hover radius-10 d-flex a-center j-between px-5 pointer"
+          >
             <span class="search-bar__select-text | fs-300 flex-1">{{ selectedSort }}</span>
             <i class="search-bar__icon | fas fa-chevron-down d-flex a-center j-center"></i>
           </button>
@@ -61,14 +66,14 @@ const selectGenre = (option) => {
       <div class="search-bar__tabs | d-flex j-center">
         <button
           class="search-bar__tab"
-          :class="{ 'search-bar__tab--active' : activeTab === 'home' }"
+          :class="{ 'search-bar__tab--active': activeTab === 'home' }"
           @click="activeTab = 'home'"
         >
           Accueil
         </button>
         <button
           class="search-bar__tab"
-          :class="{ 'search-bar__tab--active' : activeTab === 'search' }"
+          :class="{ 'search-bar__tab--active': activeTab === 'search' }"
           @click="activeTab = 'search'"
         >
           Recherche
@@ -86,9 +91,14 @@ const selectGenre = (option) => {
     <!-- Partie droite : Genre -->
     <div class="search-bar__side | right d-flex a-center g-10">
       <span class="search-bar__label | color-neutral-100">Genre</span>
-      <DropdownComponent ref="genreDropdown" orientation="right">
+      <DropdownComponent
+        ref="genreDropdown"
+        orientation="right"
+      >
         <template #button>
-          <button class="search-bar__select | bg-neutral-100 bg-neutral-300-hover radius-10 d-flex a-center j-between px-5 pointer">
+          <button
+            class="search-bar__select | bg-neutral-100 bg-neutral-300-hover radius-10 d-flex a-center j-between px-5 pointer"
+          >
             <span class="search-bar__select-text | fs-300 flex-1">{{ selectedGenre }}</span>
             <i class="search-bar__icon | fas fa-chevron-down d-flex a-center j-center"></i>
           </button>
@@ -118,9 +128,13 @@ const selectGenre = (option) => {
     padding-left: 24px;
     padding-right: 12px;
     background-color: rgba(0, 0, 0, 0.8);
-    
-    &.left { border-radius: 10px 0 0 0;}
-    &.right {border-radius: 0 10px 0 0;}
+
+    &.left {
+      border-radius: 10px 0 0 0;
+    }
+    &.right {
+      border-radius: 0 10px 0 0;
+    }
   }
 
   &__label {
@@ -152,19 +166,26 @@ const selectGenre = (option) => {
   }
 
   &__tabs {
-    > :first-child { border-radius: 5px 0 0 0; }
-    > :last-child { border-radius: 0 5px 0 0; }
+    > :first-child {
+      border-radius: 5px 0 0 0;
+    }
+    > :last-child {
+      border-radius: 0 5px 0 0;
+    }
   }
 
   &__tab {
     font-size: 1rem;
-    transition: background-color 0.3s, color 0.3s;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
     padding: 4px 20px;
     background-color: rgba(255, 255, 255, 0.75);
     color: var(--primary-700);
     cursor: pointer;
 
-    &--active, &:hover {
+    &--active,
+    &:hover {
       background-color: var(--neutral-100);
     }
   }

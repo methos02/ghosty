@@ -3,10 +3,10 @@ import { ref } from 'vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
 
 const props = defineProps({
-  title : { type: String, default : ''},
-  closeCross : { type: Boolean, default : true },
-  closeBg : { type: Boolean, default : true },
-  noPadding : { type: Boolean, default : false },
+  title: { type: String, default: '' },
+  closeCross: { type: Boolean, default: true },
+  closeBg: { type: Boolean, default: true },
+  noPadding: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['dialog-show', 'dialog-close'])
@@ -14,38 +14,46 @@ const emit = defineEmits(['dialog-show', 'dialog-close'])
 const dialog = ref()
 
 const showDialog = () => {
-  if (!dialog.value) { return }
+  if (!dialog.value) {
+    return
+  }
 
   dialog.value.showModal()
   emit('dialog-show')
 }
 
 const closeDialog = () => {
-  if (!dialog.value) { return }
-  
+  if (!dialog.value) {
+    return
+  }
+
   dialog.value.close()
   emit('dialog-close')
 }
 
 const toggleDialog = state => {
-  if (!dialog.value) { return }
-  
-  if(state !== undefined) { 
+  if (!dialog.value) {
+    return
+  }
+
+  if (state !== undefined) {
     state === true ? showDialog() : closeDialog()
-    return 
+    return
   }
 
   dialog.value.open ? closeDialog() : showDialog()
-} 
+}
 
 defineExpose({
-show: showDialog,
-close: closeDialog,
-toggle: toggleDialog
+  show: showDialog,
+  close: closeDialog,
+  toggle: toggleDialog,
 })
 
 const closeFromBackground = event => {
-  if (event.currentTarget === event.target && props.closeBg === true) { closeDialog() }
+  if (event.currentTarget === event.target && props.closeBg === true) {
+    closeDialog()
+  }
 }
 </script>
 <template>
@@ -82,7 +90,6 @@ const closeFromBackground = event => {
   </dialog>
 </template>
 <style lang="scss">
-
 .dialog {
   overflow: visible;
 
@@ -90,7 +97,7 @@ const closeFromBackground = event => {
     padding: 10px 15px;
     border-radius: 5px 5px 0 0;
   }
-  
+
   &-close {
     display: flex;
     justify-content: center;

@@ -1,7 +1,7 @@
 import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
 import { GenreDto } from '@/apis/genres/dtos/genre-dto.js'
 
-const fromShow = (data) => ({
+const fromShow = data => ({
   id: data.id,
   slug: data.slug,
   title: data.title,
@@ -16,11 +16,11 @@ const fromList = (datas = []) => {
   return datas.map(data => fromShow(data))
 }
 
-const toListParams = (page) => {
+const toListParams = page => {
   return { page }
 }
 
-const toShowParams = (slug) => {
+const toShowParams = slug => {
   return { slug }
 }
 

@@ -6,7 +6,9 @@ import { STATUS } from '@/constants/ajax-constants.js'
 const list = async (page = 1) => {
   const params = NovelDto.toListParams(page)
   const response = await NovelRepository.list({ params })
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,
@@ -15,10 +17,12 @@ const list = async (page = 1) => {
   }
 }
 
-const getBySlug = async (slug) => {
+const getBySlug = async slug => {
   const params = NovelDto.toShowParams(slug)
   const response = await NovelRepository.getBySlug({ params })
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,

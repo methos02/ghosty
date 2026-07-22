@@ -14,19 +14,28 @@ const datas = ref({})
 const dialog = ref()
 const loginButton = ref()
 
-watch(() => authDialogs.showLoginDialog.value, (show) => {
-  dialog.value.toggle(show)
-  if (show) { form.clearErrors() }
-})
+watch(
+  () => authDialogs.showLoginDialog.value,
+  show => {
+    dialog.value.toggle(show)
+    if (show) {
+      form.clearErrors()
+    }
+  },
+)
 
 const handleLogin = async () => {
   form.clearErrors()
 
   const validation = validateLoginForm(datas.value)
-  if (!validation.valid) { return }
+  if (!validation.valid) {
+    return
+  }
 
   const response = await auth.login(datas.value)
-  if (response.status !== STATUS.SUCCESS) { return }
+  if (response.status !== STATUS.SUCCESS) {
+    return
+  }
 
   authDialogs.closeDialogs()
 }
@@ -47,7 +56,10 @@ const close = () => {
     @dialog-close="close"
   >
     <div class="login-dialog__body | w-full">
-      <form @submit.prevent="loginButton?.runCallback()" class="d-flex f-column">
+      <form
+        @submit.prevent="loginButton?.runCallback()"
+        class="d-flex f-column"
+      >
         <div class="form-row">
           <InputComponent
             v-model="datas.email"

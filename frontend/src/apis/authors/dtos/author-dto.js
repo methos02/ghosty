@@ -1,4 +1,4 @@
-const fromShow = (data) => ({
+const fromShow = data => ({
   id: data.id,
   pseudo: data.pseudo,
 })

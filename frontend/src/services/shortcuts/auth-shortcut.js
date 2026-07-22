@@ -16,4 +16,4 @@ export const auth = {
   closeDialogs: () => servicesM.service('auth:closeDialogs'),
 }
 
-export {authStore} from '@/services/auth/src/auth-store.js'
+export { authStore } from '@/services/auth/src/auth-store.js'

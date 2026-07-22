@@ -2,7 +2,7 @@ import { AuthController } from '@/apis/ghosty/controllers/auth-controller.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { authStore } from './auth-store.js'
 
-const login = async (datas) => {
+const login = async datas => {
   const response = await AuthController.login(datas)
 
   if (response.status !== STATUS.SUCCESS) {
@@ -14,7 +14,7 @@ const login = async (datas) => {
   return { status: STATUS.SUCCESS, user: response.user }
 }
 
-const register = async (datas) => {
+const register = async datas => {
   const response = await AuthController.register(datas)
 
   if (response.status !== STATUS.SUCCESS) {
@@ -55,7 +55,7 @@ const isAuthenticated = () => {
   return authStore.isAuthenticated.value
 }
 
-const hasRole = (role) => {
+const hasRole = role => {
   return authStore.hasRole(role)
 }
 
@@ -69,5 +69,5 @@ export const authFunctions = {
   getCurrentUser,
   isAuthenticated,
   hasRole,
-  getAccessToken
+  getAccessToken,
 }

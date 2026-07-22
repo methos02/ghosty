@@ -20,7 +20,7 @@ export const authStore = {
   isModerator: computed(() => user.value?.roles?.includes('moderator') || false),
   isAdmin: computed(() => user.value?.roles?.includes('admin') || false),
 
-  setUser: (userData) => {
+  setUser: userData => {
     user.value = userData
     localStorage.setItem('auth_user', JSON.stringify(userData))
   },
@@ -30,7 +30,7 @@ export const authStore = {
     localStorage.removeItem('auth_user')
   },
 
-  setToken: (tokenData) => {
+  setToken: tokenData => {
     token.value = tokenData
     localStorage.setItem('auth_token', tokenData)
   },
@@ -47,8 +47,10 @@ export const authStore = {
     localStorage.removeItem('auth_user')
   },
 
-  hasRole: (role) => {
-    if (!user.value?.roles) {return false}
+  hasRole: role => {
+    if (!user.value?.roles) {
+      return false
+    }
     return user.value.roles.includes(role)
   },
 

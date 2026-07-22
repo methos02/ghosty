@@ -2,7 +2,7 @@
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 
 const props = defineProps({
-  novel: { type: Object, required: true  }
+  novel: { type: Object, required: true },
 })
 
 const { setSelectedNovel } = useNovelStore()
@@ -13,7 +13,10 @@ const handleClick = () => {
 </script>
 
 <template>
-  <div class="novel-card | overflow-hidden radius-4 pointer" @click="handleClick">
+  <div
+    class="novel-card | overflow-hidden radius-4 pointer"
+    @click="handleClick"
+  >
     <div class="novel-card__image-container | relative">
       <img
         :src="novel.coverUrl"
@@ -100,7 +103,11 @@ const handleClick = () => {
     line-height: 33px;
     text-align: center;
     color: white;
-    text-shadow: #000000 1px 1px, #000000 -1px 1px, #000000 -1px -1px, #000000 1px -1px;
+    text-shadow:
+      #000000 1px 1px,
+      #000000 -1px 1px,
+      #000000 -1px -1px,
+      #000000 1px -1px;
     white-space: nowrap;
     max-width: 85%;
     overflow: hidden;

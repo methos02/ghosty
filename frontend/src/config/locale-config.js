@@ -1,3 +1,3 @@
 export const locales = {
-  "fr": "Français"
+  fr: 'Français',
 }

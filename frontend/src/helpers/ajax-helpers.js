@@ -9,6 +9,6 @@ const isSuccess = status => {
 }
 
 export const AjaxHelpers = {
-  isAuthError, 
-  isSuccess 
+  isAuthError,
+  isSuccess,
 }

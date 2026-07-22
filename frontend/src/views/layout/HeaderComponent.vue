@@ -15,12 +15,15 @@ const handleLogout = async () => {
 <template>
   <header class="header | d-flex j-between a-center py-5">
     <div class="header-right">
-      <router-link to="/" class="d-flex a-center g-5">
+      <router-link
+        to="/"
+        class="d-flex a-center g-5"
+      >
         <img
           src="@/assets/images/logo-mini.png"
           alt="Logo"
           class="header-logo"
-        >
+        />
         <p>
           <span class="title-left">Ghos</span>
           <span class="title-right">TY</span>
@@ -32,15 +35,24 @@ const handleLogout = async () => {
         <span class="header-username | color-neutral-100 fs-500">
           {{ authStore.user.value?.pseudo }}
         </span>
-        <button @click="handleLogout" class="btn-auth | btn btn-neutral-100 py-10">
+        <button
+          @click="handleLogout"
+          class="btn-auth | btn btn-neutral-100 py-10"
+        >
           Déconnexion
         </button>
       </template>
       <template v-if="!authStore.isAuthenticated.value">
-        <button @click="authDialogs.openLoginDialog()" class="btn-auth | btn btn-neutral-100 py-10">
+        <button
+          @click="authDialogs.openLoginDialog()"
+          class="btn-auth | btn btn-neutral-100 py-10"
+        >
           Connexion
         </button>
-        <button @click="authDialogs.openRegisterDialog()" class="btn-auth | btn btn-neutral-100 py-10">
+        <button
+          @click="authDialogs.openRegisterDialog()"
+          class="btn-auth | btn btn-neutral-100 py-10"
+        >
           Inscription
         </button>
       </template>

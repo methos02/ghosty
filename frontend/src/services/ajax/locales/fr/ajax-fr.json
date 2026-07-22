@@ -1,5 +1,5 @@
 {
-  "error_no_client" : "Le client http n'a pas été initialisé",
+  "error_no_client": "Le client http n'a pas été initialisé",
   "error_bad_request": "La requête est invalide.",
   "error_forbidden": "Vous n'avez pas les droits pour effectuer cette action.",
   "error_not_found": "La ressource demandée n'a pas été trouvée.",

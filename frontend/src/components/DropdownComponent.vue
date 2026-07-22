@@ -1,17 +1,19 @@
 <script setup>
 import { vOnClickOutside } from '@vueuse/components'
-import {ref} from "vue";
+import { ref } from 'vue'
 
 const props = defineProps({
   orientation: { type: String, default: '' },
   classes: { type: String, default: '' },
-  autoToggle: { type: Boolean, default: true }
+  autoToggle: { type: Boolean, default: true },
 })
 
 const active = ref(false)
 
 const autoToggleFunction = () => {
-  if(props.autoToggle !== true) { return }
+  if (props.autoToggle !== true) {
+    return
+  }
   toggle()
 }
 
@@ -21,7 +23,9 @@ const show = () => {
 }
 
 const hide = () => {
-  if(active.value === false) { return }
+  if (active.value === false) {
+    return
+  }
   active.value = false
   emit('hide')
 }
@@ -33,15 +37,21 @@ const toggle = state => {
 
 const emit = defineEmits(['hide', 'show'])
 defineExpose({
-show,
-hide,
-toggle
+  show,
+  hide,
+  toggle,
 })
 </script>
 
 <template>
-  <div class="dropdown" v-on-click-outside.bubble="hide">
-    <div id="dropdown-button" @click="autoToggleFunction">
+  <div
+    class="dropdown"
+    v-on-click-outside.bubble="hide"
+  >
+    <div
+      id="dropdown-button"
+      @click="autoToggleFunction"
+    >
       <slot name="button"></slot>
     </div>
     <div
@@ -58,7 +68,9 @@ toggle
 <style lang="scss">
 @use '../assets/scss/variables';
 
-.dropdown { position: relative; }
+.dropdown {
+  position: relative;
+}
 
 .dropdown-items {
   min-width: 100%;
@@ -71,13 +83,21 @@ toggle
   position: absolute;
   z-index: 5;
 
-  @media (max-width: variables.$md) { 
-    &:not(.overflow) { width: 100%; }
+  @media (max-width: variables.$md) {
+    &:not(.overflow) {
+      width: 100%;
+    }
   }
 
-  &.bottom { top: calc(100% + 2px); }
-  &.left { left: 0; }
-  &.right { right: 0; }
+  &.bottom {
+    top: calc(100% + 2px);
+  }
+  &.left {
+    left: 0;
+  }
+  &.right {
+    right: 0;
+  }
 
   &.top {
     bottom: 45px;

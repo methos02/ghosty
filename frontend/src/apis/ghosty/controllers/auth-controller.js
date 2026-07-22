@@ -4,7 +4,7 @@ import { AuthErrorDto } from '@/apis/ghosty/dtos/auth-error-dto.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { form } from '@/services/shortcuts/services-shortcut.js'
 
-const register = async (datas) => {
+const register = async datas => {
   const data = AuthDto.toRegister(datas)
   const response = await AuthRepository.register(data)
 
@@ -13,16 +13,18 @@ const register = async (datas) => {
     return { status: STATUS.ERROR }
   }
 
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,
     user: AuthDto.fromUser(response.data.user),
-    token: response.data.token
+    token: response.data.token,
   }
 }
 
-const login = async (datas) => {
+const login = async datas => {
   const data = AuthDto.toLogin(datas)
   const response = await AuthRepository.login(data)
 
@@ -31,32 +33,38 @@ const login = async (datas) => {
     return { status: STATUS.ERROR }
   }
 
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,
     user: AuthDto.fromUser(response.data.user),
-    token: response.data.token
+    token: response.data.token,
   }
 }
 
 const logout = async () => {
   const response = await AuthRepository.logout()
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,
-    message: response.data.message
+    message: response.data.message,
   }
 }
 
 const me = async () => {
   const response = await AuthRepository.me()
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,
-    user: AuthDto.fromUser(response.data.user)
+    user: AuthDto.fromUser(response.data.user),
   }
 }
 
@@ -64,5 +72,5 @@ export const AuthController = {
   register,
   login,
   logout,
-  me
+  me,
 }

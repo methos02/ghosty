@@ -3,11 +3,7 @@ import { flash, t, log } from '@/services/shortcuts/services-shortcut.js'
 import { Request } from '@/services/ajax/src/models/request.js'
 import { httpClient } from '@/services/ajax/src/models/http-client.js'
 
-import {
-  STATUS,
-  DEFAULT_ERRORS,
-  ERROR_UNKNOWN,
-} from '@/constants/ajax-constants.js'
+import { STATUS, DEFAULT_ERRORS, ERROR_UNKNOWN } from '@/constants/ajax-constants.js'
 
 const SILENT_ERROR_STATUSES = new Set([STATUS.UNAUTHORIZED, STATUS.NOT_FOUND, STATUS.FORBIDDEN])
 const NO_FLASH_STATUSES = new Set([STATUS.UNPROCESSABLE_ENTITY])

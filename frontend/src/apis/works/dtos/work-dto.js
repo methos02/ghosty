@@ -1,11 +1,11 @@
-const fromShow = (work) => {
+const fromShow = work => {
   return {
     id: work.id,
     title: work.title,
     content: work.content,
     order: work.order,
     type: work.type === 1 ? 'chapter' : 'cover',
-    novelId: work.novel_id
+    novelId: work.novel_id,
   }
 }
 
@@ -17,15 +17,15 @@ const toChapterFilters = (novelSlug, order) => {
   return {
     novel_slug: novelSlug,
     order,
-    type: 1
+    type: 1,
   }
 }
 
-const toShowParams = (id) => {
+const toShowParams = id => {
   return { id }
 }
 
-const toCreate = (workData) => {
+const toCreate = workData => {
   return {
     title: workData.title,
     content: workData.content,
@@ -33,14 +33,14 @@ const toCreate = (workData) => {
   }
 }
 
-const toUpdate = (workData) => {
+const toUpdate = workData => {
   return {
     title: workData.title,
     content: workData.content,
   }
 }
 
-const toVote = (value) => {
+const toVote = value => {
   return { value }
 }
 

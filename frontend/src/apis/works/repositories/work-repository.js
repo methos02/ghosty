@@ -1,22 +1,22 @@
 import { req } from '@/services/shortcuts/services-shortcut.js'
 
-const list = async (options) => {
+const list = async options => {
   return await req('work.list', options)
 }
 
-const getById = async (options) => {
+const getById = async options => {
   return await req('work.show', options)
 }
 
-const create = async (options) => {
+const create = async options => {
   return await req('work.create', options)
 }
 
-const update = async (options) => {
+const update = async options => {
   return await req('work.update', options)
 }
 
-const vote = async (options) => {
+const vote = async options => {
   return await req('work.vote', options)
 }
 

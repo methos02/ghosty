@@ -4,11 +4,11 @@ const currentWork = ref()
 const works = ref([])
 
 export const useWorkStore = () => {
-  const setCurrentWork = (work) => {
+  const setCurrentWork = work => {
     currentWork.value = work
   }
 
-  const setWorks = (newWorks) => {
+  const setWorks = newWorks => {
     works.value = newWorks
   }
 
@@ -21,6 +21,6 @@ export const useWorkStore = () => {
     works: readonly(works),
     setCurrentWork,
     setWorks,
-    clearCurrentWork
+    clearCurrentWork,
   }
 }

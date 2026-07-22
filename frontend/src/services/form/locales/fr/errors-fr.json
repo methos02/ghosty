@@ -12,5 +12,5 @@
   "field_size_max": "La taille de ce champ doit être au maximum de {size}",
   "field_email": "L'adresse email n'est pas valide",
 
-  "error_input_search_min" : "Votre recherche doit faire au minimum {length} charactères"
+  "error_input_search_min": "Votre recherche doit faire au minimum {length} charactères"
 }

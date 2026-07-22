@@ -1,16 +1,16 @@
-const toRegister = (datas) => ({
+const toRegister = datas => ({
   pseudo: datas.pseudo,
   email: datas.email,
   password: datas.password,
-  password_confirmation: datas.passwordConfirmation
+  password_confirmation: datas.passwordConfirmation,
 })
 
-const toLogin = (datas) => ({
+const toLogin = datas => ({
   email: datas.email,
-  password: datas.password
+  password: datas.password,
 })
 
-const fromUser = (userData) => ({
+const fromUser = userData => ({
   id: userData.id,
   pseudo: userData.pseudo,
   email: userData.email,
@@ -24,11 +24,11 @@ const fromUser = (userData) => ({
   newMessagesCount: userData.new_messages_count,
   bannedUntil: userData.banned_until,
   emailVerifiedAt: userData.email_verified_at,
-  createdAt: userData.created_at
+  createdAt: userData.created_at,
 })
 
 export const AuthDto = {
   toRegister,
   toLogin,
-  fromUser
+  fromUser,
 }

@@ -6,15 +6,15 @@ const selectedNovel = ref()
 const currentChapter = ref()
 
 export const useNovelStore = () => {
-  const setNovels = (newNovels) => {
+  const setNovels = newNovels => {
     novels.value = newNovels
   }
 
-  const setLoading = (loading) => {
+  const setLoading = loading => {
     isLoading.value = loading
   }
 
-  const setSelectedNovel = (novel) => {
+  const setSelectedNovel = novel => {
     selectedNovel.value = novel
   }
 
@@ -23,7 +23,7 @@ export const useNovelStore = () => {
     currentChapter.value = undefined
   }
 
-  const setCurrentChapter = (chapter) => {
+  const setCurrentChapter = chapter => {
     currentChapter.value = chapter
   }
 
@@ -36,6 +36,6 @@ export const useNovelStore = () => {
     setLoading,
     setSelectedNovel,
     clearSelectedNovel,
-    setCurrentChapter
+    setCurrentChapter,
   }
 }

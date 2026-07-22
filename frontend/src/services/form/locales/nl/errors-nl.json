@@ -12,5 +12,5 @@
   "field_size_max": "De grootte van dit veld mag maximaal {size} zijn",
   "field_email": "Het e-mailadres is niet geldig",
 
-  "error_input_search_min" : "Uw zoekopdracht moet minstens {length} tekens lang zijn"
+  "error_input_search_min": "Uw zoekopdracht moet minstens {length} tekens lang zijn"
 }

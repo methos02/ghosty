@@ -1,15 +1,13 @@
-@use '../variables';
-
 .date-picker {
   flex: 0 0 175px;
 
   .dp__input {
     height: 45px;
-    border: 1px solid variables.$neutral-400;
+    border: 1px solid var(--neutral-400);
 
     &:hover,
     &:focus {
-      border: 1px solid variables.$primary;
+      border: 1px solid var(--primary);
     }
   }
 }

@@ -3,24 +3,31 @@ import { ref, watch } from 'vue'
 
 const props = defineProps({
   currentChapter: { type: Number, required: true },
-  totalChapters: { type: Number, required: true }
+  totalChapters: { type: Number, required: true },
 })
 
 const emit = defineEmits(['p-chapter'])
 
 const inputChapter = ref(props.currentChapter)
 
-watch(() => props.currentChapter, (newChapter) => {
-  inputChapter.value = newChapter
-})
+watch(
+  () => props.currentChapter,
+  newChapter => {
+    inputChapter.value = newChapter
+  },
+)
 
 const goToPrevious = () => {
-  if (props.currentChapter <= 1) {return}
+  if (props.currentChapter <= 1) {
+    return
+  }
   emit('p-chapter', { chapter: props.currentChapter - 1 })
 }
 
 const goToNext = () => {
-  if (props.currentChapter >= props.totalChapters) {return}
+  if (props.currentChapter >= props.totalChapters) {
+    return
+  }
   emit('p-chapter', { chapter: props.currentChapter + 1 })
 }
 
@@ -71,9 +78,7 @@ const handleInputChange = () => {
         @blur="handleInputChange"
         @keyup.enter="handleInputChange"
       />
-      <span class="paginator-chapter__total | fs-400">
-        / {{ totalChapters }}
-      </span>
+      <span class="paginator-chapter__total | fs-400"> / {{ totalChapters }} </span>
     </div>
 
     <button
@@ -137,7 +142,7 @@ const handleInputChange = () => {
       margin: 0;
     }
 
-    &[type=number] {
+    &[type='number'] {
       -moz-appearance: textfield;
     }
   }

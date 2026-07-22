@@ -4,10 +4,10 @@ import { routesApi } from '@/config/routes-api-config.js'
 import { app } from '@/config/app-config.js'
 
 const configUser = {
-locales,
-routes,
-routesApi,
-app
+  locales,
+  routes,
+  routesApi,
+  app,
 }
 
 const init = configs => {

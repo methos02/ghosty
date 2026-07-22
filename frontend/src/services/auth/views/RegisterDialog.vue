@@ -14,19 +14,28 @@ const datas = ref({})
 const dialog = ref()
 const registerButton = ref()
 
-watch(() => authDialogs.showRegisterDialog.value, (show) => {
-  dialog.value.toggle(show)
-  if (show) { form.clearErrors() }
-})
+watch(
+  () => authDialogs.showRegisterDialog.value,
+  show => {
+    dialog.value.toggle(show)
+    if (show) {
+      form.clearErrors()
+    }
+  },
+)
 
 const handleRegister = async () => {
   form.clearErrors()
 
   const validation = validateRegisterForm(datas.value)
-  if (!validation.valid) { return }
+  if (!validation.valid) {
+    return
+  }
 
   const response = await auth.register(datas.value)
-  if (response.status !== STATUS.SUCCESS) { return }
+  if (response.status !== STATUS.SUCCESS) {
+    return
+  }
 
   authDialogs.closeDialogs()
 }
@@ -47,7 +56,10 @@ const close = () => {
     @dialog-close="close"
   >
     <div class="register-dialog__body | w-full">
-      <form @submit.prevent="registerButton.runCallback()" class="d-flex f-column">
+      <form
+        @submit.prevent="registerButton.runCallback()"
+        class="d-flex f-column"
+      >
         <div class="form-row">
           <InputComponent
             v-model="datas.pseudo"
@@ -99,7 +111,11 @@ const close = () => {
         <div class="form-row">
           <div class="register-dialog__terms">
             <label class="d-flex a-start g-10 pointer">
-              <input v-model="datas.acceptTerms" type="checkbox" class="register-dialog__checkbox | pointer mt-5" />
+              <input
+                v-model="datas.acceptTerms"
+                type="checkbox"
+                class="register-dialog__checkbox | pointer mt-5"
+              />
               <span class="register-dialog__terms-text | fs-400">
                 {{ t('auth.register_terms') }}
               </span>

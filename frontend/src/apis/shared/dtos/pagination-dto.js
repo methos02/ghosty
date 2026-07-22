@@ -1,4 +1,4 @@
-const fromMeta = (data) => ({
+const fromMeta = data => ({
   page: data.current_page,
   nextPage: data.current_page + 1,
   size: data.per_page,

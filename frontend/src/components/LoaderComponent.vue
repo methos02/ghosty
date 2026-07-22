@@ -10,7 +10,7 @@ const props = defineProps({
   infinite: { type: Boolean, default: false },
   buttonClasses: { type: String, default: 'btn btn-primary' },
   buttonType: { type: String, default: 'button' },
-  disabled: { type: Boolean, default: false }
+  disabled: { type: Boolean, default: false },
 })
 
 if (!props.click && !props.cb) {
@@ -23,14 +23,18 @@ const size = ref({ width: undefined, height: undefined })
 const callback = ref(props.click || props.cb)
 
 const execute = async () => {
-  if (loading.value || props.disabled || !callback.value) { return }
+  if (loading.value || props.disabled || !callback.value) {
+    return
+  }
 
   setLoad(true)
 
   try {
     await callback.value(...props.params)
   } finally {
-    if (!props.infinite) { setLoad(false) }
+    if (!props.infinite) {
+      setLoad(false)
+    }
   }
 }
 
@@ -38,27 +42,42 @@ const clickEvent = () => execute()
 const runCallback = () => execute()
 
 const setLoad = state => {
-  if (size.value.height === undefined) { defineButtonSize() }
+  if (size.value.height === undefined) {
+    defineButtonSize()
+  }
   loading.value = state
 }
 
 const EXTRA_PADDING = 5
 const defineButtonSize = () => {
-  if (!button.value) { return }
+  if (!button.value) {
+    return
+  }
 
   const styles = globalThis.getComputedStyle(button.value)
-  const buttonWidth = pixelHelper.pxToNumber(styles.borderRightWidth) + pixelHelper.pxToNumber(styles.borderLeftWidth) + button.value.clientWidth
-  const buttonHeight = pixelHelper.pxToNumber(styles.borderTopWidth) + pixelHelper.pxToNumber(styles.borderBottomWidth) + button.value.clientHeight
+  const buttonWidth =
+    pixelHelper.pxToNumber(styles.borderRightWidth) +
+    pixelHelper.pxToNumber(styles.borderLeftWidth) +
+    button.value.clientWidth
+  const buttonHeight =
+    pixelHelper.pxToNumber(styles.borderTopWidth) +
+    pixelHelper.pxToNumber(styles.borderBottomWidth) +
+    button.value.clientHeight
 
-  if (buttonHeight === 0) { return }
+  if (buttonHeight === 0) {
+    return
+  }
 
-  size.value = { height: pixelHelper.numberToPx(buttonHeight), width: pixelHelper.numberToPx(buttonWidth + EXTRA_PADDING) }
+  size.value = {
+    height: pixelHelper.numberToPx(buttonHeight),
+    width: pixelHelper.numberToPx(buttonWidth + EXTRA_PADDING),
+  }
 }
 
 defineExpose({
-setLoad,
-loading,
-runCallback
+  setLoad,
+  loading,
+  runCallback,
 })
 </script>
 <template>
@@ -70,10 +89,16 @@ runCallback
     :disabled="loading || disabled"
     :style="{ height: size.height, width: size.width }"
   >
-    <span v-if="!loading" class="btn-content">
+    <span
+      v-if="!loading"
+      class="btn-content"
+    >
       <slot></slot>
     </span>
-    <span v-if="loading" class="loader-spinner"></span>
+    <span
+      v-if="loading"
+      class="loader-spinner"
+    ></span>
   </button>
 </template>
 

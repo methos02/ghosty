@@ -43,11 +43,7 @@ export const routerFunctions = {
 }
 
 const isDocumentationBlocked = to => {
-  return (
-    to.path.startsWith(DOCUMENTATION_PREFIX) &&
-    auth.requiresAuth() &&
-    !auth.isAuthenticated()
-  )
+  return to.path.startsWith(DOCUMENTATION_PREFIX) && auth.requiresAuth() && !auth.isAuthenticated()
 }
 
 export const routerFunctionsInternal = { isDocumentationBlocked }

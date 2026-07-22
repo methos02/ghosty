@@ -5,7 +5,9 @@ import { STATUS } from '@/constants/ajax-constants.js'
 
 const list = async (filters = {}) => {
   const response = await WorkRepository.list({ params: filters })
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,
@@ -14,10 +16,12 @@ const list = async (filters = {}) => {
   }
 }
 
-const getById = async (id) => {
+const getById = async id => {
   const params = WorkDto.toShowParams(id)
   const response = await WorkRepository.getById({ params })
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,
@@ -28,7 +32,9 @@ const getById = async (id) => {
 const getChapterByOrder = async (novelSlug, order) => {
   const params = WorkDto.toChapterFilters(novelSlug, order)
   const response = await WorkRepository.list({ params })
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,
@@ -36,12 +42,14 @@ const getChapterByOrder = async (novelSlug, order) => {
   }
 }
 
-const getFirstChapter = async (novelSlug) => getChapterByOrder(novelSlug, 1)
+const getFirstChapter = async novelSlug => getChapterByOrder(novelSlug, 1)
 
-const create = async (workData) => {
+const create = async workData => {
   const body = WorkDto.toCreate(workData)
   const response = await WorkRepository.create({ body })
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,
@@ -52,7 +60,9 @@ const create = async (workData) => {
 const update = async (id, workData) => {
   const body = WorkDto.toUpdate(workData)
   const response = await WorkRepository.update({ params: { id }, body })
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,
@@ -63,7 +73,9 @@ const update = async (id, workData) => {
 const vote = async (id, value) => {
   const body = WorkDto.toVote(value)
   const response = await WorkRepository.vote({ params: { id }, body })
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
 
   return {
     status: STATUS.SUCCESS,

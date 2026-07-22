@@ -1,5 +1,5 @@
 {
-  "error_no_client" : "De HTTP-client is niet geïnitialiseerd",
+  "error_no_client": "De HTTP-client is niet geïnitialiseerd",
   "error_bad_request": "Het verzoek is ongeldig.",
   "error_forbidden": "U heeft geen toestemming om deze actie uit te voeren.",
   "error_not_found": "De gevraagde bron werd niet gevonden.",

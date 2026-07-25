@@ -1,3 +1,5 @@
+import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
+
 const getNovelApi = (overrides = {}) => ({
   id: 1,
   slug: 'le-roman-fantome',
@@ -20,4 +22,16 @@ const getNovelsApi = (count = 3) => {
   )
 }
 
-export const novelSeeder = { getNovelApi, getNovelsApi }
+const getNovel = (overrides = {}) => ({
+  ...NovelDto.fromShow(getNovelApi()),
+  ...overrides,
+})
+
+const getNovels = (count = 3) => NovelDto.fromList(getNovelsApi(count))
+
+export const novelSeeder = { 
+  getNovelApi, 
+  getNovelsApi, 
+  getNovel, 
+  getNovels 
+}

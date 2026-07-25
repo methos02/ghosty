@@ -1,22 +1,21 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, afterEach } from 'vitest'
 import { useWorkStore } from '@/apis/works/stores/work-store.js'
 
 describe('work-store', () => {
-  let store
+  const store = useWorkStore()
 
-  beforeEach(() => {
-    store = useWorkStore()
+  afterEach(() => {
     store.setWorks([])
     store.clearCurrentWork()
   })
 
   it('shares state across calls (singleton module state)', () => {
-    const a = useWorkStore()
-    const b = useWorkStore()
+    const storeA = useWorkStore()
+    const storeB = useWorkStore()
 
-    a.setWorks([{ id: 1 }])
+    storeA.setWorks([{ id: 1 }])
 
-    expect(b.works.value).toEqual([{ id: 1 }])
+    expect(storeB.works.value).toEqual([{ id: 1 }])
   })
 
   it('setWorks replaces the works list', () => {

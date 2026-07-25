@@ -6,7 +6,7 @@
 
 **Props:** `type` (String, 'classic'), `cb` (Function, required), `params` (Object `{ page, size, total }`, required)
 
-**Types:** `classic` (numbered pages + prev/next), `load-more` (button, increments page), `range` (element range "1 to 20 of 100"), `infinite` (auto-detect scroll bottom, uses slot)
+**Types:** `classic` (numbered pages + prev/next), `infinite` (auto-detect scroll bottom, uses slot)
 
 Auto-hides if `totalPages <= 1`. Callback receives `(page, size)`. Async supported.
 

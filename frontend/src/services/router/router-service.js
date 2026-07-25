@@ -35,7 +35,7 @@ const getRoutes = () => {
 }
 
 const hasApiRoute = routeName => {
-  return ConfigLoader.has(`routesApi.${routeName}`)
+  return ConfigLoader.find('routesApi', {})[routeName] !== undefined
 }
 
 const hasCurrentRouteParam = paramName => {

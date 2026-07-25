@@ -16,6 +16,10 @@ const getAppStatus = () => {
   return appStatus.value
 }
 
+const resetAppStatus = () => {
+  appStatus.value = APP_STATUS.INIT
+}
+
 const setLoadingSentence = sentence => {
   loadingSentence.value = sentence
 }
@@ -36,14 +40,20 @@ const getAppError = () => {
   return errorGlobal.value
 }
 
+const resetAppError = () => {
+  errorGlobal.value = undefined
+}
+
 export const utilsStore = {
   setAppStatus,
   getAppStatus,
+  resetAppStatus,
   setLoadingSentence,
   getLoadingSentence,
   resetLoadingSentence,
   setAppError,
   getAppError,
+  resetAppError,
 }
 
 export const useUtilsStore = () => ({

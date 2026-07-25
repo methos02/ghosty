@@ -24,6 +24,9 @@ export const utilsStore = {
   get getAppStatus() {
     return _store().utilsStore.getAppStatus
   },
+  get resetAppStatus() {
+    return _store().utilsStore.resetAppStatus
+  },
   get setLoadingSentence() {
     return _store().utilsStore.setLoadingSentence
   },
@@ -38,6 +41,9 @@ export const utilsStore = {
   },
   get getAppError() {
     return _store().utilsStore.getAppError
+  },
+  get resetAppError() {
+    return _store().utilsStore.resetAppError
   },
 }
 

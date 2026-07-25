@@ -1,23 +1,22 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, afterEach } from 'vitest'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 
 describe('novel-store', () => {
-  let store
+  const store = useNovelStore()
 
-  beforeEach(() => {
-    store = useNovelStore()
+  afterEach(() => {
     store.setNovels([])
     store.clearSelectedNovel()
     store.setLoading(false)
   })
 
   it('shares state across calls (singleton module state)', () => {
-    const a = useNovelStore()
-    const b = useNovelStore()
+    const storeA = useNovelStore()
+    const storeB = useNovelStore()
 
-    a.setNovels([{ id: 1 }])
+    storeA.setNovels([{ id: 1 }])
 
-    expect(b.novels.value).toEqual([{ id: 1 }])
+    expect(storeB.novels.value).toEqual([{ id: 1 }])
   })
 
   it('setNovels replaces the novels list', () => {

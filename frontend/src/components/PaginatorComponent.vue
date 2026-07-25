@@ -1,6 +1,5 @@
 <script setup>
 import PaginatorClassic from '@/components/paginators/PaginatorClassicComponent.vue'
-import PaginatorLoadMore from '@/components/paginators/PaginatorLoadMoreComponent.vue'
 import PaginatorInfinite from '@/components/paginators/PaginatorInfiniteComponent.vue'
 
 const props = defineProps({
@@ -21,7 +20,7 @@ const handlePageClick = async ({ page, size }) => await props.cb(page, size)
     <slot></slot>
   </PaginatorInfinite>
   <div
-    v-else
+    v-if="type !== 'infinite'"
     class="paginator-container"
   >
     <div
@@ -32,11 +31,6 @@ const handlePageClick = async ({ page, size }) => await props.cb(page, size)
         v-if="type === 'classic'"
         :params="params"
         @p-classic="handlePageClick"
-      />
-      <PaginatorLoadMore
-        v-if="type === 'load-more'"
-        :params="params"
-        @p-loadmore="handlePageClick"
       />
     </div>
   </div>

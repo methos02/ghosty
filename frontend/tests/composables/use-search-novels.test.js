@@ -8,13 +8,15 @@ const listResult = (novels, pagination) => ({ status: STATUS.SUCCESS, novels, pa
 
 describe('use-search-novels', () => {
   beforeEach(async () => {
-    vi.resetModules()
-    ;({ NovelController } = await import('@/apis/novels/controllers/novel-controller.js'))
-    ;({ useSearchNovels } = await import('@/composables/use-search-novels.js'))
+    const controllerModule = await import('@/apis/novels/controllers/novel-controller.js')
+    const composableModule = await import('@/composables/use-search-novels.js')
+    NovelController = controllerModule.NovelController
+    useSearchNovels = composableModule.useSearchNovels
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.resetModules()
   })
 
   describe('setSort / setGenre', () => {

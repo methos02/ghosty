@@ -27,7 +27,7 @@ backend/memory-bank/
 _Add each new rule here._
 
 - `rules/global/rule-writing-guide.md` — frontmatter + structure for any new backend rule
-- `rules/tests/test-structure.md` — organisation, nommage, structure de classe, factories, assertions
+- `rules/tests/test-structure.md` — organisation, nommage (strict, grep-vérifiable), structure de classe, test structurel `has_middleware()`, factories, assertions
 - `rules/tests/test-avoid-redundant.md` — un comportement unique par test, une règle de validation par test
 - `rules/tests/test-cleanup-teardown.md` — isolation via `tearDown`, ce que Laravel gère vs pas
 - `rules/tests/test-no-loose-assertions.md` — valeurs explicites, pas de matchers fourre-tout

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\GenreFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -10,6 +12,9 @@ use Illuminate\Support\Str;
  */
 class Genre extends Model
 {
+    /** @use HasFactory<GenreFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'name',
     ];

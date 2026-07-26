@@ -1,0 +1,18 @@
+<?php
+
+namespace Tests\Feature\Models;
+
+use App\Models\Genre;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
+
+class GenreModelTest extends TestCase
+{
+    #[Test]
+    public function generates_slug_from_name_on_creation(): void
+    {
+        $genre = Genre::factory()->create(['name' => 'Science Fiction']);
+
+        $this->assertSame('science-fiction', $genre->slug);
+    }
+}

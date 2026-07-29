@@ -7,6 +7,9 @@ import NovelDetailDialog from '@/views/novels/NovelDetailDialog.vue'
 import PaginatorInfinite from '@/components/paginators/PaginatorInfiniteComponent.vue'
 import { useSearchNovels } from '@/composables/use-search-novels.js'
 import { t } from '@/services/shortcuts/services-shortcut.js'
+import { useHomeHead } from '@/head/use-home-head.js'
+
+useHomeHead()
 
 const activeTab = ref('home')
 const { novels, pagination, loadMore } = useSearchNovels()

@@ -20,9 +20,15 @@ class NovelResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'slug' => $this->slug,
             'title' => $this->title,
             'cover_url' => $this->cover_url,
             'is_favorite' => $this->is_favorite,
+            'chapters_count' => $this->chapter_count,
+            'author' => [
+                'id' => $this->author->id,
+                'pseudo' => $this->author->pseudo,
+            ],
             'genre' => [
                 'id' => $this->genre->id,
                 'name' => $this->genre->name,

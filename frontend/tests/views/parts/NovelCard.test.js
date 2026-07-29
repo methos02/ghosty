@@ -1,17 +1,19 @@
-import { describe, it, expect, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import NovelCard from '@/views/parts/NovelCard.vue'
-import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
+import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 
-describe('NovelCard.vue', () => {
-  afterEach(() => {
-    useNovelStore().clearSelectedNovel()
+const mountNovelCard = novel =>
+  mount(NovelCard, {
+    props: { novel },
+    global: { provide: { [NOVEL_STORE_KEY]: createNovelStore() } },
   })
 
+describe('NovelCard.vue', () => {
   it('renders the novel title, genre label and cover image', () => {
     const novel = novelSeeder.getNovel()
-    const wrapper = mount(NovelCard, { props: { novel } })
+    const wrapper = mountNovelCard(novel)
 
     expect(wrapper.find('.novel-card__title').text()).toBe(novel.title)
     expect(wrapper.find('.novel-card__genre').text()).toBe(novel.genre.label)
@@ -21,12 +23,12 @@ describe('NovelCard.vue', () => {
     expect(img.attributes('alt')).toBe(novel.title)
   })
 
-  it('selects the novel in the store on click', async () => {
+  it('links to the novel detail page for its slug', () => {
     const novel = novelSeeder.getNovel()
-    const wrapper = mount(NovelCard, { props: { novel } })
+    const wrapper = mountNovelCard(novel)
 
-    await wrapper.find('.novel-card').trigger('click')
+    const link = wrapper.getComponent({ name: 'router-link' })
 
-    expect(useNovelStore().selectedNovel.value).toEqual(novel)
+    expect(link.props('to')).toEqual({ name: 'novel-detail', params: { slug: novel.slug } })
   })
 })

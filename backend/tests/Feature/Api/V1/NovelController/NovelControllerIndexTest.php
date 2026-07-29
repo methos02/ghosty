@@ -25,13 +25,13 @@ class NovelControllerIndexTest extends TestCase
         $response = $this->getJson($this->route);
 
         $response->assertOk();
-        $response->assertJsonCount(1, 'data');
-        $response->assertJsonPath('data.0.id', $novel->id);
-        $response->assertJsonPath('data.0.title', 'Dune');
-        $response->assertJsonPath('data.0.cover_url', 'https://example.com/dune.jpg');
-        $response->assertJsonPath('data.0.is_favorite', true);
-        $response->assertJsonPath('data.0.genre.id', $genre->id);
-        $response->assertJsonPath('data.0.genre.name', 'Science Fiction');
+        $response->assertJsonCount(1, 'novels');
+        $response->assertJsonPath('novels.0.id', $novel->id);
+        $response->assertJsonPath('novels.0.title', 'Dune');
+        $response->assertJsonPath('novels.0.cover_url', 'https://example.com/dune.jpg');
+        $response->assertJsonPath('novels.0.is_favorite', true);
+        $response->assertJsonPath('novels.0.genre.id', $genre->id);
+        $response->assertJsonPath('novels.0.genre.name', 'Science Fiction');
     }
 
     #[Test]
@@ -42,7 +42,7 @@ class NovelControllerIndexTest extends TestCase
         $response = $this->getJson($this->route);
 
         $response->assertOk();
-        $response->assertJsonCount(15, 'data');
+        $response->assertJsonCount(15, 'novels');
         $response->assertJsonPath('meta.per_page', 15);
         $response->assertJsonPath('meta.total', 16);
     }

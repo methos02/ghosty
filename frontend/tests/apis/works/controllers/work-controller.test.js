@@ -16,7 +16,7 @@ describe('work-controller', () => {
   describe('list', () => {
     it('forwards filters as params and returns mapped works + pagination', async () => {
       vi.spyOn(WorkRepository, 'list').mockResolvedValue(
-        success({ data: workSeeder.getWorksApi(2), meta: paginationSeeder.getMetaApi() }),
+        success({ works: workSeeder.getWorksApi(2), meta: paginationSeeder.getMetaApi() }),
       )
 
       const result = await WorkController.list({ novel_id: 1 })
@@ -30,7 +30,7 @@ describe('work-controller', () => {
 
     it('defaults filters to an empty object', async () => {
       vi.spyOn(WorkRepository, 'list').mockResolvedValue(
-        success({ data: [], meta: paginationSeeder.getMetaApi({ total: 0 }) }),
+        success({ works: [], meta: paginationSeeder.getMetaApi({ total: 0 }) }),
       )
 
       await WorkController.list()
@@ -65,7 +65,7 @@ describe('work-controller', () => {
   describe('getChapterByOrder', () => {
     it('queries the list endpoint with chapter filters and returns the first result', async () => {
       vi.spyOn(WorkRepository, 'list').mockResolvedValue(
-        success({ data: [workSeeder.getWorkApi({ order: 2 })] }),
+        success({ works: [workSeeder.getWorkApi({ order: 2 })] }),
       )
 
       const result = await WorkController.getChapterByOrder('mon-roman', 2)
@@ -80,7 +80,7 @@ describe('work-controller', () => {
   describe('getFirstChapter', () => {
     it('delegates to getChapterByOrder with order 1', async () => {
       vi.spyOn(WorkRepository, 'list').mockResolvedValue(
-        success({ data: [workSeeder.getWorkApi({ order: 1 })] }),
+        success({ works: [workSeeder.getWorkApi({ order: 1 })] }),
       )
 
       const result = await WorkController.getFirstChapter('mon-roman')

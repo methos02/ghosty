@@ -9,10 +9,11 @@ const list = async (filters = {}) => {
     return response
   }
 
+  const { works, meta } = response.data
   return {
     status: STATUS.SUCCESS,
-    works: WorkDto.fromList(response.data.data),
-    pagination: PaginationDto.fromMeta(response.data.meta),
+    works: WorkDto.fromList(works),
+    pagination: PaginationDto.fromMeta(meta),
   }
 }
 
@@ -38,7 +39,7 @@ const getChapterByOrder = async (novelSlug, order) => {
 
   return {
     status: STATUS.SUCCESS,
-    work: WorkDto.fromShow(response.data.data[0]),
+    work: WorkDto.fromShow(response.data.works[0]),
   }
 }
 

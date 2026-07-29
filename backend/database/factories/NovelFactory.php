@@ -17,8 +17,10 @@ class NovelFactory extends Factory
         return [
             'title' => fake()->sentence(3),
             'genre_id' => GenreFactory::new(),
+            'author_id' => UserFactory::new(),
             'cover_url' => fake()->imageUrl(),
             'is_favorite' => false,
+            'chapter_count' => 0,
         ];
     }
 }

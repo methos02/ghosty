@@ -2,9 +2,8 @@
 import { APP_STATUS } from '@/constants/utils-constants.js'
 import { utilsStore } from '@/services/utils/src/utils-store.js'
 import View from '@/services/router/views/ViewComponent.vue'
-import { t, routerStore } from '@/services/shortcuts/services-shortcut.js'
+import { t, route, routerStore } from '@/services/shortcuts/services-shortcut.js'
 import { onMounted, onUnmounted, onErrorCaptured, computed } from 'vue'
-import { routerService } from '@/services/router/router-service.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { servicesM } from '@/services/services-manager.js'
 import { ConfigLoader } from '@/config/config-loader.js'
@@ -22,8 +21,7 @@ const publicRoutes = new Set(['login', 'services.utils.appComponent'])
 const publicPaths = new Set(['/login'])
 
 const isOnPublicPage = computed(() => {
-  const currentRoute = routerService.currentRoute()
-  return publicRoutes.has(currentRoute?.value?.name)
+  return publicRoutes.has(route.current()?.value?.name)
 })
 
 const isInitiate = computed(() => {

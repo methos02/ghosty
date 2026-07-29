@@ -1,0 +1,14 @@
+[
+    {
+        "order": 1,
+        "type": 1,
+        "title": "Le commencement",
+        "content": "La nuit tombait sur la ville endormie quand tout bascula. Personne n'aurait pu prévoir ce qui allait suivre, et pourtant les signes étaient là, discrets, patients. Ce premier chapitre pose les fondations d'une histoire écrite à plusieurs mains, où chaque lecteur devient un peu l'auteur de la suite."
+    },
+    {
+        "order": 2,
+        "type": 1,
+        "title": "La bifurcation",
+        "content": "Le lendemain, les choix des uns devinrent les contraintes des autres. Les propositions affluaient, les votes s'accumulaient, et lentement une direction se dessinait. Ce deuxième chapitre prolonge le récit là où la communauté a décidé de l'emmener, fidèle à l'esprit collaboratif de la plateforme."
+    }
+]

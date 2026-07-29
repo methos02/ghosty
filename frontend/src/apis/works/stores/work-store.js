@@ -1,9 +1,11 @@
-import { ref, readonly } from 'vue'
+import { ref, readonly, inject } from 'vue'
 
-const currentWork = ref()
-const works = ref([])
+export const WORK_STORE_KEY = Symbol('work-store')
 
-export const useWorkStore = () => {
+export const createWorkStore = () => {
+  const currentWork = ref()
+  const works = ref([])
+
   const setCurrentWork = work => {
     currentWork.value = work
   }
@@ -16,11 +18,28 @@ export const useWorkStore = () => {
     currentWork.value = undefined
   }
 
+  const serialize = () => ({
+    currentWork: currentWork.value,
+    works: works.value,
+  })
+
+  const hydrate = data => {
+    if (!data) {
+      return
+    }
+    currentWork.value = data.currentWork
+    works.value = data.works ?? []
+  }
+
   return {
     currentWork: readonly(currentWork),
     works: readonly(works),
     setCurrentWork,
     setWorks,
     clearCurrentWork,
+    serialize,
+    hydrate,
   }
 }
+
+export const useWorkStore = () => inject(WORK_STORE_KEY)

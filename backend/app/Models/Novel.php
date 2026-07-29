@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSlug;
 use Database\Factories\NovelFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperNovel
@@ -15,11 +17,16 @@ class Novel extends Model
     /** @use HasFactory<NovelFactory> */
     use HasFactory;
 
+    use HasSlug;
+
     protected $fillable = [
         'title',
+        'slug',
         'genre_id',
+        'author_id',
         'cover_url',
         'is_favorite',
+        'chapter_count',
     ];
 
     protected function casts(): array
@@ -29,11 +36,32 @@ class Novel extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     /**
      * @return BelongsTo<Genre, $this>
      */
     public function genre(): BelongsTo
     {
         return $this->belongsTo(Genre::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * @return HasMany<Work, $this>
+     */
+    public function chapters(): HasMany
+    {
+        return $this->hasMany(Work::class)->where('type', Work::TYPE_CHAPTER);
     }
 }

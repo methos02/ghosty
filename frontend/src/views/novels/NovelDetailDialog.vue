@@ -1,18 +1,38 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { t } from '@/services/shortcuts/services-shortcut.js'
+import { ref, watch, onMounted } from 'vue'
+import { t, route, router } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
+import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
 import { WorkController } from '@/apis/works/controllers/work-controller.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
+import { useNovelDetailHead } from '@/head/use-novel-detail-head.js'
 import DialogComponent from '@/components/DialogComponent.vue'
 import PaginatorChapterComponent from '@/components/paginators/PaginatorChapterComponent.vue'
 
-const { selectedNovel, currentChapter, clearSelectedNovel, setCurrentChapter } = useNovelStore()
+useNovelDetailHead()
+
+const { selectedNovel, currentChapter, setSelectedNovel, clearSelectedNovel, setCurrentChapter } =
+  useNovelStore()
 
 const dialog = ref()
 const currentChapterNumber = ref(1)
 const isLoading = ref(false)
 const errorMessage = ref('')
+
+const ensureNovel = async slug => {
+  if (selectedNovel.value?.slug === slug) {
+    return STATUS.SUCCESS
+  }
+
+  const response = await NovelController.getBySlug(slug)
+  if (response.status !== STATUS.SUCCESS) {
+    errorMessage.value = response.error
+    return response.status
+  }
+
+  setSelectedNovel(response.novel)
+  return STATUS.SUCCESS
+}
 
 const loadChapter = async (chapterNumber = 1) => {
   if (!selectedNovel.value) {
@@ -35,6 +55,29 @@ const loadChapter = async (chapterNumber = 1) => {
   isLoading.value = false
 }
 
+const openForSlug = async slug => {
+  if (!slug) {
+    if (dialog.value) {
+      dialog.value.close()
+    }
+    return
+  }
+
+  currentChapterNumber.value = 1
+  errorMessage.value = ''
+
+  if (dialog.value) {
+    dialog.value.show()
+  }
+
+  const status = await ensureNovel(slug)
+  if (status !== STATUS.SUCCESS) {
+    return
+  }
+
+  await loadChapter(1)
+}
+
 const handleChapterChange = ({ chapter }) => {
   if (chapter === currentChapterNumber.value) {
     return
@@ -50,24 +93,15 @@ const handleDialogClose = () => {
   clearSelectedNovel()
   currentChapterNumber.value = 1
   errorMessage.value = ''
+
+  if (route.get('slug')) {
+    router.push('/')
+  }
 }
 
-watch(selectedNovel, async novel => {
-  if (!novel) {
-    if (dialog.value) {
-      dialog.value.close()
-    }
-    return
-  }
+onMounted(() => openForSlug(route.get('slug')))
 
-  currentChapterNumber.value = 1
-  errorMessage.value = ''
-
-  if (dialog.value) {
-    dialog.value.show()
-  }
-  await loadChapter(1)
-})
+watch(() => route.get('slug'), openForSlug)
 </script>
 
 <template>
@@ -118,7 +152,7 @@ watch(selectedNovel, async novel => {
             v-if="isLoading"
             class="d-flex j-center p-30"
           >
-            <span>{{ t('common.loading') }}</span>
+            <span>{{ t('novel.chapter_loading') }}</span>
           </div>
 
           <div

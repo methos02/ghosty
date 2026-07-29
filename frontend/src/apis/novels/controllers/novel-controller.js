@@ -10,10 +10,11 @@ const list = async (page = 1) => {
     return response
   }
 
+  const { novels, meta } = response.data
   return {
     status: STATUS.SUCCESS,
-    novels: NovelDto.fromList(response.data.data),
-    pagination: PaginationDto.fromMeta(response.data.meta),
+    novels: NovelDto.fromList(novels),
+    pagination: PaginationDto.fromMeta(meta),
   }
 }
 

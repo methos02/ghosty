@@ -1,4 +1,4 @@
-import { getRouter } from '@/services/router/src/router-plugin.js'
+import { routerPlugin } from '@/services/router/src/router-plugin.js'
 import { useRouterStore } from '@/services/router/src/router-store.js'
 import { flash } from '@/services/shortcuts/services-shortcut.js'
 import { ConfigLoader } from '@/config/config-loader.js'
@@ -12,12 +12,12 @@ const addRoute = route => {
     return flash.errorT('error_route_component', { url: route.path })
   }
 
-  getRouter().addRoute(route)
+  routerPlugin.getRouter().addRoute(route)
   return true
 }
 
 const currentRoute = () => {
-  return getRouter().currentRoute
+  return routerPlugin.getRouter().currentRoute
 }
 
 const getCurrentRouteParam = paramName => {
@@ -27,11 +27,11 @@ const getCurrentRouteParam = paramName => {
 }
 
 const getRoute = routeName => {
-  return getRouter().resolve({ name: routeName })
+  return routerPlugin.getRouter().resolve({ name: routeName })
 }
 
 const getRoutes = () => {
-  return getRouter().getRoutes()
+  return routerPlugin.getRouter().getRoutes()
 }
 
 const hasApiRoute = routeName => {
@@ -43,13 +43,13 @@ const hasCurrentRouteParam = paramName => {
 }
 
 const hasRoute = routeName => {
-  return getRouter().hasRoute(routeName)
+  return routerPlugin.getRouter().hasRoute(routeName)
 }
 
 const push = async route => {
   if (typeof route === 'string') {
     // eslint-disable-next-line unicorn/no-return-array-push
-    await getRouter().push(route)
+    await routerPlugin.getRouter().push(route)
     return true
   }
 
@@ -61,13 +61,13 @@ const push = async route => {
   }
 
   // eslint-disable-next-line unicorn/no-return-array-push
-  await getRouter().push(route)
+  await routerPlugin.getRouter().push(route)
   return true
 }
 
 const replace = async route => {
   if (typeof route === 'string') {
-    await getRouter().replace(route)
+    await routerPlugin.getRouter().replace(route)
     return true
   }
 
@@ -78,12 +78,12 @@ const replace = async route => {
     return flash.errorT('error_url_unknown', { url: route })
   }
 
-  await getRouter().replace(route)
+  await routerPlugin.getRouter().replace(route)
   return true
 }
 
 const resolve = route => {
-  return getRouter().resolve(route)
+  return routerPlugin.getRouter().resolve(route)
 }
 
 const redirectAfterLogin = async () => {
@@ -115,11 +115,11 @@ export const routerService = {
   setUrlIntented,
 }
 
-const isUnknownNamedRoute = route => route.name !== undefined && !getRouter().hasRoute(route.name)
+const isUnknownNamedRoute = route => route.name !== undefined && !routerPlugin.getRouter().hasRoute(route.name)
 
 const isUnknownPath = route =>
   route.name === undefined &&
-  getRouter()
+  routerPlugin.getRouter()
     .getRoutes()
     .every(routeConfig => routeConfig.path !== route.path)
 

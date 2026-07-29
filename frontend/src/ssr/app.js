@@ -1,0 +1,56 @@
+import { createSSRApp } from 'vue'
+import App from '@/App.vue'
+import '@/assets/scss/app.scss'
+
+import { servicesBoot } from '@/ssr/services-boot.js'
+import { localePlugin } from '@/services/locale/src/locale-plugin.js'
+import { routerPlugin, ROUTER_KEY } from '@/services/router/src/router-plugin.js'
+import { flashPlugin } from '@/services/flash/src/flash-plugin.js'
+
+import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
+import { createWorkStore, WORK_STORE_KEY } from '@/apis/works/stores/work-store.js'
+import { createSearchNovelsStore, SEARCH_NOVELS_KEY } from '@/composables/use-search-novels.js'
+
+export const createApp = async ({ ssr = false } = {}) => {
+  servicesBoot.bootServicesOnce()
+
+  const app = createSSRApp(App)
+
+  const router = routerPlugin.createAppRouter({ ssr })
+  app.use(router)
+  app.provide(ROUTER_KEY, router)
+
+  const stores = {
+    novel: createNovelStore(),
+    work: createWorkStore(),
+    search: createSearchNovelsStore(),
+  }
+
+  app.provide(NOVEL_STORE_KEY, stores.novel)
+  app.provide(WORK_STORE_KEY, stores.work)
+  app.provide(SEARCH_NOVELS_KEY, stores.search)
+
+  app.use(await localePlugin())
+  app.use(flashPlugin())
+
+  return {
+    app,
+    router,
+    stores,
+  }
+}
+
+export const serializeStores = stores => ({
+  novel: stores.novel.serialize(),
+  work: stores.work.serialize(),
+  search: stores.search.serialize(),
+})
+
+export const hydrateStores = (stores, snapshot) => {
+  if (!snapshot) {
+    return
+  }
+  stores.novel.hydrate(snapshot.novel)
+  stores.work.hydrate(snapshot.work)
+  stores.search.hydrate(snapshot.search)
+}

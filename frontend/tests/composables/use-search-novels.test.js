@@ -1,27 +1,18 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { STATUS } from '@/constants/ajax-constants.js'
-
-let useSearchNovels
-let NovelController
+import { createSearchNovelsStore } from '@/composables/use-search-novels.js'
+import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
 
 const listResult = (novels, pagination) => ({ status: STATUS.SUCCESS, novels, pagination })
 
 describe('use-search-novels', () => {
-  beforeEach(async () => {
-    const controllerModule = await import('@/apis/novels/controllers/novel-controller.js')
-    const composableModule = await import('@/composables/use-search-novels.js')
-    NovelController = controllerModule.NovelController
-    useSearchNovels = composableModule.useSearchNovels
-  })
-
   afterEach(() => {
     vi.restoreAllMocks()
-    vi.resetModules()
   })
 
   describe('setSort / setGenre', () => {
     it('updates the selected sort and genre', () => {
-      const { selectedSort, selectedGenre, setSort, setGenre } = useSearchNovels()
+      const { selectedSort, selectedGenre, setSort, setGenre } = createSearchNovelsStore()
 
       setSort('Récents')
       setGenre('Fantastique')
@@ -31,7 +22,7 @@ describe('use-search-novels', () => {
     })
 
     it('defaults sort to "Top 10" and genre to "Tous"', () => {
-      const { selectedSort, selectedGenre } = useSearchNovels()
+      const { selectedSort, selectedGenre } = createSearchNovelsStore()
 
       expect(selectedSort.value).toBe('Top 10')
       expect(selectedGenre.value).toBe('Tous')
@@ -43,7 +34,7 @@ describe('use-search-novels', () => {
       vi.spyOn(NovelController, 'list').mockResolvedValue(
         listResult([{ id: 1 }, { id: 2 }], { nextPage: 2, lastPage: 3 }),
       )
-      const { loadNovels, novels, pagination } = useSearchNovels()
+      const { loadNovels, novels, pagination } = createSearchNovelsStore()
 
       const response = await loadNovels()
 
@@ -54,7 +45,7 @@ describe('use-search-novels', () => {
     })
 
     it('accumulates novels across successive pages', async () => {
-      const { loadNovels, novels } = useSearchNovels()
+      const { loadNovels, novels } = createSearchNovelsStore()
 
       vi.spyOn(NovelController, 'list').mockResolvedValueOnce(
         listResult([{ id: 1 }], { nextPage: 2, lastPage: 3 }),
@@ -72,7 +63,7 @@ describe('use-search-novels', () => {
     it('returns the error response and does not append on failure', async () => {
       const failure = { status: STATUS.ERROR_SERVER, error: 'boom' }
       vi.spyOn(NovelController, 'list').mockResolvedValue(failure)
-      const { loadNovels, novels } = useSearchNovels()
+      const { loadNovels, novels } = createSearchNovelsStore()
 
       const response = await loadNovels()
 
@@ -83,7 +74,7 @@ describe('use-search-novels', () => {
 
   describe('loadMore', () => {
     it('loads the next page when more pages are available', async () => {
-      const { loadNovels, loadMore } = useSearchNovels()
+      const { loadNovels, loadMore } = createSearchNovelsStore()
 
       vi.spyOn(NovelController, 'list').mockResolvedValue(
         listResult([{ id: 1 }], { nextPage: 2, lastPage: 3 }),
@@ -96,7 +87,7 @@ describe('use-search-novels', () => {
     })
 
     it('does nothing and returns success when no more pages', async () => {
-      const { loadNovels, loadMore } = useSearchNovels()
+      const { loadNovels, loadMore } = createSearchNovelsStore()
 
       vi.spyOn(NovelController, 'list').mockResolvedValue(
         listResult([{ id: 1 }], { nextPage: 4, lastPage: 3 }),
@@ -113,7 +104,7 @@ describe('use-search-novels', () => {
 
   describe('hasMore', () => {
     it('is true while nextPage is within lastPage', async () => {
-      const { loadNovels, hasMore } = useSearchNovels()
+      const { loadNovels, hasMore } = createSearchNovelsStore()
       vi.spyOn(NovelController, 'list').mockResolvedValue(
         listResult([{ id: 1 }], { nextPage: 2, lastPage: 3 }),
       )
@@ -124,7 +115,7 @@ describe('use-search-novels', () => {
     })
 
     it('is false once nextPage passes lastPage', async () => {
-      const { loadNovels, hasMore } = useSearchNovels()
+      const { loadNovels, hasMore } = createSearchNovelsStore()
       vi.spyOn(NovelController, 'list').mockResolvedValue(
         listResult([{ id: 1 }], { nextPage: 4, lastPage: 3 }),
       )

@@ -4,7 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "dev:ssr": "node server.js",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build",
+    "build:server": "vite build --ssr src/ssr/entry-server.js --outDir dist/server",
+    "serve": "node server.js --prod",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -15,9 +19,11 @@
     "format:check": "prettier --check \"src/**/*.{js,vue,json,scss}\""
   },
   "dependencies": {
+    "@unhead/vue": "^2.1.16",
     "@vueuse/components": "^14.0.0",
     "@vueuse/core": "^14.0.0",
     "dayjs": "^1.11.21",
+    "express": "^5.2.1",
     "vue": "^3.4.0",
     "vue-i18n": "^11.0.0",
     "vue-router": "^5.2.0"

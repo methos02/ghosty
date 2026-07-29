@@ -1,3 +1,6 @@
+import { createI18n } from 'vue-i18n'
+import { utilsH } from '@/helpers/utils-helper.js'
+
 const state = {
   translater: undefined,
 }
@@ -16,7 +19,15 @@ const vueTranslate = (message, params) => {
 }
 
 const loadLocaleMessages = async locale => {
-  state.translater.global.setLocaleMessage(locale, await getLocaleMessage(locale))
+  state.translater.global.setLocaleMessage(
+    locale,
+    await localeFunctionsInternal.getLocaleMessage(locale),
+  )
+}
+
+const init = async locale => {
+  localeFunctions.setTranslater(createI18n({ locale, legacy: false }))
+  await localeFunctions.loadLocaleMessages(locale)
 }
 
 export const localeFunctions = {
@@ -24,14 +35,21 @@ export const localeFunctions = {
   getTranslater,
   vueTranslate,
   loadLocaleMessages,
+  init,
 }
 
 const getLocaleMessage = async locale => {
-  const version = getAppVersion()
-  const response = await fetch(`/locales/app-translate-${locale}-${version}.json`)
+  const version = localeFunctionsInternal.getAppVersion()
+  const base = utilsH.isSsr() ? (globalThis.__SSR_ORIGIN__ ?? '') : ''
+  const response = await fetch(`${base}/locales/app-translate-${locale}-${version}.json`)
   return response.json()
 }
 
 const getAppVersion = () => {
   return __APP_VERSION__.replaceAll('.', '_')
+}
+
+export const localeFunctionsInternal = {
+  getLocaleMessage,
+  getAppVersion,
 }

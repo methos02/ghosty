@@ -21,11 +21,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 # Installation
 npm install
 
-# Développement (http://localhost:5173)
+# Développement SPA pur (Vite, http://localhost:5173) — sans SSR
 npm run dev
 
-# Build production (vers backend/public/build)
-npm run build
+# Développement SSR (serveur Node + Vite middleware, http://localhost:5173)
+npm run dev:ssr
+
+# Build production SSR (client → dist/client, serveur → dist/server)
+npm run build             # = build:client && build:server
+
+# Serveur SSR de production
+npm run serve             # node server.js --prod
 
 # Tests
 npm run test              # Mode watch
@@ -34,6 +40,8 @@ npm run test:ui           # Interface UI
 # Preview du build
 npm run preview
 ```
+
+> ⚠️ Le point d'entrée client est **`src/ssr/entry-client.js`** (plus `main.js`, conservé inerte). Le build ne sort plus vers `backend/public/build` : le **serveur Node SSR** (`server.js`) sert le HTML rendu + les assets, et Laravel reste une **API pure**.
 
 ## Architecture Frontend
 
@@ -123,6 +131,32 @@ frontend/src/
 │  /api/v1/novels │
 └─────────────────┘
 ```
+
+## Rendu côté serveur (SSR isomorphe)
+
+L'app est rendue côté serveur (contenu + meta/OG dans le HTML pour le SEO), puis hydratée côté client.
+
+### Trio d'entrée + factory
+
+L'infra SSR isomorphe est regroupée dans **`src/ssr/`** (hors `server.js`, process Node à la racine de `frontend/`).
+
+- **`src/ssr/app.js`** — factory `createApp({ ssr })` : `createSSRApp`, router neuf par requête, `provide()` des stores request-scoped, retourne `{ app, router, stores }`. Expose aussi `serializeStores` / `hydrateStores`.
+- **`src/ssr/entry-client.js`** — hydrate : `createApp()`, `hydrateStores(stores, window.__INITIAL_STATE__)`, `router.isReady()`, `mount('#app')`.
+- **`src/ssr/entry-server.js`** — `render(url)` : push l'URL, exécute le prefetch, `renderToString`, renvoie `{ html, head, state, statusCode }`.
+- **`server.js`** (racine `frontend/`) — serveur Express (dev = Vite middleware + `ssrLoadModule` ; prod = `dist/client` statique + `dist/server`). Injecte `<!--app-html-->`, `<!--ssr-state-->` et le head (`@unhead/vue`).
+- **`src/ssr/services-boot.js`** — boot **global unique** (mémoïsé) : enregistre les services/stores + crée l'i18n. À distinguer du wiring **par requête** fait dans `ssr/app.js`.
+
+### Règles SSR (à respecter pour tout nouveau code)
+
+1. **Stores request-scoped** : un store consommé au SSR est une **factory** (`createXStore()`) fournie via `provide()` dans `app.js` ; `useXStore()` fait `inject(KEY, false) ?? fallback`. **JAMAIS** de `ref()` au niveau module partagé pour de la donnée rendue au serveur (fuite entre requêtes). Chaque store expose `serialize()` / `hydrate()`. Voir `apis/novels/stores/novel-store.js`.
+2. **Aucun accès navigateur au module-load ou en `setup()`** : `window`, `document`, `localStorage` uniquement derrière un guard. Utiliser **`helpers/ssr-storage.js`** pour le storage. OK dans `onMounted`/handlers (non exécutés au serveur).
+3. **Prefetch des données** : déclarer `meta.asyncData({ stores, route })` sur la route (voir `config/routes-config.js`). `entry-server` l'appelle avant le rendu ; l'état est sérialisé puis hydraté (pas de double fetch au 1er rendu). Prévoir le rechargement client (onMounted) pour les navigations SPA. Pour propager un vrai statut HTTP (ex. **404 sur ressource introuvable**), l'asyncData **retourne `{ statusCode }`** (retour uniforme) ; `runAsyncData` propage les statuts `< 500` à la réponse HTTP et **logue** les erreurs serveur (`≥ 500`) en gardant la coquille résiliente (le client réhydrate).
+4. **Meta/SEO** : `useHead()` de `@unhead/vue` dans les composants de page.
+5. **Fetch serveur** : l'URL d'API doit être **absolue** (`VITE_GHOSTY_API_URL`) et joignable depuis le process Node.
+
+### 404 SEO
+
+Le catch-all `/:pathMatch(.*)*` (voir `services/router/src/router-plugin.js`) rend une **page dédiée** `views/NotFoundPage.vue` (`name: 'not-found'`, `meta.statusCode = 404`, `robots: noindex`), plus de redirection vers `/`. Au SSR, `runAsyncData` seede le statut depuis `route.meta.statusCode` → **vrai HTTP 404** pour les URLs inconnues comme pour les ressources introuvables (cf. point 3 ci-dessus).
 
 ## Services Vuemann
 

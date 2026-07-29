@@ -1,5 +1,6 @@
 import { localeFunctions } from '@/services/locale/src/locale-functions.js'
 import { flash } from '@/services/shortcuts/services-shortcut.js'
+import { ssrStorage } from '@/helpers/ssr-storage.js'
 
 const localeDefault = 'fr'
 const MAX_PARTS = 2
@@ -14,12 +15,12 @@ const t = (textKey, params = {}) => {
 }
 
 const getCurrentLocale = () => {
-  const currentLocale = localStorage.getItem('locale')
+  const currentLocale = ssrStorage.getItem('locale')
   if (currentLocale !== null) {
     return currentLocale
   }
 
-  localStorage.setItem('locale', localeDefault)
+  ssrStorage.setItem('locale', localeDefault)
   return localeDefault
 }
 

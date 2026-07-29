@@ -46,6 +46,8 @@ const getNestedProperty = (object, key) => {
   return result
 }
 
+const isSsr = () => typeof window === 'undefined'
+
 const isRecursivelyIncluded = (subset, object) => {
   if (typeof subset !== 'object' || subset === null) {
     return subset === object
@@ -82,6 +84,7 @@ export const utilsH = {
   getGenreIconClass,
   getNestedProperty,
   isRecursivelyIncluded,
+  isSsr,
   percentOf,
   voidToEmpty,
   voidToNull,

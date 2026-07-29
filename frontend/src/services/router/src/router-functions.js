@@ -1,10 +1,15 @@
 import { servicesM } from '@/services/services-manager.js'
 import { auth, flash, t } from '@/services/shortcuts/services-shortcut.js'
 import { ConfigLoader } from '@/config/config-loader.js'
+import { utilsH } from '@/helpers/utils-helper.js'
 
 const DOCUMENTATION_PREFIX = '/documentation'
 
 const afterEach = to => {
+  if (utilsH.isSsr()) {
+    return
+  }
+
   const appTitle = t(ConfigLoader.get('app.title'))
   const routeTitle = to.meta?.title
 

@@ -27,6 +27,12 @@ backend/memory-bank/
 _Add each new rule here._
 
 - `rules/global/rule-writing-guide.md` — frontmatter + structure for any new backend rule
+- `rules/global/dependency-naming.md` — dépendances injectées suffixées `R` (repository) / `H` (helper) ; nom nu = donnée
+- `rules/files-type/controller.md` — contrôleurs minces : aucune requête, injection, variable intermédiaire avant la Resource
+- `rules/files-type/repository.md` — seul endroit pour l'accès DB ; jamais couplé à `Request`
+- `rules/files-type/seeder.md` — insert-only, pas de `truncate` ; re-seed via `migrate:fresh --seed`
+- `rules/files-type/model.md` — comportement réutilisable → trait `Concerns/` ; compteurs dénormalisés à maintenir
+- `rules/langage/php/constructor-style.md` — constructeurs multi-ligne, un paramètre promu par ligne
 - `rules/tests/test-structure.md` — organisation, nommage (strict, grep-vérifiable), structure de classe, test structurel `has_middleware()`, factories, assertions
 - `rules/tests/test-avoid-redundant.md` — un comportement unique par test, une règle de validation par test
 - `rules/tests/test-cleanup-teardown.md` — isolation via `tearDown`, ce que Laravel gère vs pas

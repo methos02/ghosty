@@ -17,8 +17,6 @@ class GenresSeeder extends Seeder
         /** @var array<int, array{id: int, name: string}> $genres */
         $genres = File::json(database_path('data/genres.json'));
 
-        DB::table('genres')->truncate();
-
         foreach ($genres as $genre) {
             DB::table('genres')->insert([
                 'id' => $genre['id'],

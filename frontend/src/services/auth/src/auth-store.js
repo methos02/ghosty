@@ -1,10 +1,11 @@
 import { ref, readonly, computed } from 'vue'
+import { ssrStorage } from '@/helpers/ssr-storage.js'
 
 const user = ref()
 const token = ref()
 
-const storedToken = localStorage.getItem('auth_token')
-const storedUser = localStorage.getItem('auth_user')
+const storedToken = ssrStorage.getItem('auth_token')
+const storedUser = ssrStorage.getItem('auth_user')
 
 if (storedToken && storedUser) {
   token.value = storedToken
@@ -22,29 +23,29 @@ export const authStore = {
 
   setUser: userData => {
     user.value = userData
-    localStorage.setItem('auth_user', JSON.stringify(userData))
+    ssrStorage.setItem('auth_user', JSON.stringify(userData))
   },
 
   unsetUser: () => {
     user.value = undefined
-    localStorage.removeItem('auth_user')
+    ssrStorage.removeItem('auth_user')
   },
 
   setToken: tokenData => {
     token.value = tokenData
-    localStorage.setItem('auth_token', tokenData)
+    ssrStorage.setItem('auth_token', tokenData)
   },
 
   unsetToken: () => {
     token.value = undefined
-    localStorage.removeItem('auth_token')
+    ssrStorage.removeItem('auth_token')
   },
 
   clear: () => {
     user.value = undefined
     token.value = undefined
-    localStorage.removeItem('auth_token')
-    localStorage.removeItem('auth_user')
+    ssrStorage.removeItem('auth_token')
+    ssrStorage.removeItem('auth_user')
   },
 
   hasRole: role => {

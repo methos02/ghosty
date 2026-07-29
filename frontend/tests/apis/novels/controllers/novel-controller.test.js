@@ -1,13 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
 import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
+import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
+import { PaginationDto } from '@/apis/shared/dtos/pagination-dto.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { paginationSeeder } from '&/utils/seeders/pagination-seeder.js'
 
 describe('novel-controller', () => {
   afterEach(() => {
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('list', () => {
@@ -15,7 +17,7 @@ describe('novel-controller', () => {
       vi.spyOn(NovelRepository, 'list').mockResolvedValue({
         status: STATUS.SUCCESS,
         data: {
-          data: novelSeeder.getNovelsApi(2),
+          novels: novelSeeder.getNovelsApi(2),
           meta: paginationSeeder.getMetaApi(),
         },
       })
@@ -24,28 +26,21 @@ describe('novel-controller', () => {
     it('forwards the paginated page param to the repository', async () => {
       await NovelController.list(2)
 
-      expect(NovelRepository.list).toHaveBeenCalledWith({ params: { page: 2 } })
+      expect(NovelRepository.list).toHaveBeenCalledWith({ params: NovelDto.toListParams(2) })
     })
 
     it('defaults to page 1 when no page is given', async () => {
       await NovelController.list()
 
-      expect(NovelRepository.list).toHaveBeenCalledWith({ params: { page: 1 } })
+      expect(NovelRepository.list).toHaveBeenCalledWith({ params: NovelDto.toListParams(1) })
     })
 
     it('returns mapped novels and pagination on success', async () => {
       const result = await NovelController.list()
 
       expect(result.status).toBe(STATUS.SUCCESS)
-      expect(result.novels).toHaveLength(2)
-      expect(result.novels[0].coverUrl).toBe('https://example.test/covers/1.jpg')
-      expect(result.pagination).toEqual({
-        page: 1,
-        nextPage: 2,
-        size: 15,
-        total: 45,
-        lastPage: 3,
-      })
+      expect(result.novels).toEqual(novelSeeder.getNovels(2))
+      expect(result.pagination).toEqual(PaginationDto.fromMeta(paginationSeeder.getMetaApi()))
     })
 
     it('passes the error response through untouched on failure', async () => {
@@ -60,17 +55,17 @@ describe('novel-controller', () => {
 
   describe('getBySlug', () => {
     it('forwards the slug param and returns the mapped novel on success', async () => {
+      const novelApi = novelSeeder.getNovelApi({ slug: 'mon-roman' })
       vi.spyOn(NovelRepository, 'getBySlug').mockResolvedValue({
         status: STATUS.SUCCESS,
-        data: novelSeeder.getNovelApi({ slug: 'mon-roman' }),
+        data: novelApi,
       })
 
       const result = await NovelController.getBySlug('mon-roman')
 
-      expect(NovelRepository.getBySlug).toHaveBeenCalledWith({ params: { slug: 'mon-roman' } })
+      expect(NovelRepository.getBySlug).toHaveBeenCalledWith({ params: NovelDto.toShowParams('mon-roman') })
       expect(result.status).toBe(STATUS.SUCCESS)
-      expect(result.novel.slug).toBe('mon-roman')
-      expect(result.novel.author.pseudo).toBe('GhostWriter')
+      expect(result.novel).toEqual(NovelDto.fromShow(novelApi))
     })
 
     it('passes the error response through untouched on failure', async () => {

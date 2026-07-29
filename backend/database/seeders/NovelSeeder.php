@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Novel;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class NovelSeeder extends Seeder
@@ -16,16 +17,15 @@ class NovelSeeder extends Seeder
         /** @var array<int, array{title: string, genre_id: int, cover_url: string}> $novels */
         $novels = File::json(database_path('data/novels.json'));
 
-        DB::table('novels')->truncate();
+        $authorId = User::where('pseudo', 'auteur1')->value('id');
 
         foreach ($novels as $novel) {
-            DB::table('novels')->insert([
+            Novel::create([
                 'title' => $novel['title'],
                 'genre_id' => $novel['genre_id'],
+                'author_id' => $authorId,
                 'cover_url' => $novel['cover_url'],
                 'is_favorite' => false,
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
         }
     }

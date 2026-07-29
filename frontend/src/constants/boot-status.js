@@ -1,4 +1,0 @@
-export const BOOT_STATUS = {
-  ABORTED: 'ABORTED',
-  SUCCESS: 'SUCCESS',
-}

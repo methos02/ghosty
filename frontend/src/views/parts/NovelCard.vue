@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 
 const props = defineProps({
@@ -7,14 +8,20 @@ const props = defineProps({
 
 const { setSelectedNovel } = useNovelStore()
 
+const linkTarget = computed(() => ({
+  name: 'novel-detail',
+  params: { slug: props.novel.slug },
+}))
+
 const handleClick = () => {
   setSelectedNovel(props.novel)
 }
 </script>
 
 <template>
-  <div
+  <router-link
     class="novel-card | overflow-hidden radius-4 pointer"
+    :to="linkTarget"
     @click="handleClick"
   >
     <div class="novel-card__image-container | relative">
@@ -38,11 +45,14 @@ const handleClick = () => {
         </span>
       </div>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <style lang="scss">
 .novel-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
   background: transparent;
   box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.2s ease;

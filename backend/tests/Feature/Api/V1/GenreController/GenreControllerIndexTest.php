@@ -21,11 +21,11 @@ class GenreControllerIndexTest extends TestCase
         $response = $this->getJson($this->route);
 
         $response->assertOk();
-        $response->assertJsonCount(3, 'data');
-        $response->assertJsonPath('data.0.name', 'Aventure');
-        $response->assertJsonPath('data.1.name', 'Horreur');
-        $response->assertJsonPath('data.2.name', 'Thriller');
-        $response->assertJsonPath('data.0.slug', 'aventure');
+        $response->assertJsonCount(3);
+        $response->assertJsonPath('0.name', 'Aventure');
+        $response->assertJsonPath('1.name', 'Horreur');
+        $response->assertJsonPath('2.name', 'Thriller');
+        $response->assertJsonPath('0.slug', 'aventure');
     }
 
     #[Test]

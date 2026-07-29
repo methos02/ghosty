@@ -1,4 +1,5 @@
 import { ref, readonly } from 'vue'
+import { ssrStorage } from '@/helpers/ssr-storage.js'
 
 const currentLocale = ref('fr')
 
@@ -8,7 +9,7 @@ const get = () => {
 
 const set = newLocale => {
   currentLocale.value = newLocale
-  localStorage.setItem('locale', newLocale)
+  ssrStorage.setItem('locale', newLocale)
 }
 
 export const localeStore = {

@@ -10,9 +10,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const isProduction = process.env.NODE_ENV === 'production' || process.argv.includes('--prod')
 const port = Number(process.env.PORT) || 5173
 
-// Origine consommée côté serveur par locale-functions pour un fetch absolu des traductions.
 // eslint-disable-next-line unicorn/no-global-object-property-assignment
 globalThis.__SSR_ORIGIN__ = process.env.SSR_ORIGIN || `http://localhost:${port}`
+
+// @see ../backend/memory-bank/decisions/ADR-04-token-en-cookie-httponly.md
+const browserUrl = process.env.SSR_PUBLIC_URL || `http://localhost:${port}`
 
 const BACKSLASH = String.fromCodePoint(92)
 const escapeState = state =>
@@ -89,7 +91,7 @@ const start = async () => {
   }
 
   app.listen(port, () => {
-    log.info(`SSR server (${isProduction ? 'prod' : 'dev'}) → http://localhost:${port}`)
+    log.info(`SSR server (${isProduction ? 'prod' : 'dev'}) → ${browserUrl}`)
   })
 }
 

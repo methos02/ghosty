@@ -10,7 +10,7 @@ const afterEach = to => {
     return
   }
 
-  const appTitle = t(ConfigLoader.get('app.title'))
+  const appTitle = ConfigLoader.get('app.title')
   const routeTitle = to.meta?.title
 
   document.title = routeTitle ? `${t(routeTitle)} - ${appTitle}` : appTitle

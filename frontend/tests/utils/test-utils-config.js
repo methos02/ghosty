@@ -1,7 +1,7 @@
 import { config } from '@vue/test-utils'
 import { shallowRef } from 'vue'
 import { matchedRouteKey } from 'vue-router'
-import { getRouter } from '@/services/router/src/router-plugin.js'
+import { routerPlugin } from '@/services/router/src/router-plugin.js'
 
 // Stub minimal de <router-link> pour les composants montés.
 const ROUTER_LINK_STUB = {
@@ -21,7 +21,7 @@ const ROUTER_LINK_STUB = {
 export const configureTestUtils = () => {
   config.global.provide = {
     ...config.global.provide,
-    [matchedRouteKey]: shallowRef(getRouter().resolve('/').matched[0]),
+    [matchedRouteKey]: shallowRef(routerPlugin.getRouter().resolve('/').matched[0]),
   }
   config.global.components = {
     ...config.global.components,

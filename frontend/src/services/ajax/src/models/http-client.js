@@ -72,6 +72,7 @@ const rawRequest = async requestConfig => {
   const options = {
     method: requestConfig.method,
     headers: { ...requestConfig.headers },
+    credentials: requestConfig.credentials ?? 'include',
   }
 
   if (requestConfig.data && !['GET', 'HEAD'].includes(requestConfig.method)) {
@@ -175,6 +176,9 @@ const prepareFetchRequest = (config, method, url) => {
   const headers = { ...interceptedConfig.headers }
 
   const fetchOptions = { method: method.toUpperCase(), headers }
+  if (interceptedConfig.credentials) {
+    fetchOptions.credentials = interceptedConfig.credentials
+  }
   if (interceptedConfig.signal) {
     fetchOptions.signal = interceptedConfig.signal
   }
@@ -191,6 +195,7 @@ const prepareFetchRequest = (config, method, url) => {
     data: body,
     requestId: config.requestId,
     responseType: config.responseType,
+    credentials: interceptedConfig.credentials,
   }
   if (interceptedConfig.signal) {
     requestConfig.signal = interceptedConfig.signal

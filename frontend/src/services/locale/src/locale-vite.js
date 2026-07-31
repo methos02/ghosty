@@ -1,8 +1,8 @@
-/* eslint-disable no-console */
 import path from 'node:path'
 import fs from 'node:fs'
 import { locales } from '../../../config/locale-config.js'
 import { localeHelper } from '../../../helpers/locale-helper.js'
+import { log } from '../../shortcuts/log-shortcut.js'
 
 const compileLocales = projectDirectory => {
   localeViteInternal.cleanOldTranslations(projectDirectory)
@@ -86,7 +86,7 @@ const writeTranslationFile = (projectDirectory, locale, translations) => {
     JSON.stringify(translations, undefined, INDENT_SPACES) + ' ',
   )
 
-  console.log(`✅ Fichier de traduction généré: app-translate-${locale}-${version_format}.json`)
+  log.info(`✅ Fichier de traduction généré: app-translate-${locale}-${version_format}.json`)
 }
 
 const cleanOldTranslations = projectDirectory => {
@@ -105,7 +105,7 @@ const cleanOldTranslations = projectDirectory => {
     fs.unlinkSync(filePath)
   }
 
-  console.log(`🗑️  Anciens fichiers de traduction supprimés`)
+  log.info(`🗑️  Anciens fichiers de traduction supprimés`)
 }
 
 export const localeVite = projectDirectory => {

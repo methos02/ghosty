@@ -9,9 +9,14 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Cookie as SymfonyCookie;
 
+/**
+ * @see backend/memory-bank/decisions/ADR-04-token-en-cookie-httponly.md
+ */
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request): JsonResponse
@@ -23,12 +28,7 @@ class AuthController extends Controller
             'roles' => [User::ROLE_READER],
         ]);
 
-        $token = $user->createToken('auth-token')->plainTextToken;
-
-        return response()->json([
-            'user' => new UserResource($user),
-            'token' => $token,
-        ], 201);
+        return $this->authenticated($user, 201);
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -47,12 +47,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken('auth-token')->plainTextToken;
-
-        return response()->json([
-            'user' => new UserResource($user),
-            'token' => $token,
-        ]);
+        return $this->authenticated($user);
     }
 
     public function logout(Request $request): JsonResponse
@@ -63,7 +58,9 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Déconnecté avec succès',
-        ]);
+        ])
+            ->withCookie($this->forgetCookie(config('sanctum.token_cookie.name')))
+            ->withCookie($this->forgetCookie(config('sanctum.token_cookie.session_name')));
     }
 
     public function me(Request $request): JsonResponse
@@ -71,5 +68,53 @@ class AuthController extends Controller
         return response()->json([
             'user' => new UserResource($request->user()),
         ]);
+    }
+
+    private function authenticated(User $user, int $status = 200): JsonResponse
+    {
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return response()->json([
+            'user' => new UserResource($user),
+        ], $status)
+            ->withCookie($this->tokenCookie($token))
+            ->withCookie($this->sessionCookie());
+    }
+
+    private function tokenCookie(string $token): SymfonyCookie
+    {
+        return Cookie::make(
+            name: config('sanctum.token_cookie.name'),
+            value: $token,
+            minutes: config('sanctum.token_cookie.lifetime'),
+            path: config('sanctum.token_cookie.path'),
+            domain: config('sanctum.token_cookie.domain'),
+            secure: config('sanctum.token_cookie.secure'),
+            httpOnly: true,
+            sameSite: config('sanctum.token_cookie.same_site'),
+        );
+    }
+
+    private function sessionCookie(): SymfonyCookie
+    {
+        return Cookie::make(
+            name: config('sanctum.token_cookie.session_name'),
+            value: '1',
+            minutes: config('sanctum.token_cookie.lifetime'),
+            path: config('sanctum.token_cookie.path'),
+            domain: config('sanctum.token_cookie.domain'),
+            secure: config('sanctum.token_cookie.secure'),
+            httpOnly: false,
+            sameSite: config('sanctum.token_cookie.same_site'),
+        );
+    }
+
+    private function forgetCookie(string $name): SymfonyCookie
+    {
+        return Cookie::forget(
+            name: $name,
+            path: config('sanctum.token_cookie.path'),
+            domain: config('sanctum.token_cookie.domain'),
+        );
     }
 }

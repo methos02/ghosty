@@ -12,8 +12,8 @@ const logout = async () => {
   return await req('auth.logout')
 }
 
-const me = async () => {
-  return await req('auth.me')
+const me = async options => {
+  return await req('auth.me', options)
 }
 
 export const AuthRepository = {

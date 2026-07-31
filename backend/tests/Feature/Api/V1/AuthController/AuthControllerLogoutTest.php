@@ -33,10 +33,22 @@ class AuthControllerLogoutTest extends TestCase
         $user = User::factory()->create();
         $token = $user->createToken('auth-token')->plainTextToken;
 
-        $response = $this->withToken($token)->postJson($this->route);
+        $response = $this->withCredentials()->withUnencryptedCookie('ghosty_token', $token)->postJson($this->route);
 
         $response->assertOk();
         $response->assertJsonPath('message', 'Déconnecté avec succès');
         $this->assertDatabaseCount('personal_access_tokens', 0);
+    }
+
+    #[Test]
+    public function expires_the_auth_cookies(): void
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        $response = $this->withCredentials()->withUnencryptedCookie('ghosty_token', $token)->postJson($this->route);
+
+        $response->assertCookieExpired('ghosty_token');
+        $response->assertCookieExpired('ghosty_session');
     }
 }

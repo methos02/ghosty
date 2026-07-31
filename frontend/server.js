@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import express from 'express'
 import { transformHtmlTemplate } from '@unhead/vue/server'
+import { log } from './src/services/shortcuts/log-shortcut.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -50,7 +51,7 @@ const createDevelopmentServer = async app => {
       const template = await vite.transformIndexHtml(url, rawTemplate)
       const { render } = await vite.ssrLoadModule('/src/ssr/entry-server.js')
 
-      const rendered = await render(url)
+      const rendered = await render(url, { cookie: req.headers.cookie })
       await sendRendered(response, { ...rendered, template: buildHtml(template, rendered) })
     } catch (error) {
       vite.ssrFixStacktrace(error)
@@ -68,7 +69,7 @@ const createProductionServer = async app => {
 
   app.use('*all', async (req, response, next) => {
     try {
-      const rendered = await render(req.originalUrl)
+      const rendered = await render(req.originalUrl, { cookie: req.headers.cookie })
       await sendRendered(response, { ...rendered, template: buildHtml(template, rendered) })
     } catch (error) {
       next(error)
@@ -88,8 +89,7 @@ const start = async () => {
   }
 
   app.listen(port, () => {
-    // eslint-disable-next-line no-console
-    console.log(`SSR server (${isProduction ? 'prod' : 'dev'}) → http://localhost:${port}`)
+    log.info(`SSR server (${isProduction ? 'prod' : 'dev'}) → http://localhost:${port}`)
   })
 }
 

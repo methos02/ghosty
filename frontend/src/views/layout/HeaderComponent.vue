@@ -3,9 +3,10 @@ import LoginDialog from '@/services/auth/views/LoginDialog.vue'
 import RegisterDialog from '@/services/auth/views/RegisterDialog.vue'
 import { useAuth } from '@/services/auth/src/use-auth.js'
 import { auth } from '@/services/shortcuts/services-shortcut.js'
-import { authStore } from '@/services/auth/src/auth-store.js'
+import { useAuthStore } from '@/services/auth/src/auth-store.js'
 
 const authDialogs = useAuth()
+const authStore = useAuthStore()
 
 const handleLogout = async () => {
   await auth.logout()

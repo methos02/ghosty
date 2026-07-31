@@ -1,6 +1,8 @@
 import { AuthController } from '@/apis/ghosty/controllers/auth-controller.js'
+import { AUTH_SESSION_COOKIE } from '@/constants/auth-constants.js'
 import { STATUS } from '@/constants/ajax-constants.js'
-import { authStore } from './auth-store.js'
+import { cookieHelper } from '@/helpers/cookie-helper.js'
+import { useAuthStore } from './auth-store.js'
 
 const login = async datas => {
   const response = await AuthController.login(datas)
@@ -9,8 +11,7 @@ const login = async datas => {
     return { status: STATUS.ERROR, error: response.error }
   }
 
-  authStore.setUser(response.user)
-  authStore.setToken(response.token)
+  useAuthStore().setUser(response.user)
   return { status: STATUS.SUCCESS, user: response.user }
 }
 
@@ -21,53 +22,67 @@ const register = async datas => {
     return { status: STATUS.ERROR, error: response.error }
   }
 
-  authStore.setUser(response.user)
-  authStore.setToken(response.token)
+  useAuthStore().setUser(response.user)
   return { status: STATUS.SUCCESS, user: response.user }
 }
 
 const logout = async () => {
   const response = await AuthController.logout()
-  authStore.clear()
+  useAuthStore().clear()
   return response
 }
 
 const fetchCurrentUser = async () => {
-  if (!authStore.token.value) {
+  if (!cookieHelper.has(AUTH_SESSION_COOKIE)) {
     return
   }
 
+  const store = useAuthStore()
   const response = await AuthController.me()
 
   if (response.status !== STATUS.SUCCESS) {
-    authStore.clear()
+    store.clear()
     return
   }
 
-  authStore.setUser(response.user)
+  store.setUser(response.user)
+}
+
+// @see backend/memory-bank/decisions/ADR-06-rendu-ssr-authentifie.md
+const restoreSession = async (store, cookieHeader) => {
+  if (!cookieHeader?.includes(`${AUTH_SESSION_COOKIE}=`)) {
+    return { status: STATUS.SUCCESS }
+  }
+
+  const response = await AuthController.me({ headers: { Cookie: cookieHeader } })
+
+  if (response.status !== STATUS.SUCCESS) {
+    return response
+  }
+
+  store.setUser(response.user)
+  return { status: STATUS.SUCCESS }
 }
 
 const getCurrentUser = () => {
-  return authStore.user.value
+  return useAuthStore().getCurrentUser()
 }
 
 const isAuthenticated = () => {
-  return authStore.isAuthenticated.value
+  return useAuthStore().isAuthenticated.value
 }
 
 const hasRole = role => {
-  return authStore.hasRole(role)
+  return useAuthStore().hasRole(role)
 }
-
-const getAccessToken = () => authStore.token.value ?? undefined
 
 export const authFunctions = {
   login,
   register,
   logout,
   fetchCurrentUser,
+  restoreSession,
   getCurrentUser,
   isAuthenticated,
   hasRole,
-  getAccessToken,
 }

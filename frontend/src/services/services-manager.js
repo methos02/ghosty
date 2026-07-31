@@ -1,4 +1,5 @@
-/* eslint-disable no-console */
+import { log } from '@/services/shortcuts/log-shortcut.js'
+
 const MAX_PARTS = 2
 
 const state = {
@@ -52,11 +53,11 @@ const formatServiceName = serviceName => {
 
 const serviceDefault = (serviceName, serviceMethod, methodParams) => {
   if (servicesDefault[serviceName] === undefined) {
-    return console.log(`default service ${serviceName} est inconnu`)
+    return log.error(`default service ${serviceName} est inconnu`)
   }
 
   if (servicesDefault[serviceName][serviceMethod] === undefined) {
-    return console.log(`default service ${serviceName} n'a pas la méthode ${serviceMethod}`)
+    return log.error(`default service ${serviceName} n'a pas la méthode ${serviceMethod}`)
   }
 
   return methodParams === false
@@ -65,9 +66,7 @@ const serviceDefault = (serviceName, serviceMethod, methodParams) => {
 }
 
 const serviceError = serviceName => {
-  console.error(servicesM.getServices())
-  console.trace()
-  console.error(`service ${serviceName} inconnu`)
+  log.error(`service ${serviceName} inconnu`, { services: servicesM.getServices() })
 }
 
 const serviceMethod = (serviceName, methodName) => {
@@ -78,7 +77,7 @@ const serviceMethod = (serviceName, methodName) => {
   }
 
   if (state.services[formattedName][methodName] === undefined) {
-    return console.error(`méthode ${methodName} inconnue dans le service ${formattedName}`)
+    return log.error(`méthode ${methodName} inconnue dans le service ${formattedName}`)
   }
 
   return state.services[formattedName][methodName]
@@ -95,8 +94,7 @@ export const servicesManagerInternal = {
 export const servicesDefault = {
   locale: { t: textKey => textKey },
   flash: {
-    success: message => console.log(message),
-    error: message => console.log(message),
+    success: message => log.info(message),
+    error: message => log.error(message),
   },
 }
-/* eslint-enable no-console */

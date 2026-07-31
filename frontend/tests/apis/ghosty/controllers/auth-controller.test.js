@@ -11,11 +11,11 @@ describe('auth-controller', () => {
   })
 
   describe('register', () => {
-    it('sends the mapped payload and returns user + token on success', async () => {
+    it('sends the mapped payload and returns the user on success', async () => {
       const user = userSeeder.getUserApi()
       vi.spyOn(AuthRepository, 'register').mockResolvedValue({
         status: STATUS.SUCCESS,
-        data: { user, token: 'jwt-token' },
+        data: { user },
       })
 
       const result = await AuthController.register(userSeeder.getRegisterForm())
@@ -28,7 +28,6 @@ describe('auth-controller', () => {
       })
       expect(result.status).toBe(STATUS.SUCCESS)
       expect(result.user.pseudo).toBe('GhostWriter')
-      expect(result.token).toBe('jwt-token')
     })
 
     it('registers validation errors on 422 and returns an error status', async () => {
@@ -55,11 +54,11 @@ describe('auth-controller', () => {
   })
 
   describe('login', () => {
-    it('sends the mapped credentials and returns user + token on success', async () => {
+    it('sends the mapped credentials and returns the user on success', async () => {
       const user = userSeeder.getUserApi()
       vi.spyOn(AuthRepository, 'login').mockResolvedValue({
         status: STATUS.SUCCESS,
-        data: { user, token: 'jwt-token' },
+        data: { user },
       })
 
       const result = await AuthController.login(userSeeder.getLoginForm())
@@ -69,7 +68,6 @@ describe('auth-controller', () => {
         password: 'Secret123!',
       })
       expect(result.user.id).toBe(42)
-      expect(result.token).toBe('jwt-token')
     })
 
     it('registers validation errors on 422 and returns an error status', async () => {

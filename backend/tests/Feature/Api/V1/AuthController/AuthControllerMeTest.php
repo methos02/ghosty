@@ -29,6 +29,15 @@ class AuthControllerMeTest extends TestCase
     }
 
     #[Test]
+    public function rejects_a_valid_token_sent_as_a_bearer_header(): void
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        $this->withToken($token)->getJson($this->route)->assertUnauthorized();
+    }
+
+    #[Test]
     public function returns_authenticated_user(): void
     {
         $user = User::factory()->create(['pseudo' => 'JohnDoe', 'email' => 'john@example.com']);

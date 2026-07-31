@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -28,7 +29,29 @@ class AuthControllerRegisterTest extends TestCase
     }
 
     #[Test]
-    public function registers_user_and_returns_token(): void
+    public function has_middleware(): void
+    {
+        $route = Route::getRoutes()->getByAction(AuthController::class.'@register');
+        $this->assertNotNull($route);
+
+        $this->assertEqualsCanonicalizing(['api', 'throttle:register'], $route->gatherMiddleware());
+    }
+
+    #[Test]
+    public function blocks_the_sixth_registration_from_the_same_ip_within_an_hour(): void
+    {
+        for ($attempt = 1; $attempt <= 5; $attempt++) {
+            $this->postJson($this->route, $this->getDatas([
+                'pseudo' => 'Ghost'.$attempt,
+                'email' => "ghost{$attempt}@example.com",
+            ]))->assertCreated();
+        }
+
+        $this->postJson($this->route, $this->getDatas())->assertStatus(429);
+    }
+
+    #[Test]
+    public function registers_user_and_signs_it_in_through_an_httponly_cookie(): void
     {
         $response = $this->postJson($this->route, $this->getDatas());
 
@@ -36,7 +59,11 @@ class AuthControllerRegisterTest extends TestCase
         $response->assertJsonPath('user.pseudo', 'JohnDoe');
         $response->assertJsonPath('user.email', 'john@example.com');
         $response->assertJsonPath('user.roles', [User::ROLE_READER]);
-        $this->assertIsString($response->json('token'));
+        $this->assertArrayNotHasKey('token', $response->json());
+
+        $cookie = $response->getCookie('ghosty_token', false);
+        $this->assertNotNull($cookie);
+        $this->assertTrue($cookie->isHttpOnly());
 
         $this->assertDatabaseHas('users', ['email' => 'john@example.com', 'pseudo' => 'JohnDoe']);
     }

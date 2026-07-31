@@ -7,6 +7,11 @@ import { localePlugin } from '@/services/locale/src/locale-plugin.js'
 import { routerPlugin, ROUTER_KEY } from '@/services/router/src/router-plugin.js'
 import { flashPlugin } from '@/services/flash/src/flash-plugin.js'
 
+import {
+  createAuthStore,
+  setClientAuthStore,
+  AUTH_STORE_KEY,
+} from '@/services/auth/src/auth-store.js'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
 import { createWorkStore, WORK_STORE_KEY } from '@/apis/works/stores/work-store.js'
 import { createSearchNovelsStore, SEARCH_NOVELS_KEY } from '@/composables/use-search-novels.js'
@@ -16,16 +21,22 @@ export const createApp = async ({ ssr = false } = {}) => {
 
   const app = createSSRApp(App)
 
-  const router = routerPlugin.createAppRouter({ ssr })
-  app.use(router)
-  app.provide(ROUTER_KEY, router)
-
   const stores = {
+    auth: createAuthStore(),
     novel: createNovelStore(),
     work: createWorkStore(),
     search: createSearchNovelsStore(),
   }
 
+  if (!ssr) {
+    setClientAuthStore(stores.auth)
+  }
+
+  const router = routerPlugin.createAppRouter({ ssr })
+  app.use(router)
+  app.provide(ROUTER_KEY, router)
+
+  app.provide(AUTH_STORE_KEY, stores.auth)
   app.provide(NOVEL_STORE_KEY, stores.novel)
   app.provide(WORK_STORE_KEY, stores.work)
   app.provide(SEARCH_NOVELS_KEY, stores.search)
@@ -41,6 +52,7 @@ export const createApp = async ({ ssr = false } = {}) => {
 }
 
 export const serializeStores = stores => ({
+  auth: stores.auth.serialize(),
   novel: stores.novel.serialize(),
   work: stores.work.serialize(),
   search: stores.search.serialize(),
@@ -50,6 +62,7 @@ export const hydrateStores = (stores, snapshot) => {
   if (!snapshot) {
     return
   }
+  stores.auth.hydrate(snapshot.auth)
   stores.novel.hydrate(snapshot.novel)
   stores.work.hydrate(snapshot.work)
   stores.search.hydrate(snapshot.search)

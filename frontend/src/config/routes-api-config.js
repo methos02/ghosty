@@ -51,8 +51,8 @@ export const routesApi = {
     method: 'post',
     api: 'ghosty',
   },
-  'auth.user': {
-    url: 'v1/auth/user',
+  'auth.me': {
+    url: 'v1/auth/me',
     method: 'get',
     api: 'ghosty',
   },

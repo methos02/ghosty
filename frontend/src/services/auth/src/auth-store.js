@@ -1,59 +1,61 @@
-import { ref, readonly, computed } from 'vue'
-import { ssrStorage } from '@/helpers/ssr-storage.js'
+import { ref, readonly, computed, inject, hasInjectionContext } from 'vue'
 
-const user = ref()
-const token = ref()
+export const AUTH_STORE_KEY = Symbol('auth-store')
 
-const storedToken = ssrStorage.getItem('auth_token')
-const storedUser = ssrStorage.getItem('auth_user')
-
-if (storedToken && storedUser) {
-  token.value = storedToken
-  user.value = JSON.parse(storedUser)
+// @see backend/memory-bank/decisions/ADR-04-token-en-cookie-httponly.md
+const state = {
+  clientStore: undefined,
 }
 
-export const authStore = {
-  user: readonly(user),
-  token: readonly(token),
+export const createAuthStore = () => {
+  const user = ref()
 
-  isAuthenticated: computed(() => Boolean(user.value) && Boolean(token.value)),
-  isAuthor: computed(() => user.value?.roles?.includes('author') || false),
-  isModerator: computed(() => user.value?.roles?.includes('moderator') || false),
-  isAdmin: computed(() => user.value?.roles?.includes('admin') || false),
-
-  setUser: userData => {
-    user.value = userData
-    ssrStorage.setItem('auth_user', JSON.stringify(userData))
-  },
-
-  unsetUser: () => {
-    user.value = undefined
-    ssrStorage.removeItem('auth_user')
-  },
-
-  setToken: tokenData => {
-    token.value = tokenData
-    ssrStorage.setItem('auth_token', tokenData)
-  },
-
-  unsetToken: () => {
-    token.value = undefined
-    ssrStorage.removeItem('auth_token')
-  },
-
-  clear: () => {
-    user.value = undefined
-    token.value = undefined
-    ssrStorage.removeItem('auth_token')
-    ssrStorage.removeItem('auth_user')
-  },
-
-  hasRole: role => {
+  const hasRole = role => {
     if (!user.value?.roles) {
       return false
     }
     return user.value.roles.includes(role)
-  },
+  }
 
-  getCurrentUser: () => user.value ?? undefined,
+  return {
+    user: readonly(user),
+
+    isAuthenticated: computed(() => Boolean(user.value)),
+    isAuthor: computed(() => hasRole('author')),
+    isModerator: computed(() => hasRole('moderator')),
+    isAdmin: computed(() => hasRole('admin')),
+
+    setUser: userData => {
+      user.value = userData
+    },
+
+    clear: () => {
+      user.value = undefined
+    },
+
+    hasRole,
+
+    getCurrentUser: () => user.value ?? undefined,
+
+    serialize: () => ({ user: user.value }),
+
+    hydrate: data => {
+      if (!data) {
+        return
+      }
+      user.value = data.user
+    },
+  }
+}
+
+export const setClientAuthStore = store => {
+  state.clientStore = store
+}
+
+export const useAuthStore = () => {
+  if (hasInjectionContext()) {
+    return inject(AUTH_STORE_KEY, state.clientStore)
+  }
+
+  return state.clientStore ?? createAuthStore()
 }

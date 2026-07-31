@@ -1,9 +1,13 @@
 import { vi } from 'vitest'
-import { promises as fs } from 'node:fs'
-import path from 'node:path'
 
+// importActual : un fichier de test qui mocke node:fs / node:path (locale-helper)
+// ne doit pas voir ses mocks consommés par le chargement des traductions du setup.
 const createFetchMock = () => {
   return vi.fn(async url => {
+    const [{ promises: fs }, { default: path }] = await Promise.all([
+      vi.importActual('node:fs'),
+      vi.importActual('node:path'),
+    ])
     const filePath = path.resolve('public', url.replace(/^\//, ''))
     const data = await fs.readFile(filePath, 'utf8')
     return {

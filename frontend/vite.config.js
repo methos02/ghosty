@@ -32,6 +32,8 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    // @see ../backend/memory-bank/decisions/ADR-04-token-en-cookie-httponly.md
+    allowedHosts: ['app.ghosty.local'],
     proxy: {
       '/api': {
         target: 'http://localhost:8000',

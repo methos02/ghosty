@@ -41,6 +41,12 @@ npm run test:ui           # Interface UI
 npm run preview
 ```
 
+> ⚠️ **Prérequis dev** : le front et l'API doivent partager le même site pour que le cookie
+> d'auth (`SameSite=Lax`) soit joint aux requêtes. Ajouter dans le fichier `hosts` :
+> `127.0.0.1 app.ghosty.local` puis ouvrir **http://app.ghosty.local:5173** (et non
+> `localhost`). L'API reste sur `api.ghosty.local`. Voir
+> [ADR-04](../backend/memory-bank/decisions/ADR-04-token-en-cookie-httponly.md).
+
 > ⚠️ Le point d'entrée client est **`src/ssr/entry-client.js`** (plus `main.js`, conservé inerte). Le build ne sort plus vers `backend/public/build` : le **serveur Node SSR** (`server.js`) sert le HTML rendu + les assets, et Laravel reste une **API pure**.
 
 ## Architecture Frontend
@@ -142,8 +148,8 @@ L'infra SSR isomorphe est regroupée dans **`src/ssr/`** (hors `server.js`, proc
 
 - **`src/ssr/app.js`** — factory `createApp({ ssr })` : `createSSRApp`, router neuf par requête, `provide()` des stores request-scoped, retourne `{ app, router, stores }`. Expose aussi `serializeStores` / `hydrateStores`.
 - **`src/ssr/entry-client.js`** — hydrate : `createApp()`, `hydrateStores(stores, window.__INITIAL_STATE__)`, `router.isReady()`, `mount('#app')`.
-- **`src/ssr/entry-server.js`** — `render(url)` : push l'URL, exécute le prefetch, `renderToString`, renvoie `{ html, head, state, statusCode }`.
-- **`server.js`** (racine `frontend/`) — serveur Express (dev = Vite middleware + `ssrLoadModule` ; prod = `dist/client` statique + `dist/server`). Injecte `<!--app-html-->`, `<!--ssr-state-->` et le head (`@unhead/vue`).
+- **`src/ssr/entry-server.js`** — `render(url, { cookie })` : restaure la session depuis le cookie, push l'URL, exécute le prefetch, `renderToString`, renvoie `{ html, head, state, statusCode }`.
+- **`server.js`** (racine `frontend/`) — serveur Express (dev = Vite middleware + `ssrLoadModule` ; prod = `dist/client` statique + `dist/server`). Transmet `req.headers.cookie` à `render()`, injecte `<!--app-html-->`, `<!--ssr-state-->` et le head (`@unhead/vue`).
 - **`src/ssr/services-boot.js`** — boot **global unique** (mémoïsé) : enregistre les services/stores + crée l'i18n. À distinguer du wiring **par requête** fait dans `ssr/app.js`.
 
 ### Règles SSR (à respecter pour tout nouveau code)
@@ -153,6 +159,7 @@ L'infra SSR isomorphe est regroupée dans **`src/ssr/`** (hors `server.js`, proc
 3. **Prefetch des données** : déclarer `meta.asyncData({ stores, route })` sur la route (voir `config/routes-config.js`). `entry-server` l'appelle avant le rendu ; l'état est sérialisé puis hydraté (pas de double fetch au 1er rendu). Prévoir le rechargement client (onMounted) pour les navigations SPA. Pour propager un vrai statut HTTP (ex. **404 sur ressource introuvable**), l'asyncData **retourne `{ statusCode }`** (retour uniforme) ; `runAsyncData` propage les statuts `< 500` à la réponse HTTP et **logue** les erreurs serveur (`≥ 500`) en gardant la coquille résiliente (le client réhydrate).
 4. **Meta/SEO** : `useHead()` de `@unhead/vue` dans les composants de page.
 5. **Fetch serveur** : l'URL d'API doit être **absolue** (`VITE_GHOSTY_API_URL`) et joignable depuis le process Node.
+6. **Authentification au SSR** : le cookie d'auth étant posé sur le domaine parent, il arrive aussi au serveur Node. `entry-server` appelle `authFunctions.restoreSession(stores.auth, cookie)` **avant** le routage — l'API n'est interrogée que si le témoin `ghosty_session` est présent. L'état part dans `__INITIAL_STATE__` et le client ne refait un `/auth/me` que si le store est vide. Voir [ADR-06](../backend/memory-bank/decisions/ADR-06-rendu-ssr-authentifie.md).
 
 ### 404 SEO
 
@@ -490,10 +497,13 @@ export const flashStore = {
 
 Les stores (composables/services) doivent **UNIQUEMENT** contenir des **états de session persistants** :
 - ✅ **user** - L'utilisateur connecté
-- ✅ **token** - Le token d'authentification
 - ✅ **novels** - Liste des romans chargés
 - ✅ **flashes** - Messages flash globaux
-- ✅ **isAuthenticated** - Computed basé sur user/token
+- ✅ **isAuthenticated** - Computed basé sur user
+
+⛔ **JAMAIS de token d'authentification dans un store ni dans `localStorage`** : il vit
+dans un cookie HttpOnly posé par l'API, hors de portée du JavaScript (voir
+[ADR-04](../backend/memory-bank/decisions/ADR-04-token-en-cookie-httponly.md)).
 
 Les stores ne doivent **JAMAIS** contenir des **états temporaires UI** liés à une action spécifique :
 - ❌ **loading** - État de chargement d'une action (login, register, etc.)
@@ -508,15 +518,13 @@ Les stores ne doivent **JAMAIS** contenir des **états temporaires UI** liés à
 **Exemple correct** :
 
 ```javascript
-// ✅ Store : État de session uniquement
-const user = ref(null)
-const token = ref(null)
+// ✅ Store : État de session uniquement (jamais le token — cookie HttpOnly)
+const user = ref()
 
 export const authStore = {
   user: readonly(user),
-  token: readonly(token),
   setUser: (userData) => { user.value = userData },
-  clear: () => { user.value = null; token.value = null }
+  clear: () => { user.value = undefined }
 }
 
 // ✅ Fonction : Retourne status/error
@@ -1018,24 +1026,21 @@ return { data: response.data }
 
 ```javascript
 // ❌ MAUVAIS - Setter avec else
-setUser: (userData) => {
-  user.value = userData
-  if (userData) {
-    localStorage.setItem('auth_user', JSON.stringify(userData))
+setLocale: (locale) => {
+  if (locale) {
+    ssrStorage.setItem('locale', locale)
   } else {
-    localStorage.removeItem('auth_user')
+    ssrStorage.removeItem('locale')
   }
 }
 
 // ✅ CORRECT - Méthodes séparées (plus explicite)
-setUser: (userData) => {
-  user.value = userData
-  localStorage.setItem('auth_user', JSON.stringify(userData))
+setLocale: (locale) => {
+  ssrStorage.setItem('locale', locale)
 },
 
-unsetUser: () => {
-  user.value = null
-  localStorage.removeItem('auth_user')
+unsetLocale: () => {
+  ssrStorage.removeItem('locale')
 }
 ```
 

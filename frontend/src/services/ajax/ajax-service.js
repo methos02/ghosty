@@ -2,7 +2,7 @@ import { ajaxFunctions } from '@/services/ajax/src/ajax-functions.js'
 import { abortManager } from '@/services/ajax/src/models/abort-manager.js'
 import { Request } from '@/services/ajax/src/models/request.js'
 import { httpClient } from '@/services/ajax/src/models/http-client.js'
-import { flash, log, authStore } from '@/services/shortcuts/services-shortcut.js'
+import { flash, log, useAuthStore } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { servicesM } from '@/services/services-manager.js'
 
@@ -161,7 +161,7 @@ const guardSkippedApi = async (route, routeName) => {
     module: 'ajax',
     api: route.api,
     route: routeName,
-    username: authStore.getCurrentUser(),
+    username: useAuthStore().getCurrentUser(),
   })
 
   return true

@@ -5,11 +5,11 @@ import NovelDetailDialog from '@/views/novels/NovelDetailDialog.vue'
 import { WorkController } from '@/apis/works/controllers/work-controller.js'
 import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
-import { getRouter } from '@/services/router/src/router-plugin.js'
+import { routerPlugin } from '@/services/router/src/router-plugin.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
 
-const router = getRouter()
+const router = routerPlugin.getRouter()
 
 const mountDialogFor = async (novel, { presetNovel = true } = {}) => {
   const store = createNovelStore()

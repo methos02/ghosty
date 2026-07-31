@@ -8,7 +8,14 @@ const authDialogs = useAuth()
 // archi attend d'un service auth (ajax-service, router-functions, AppComponent).
 const isApiSkipped = () => false
 const refreshToken = async () => ({ status: STATUS.UNAUTHORIZED })
-const routesAuthCheck = async () => ({ status: STATUS.SUCCESS })
+
+const routesAuthCheck = async () => {
+  if (!authFunctions.isAuthenticated()) {
+    await authFunctions.fetchCurrentUser()
+  }
+
+  return { status: STATUS.SUCCESS }
+}
 
 export const authService = {
   login: authFunctions.login,
@@ -18,7 +25,6 @@ export const authService = {
   isAuthenticated: authFunctions.isAuthenticated,
   hasRole: authFunctions.hasRole,
   fetchCurrentUser: authFunctions.fetchCurrentUser,
-  getAccessToken: authFunctions.getAccessToken,
   isApiSkipped,
   refreshToken,
   routesAuthCheck,

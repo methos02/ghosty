@@ -1,3 +1,5 @@
+import { AuthDto } from '@/apis/ghosty/dtos/auth-dto.js'
+
 const getUserApi = (overrides = {}) => ({
   id: 42,
   pseudo: 'GhostWriter',
@@ -16,6 +18,8 @@ const getUserApi = (overrides = {}) => ({
   ...overrides,
 })
 
+const getUser = (overrides = {}) => ({ ...AuthDto.fromUser(getUserApi()), ...overrides })
+
 const getRegisterForm = (overrides = {}) => ({
   pseudo: 'GhostWriter',
   email: 'ghost@ghosty.test',
@@ -30,4 +34,9 @@ const getLoginForm = (overrides = {}) => ({
   ...overrides,
 })
 
-export const userSeeder = { getUserApi, getRegisterForm, getLoginForm }
+export const userSeeder = {
+  getUserApi,
+  getUser,
+  getRegisterForm,
+  getLoginForm,
+}

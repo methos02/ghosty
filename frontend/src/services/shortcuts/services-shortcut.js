@@ -1,5 +1,5 @@
 export { ajax, req, url } from '@/services/shortcuts/ajax-shortcut.js'
-export { auth, authStore } from '@/services/shortcuts/auth-shortcut.js'
+export { auth, useAuthStore } from '@/services/shortcuts/auth-shortcut.js'
 export { flash, flashStore } from '@/services/shortcuts/flash-shortcut.js'
 export { form, formStore } from '@/services/shortcuts/form-shortcut.js'
 export { locale, localeStore, t } from '@/services/shortcuts/locale-shortcut.js'

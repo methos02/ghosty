@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     // Public routes
-    Route::post('/auth/register', [AuthController::class, 'register']);
-    Route::post('/auth/login', [AuthController::class, 'login']);
+    Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:register');
+    Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:login');
 
     Route::get('/genres', [GenreController::class, 'index']);
     Route::get('/novels', [NovelController::class, 'index']);

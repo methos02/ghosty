@@ -776,93 +776,29 @@ Route::prefix('v1')->group(function () {
 
 ```php
 // config/sanctum.php
-'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS',
-    'localhost,localhost:5173,127.0.0.1,127.0.0.1:5173'
-)),
+'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'app.ghosty.local:5173')),
+
+// Le token voyage dans un cookie HttpOnly, pas dans un en-tête Authorization
+'token_cookie' => [
+    'name' => env('SANCTUM_TOKEN_COOKIE', 'ghosty_token'),
+    'session_name' => env('SANCTUM_SESSION_COOKIE', 'ghosty_session'),
+    ...
+],
 ```
+
+`config/cors.php` doit poser `supports_credentials => true` avec des origines explicites
+(`CORS_ALLOWED_ORIGINS`) : `*` est refusé par le navigateur dès qu'un cookie est envoyé.
 
 ### Login Controller
 
-```php
-<?php
-// app/Http/Controllers/Api/V1/AuthController.php
+⛔ **Le token n'est JAMAIS rendu dans le corps de la réponse.** `AuthController::authenticated()`
+le pose dans un cookie HttpOnly + Secure + SameSite, accompagné d'un cookie témoin
+`ghosty_session` lisible et sans secret. `AppServiceProvider` branche
+`Sanctum::getAccessTokenFromRequestUsing()` pour lire ce cookie — **seule** voie
+d'authentification : un `Authorization: Bearer`, même valide, reçoit un 401.
 
-namespace App\Http\Controllers\Api\V1;
-
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
-
-class AuthController extends Controller
-{
-    public function register(Request $request)
-    {
-        $request->validate([
-            'pseudo' => 'required|string|unique:users',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8|confirmed'
-        ]);
-
-        $user = User::create([
-            'pseudo' => $request->pseudo,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'reader'
-        ]);
-
-        $token = $user->createToken('auth-token')->plainTextToken;
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token
-        ], 201);
-    }
-
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Identifiants incorrects']
-            ]);
-        }
-
-        // Vérifier si banni
-        if ($user->banned_until && $user->banned_until->isFuture()) {
-            throw ValidationException::withMessages([
-                'email' => ['Compte banni jusqu\'au ' . $user->banned_until->format('d/m/Y')]
-            ]);
-        }
-
-        $token = $user->createToken('auth-token')->plainTextToken;
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token
-        ]);
-    }
-
-    public function logout(Request $request)
-    {
-        $request->user()->currentAccessToken()->delete();
-
-        return response()->json(['message' => 'Déconnecté avec succès']);
-    }
-
-    public function me(Request $request)
-    {
-        return response()->json($request->user());
-    }
-}
-```
+Implémentation de référence : `app/Http/Controllers/Api/V1/AuthController.php`.
+Décision et alternatives : [ADR-04](memory-bank/decisions/ADR-04-token-en-cookie-httponly.md).
 
 ## Services (Business Logic)
 
@@ -1054,6 +990,8 @@ class VoteCalculationServiceTest extends TestCase
 - ✅ **Rate Limiting** : Middleware sur routes sensibles
 - ✅ **Upload Files** : `Storage::disk()` + validation MIME
 - ✅ **HTTPS** : Forcer en production
+- ✅ **Token d'accès** : cookie HttpOnly + SameSite, **jamais** rendu dans le corps JSON
+  (voir [ADR-04](memory-bank/decisions/ADR-04-token-en-cookie-httponly.md))
 
 ### Middleware Rate Limiting
 

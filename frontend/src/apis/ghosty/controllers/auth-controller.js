@@ -20,7 +20,6 @@ const register = async datas => {
   return {
     status: STATUS.SUCCESS,
     user: AuthDto.fromUser(response.data.user),
-    token: response.data.token,
   }
 }
 
@@ -40,7 +39,6 @@ const login = async datas => {
   return {
     status: STATUS.SUCCESS,
     user: AuthDto.fromUser(response.data.user),
-    token: response.data.token,
   }
 }
 
@@ -56,8 +54,8 @@ const logout = async () => {
   }
 }
 
-const me = async () => {
-  const response = await AuthRepository.me()
+const me = async (options = {}) => {
+  const response = await AuthRepository.me(options)
   if (response.status !== STATUS.SUCCESS) {
     return response
   }

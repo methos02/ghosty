@@ -1,7 +1,18 @@
 import { createHead } from '@unhead/vue/server'
 import { renderToString } from 'vue/server-renderer'
 import { createApp, serializeStores } from '@/ssr/app.js'
+import { authFunctions } from '@/services/auth/src/auth-functions.js'
+import { log } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
+
+// @see backend/memory-bank/decisions/ADR-06-rendu-ssr-authentifie.md
+const runRestoreSession = async (stores, cookie) => {
+  const { status } = await authFunctions.restoreSession(stores.auth, cookie)
+
+  if (status >= STATUS.ERROR_SERVER) {
+    log.error('[SSR] restoreSession', status)
+  }
+}
 
 const runRecordAsyncData = async (record, route, stores) => {
   const asyncData = record.meta?.asyncData
@@ -16,8 +27,7 @@ const runRecordAsyncData = async (record, route, stores) => {
       throw error
     }
 
-    // eslint-disable-next-line no-console
-    console.error(`[SSR] asyncData a échoué (${route.fullPath}) :`, error)
+    log.error(`[SSR] asyncData a échoué (${route.fullPath}) :`, error)
     return {}
   }
 }
@@ -32,8 +42,7 @@ const runAsyncData = async (route, stores) => {
     }
 
     if (recordStatus >= STATUS.ERROR_SERVER) {
-      // eslint-disable-next-line no-console
-      console.error('[SSR] asyncData', route.fullPath, recordStatus)
+      log.error('[SSR] asyncData', route.fullPath, recordStatus)
       continue
     }
 
@@ -43,11 +52,13 @@ const runAsyncData = async (route, stores) => {
   return statusCode
 }
 
-export const render = async url => {
+export const render = async (url, { cookie } = {}) => {
   const { app, router, stores } = await createApp({ ssr: true })
 
   const head = createHead()
   app.use(head)
+
+  await runRestoreSession(stores, cookie)
 
   await router.push(url)
   await router.isReady()
@@ -67,8 +78,7 @@ export const render = async url => {
       statusCode,
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('[SSR] renderToString a échoué, fallback client :', error)
+    log.error('[SSR] renderToString a échoué, fallback client :', error)
     return {
       html: '',
       head,

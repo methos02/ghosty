@@ -13,11 +13,32 @@
 
 namespace App\Models{
 /**
+ * @property-read \App\Models\User|null $author
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Chapter> $children
+ * @property-read int|null $children_count
+ * @property-read \App\Models\Novel|null $novel
+ * @property-read Chapter|null $parent
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter branches()
+ * @method static \Database\Factories\ChapterFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter published()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter roots()
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChapter {}
+}
+
+namespace App\Models{
+/**
  * @property int $id
  * @property string $name
  * @property string $slug
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\GenreFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Genre newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Genre newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Genre query()
@@ -34,22 +55,33 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property-read \App\Models\Genre $genre
  * @property int $id
  * @property string $title
+ * @property string $slug
  * @property int $genre_id
+ * @property int $author_id
  * @property string|null $cover_url
  * @property bool $is_favorite
+ * @property int $chapter_count
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $author
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
+ * @property-read int|null $chapters_count
+ * @property-read \App\Models\Genre|null $genre
+ * @property-read \App\Models\Chapter|null $rootChapter
+ * @method static \Database\Factories\NovelFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereChapterCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereCoverUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereGenreId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereIsFavorite($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereUpdatedAt($value)
  * @mixin \Eloquent

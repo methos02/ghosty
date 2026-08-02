@@ -55,10 +55,10 @@ describe('ajax-service', () => {
     it('routes a POST through the http client post method', async () => {
       const post = vi.spyOn(httpClient, 'post').mockResolvedValue(httpResponse({ id: 10 }))
 
-      const response = await ajaxService.req('work.create', { body: { title: 'Chapitre' } })
+      const response = await ajaxService.req('auth.login', { body: { title: 'Chapitre' } })
 
       expect(post).toHaveBeenCalledOnce()
-      expect(response).toMatchObject({ api: 'ghosty', route: 'work.create', status: 200 })
+      expect(response).toMatchObject({ api: 'ghosty', route: 'auth.login', status: 200 })
       expect(response.data.id).toBe(10)
     })
 

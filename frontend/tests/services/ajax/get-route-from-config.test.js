@@ -14,13 +14,13 @@ describe('ajax-functions.getRouteFromConfig', () => {
   })
 
   it('resolves a POST route', () => {
-    const route = ajaxFunctionsInternal.getRouteFromConfig('work.vote')
+    const route = ajaxFunctionsInternal.getRouteFromConfig('auth.login')
 
     expect(route).toMatchObject({
-      url: 'v1/works/{id}/vote',
+      url: 'v1/auth/login',
       method: 'post',
       api: 'ghosty',
-      name: 'work.vote',
+      name: 'auth.login',
     })
   })
 

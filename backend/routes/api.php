@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\ChapterController;
 use App\Http\Controllers\Api\V1\GenreController;
 use App\Http\Controllers\Api\V1\NovelController;
-use App\Http\Controllers\Api\V1\WorkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +15,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/genres', [GenreController::class, 'index']);
     Route::get('/novels', [NovelController::class, 'index']);
     Route::get('/novels/{slug}', [NovelController::class, 'show']);
-    Route::get('/works', [WorkController::class, 'index']);
+    Route::get('/novels/{slug}/chapters', [ChapterController::class, 'mainContinuity'])->name('chapters.main-continuity');
+    Route::get('/chapters/{chapter}', [ChapterController::class, 'show'])->name('chapters.show');
+    Route::get('/chapters/{chapter}/children', [ChapterController::class, 'children'])->name('chapters.children');
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {

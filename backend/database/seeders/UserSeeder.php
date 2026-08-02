@@ -35,6 +35,22 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
+            'pseudo' => 'auteur2',
+            'email' => 'auteur2@ghosty.fr',
+            'password' => Hash::make('password'),
+            'roles' => [User::ROLE_READER, User::ROLE_AUTHOR],
+            'email_verified_at' => now(),
+        ]);
+
+        User::create([
+            'pseudo' => 'auteur3',
+            'email' => 'auteur3@ghosty.fr',
+            'password' => Hash::make('password'),
+            'roles' => [User::ROLE_READER, User::ROLE_AUTHOR],
+            'email_verified_at' => now(),
+        ]);
+
+        User::create([
             'pseudo' => 'lecteur1',
             'email' => 'lecteur@ghosty.fr',
             'password' => Hash::make('password'),

@@ -1,7 +1,7 @@
 import { STATUS } from '@/constants/ajax-constants.js'
 
 // Format standard d'une réponse de controller.
-// Succès : { status: SUCCESS, ...données } (ex. { status, works }, { status, work }).
+// Succès : { status: SUCCESS, ...données } (ex. { status, chapters }, { status, chapter }).
 export const controllerSuccess = (data = {}) => ({ status: STATUS.SUCCESS, ...data })
 
 // Erreur : { status, error } — le controller passe cette réponse telle quelle.

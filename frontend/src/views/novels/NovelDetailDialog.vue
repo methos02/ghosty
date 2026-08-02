@@ -3,16 +3,18 @@ import { ref, watch, onMounted } from 'vue'
 import { t, route, router } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
-import { WorkController } from '@/apis/works/controllers/work-controller.js'
+import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
+import { useChapterStore } from '@/apis/chapters/stores/chapter-store.js'
 import { useNovelDetailHead } from '@/head/use-novel-detail-head.js'
 import DialogComponent from '@/components/DialogComponent.vue'
 import PaginatorChapterComponent from '@/components/paginators/PaginatorChapterComponent.vue'
 
 useNovelDetailHead()
 
-const { selectedNovel, currentChapter, setSelectedNovel, clearSelectedNovel, setCurrentChapter } =
-  useNovelStore()
+const { selectedNovel, setSelectedNovel, clearSelectedNovel } = useNovelStore()
+const { mainContinuity, currentChapter, setMainContinuity, setCurrentChapter, clear } =
+  useChapterStore()
 
 const dialog = ref()
 const currentChapterNumber = ref(1)
@@ -34,7 +36,17 @@ const ensureNovel = async slug => {
   return STATUS.SUCCESS
 }
 
-const loadChapter = async (chapterNumber = 1) => {
+const showChapterAt = chapterNumber => {
+  const chapter = mainContinuity.value[chapterNumber - 1]
+  if (!chapter) {
+    return
+  }
+
+  setCurrentChapter(chapter)
+  currentChapterNumber.value = chapterNumber
+}
+
+const loadMainContinuity = async () => {
   if (!selectedNovel.value) {
     return
   }
@@ -42,7 +54,7 @@ const loadChapter = async (chapterNumber = 1) => {
   isLoading.value = true
   errorMessage.value = ''
 
-  const response = await WorkController.getChapterByOrder(selectedNovel.value.slug, chapterNumber)
+  const response = await ChapterController.mainContinuity(selectedNovel.value.slug)
 
   if (response.status !== STATUS.SUCCESS) {
     errorMessage.value = response.error
@@ -50,8 +62,8 @@ const loadChapter = async (chapterNumber = 1) => {
     return
   }
 
-  setCurrentChapter(response.work)
-  currentChapterNumber.value = chapterNumber
+  setMainContinuity(response.chapters)
+  showChapterAt(1)
   isLoading.value = false
 }
 
@@ -75,14 +87,14 @@ const openForSlug = async slug => {
     return
   }
 
-  await loadChapter(1)
+  await loadMainContinuity()
 }
 
 const handleChapterChange = ({ chapter }) => {
   if (chapter === currentChapterNumber.value) {
     return
   }
-  loadChapter(chapter)
+  showChapterAt(chapter)
 }
 
 const readCurrentChapter = () => {
@@ -91,6 +103,7 @@ const readCurrentChapter = () => {
 
 const handleDialogClose = () => {
   clearSelectedNovel()
+  clear()
   currentChapterNumber.value = 1
   errorMessage.value = ''
 
@@ -140,9 +153,9 @@ watch(() => route.get('slug'), openForSlug)
           </div>
 
           <PaginatorChapterComponent
-            v-if="selectedNovel.chaptersCount > 0"
+            v-if="mainContinuity.length > 0"
             :currentChapter="currentChapterNumber"
-            :totalChapters="selectedNovel.chaptersCount"
+            :totalChapters="mainContinuity.length"
             @p-chapter="handleChapterChange"
           />
         </div>
@@ -164,7 +177,7 @@ watch(() => route.get('slug'), openForSlug)
             </h3>
 
             <div class="novel-detail-dialog__summary | fs-400 color-neutral-700">
-              {{ currentChapter.content }}
+              {{ currentChapter.summary }}
             </div>
 
             <button

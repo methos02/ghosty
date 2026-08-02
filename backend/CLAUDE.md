@@ -14,7 +14,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 - **Tests** : Pest ou PHPUnit
 - **Hébergement** : O2Switch (mutualisé)
 
-⚠️ **IMPORTANT** : Ce backend est actuellement **vide** et doit être développé. Ce fichier documente l'architecture cible basée sur l'audit du legacy PHP 5.6.
+⚠️ **IMPORTANT** : ce fichier documente le modèle **multivers** du MVP. Il a été réécrit le 2026-07-31 : le schéma précédent, hérité du legacy PHP 5.6 (romans en `status = voting|writing`, propositions `accepted|rejected`, sessions de vote clôturées par un `VoteCalculationService`), **contredisait** le MVP et ne doit plus servir de référence.
+
+Les décisions structurantes sont dans les ADR :
+
+| ADR | Décision |
+|---|---|
+| [ADR-07](memory-bank/decisions/ADR-07-modele-multivers-arbre-de-chapitres.md) | Arbre `chapters` + chemin matérialisé ; `works` supprimée ; branche **dérivée**, sans table |
+| [ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md) | Soutien **positif seul** (aucun downvote) ; signalement = unique voie négative ; continuité principale **automatique** |
+| [ADR-09](memory-bank/decisions/ADR-09-pas-d-archivage-automatique.md) | **Aucun archivage automatique** : `archived` / `hidden` sont des issues de modération humaine |
+| [ADR-10](memory-bank/decisions/ADR-10-notifications-in-app-agregees.md) | Notifications in-app **agrégées**, canal `database` natif |
+
+Plan de livraison par lots : [ghosty-mvp-plan.md](../ghosty-mvp-plan.md).
 
 ## Commandes de Développement (À venir)
 
@@ -55,8 +66,9 @@ backend/
 │   │   │       └── V1/
 │   │   │           ├── AuthController.php
 │   │   │           ├── NovelController.php
-│   │   │           ├── WorkController.php
-│   │   │           ├── VoteController.php
+│   │   │           ├── ChapterController.php
+│   │   │           ├── LikeController.php
+│   │   │           ├── ReportController.php
 │   │   │           ├── CommentController.php
 │   │   │           ├── NotificationController.php
 │   │   │           ├── UserController.php
@@ -67,59 +79,65 @@ backend/
 │   │   │   └── ...
 │   │   ├── Resources/             # API Resources (serialization)
 │   │   │   ├── NovelResource.php
-│   │   │   ├── WorkResource.php
+│   │   │   ├── ChapterResource.php
 │   │   │   ├── UserResource.php
 │   │   │   └── ...
 │   │   └── Middleware/
 │   │       ├── CheckRole.php
-│   │       └── RateLimitVotes.php
+│   │       └── RateLimitLikes.php
 │   ├── Models/                    # Eloquent Models
 │   │   ├── User.php
 │   │   ├── Novel.php
-│   │   ├── Work.php
-│   │   ├── Vote.php
+│   │   ├── Chapter.php
+│   │   ├── NovelCover.php
+│   │   ├── Like.php
 │   │   ├── Comment.php
-│   │   ├── Notification.php
 │   │   ├── Report.php
 │   │   └── Genre.php
+│   ├── Repositories/              # SEUL endroit pour l'accès DB
+│   │   ├── NovelRepository.php
+│   │   ├── ChapterRepository.php
+│   │   └── GenreRepository.php
 │   ├── Policies/                  # Authorization
 │   │   ├── NovelPolicy.php
-│   │   ├── WorkPolicy.php
+│   │   ├── ChapterPolicy.php
 │   │   └── ReportPolicy.php
 │   └── Services/                  # Business Logic
-│       ├── VoteCalculationService.php
-│       ├── NotificationService.php
+│       ├── ChapterTreeService.php        # path/depth, compteurs, désarchivage
+│       ├── MainContinuityService.php     # is_main_child automatique (ADR-08)
+│       ├── LikeGuard.php              # anti-abus des soutiens
+│       ├── ModerationService.php         # seul chemin vers archived/hidden
+│       ├── NotificationService.php       # agrégation par group_key
 │       └── ImageUploadService.php
 ├── database/
 │   ├── migrations/
 │   │   ├── 2024_01_01_000000_create_users_table.php
 │   │   ├── 2024_01_01_000001_create_genres_table.php
-│   │   ├── 2024_01_01_000002_create_novels_table.php
-│   │   ├── 2024_01_01_000003_create_works_table.php
-│   │   ├── 2024_01_01_000004_create_votes_table.php
-│   │   ├── 2024_01_01_000005_create_comments_table.php
-│   │   ├── 2024_01_01_000006_create_notifications_table.php
-│   │   └── 2024_01_01_000007_create_reports_table.php
+│   │   ├── 2025_10_26_084234_create_genres_table.php
+│   │   ├── 2025_11_05_095500_create_novels_table.php
+│   │   └── 2026_07_31_141503_create_chapters_table.php
 │   ├── seeders/
 │   │   ├── GenresSeeder.php         # ⚠️ Lit database/data/genres.json
 │   │   ├── NovelSeeder.php          # ⚠️ Lit database/data/novels.json
-│   │   ├── UsersSeeder.php
+│   │   ├── ChapterSeeder.php        # ⚠️ Lit database/data/chapters.json (arbre imbriqué)
+│   │   ├── UserSeeder.php
 │   │   └── DatabaseSeeder.php
 │   ├── data/                         # ⚠️ Données JSON pour seeders
 │   │   ├── genres.json              # Liste des genres (17 genres)
-│   │   └── novels.json              # Romans de test (20 romans)
+│   │   ├── novels.json              # Romans de test (20 romans)
+│   │   └── chapters.json            # Multivers de démo (arbre du MVP §5)
 │   └── factories/
 │       ├── UserFactory.php
-│       └── NovelFactory.php
+│       ├── NovelFactory.php
+│       └── ChapterFactory.php
 ├── routes/
 │   ├── api.php                    # Routes API
 │   └── web.php
 ├── tests/
 │   ├── Feature/
-│   │   ├── NovelControllerTest.php
-│   │   └── VoteControllerTest.php
+│   │   ├── Api/V1/{Controller}/{Controller}{Method}Test.php
+│   │   └── Models/{Model}ModelTest.php
 │   └── Unit/
-│       └── VoteCalculationServiceTest.php
 ├── storage/
 │   └── app/
 │       └── public/
@@ -163,117 +181,105 @@ id BIGINT PRIMARY KEY
 title VARCHAR
 genre_id BIGINT → genres.id
 author_id BIGINT → users.id
-cover_id BIGINT → works.id
-status ENUM('draft', 'voting', 'writing', 'finished', 'rejected')
-chapter_count INT DEFAULT 0
-favorites_count INT DEFAULT 0
-vote_sum INT DEFAULT 0
-vote_count INT DEFAULT 0
-published_at TIMESTAMP
-status_changed_at TIMESTAMP
+cover_url VARCHAR NULLABLE          -- déprécié : remplacé par la cover officielle
+is_favorite BOOLEAN DEFAULT false
+chapter_count INT DEFAULT 0         -- toutes réalités confondues
 created_at TIMESTAMP
 updated_at TIMESTAMP
 
-INDEX idx_status (status)
 INDEX idx_author (author_id)
-INDEX idx_genre (genre_id)
 ```
 
-#### works
+> ⛔ **Pas de `status` sur un roman.** Il n'y a ni cycle de vote, ni phase d'écriture :
+> une suite peut arriver à tout moment (MVP §3). Les états `voting` / `writing` du
+> legacy n'existent plus.
+
+#### chapters — l'arbre du multivers ✅ implémenté
 ```sql
 id BIGINT PRIMARY KEY
+novel_id BIGINT → novels.id
+parent_id BIGINT NULLABLE → chapters.id   -- NULL = chapitre racine
+author_id BIGINT → users.id
 title VARCHAR
-content TEXT                        -- HTML pour chapitres, URL pour covers
-summary TEXT
-order INT                           -- Numéro chapitre
-is_end BOOLEAN DEFAULT false
-status ENUM('new', 'accepted', 'rejected', 'draft')
-type ENUM('chapter', 'cover')
-author_id BIGINT → users.id
-novel_id BIGINT → novels.id
-vote_sum INT DEFAULT 0
-vote_count INT DEFAULT 0
+content LONGTEXT
+summary TEXT NULLABLE
+path VARCHAR                              -- chemin matérialisé "/1/12/45/"
+depth SMALLINT                            -- 0 pour la racine
+continuations_count INT DEFAULT 0         -- suites PUBLIÉES ; > 0 ⇒ branche
+like_count INT DEFAULT 0
 comment_count INT DEFAULT 0
-edit_count INT DEFAULT 0            -- Max 20 modifications
-published_at TIMESTAMP
-status_changed_at TIMESTAMP
-created_at TIMESTAMP
-updated_at TIMESTAMP
+read_count INT DEFAULT 0
+is_main_child BOOLEAN DEFAULT false       -- suite mise en avant (automatique)
+status TINYINT DEFAULT 1                  -- 1 published, 2 archived, 3 hidden
+published_at TIMESTAMP NULLABLE
+last_activity_at TIMESTAMP NULLABLE
+created_at / updated_at TIMESTAMP
 
-INDEX idx_novel (novel_id)
-INDEX idx_type_status (type, status)
+INDEX (novel_id, parent_id), (parent_id, is_main_child), (status, last_activity_at), (path)
+INDEX chapters_active_branches_index (novel_id, continuations_count, status, last_activity_at)
 ```
 
-#### votes
+**Trois pièges à connaître avant d'y toucher** :
+
+1. **`continuations_count`, pas `children_count`** — Eloquent réserve `children_count` au résultat de `withCount('children')`, qui écraserait silencieusement le compteur dénormalisé.
+2. **Il compte les suites publiées** : décrémenter aussi quand la modération archive ou masque une suite, sinon un parent reste affiché comme branche active (interdit par §9).
+3. **`path` est encadré de séparateurs** (`/1/12/45/`) pour qu'un préfixe `LIKE '/1/12/%'` ne capture jamais le chapitre 120.
+
+#### novel_covers — à venir (lot 7)
 ```sql
-id BIGINT PRIMARY KEY
-user_id BIGINT → users.id
-novel_id BIGINT → novels.id
-work_id BIGINT → works.id
-vote TINYINT                        -- -1, 0, 1
-type ENUM('chapter', 'cover')
-created_at TIMESTAMP
-updated_at TIMESTAMP
-
-UNIQUE KEY unique_vote (user_id, work_id)
-INDEX idx_work (work_id)
+id, novel_id → novels.id, author_id → users.id, image_path,
+status ENUM('proposed', 'official', 'archived'), like_count, comment_count, timestamps
 ```
 
-#### comments
+#### likes — à venir (lot 3)
 ```sql
-id BIGINT PRIMARY KEY
-content TEXT
-author_id BIGINT → users.id
-work_id BIGINT → works.id
-parent_id BIGINT NULLABLE           -- 0 si racine
-reply_to_id BIGINT NULLABLE
-reply_count INT DEFAULT 0
-created_at TIMESTAMP
-updated_at TIMESTAMP
-
-INDEX idx_work (work_id)
-INDEX idx_parent (parent_id)
+id, user_id → users.id, likeable_type, likeable_id, created_at
+UNIQUE (user_id, likeable_type, likeable_id)
 ```
 
-#### notifications
+> ⛔ **Pas de colonne `vote`.** Le soutien est positif ou absent : il n'existe pas de `-1`
+> ([ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md)).
+
+#### comments — à venir (lot 5)
 ```sql
-id BIGINT PRIMARY KEY
-user_id BIGINT → users.id
-type VARCHAR                        -- 'vote_accepted', 'chapter_accepted', etc.
-message TEXT                        -- HTML du message
-data JSON                           -- Données contextuelles
-is_read BOOLEAN DEFAULT false
-created_at TIMESTAMP
-deleted_at TIMESTAMP NULLABLE
+id, author_id → users.id, commentable_type (Novel|Chapter|NovelCover), commentable_id,
+parent_id NULLABLE, reply_count, content, is_spoiler BOOLEAN,
+status ENUM('visible', 'hidden', 'deleted'), timestamps
 
-INDEX idx_user_unread (user_id, is_read)
+INDEX (commentable_type, commentable_id, parent_id)
 ```
 
-#### reports
+#### reports / sanctions — à venir (lots 3 et 6)
 ```sql
-id BIGINT PRIMARY KEY
-reporter_id BIGINT → users.id       -- Signaleur
-work_id BIGINT → works.id
-moderator_id BIGINT NULLABLE → users.id
-reason VARCHAR
-description TEXT
-status ENUM('pending', 'processed')
-sanction_type ENUM('warning', 'vote_ban', 'write_ban') NULLABLE
-sanction_until DATE NULLABLE
-processed_at TIMESTAMP NULLABLE
-created_at TIMESTAMP
-updated_at TIMESTAMP
+reports   : reporter_id, reportable_type (Chapter|Comment|NovelCover|User), reportable_id,
+            reason ENUM('poor_quality','off_topic','plagiarism','unauthorized_illustration',
+                        'spam','hate_speech','insult','harassment','personal_attack',
+                        'like_manipulation','illegal'),
+            description, status ENUM('pending','processed'), moderator_id,
+            resolution ENUM('dismissed','hidden','removed','sanction'), processed_at, timestamps
+            UNIQUE (reporter_id, reportable_type, reportable_id)
 
-INDEX idx_status (status)
+sanctions : user_id, moderator_id, type ENUM('warning','like_ban','write_ban',
+            'comment_ban','account_ban'), until NULLABLE, reason, report_id NULLABLE, timestamps
 ```
+
+> ⛔ **Aucune bascule d'état sur un nombre de signalements.** Sans ce garde-fou, « signaler »
+> redevient le downvote supprimé, actionnable en brigade.
+
+#### notifications — à venir (lot 3b)
+
+Table **native Laravel** (`php artisan make:notifications-table`, canal `database`), plus une
+colonne `group_key` indexée qui porte l'agrégation. Pas de schéma maison.
 
 ### Ordre de Création des Migrations
 
 1. `users`, `genres`
 2. `novels`
-3. `works`
-4. `votes`, `comments`
-5. `notifications`, `reports`
+3. `chapters`
+4. `likes`, `reports`
+5. `notifications`
+6. `comments`
+7. `sanctions`, `novel_covers`
 
 ## Seeders et Données de Test
 
@@ -422,7 +428,7 @@ class DatabaseSeeder extends Seeder
 
 ```php
 <?php
-// database/migrations/2024_01_01_000002_create_novels_table.php
+// database/migrations/2026_07_31_141503_create_chapters_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -432,31 +438,39 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('novels', function (Blueprint $table) {
+        Schema::create('chapters', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('novel_id')->constrained('novels')->cascadeOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained('chapters')->cascadeOnDelete();
+            $table->foreignId('author_id')->constrained('users')->cascadeOnDelete();
             $table->string('title');
-            $table->foreignId('genre_id')->constrained('genres');
-            $table->foreignId('author_id')->constrained('users');
-            $table->foreignId('cover_id')->nullable()->constrained('works');
-            $table->enum('status', ['draft', 'voting', 'writing', 'finished', 'rejected'])
-                ->default('draft');
-            $table->integer('chapter_count')->default(0);
-            $table->integer('favorites_count')->default(0);
-            $table->integer('vote_sum')->default(0);
-            $table->integer('vote_count')->default(0);
+            $table->longText('content');
+            $table->text('summary')->nullable();
+
+            $table->string('path');
+            $table->unsignedSmallInteger('depth')->default(0);
+
+            // Volontairement pas `children_count` : Eloquent réserve ce nom au
+            // résultat de `withCount('children')`, qui écraserait ce compteur.
+            $table->unsignedInteger('continuations_count')->default(0);
+            $table->unsignedInteger('like_count')->default(0);
+
+            $table->boolean('is_main_child')->default(false);
+            $table->unsignedTinyInteger('status')->default(1);
+
             $table->timestamp('published_at')->nullable();
-            $table->timestamp('status_changed_at')->nullable();
+            $table->timestamp('last_activity_at')->nullable();
             $table->timestamps();
 
-            $table->index('status');
-            $table->index('author_id');
-            $table->index('genre_id');
+            $table->index(['novel_id', 'parent_id']);
+            $table->index(['parent_id', 'is_main_child']);
+            $table->index('path');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('novels');
+        Schema::dropIfExists('chapters');
     }
 };
 ```
@@ -498,36 +512,21 @@ class Novel extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
+    /**
+     * Tous les chapitres du roman, toutes réalités confondues.
+     */
     public function chapters(): HasMany
     {
-        return $this->hasMany(Work::class)
-            ->where('type', 'chapter');
+        return $this->hasMany(Chapter::class);
     }
 
-    public function proposals(): HasMany
+    /**
+     * Chapitre d'origine, racine de l'arbre du multivers.
+     */
+    public function rootChapter(): HasOne
     {
-        return $this->hasMany(Work::class)
-            ->where('type', 'chapter')
-            ->where('status', 'new');
+        return $this->hasOne(Chapter::class)->whereNull('parent_id');
     }
-
-    // Scopes
-    public function scopeActive($query)
-    {
-        return $query->whereIn('status', ['voting', 'writing', 'finished']);
-    }
-
-    public function scopeInVoting($query)
-    {
-        return $query->where('status', 'voting');
-    }
-
-    // Constantes
-    const STATUS_DRAFT = 'draft';
-    const STATUS_VOTING = 'voting';
-    const STATUS_WRITING = 'writing';
-    const STATUS_FINISHED = 'finished';
-    const STATUS_REJECTED = 'rejected';
 }
 ```
 
@@ -573,39 +572,59 @@ class StoreNovelRequest extends FormRequest
 
 ### 4. Resource (Serialization)
 
+Le wrapping est désactivé (`JsonResource::withoutWrapping()` dans `AppServiceProvider`) :
+les champs sont à la racine de la réponse, **pas** sous une clé `data`.
+
+Les noms de champs sont **explicites** — les préfixes legacy (`nov_id`, `wrk_content`,
+`nov_date_publi`) ne sont plus utilisés nulle part.
+
 ```php
 <?php
-// app/Http/Resources/NovelResource.php
+// app/Http/Resources/ChapterResource.php
 
 namespace App\Http\Resources;
 
+use App\Models\Chapter;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class NovelResource extends JsonResource
+/**
+ * @mixin Chapter
+ */
+class ChapterResource extends JsonResource
 {
-    public function toArray($request): array
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
     {
         return [
-            'nov_id' => $this->id,
-            'nov_title' => $this->title,
-            'nov_status' => $this->status,
-            'nov_id_genre' => $this->genre_id,
-            'genre_label' => $this->whenLoaded('genre', fn() => $this->genre->label),
-            'nov_id_author' => $this->author_id,
-            'author_pseudo' => $this->whenLoaded('author', fn() => $this->author->pseudo),
-            'chapter_count' => $this->chapter_count,
-            'favorites_count' => $this->favorites_count,
-            'vote_sum' => $this->vote_sum,
-            'vote_count' => $this->vote_count,
-            'vote_average' => $this->vote_count > 0
-                ? round($this->vote_sum / $this->vote_count, 2)
-                : 0,
-            'nov_date_publi' => $this->published_at?->format('Y-m-d H:i:s'),
-            'nov_date_statut' => $this->status_changed_at?->format('Y-m-d H:i:s')
+            'id' => $this->id,
+            'parent_id' => $this->parent_id,
+            'title' => $this->title,
+            'summary' => $this->summary,
+            'content' => $this->when($this->shouldExposeContent($request), $this->content),
+            'depth' => $this->depth,
+            'is_main_child' => $this->is_main_child,
+            'is_branch' => $this->isBranch(),
+            'continuations_count' => $this->continuations_count,
+            'like_count' => $this->like_count,
+            'author' => [
+                'id' => $this->author_id,
+                'pseudo' => $this->whenLoaded('author', fn () => $this->author?->pseudo),
+            ],
+            'published_at' => $this->published_at?->toIso8601String(),
         ];
     }
 }
 ```
+
+**`is_branch` est dérivé**, jamais stocké : une proposition devient une branche dès qu'une
+suite publiée la poursuit. Il n'existe pas d'entité « branche »
+([ADR-07](memory-bank/decisions/ADR-07-modele-multivers-arbre-de-chapitres.md)).
+
+**Le texte intégral n'est servi que sur la fiche d'un chapitre** : une liste de continuité
+renverrait autant de `longText` que de chapitres.
 
 ### 5. Policy (Authorization)
 
@@ -802,70 +821,49 @@ Décision et alternatives : [ADR-04](memory-bank/decisions/ADR-04-token-en-cooki
 
 ## Services (Business Logic)
 
-### Vote Calculation Service
+> ⛔ **`VoteCalculationService` n'existe plus.** Le service legacy clôturait une session de
+> vote, acceptait un « gagnant » et passait les autres propositions en `rejected`. Le MVP
+> écarte ce fonctionnement : « le vote n'est plus une échéance destinée à éliminer les
+> propositions » (§7), et « une proposition moins soutenue peut toujours être poursuivie et
+> devenir une branche ». **Aucune proposition n'est jamais rejetée.**
+
+### MainContinuityService — la mise en avant, sans élimination
+
+La continuité principale est **recalculée**, jamais décidée : parmi les suites publiées d'un
+même chapitre, celle qui totalise le plus de soutiens porte `is_main_child`. Les autres
+restent intégralement lisibles et peuvent encore devenir des branches.
 
 ```php
-<?php
-// app/Services/VoteCalculationService.php
-
-namespace App\Services;
-
-use App\Models\Novel;
-use App\Models\Work;
-
-class VoteCalculationService
+public function recalculate(Chapter $parent): void
 {
-    public function calculateWinner(Novel $novel): ?Work
-    {
-        $proposals = $novel->proposals()
-            ->with('author')
-            ->get();
+    $winner = $parent->children()
+        ->published()
+        ->orderByDesc('like_count')
+        ->orderBy('published_at')   // à égalité, le plus ancien garde la place
+        ->first();
 
-        if ($proposals->isEmpty()) {
-            return null;
-        }
-
-        // Algorithme de calcul (à adapter selon logique métier)
-        $winner = $proposals->sortByDesc(function ($proposal) {
-            // Score = vote_sum + bonus si auteur original
-            $score = $proposal->vote_sum;
-            if ($proposal->author_id === $proposal->novel->author_id) {
-                $score += 5; // Bonus auteur original
-            }
-            return $score;
-        })->first();
-
-        return $winner;
-    }
-
-    public function closeVotingSession(Novel $novel): void
-    {
-        $winner = $this->calculateWinner($novel);
-
-        if ($winner) {
-            // Accepter le gagnant
-            $winner->update([
-                'status' => 'accepted',
-                'order' => $novel->chapter_count + 1
-            ]);
-
-            // Incrémenter compteur chapitres
-            $novel->increment('chapter_count');
-
-            // Rejeter les autres propositions
-            $novel->proposals()
-                ->where('id', '!=', $winner->id)
-                ->update(['status' => 'rejected']);
-
-            // Changer statut roman
-            $novel->update(['status' => Novel::STATUS_WRITING]);
-
-            // Envoyer notifications
-            app(NotificationService::class)->notifyChapterAccepted($winner);
-        }
-    }
+    // ... bascule is_main_child sur $winner, retire-le des frères
 }
 ```
+
+**Trois règles à ne pas contourner** :
+
+1. **Aucun arbitrage humain.** Ni l'auteur du chapitre parent ni celui du roman ne choisit :
+   ce serait un parti pris sur le travail des autres
+   ([ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md)).
+2. **Départage déterministe** — à égalité de soutiens, la suite publiée en premier conserve
+   la place. Sans lui, la continuité bascule au hasard à chaque nouvelle proposition.
+3. **On notifie le gain, jamais la perte.** Annoncer une rétrogradation transformerait un
+   classement en défaite, à rebours de §7.
+
+### LikeGuard — anti-abus
+
+Le soutien porte à lui seul le classement des suites, la continuité principale et la
+régulation de la visibilité (rien n'étant archivé par le temps qui passe,
+[ADR-09](memory-bank/decisions/ADR-09-pas-d-archivage-automatique.md)). Le truquer ne fausse
+pas un classement : il détourne le parcours de lecture par défaut. D'où les garde-fous à
+livrer avec le service — email vérifié, ancienneté de compte, unicité, pas d'auto-soutien,
+throttle — et leurs seuils dans un `config/ghosty.php` créé à ce moment-là, pas avant.
 
 ## Tests
 
@@ -937,45 +935,51 @@ class NovelControllerTest extends TestCase
 
 ### Unit Test
 
+La `ChapterFactory` fournit les states qui construisent l'arbre — les utiliser plutôt que de
+poser `path` et `depth` à la main :
+
+| State | Effet |
+|---|---|
+| `continuing($parent)` | rattache au parent : `novel_id`, `depth`, `path`, et incrémente `continuations_count` du parent |
+| `mainContinuity()` | marque la suite comme continuité mise en avant |
+| `archived()` / `hidden()` | issues de modération |
+
 ```php
 <?php
-// tests/Unit/VoteCalculationServiceTest.php
+// tests/Feature/Models/ChapterModelTest.php
 
-namespace Tests\Unit;
+namespace Tests\Feature\Models;
 
-use App\Models\Novel;
-use App\Models\Work;
-use App\Services\VoteCalculationService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Chapter;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class VoteCalculationServiceTest extends TestCase
+class ChapterModelTest extends TestCase
 {
-    use RefreshDatabase;
-
-    public function test_calculates_winner_with_highest_votes(): void
+    #[Test]
+    public function a_proposal_becomes_a_branch_once_continued(): void
     {
-        $novel = Novel::factory()->create(['status' => 'voting']);
+        $chapter = Chapter::factory()->create();
+        Chapter::factory()->continuing($chapter)->create();
 
-        $proposal1 = Work::factory()->create([
-            'novel_id' => $novel->id,
-            'vote_sum' => 10,
-            'status' => 'new'
-        ]);
+        $this->assertTrue($chapter->refresh()->isBranch());
+    }
 
-        $proposal2 = Work::factory()->create([
-            'novel_id' => $novel->id,
-            'vote_sum' => 15,
-            'status' => 'new'
-        ]);
+    #[Test]
+    public function ancestors_are_read_from_the_path_in_order(): void
+    {
+        $root = Chapter::factory()->create();
+        $second = Chapter::factory()->continuing($root)->create();
+        $third = Chapter::factory()->continuing($second->refresh())->create();
 
-        $service = new VoteCalculationService();
-        $winner = $service->calculateWinner($novel);
-
-        $this->assertEquals($proposal2->id, $winner->id);
+        $this->assertSame([$root->id, $second->id], $third->refresh()->ancestorIds());
     }
 }
 ```
+
+> ⚠️ `assertJsonMissing(['id' => $x])` cherche le fragment **partout** dans la réponse et
+> matche aussi un `author.id` imbriqué. Pour vérifier une liste de chapitres, asserter la
+> séquence exacte : `assertJsonPath('chapters.*.id', [$root->id, $main->id])`.
 
 ## Sécurité
 
@@ -1001,8 +1005,8 @@ Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     // Max 60 requêtes par minute
 });
 
-Route::post('/votes', [VoteController::class, 'store'])
-    ->middleware(['auth:sanctum', 'throttle:10,1']);  // Max 10 votes/min
+Route::post('/chapters/{chapter}/like', [LikeController::class, 'store'])
+    ->middleware(['auth:sanctum', 'throttle:10,1']);  // Max 10 soutiens/min
 ```
 
 ## Déploiement O2Switch

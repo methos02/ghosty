@@ -13,7 +13,7 @@ import {
   AUTH_STORE_KEY,
 } from '@/services/auth/src/auth-store.js'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
-import { createWorkStore, WORK_STORE_KEY } from '@/apis/works/stores/work-store.js'
+import { createChapterStore, CHAPTER_STORE_KEY } from '@/apis/chapters/stores/chapter-store.js'
 import { createSearchNovelsStore, SEARCH_NOVELS_KEY } from '@/composables/use-search-novels.js'
 
 export const createApp = async ({ ssr = false } = {}) => {
@@ -24,7 +24,7 @@ export const createApp = async ({ ssr = false } = {}) => {
   const stores = {
     auth: createAuthStore(),
     novel: createNovelStore(),
-    work: createWorkStore(),
+    chapter: createChapterStore(),
     search: createSearchNovelsStore(),
   }
 
@@ -38,7 +38,7 @@ export const createApp = async ({ ssr = false } = {}) => {
 
   app.provide(AUTH_STORE_KEY, stores.auth)
   app.provide(NOVEL_STORE_KEY, stores.novel)
-  app.provide(WORK_STORE_KEY, stores.work)
+  app.provide(CHAPTER_STORE_KEY, stores.chapter)
   app.provide(SEARCH_NOVELS_KEY, stores.search)
 
   app.use(await localePlugin())
@@ -54,7 +54,7 @@ export const createApp = async ({ ssr = false } = {}) => {
 export const serializeStores = stores => ({
   auth: stores.auth.serialize(),
   novel: stores.novel.serialize(),
-  work: stores.work.serialize(),
+  chapter: stores.chapter.serialize(),
   search: stores.search.serialize(),
 })
 
@@ -64,6 +64,6 @@ export const hydrateStores = (stores, snapshot) => {
   }
   stores.auth.hydrate(snapshot.auth)
   stores.novel.hydrate(snapshot.novel)
-  stores.work.hydrate(snapshot.work)
+  stores.chapter.hydrate(snapshot.chapter)
   stores.search.hydrate(snapshot.search)
 }

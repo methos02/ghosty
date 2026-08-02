@@ -10,29 +10,19 @@ export const routesApi = {
     api: 'ghosty',
   },
 
-  'work.list': {
-    url: 'v1/works',
+  'chapter.mainContinuity': {
+    url: 'v1/novels/{slug}/chapters',
     method: 'get',
     api: 'ghosty',
   },
-  'work.show': {
-    url: 'v1/works/{slug}',
+  'chapter.show': {
+    url: 'v1/chapters/{chapter}',
     method: 'get',
     api: 'ghosty',
   },
-  'work.create': {
-    url: 'v1/works',
-    method: 'post',
-    api: 'ghosty',
-  },
-  'work.update': {
-    url: 'v1/works/{id}',
-    method: 'put',
-    api: 'ghosty',
-  },
-  'work.vote': {
-    url: 'v1/works/{id}/vote',
-    method: 'post',
+  'chapter.children': {
+    url: 'v1/chapters/{chapter}/children',
+    method: 'get',
     api: 'ghosty',
   },
 

@@ -37,9 +37,9 @@ D1 → D6 sont **tranchées (2026-07-31)**.
 | # | Décision | Décision / recommandation | Impact si l'autre option est retenue |
 |---|---|---|---|
 | D1 ✅ | Modéliser l'arbre | **`works` disparaît.** Les chapitres passent dans **`chapters`** (arbre + `status`), l'illustration dans **`novel_covers`**. Plus de colonne `type` discriminante | Garder `works` + `parent_id` : moins de refonte, mais un `type` qui mêle deux entités aux règles opposées (une cover n'a ni parent, ni ordre, ni suite), et des FK non contraignables |
-| D2 ✅ | Soutien | **Soutien positif uniquement** (`support` / retrait). **Aucun downvote.** Le seul signal négatif est le **signalement**, qui vise la faute (mauvaise qualité, haine, insulte…) et passe par la modération, pas par le classement | Vote `-1/0/+1` : permet d'enterrer une proposition par vote de foule, réintroduit la logique d'élimination que le MVP écarte |
+| D2 ✅ | Soutien | **Soutien positif uniquement** (`like` / retrait). **Aucun downvote.** Le seul signal négatif est le **signalement**, qui vise la faute (mauvaise qualité, haine, insulte…) et passe par la modération, pas par le classement | Vote `-1/0/+1` : permet d'enterrer une proposition par vote de foule, réintroduit la logique d'élimination que le MVP écarte |
 | D3 ✅ | Continuité principale | **100 % automatique** : la suite la plus soutenue parmi les frères publiés, recalculée à chaque soutien. **Aucun verrou ni choix manuel** — un arbitrage humain serait un parti pris de l'auteur du chapitre parent sur le travail des autres | Sélection manuelle : contrôle éditorial, mais l'auteur du parent devient juge de ses concurrents et un roman abandonné fige sa continuité |
-| D4 ✅ | Notion de « branche » | **Dérivée, pas de table.** Une branche = un chapitre dont `children_count > 0` ; « les branches auxquelles je participe » se lit dans `path`. Suivre/commenter une branche = suivre/commenter son **chapitre-tête**, dont elle emprunte l'identité (titre, auteur, résumé, soutiens) | Table `branches` : il faudrait lui donner des attributs propres (nom, description) **sans propriétaire légitime** — l'auteur du chapitre-tête n'a pas créé la branche, celui qui l'a poursuivie n'en possède pas la tête, l'auteur du roman serait le parti pris refusé en D3. S'y ajoute une création rétroactive et des branches imbriquées qui rendent l'appartenance d'un chapitre arbitraire |
+| D4 ✅ | Notion de « branche » | **Dérivée, pas de table.** Une branche = un chapitre dont `continuations_count > 0` ; « les branches auxquelles je participe » se lit dans `path`. Suivre/commenter une branche = suivre/commenter son **chapitre-tête**, dont elle emprunte l'identité (titre, auteur, résumé, soutiens) | Table `branches` : il faudrait lui donner des attributs propres (nom, description) **sans propriétaire légitime** — l'auteur du chapitre-tête n'a pas créé la branche, celui qui l'a poursuivie n'en possède pas la tête, l'auteur du roman serait le parti pris refusé en D3. S'y ajoute une création rétroactive et des branches imbriquées qui rendent l'appartenance d'un chapitre arbitraire |
 | D5 ✅ | Archivage (MVP §9) | **Aucun archivage automatique sur inactivité.** Un chapitre sans suite reste publié indéfiniment : §3 promet qu'on peut le poursuivre « à tout moment », un minuteur contredirait cette promesse. L'encombrement se règle par le **tri par soutiens**, pas par un changement d'état. L'archivage devient une **issue de modération** (qualité / hors sujet), toujours sur décision humaine et réversible | Archivage à 60 j : désencombre, mais pénalise un excellent chapitre pour la seule raison que personne ne l'a *encore* repris, et l'effet est auto-réalisateur (moins visible → moins lu → moins repris → archivé) |
 | D6 ✅ | Notifications | **Dans le MVP** (lot 3b), malgré leur absence de §14. Sans elles, un auteur n'apprend jamais que son chapitre a été poursuivi — or c'est l'événement qui le fait revenir écrire, et §16 en fait son indicateur central. **In-app seulement** (pas d'email au MVP), **agrégées**, sur le canal `database` natif de Laravel | Les exclure : −1 lot, mais l'indicateur « auteurs qui publient une deuxième contribution » mesurerait l'assiduité des gens plutôt que l'attrait du concept |
 
@@ -57,10 +57,12 @@ novel_id        → novels (cascade)
 parent_id       → chapters, nullable          -- null = chapitre racine
 author_id       → users
 title, content (longText), summary (nullable)
-path            varchar(255)                  -- "1/12/45" : chemin matérialisé (ancêtres + soi)
+path            varchar(255)                  -- "/1/12/45/" : chemin matérialisé (ancêtres + soi)
 depth           unsignedSmallInteger
-children_count  unsigned default 0            -- suites PUBLIÉES uniquement ; > 0 ⇒ branche (D4)
-support_count   unsigned default 0
+continuations_count unsigned default 0        -- suites PUBLIÉES ; > 0 ⇒ branche (D4). Pas
+                                              -- `children_count` : Eloquent réserve ce nom
+                                              -- au résultat de `withCount('children')`
+like_count   unsigned default 0
 comment_count   unsigned default 0
 read_count      unsigned default 0
 is_main_child   boolean default false         -- continuité mise en avant parmi les frères
@@ -73,23 +75,23 @@ last_activity_at timestamp                    -- alimente « branches actives »
 published_at, timestamps
 
 index (novel_id, parent_id), (parent_id, is_main_child), (status, last_activity_at), (path)
-index (novel_id, children_count, status, last_activity_at)   -- « branches actives » (§16)
+index (novel_id, continuations_count, status, last_activity_at)   -- « branches actives » (§16)
 ```
 
-**Règle de cohérence `children_count` (D4).** Il compte les suites **publiées**. Il est donc décrémenté quand la modération archive ou masque une suite, pas seulement à la suppression : sinon un parent reste affiché comme branche active alors que sa seule suite est invisible, ce qu'interdit §9. Corollaire — un chapitre peut **redevenir** une simple proposition ; comme rien ne l'archive plus par le temps qui passe (D5), il redevient simplement une suite candidate parmi les autres.
+**Règle de cohérence `continuations_count` (D4).** Il compte les suites **publiées**. Il est donc décrémenté quand la modération archive ou masque une suite, pas seulement à la suppression : sinon un parent reste affiché comme branche active alors que sa seule suite est invisible, ce qu'interdit §9. Corollaire — un chapitre peut **redevenir** une simple proposition ; comme rien ne l'archive plus par le temps qui passe (D5), il redevient simplement une suite candidate parmi les autres.
 
 **`novel_covers`** (MVP §10 — illustration du roman uniquement)
 
 ```
 id, novel_id → novels, author_id → users, image_path,
-status (proposed | official | archived), support_count, comment_count, timestamps
+status (proposed | official | archived), like_count, comment_count, timestamps
 ```
 
-**`supports`** (D2, polymorphe chapitre/cover)
+**`likes`** (D2, polymorphe chapitre/cover)
 
 ```
-id, user_id, supportable_type, supportable_id, created_at
-unique (user_id, supportable_type, supportable_id)
+id, user_id, likeable_type, likeable_id, created_at
+unique (user_id, likeable_type, likeable_id)
 ```
 
 **`comments`** (MVP §11)
@@ -115,7 +117,7 @@ chapter_reads      : user_id (nullable), chapter_id, session_key, created_at —
 reports   : reporter_id, reportable_type (Chapter|Comment|NovelCover|User), reportable_id,
             reason (poor_quality|off_topic|plagiarism|unauthorized_illustration|spam|
                     hate_speech|insult|harassment|personal_attack|
-                    support_manipulation|illegal),
+                    like_manipulation|illegal),
             description, status (pending|processed), moderator_id,
             resolution (dismissed|hidden|removed|sanction), processed_at, timestamps
             unique (reporter_id, reportable_type, reportable_id)   -- 1 signalement par contenu
@@ -131,10 +133,10 @@ Motifs, en clair (MVP §12 + D2) :
 | `hate_speech` | racisme, propos haineux visant un groupe |
 | `insult` / `personal_attack` | insulte, attaque visant une personne |
 | `harassment` | acharnement répété |
-| `plagiarism`, `unauthorized_illustration`, `spam`, `support_manipulation`, `illegal` | MVP §12 |
+| `plagiarism`, `unauthorized_illustration`, `spam`, `like_manipulation`, `illegal` | MVP §12 |
 
 ```
-sanctions : user_id, moderator_id, type (warning|support_ban|write_ban|comment_ban|account_ban),
+sanctions : user_id, moderator_id, type (warning|like_ban|write_ban|comment_ban|account_ban),
             until (nullable), reason, report_id (nullable), timestamps
 ```
 
@@ -158,9 +160,9 @@ unique (notifiable_id, group_key) WHERE read_at IS NULL   -- 1 notif vivante par
 
 | Service | Responsabilité |
 |---|---|
-| `ChapterTreeService` | `createRoot()`, `propose(parent)`, calcul `path`/`depth`, incréments `children_count`/`chapter_count`, réactivation du parent archivé, désarchivage en cascade |
+| `ChapterTreeService` | `createRoot()`, `propose(parent)`, calcul `path`/`depth`, incréments `continuations_count`/`chapter_count`, réactivation du parent archivé, désarchivage en cascade |
 | `MainContinuityService` | Recalcul de `is_main_child` à chaque soutien / nouvelle suite (D3). Départage déterministe à égalité de soutiens : **le plus ancien publié gagne** (une nouvelle proposition ne détrône jamais par hasard) |
-| `SupportGuard` | Anti-abus (MVP §7) : email vérifié, ancienneté de compte minimale, 1 soutien par contenu, pas d'auto-soutien, throttle, journalisation IP |
+| `LikeGuard` | Anti-abus (MVP §7) : email vérifié, ancienneté de compte minimale, 1 soutien par contenu, pas d'auto-soutien, throttle, journalisation IP |
 | `ModerationService` | Seul chemin vers `archived` / `hidden` (D5), toujours déclenché par un modérateur — **jamais par un seuil de signalements**. Applique les sanctions, cohérence avec `users.banned_until` (ADR-01), désarchivage réversible |
 | `MetricsService` | Indicateurs MVP §16 |
 
@@ -179,8 +181,8 @@ POST   /novels/{slug}/chapters              proposer une suite (parent_id — n'
 PUT    /chapters/{chapter}                  éditer (auteur, fenêtre limitée)
 GET    /chapters/{chapter}/children         suites paginées, triées par soutiens
 
-POST   /chapters/{chapter}/support          DELETE pour retirer — recalcule la continuité (D3)
-POST   /covers/{cover}/support
+POST   /chapters/{chapter}/like          DELETE pour retirer — recalcule la continuité (D3)
+POST   /covers/{cover}/like
 POST   /chapters/{chapter}/report           signalement (D2 : seul signal négatif)
 
 POST   /novels/{slug}/covers                proposer une illustration
@@ -214,7 +216,9 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 1. Réécrire [backend/CLAUDE.md](backend/CLAUDE.md) : schéma multivers, suppression de `VoteCalculationService`/`closeVotingSession`, des statuts `voting|writing` et des `accepted|rejected`.
 2. **ADR-07** — modèle multivers : arbre `chapters` + chemin matérialisé, disparition de `works`, **branche dérivée sans table** (D1, D4). Consigner l'argument décisif : une branche n'a pas de propriétaire légitime pour porter un nom ou une description, elle emprunte l'identité de son chapitre-tête.
 3. **ADR-08** — soutien **positif seul** (aucun downvote, D2), signalement comme unique canal négatif, et continuité principale **automatique** (D3).
-4. `config/ghosty.php` (seuils anti-abus des soutiens, profondeur d'arbre affichée, pagination des suites).
+   **ADR-09** — aucun archivage automatique ; `archived` / `hidden` sont des issues de modération (D5).
+   **ADR-10** — notifications in-app agrégées sur le canal `database` natif (D6).
+4. `config/ghosty.php` (seuils anti-abus des soutiens, profondeur d'arbre affichée, pagination des suites) — **reporté** : créé avec le premier service qui le lit (`LikeGuard`, lot 3), pour ne pas versionner des réglages que rien n'applique.
 5. Migration `chapters` + `NovelChapterSeeder` (JSON dans `database/data/` — jamais de données en dur) produisant un multivers de démo conforme à l'exemple §5.
 6. Retrait de `works` (back + front + tests) une fois `chapters` lisible par l'API.
 
@@ -224,7 +228,7 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 
 - `Chapter` model + `ChapterRepository` + `ChapterTreeService` + `ChapterPolicy`.
 - `POST /novels` (roman + chapitre racine en transaction), `POST /novels/{slug}/chapters` (suite depuis **n'importe quel** chapitre, y compris le sien — MVP §6), `PUT /chapters/{id}`.
-- Règles : `path`/`depth` calculés, `children_count`/`chapter_count` incrémentés atomiquement, `last_activity_at` propagé aux ancêtres.
+- Règles : `path`/`depth` calculés, `continuations_count`/`chapter_count` incrémentés atomiquement, `last_activity_at` propagé aux ancêtres.
 - Front : `apis/chapters/` complet, pages `NovelCreatePage`, `ChapterWritePage`, éditeur de texte, `formRequest` de validation.
 
 > Valide : « un auteur peut créer, poursuivre, bifurquer ».
@@ -242,10 +246,10 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 
 Les deux signaux communautaires d'un chapitre — positif et négatif — arrivent ensemble : sans downvote (D2), livrer les soutiens sans le signalement laisserait un contenu raciste ou bâclé sans aucun recours pour les lecteurs.
 
-- `supports` polymorphe, `SupportGuard`, `MainContinuityService` (recalcul + départage à l'ancienneté), throttle dédié.
+- `likes` polymorphe, `LikeGuard`, `MainContinuityService` (recalcul + départage à l'ancienneté), throttle dédié.
 - Tri des suites par soutiens, mise en avant **automatique** de la continuité principale (D3).
 - `reports` + `POST /chapters/{id}/report` avec les motifs de §3 (`poor_quality`, `hate_speech`, `insult`, …), unicité par signaleur.
-- Front : `SupportButton` (optimiste + rollback), tri des propositions, badge « continuité principale », `ReportDialog`.
+- Front : `LikeButton` (optimiste + rollback), tri des propositions, badge « continuité principale », `ReportDialog`.
 
 > ⚠️ Le **traitement** des signalements n'arrive qu'au lot 6. Entre les deux, les signalements s'empilent en base et sont traités à la main (requête SQL / commande artisan). Acceptable en bêta fermée, à ne pas laisser courir en ouverture publique.
 
@@ -259,7 +263,7 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 | Type | Déclencheur | Livré au lot |
 |---|---|---|
 | `chapter_continued` ★ | quelqu'un publie une suite à mon chapitre | 3b |
-| `support_received` | mon chapitre / ma cover reçoit des soutiens (**agrégé**) | 3b |
+| `like_received` | mon chapitre / ma cover reçoit des soutiens (**agrégé**) | 3b |
 | `main_continuity_gained` | ma suite devient la continuité principale (D3) | 3b |
 | `followed_branch_extended` ★ | une branche que je suis reçoit une suite | 4 |
 | `comment_received` / `comment_replied` | commentaire sur mon contenu, réponse à mon commentaire | 5 |
@@ -321,12 +325,12 @@ Forum par roman et espaces privés (§15), **notifications par email et temps r�
 | Risque | Mitigation |
 |---|---|
 | **SEO — contenu dupliqué** : N réalités partagent les mêmes chapitres d'amont | Canonical vers la continuité principale, URL stable par chapitre, arbre en `noindex` |
-| **Performance de l'arbre** : un roman très ramifié explose la requête | Chemin matérialisé (1 requête pour une branche entière), profondeur d'affichage plafonnée + chargement à la demande, `children_count` dénormalisé |
-| **Compteurs désynchronisés** (`children_count`, `support_count`, `chapter_count`) | Incréments atomiques SQL + commande de reconciliation, tests Unit dédiés (cf. `rules/files-type/model.md`) |
-| **Manipulation des soutiens** (§7) | `SupportGuard` : email vérifié + ancienneté + unicité + pas d'auto-soutien + throttle ; signalement `support_manipulation` |
+| **Performance de l'arbre** : un roman très ramifié explose la requête | Chemin matérialisé (1 requête pour une branche entière), profondeur d'affichage plafonnée + chargement à la demande, `continuations_count` dénormalisé |
+| **Compteurs désynchronisés** (`continuations_count`, `like_count`, `chapter_count`) | Incréments atomiques SQL + commande de reconciliation, tests Unit dédiés (cf. `rules/files-type/model.md`) |
+| **Manipulation des soutiens** (§7) | `LikeGuard` : email vérifié + ancienneté + unicité + pas d'auto-soutien + throttle ; signalement `like_manipulation` |
 | **Sans downvote (D2) ni archivage automatique (D5), un contenu médiocre n'est freiné que par la modération** | Signalement livré **avec** les soutiens (lot 3) ; tri par soutiens qui relègue sans exclure ; traitement humain assumé, d'où l'importance de ne pas ouvrir publiquement avant le lot 6 |
 | **Encombrement des suites** : un chapitre à 40 propositions, désormais sans purge par le temps (D5) | Tri par soutiens + pagination « voir les N autres suites » (lot 2/3) — la visibilité décroît proportionnellement, la porte ne se ferme jamais |
-| **Le soutien porte trois rôles à lui seul** : classer les suites (D2), désigner la continuité principale (D3), réguler la visibilité en l'absence d'archivage (D5) | Truquer les soutiens ne fausse plus un classement mais détourne le parcours de lecture par défaut → `SupportGuard` est une pièce critique du lot 3, pas un confort ; motif de signalement `support_manipulation` ; suivre l'indicateur §16 « exploration des réalités alternatives » |
+| **Le soutien porte trois rôles à lui seul** : classer les suites (D2), désigner la continuité principale (D3), réguler la visibilité en l'absence d'archivage (D5) | Truquer les soutiens ne fausse plus un classement mais détourne le parcours de lecture par défaut → `LikeGuard` est une pièce critique du lot 3, pas un confort ; motif de signalement `like_manipulation` ; suivre l'indicateur §16 « exploration des réalités alternatives » |
 | **Notifications bruyantes** (D6) : un chapitre populaire génère des dizaines d'événements | Agrégation par `group_key` imposée dès le socle (lot 3b), in-app seul, `notifications_enabled` en interrupteur |
 | **Continuité automatique (D3) : effet boule de neige** — la suite en tête capte les lecteurs, donc les soutiens, donc reste en tête | Les suites concurrentes restent visibles depuis le chapitre parent (`ContinuationSwitcher`, lot 2) ; à surveiller via l'indicateur « lecteurs qui explorent une réalité alternative » (§16) |
 | **Suppression de `works`** (D1) casse le front existant (`apis/works/`, `use-works`, PaginatorChapter) et 4 fichiers de tests | Fait dans le lot 0, en un seul worktree, tests migrés vers `chapters` dans la même PR |

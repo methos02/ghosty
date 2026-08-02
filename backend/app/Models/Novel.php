@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @mixin IdeHelperNovel
@@ -58,10 +59,22 @@ class Novel extends Model
     }
 
     /**
-     * @return HasMany<Work, $this>
+     * Tous les chapitres du roman, toutes réalités confondues.
+     *
+     * @return HasMany<Chapter, $this>
      */
     public function chapters(): HasMany
     {
-        return $this->hasMany(Work::class)->where('type', Work::TYPE_CHAPTER);
+        return $this->hasMany(Chapter::class);
+    }
+
+    /**
+     * Chapitre d'origine, racine de l'arbre du multivers.
+     *
+     * @return HasOne<Chapter, $this>
+     */
+    public function rootChapter(): HasOne
+    {
+        return $this->hasOne(Chapter::class)->whereNull('parent_id');
     }
 }

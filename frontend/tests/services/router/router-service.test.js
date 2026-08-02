@@ -20,7 +20,7 @@ describe('router-service', () => {
   describe('hasApiRoute', () => {
     it('is true for a declared API route (flat dotted key)', () => {
       expect(routerService.hasApiRoute('novel.list')).toBe(true)
-      expect(routerService.hasApiRoute('work.vote')).toBe(true)
+      expect(routerService.hasApiRoute('auth.login')).toBe(true)
     })
 
     it('is false for an unknown API route', () => {

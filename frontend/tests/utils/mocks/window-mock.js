@@ -1,7 +1,5 @@
 import { vi } from 'vitest'
 
-// importActual : un fichier de test qui mocke node:fs / node:path (locale-helper)
-// ne doit pas voir ses mocks consommés par le chargement des traductions du setup.
 const createFetchMock = () => {
   return vi.fn(async url => {
     const [{ promises: fs }, { default: path }] = await Promise.all([
@@ -75,7 +73,6 @@ export const windowMock = () => {
         forward: vi.fn(),
         go: vi.fn(),
       },
-      // Propriétés nécessaires pour vue-i18n
       Intl: globalThis.Intl || {
         DateTimeFormat: vi.fn(),
         NumberFormat: vi.fn(),
@@ -85,7 +82,6 @@ export const windowMock = () => {
         ListFormat: vi.fn(),
         Segmenter: vi.fn(),
       },
-      // Support pour les APIs d'internationalisation
       ResizeObserver: vi.fn(),
       MutationObserver: vi.fn(),
       IntersectionObserver: vi.fn(),

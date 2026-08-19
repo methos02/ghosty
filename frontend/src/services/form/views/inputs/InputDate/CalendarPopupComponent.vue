@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
-import { dateHelper } from '@/helpers/date-helper.js'
+import { dateHelper } from '@/core/helpers/date-helper.js'
 import { InputDate } from '@/services/form/views/inputs/InputDate/src/input-date.js'
 
 const props = defineProps({

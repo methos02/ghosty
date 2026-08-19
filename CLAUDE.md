@@ -186,9 +186,9 @@ php artisan test
 - Facilite migration future vers autre framework
 - Séparation claire logique/présentation
 
-### 2. Composables Globaux (Pas Pinia)
-- Utilisation de **composables Vue natifs** pour l'état global
-- Stockage uniquement (refs/reactive), PAS de logique métier
+### 2. Stores Vue Natifs (Pas Pinia)
+- Utilisation de **factories Vue natives** pour l'état partagé
+- Les stores stockent (refs/reactive) ; l'orchestration vit dans un composable
 - Plus simple, moins de boilerplate
 
 ### 3. Vuemann au Maximum
@@ -235,7 +235,8 @@ php artisan test
 **Règles critiques** :
 - ❌ **Repositories** : SEULS à utiliser `req()` pour appels API
 - ❌ **Controllers** : Orchestrent Repository + DTO, PAS d'appels directs
-- ❌ **Composables** : Stockage uniquement, PAS d'appels API
+- ❌ **Stores** : Stockage uniquement, PAS d'appels API
+- ✅ **Composables** : orchestrent stores + controllers pour un besoin de vue
 - ❌ **Components** : Présentation uniquement, PAS de logique métier
 
 ## Fonctionnalités Principales (à migrer)

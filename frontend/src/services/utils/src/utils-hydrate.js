@@ -1,6 +1,6 @@
 import { STATUS } from '@/constants/ajax-constants.js'
-import { FormHelper } from '@/helpers/form-helper.js'
-import { utilsH } from '@/helpers/utils-helper.js'
+import { FormHelper } from '@/core/helpers/form-helper.js'
+import { utilsH } from '@/core/helpers/utils-helper.js'
 
 const controllerRegistry = new Map()
 

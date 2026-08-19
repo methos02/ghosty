@@ -26,15 +26,15 @@ class ChapterControllerShowTest extends TestCase
     }
 
     #[Test]
-    public function exposes_the_author_pseudo(): void
+    public function exposes_the_author_username(): void
     {
-        $author = User::factory()->create(['pseudo' => 'auteur2']);
+        $author = User::factory()->create(['username' => 'auteur2']);
         $chapter = Chapter::factory()->create(['author_id' => $author->id]);
 
         $response = $this->getJson("/api/v1/chapters/{$chapter->id}");
 
         $response->assertOk()
-            ->assertJsonPath('author.pseudo', 'auteur2');
+            ->assertJsonPath('author.username', 'auteur2');
     }
 
     #[Test]
@@ -45,7 +45,7 @@ class ChapterControllerShowTest extends TestCase
         $response = $this->getJson("/api/v1/chapters/{$chapter->id}");
 
         $response->assertOk()
-            ->assertJsonPath('is_branch', false)
+            ->assertJsonPath('is_continued', false)
             ->assertJsonPath('continuations_count', 0);
     }
 
@@ -58,7 +58,7 @@ class ChapterControllerShowTest extends TestCase
         $response = $this->getJson("/api/v1/chapters/{$chapter->id}");
 
         $response->assertOk()
-            ->assertJsonPath('is_branch', true)
+            ->assertJsonPath('is_continued', true)
             ->assertJsonPath('continuations_count', 1);
     }
 

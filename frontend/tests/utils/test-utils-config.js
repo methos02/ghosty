@@ -1,9 +1,9 @@
 import { config } from '@vue/test-utils'
 import { shallowRef } from 'vue'
 import { matchedRouteKey } from 'vue-router'
+import { createHead } from '@unhead/vue/client'
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
 
-// Stub minimal de <router-link> pour les composants montés.
 const ROUTER_LINK_STUB = {
   name: 'router-link',
   template: '<a :href="href" @click.prevent><slot /></a>',
@@ -15,14 +15,12 @@ const ROUTER_LINK_STUB = {
   },
 }
 
-// Config globale @vue/test-utils appliquée à tous les mount() : route courante
-// injectée + stub <router-link>. À appeler APRÈS le boot (getRouter() a besoin
-// du router initialisé).
 export const configureTestUtils = () => {
   config.global.provide = {
     ...config.global.provide,
     [matchedRouteKey]: shallowRef(routerPlugin.getRouter().resolve('/').matched[0]),
   }
+  config.global.plugins = [...(config.global.plugins ?? []), createHead()]
   config.global.components = {
     ...config.global.components,
     'router-link': ROUTER_LINK_STUB,

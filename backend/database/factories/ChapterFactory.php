@@ -25,14 +25,9 @@ class ChapterFactory extends Factory
             'depth' => 0,
             'status' => Chapter::STATUS_PUBLISHED,
             'published_at' => now(),
-            'last_activity_at' => now(),
         ];
     }
 
-    /**
-     * Rattache le chapitre à un parent : profondeur, chemin et roman en
-     * découlent, et le parent voit son compteur de suites augmenter.
-     */
     public function continuing(Chapter $parent): static
     {
         return $this->state(fn () => [
@@ -40,17 +35,31 @@ class ChapterFactory extends Factory
             'parent_id' => $parent->id,
             'depth' => $parent->depth + 1,
         ])->afterCreating(function (Chapter $chapter) use ($parent) {
-            $chapter->update(['path' => $parent->path.$chapter->id.Chapter::PATH_SEPARATOR]);
-            $parent->increment('continuations_count');
+            $chapter->forceFill([
+                'path' => $parent->path.$chapter->id.Chapter::PATH_SEPARATOR,
+                'branch_like_count' => $parent->branch_like_count + $chapter->like_count,
+            ])->save();
+
+            if ($chapter->isPublished()) {
+                $parent->increment('continuations_count');
+            }
         });
     }
 
-    /**
-     * Suite mise en avant parmi les propositions d'un même chapitre.
-     */
-    public function mainContinuity(): static
+    public function liked(int $count): static
     {
-        return $this->state(fn () => ['is_main_child' => true]);
+        return $this->state(fn () => [
+            'like_count' => $count,
+            'branch_like_count' => $count,
+        ]);
+    }
+
+    public function draft(): static
+    {
+        return $this->state(fn () => [
+            'status' => Chapter::STATUS_DRAFT,
+            'published_at' => null,
+        ]);
     }
 
     public function archived(): static

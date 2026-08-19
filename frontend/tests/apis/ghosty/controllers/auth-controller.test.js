@@ -21,13 +21,13 @@ describe('auth-controller', () => {
       const result = await AuthController.register(userSeeder.getRegisterForm())
 
       expect(AuthRepository.register).toHaveBeenCalledWith({
-        pseudo: 'GhostWriter',
+        username: 'GhostWriter',
         email: 'ghost@ghosty.test',
         password: 'Secret123!',
         password_confirmation: 'Secret123!',
       })
       expect(result.status).toBe(STATUS.SUCCESS)
-      expect(result.user.pseudo).toBe('GhostWriter')
+      expect(result.user.username).toBe('GhostWriter')
     })
 
     it('registers validation errors on 422 and returns an error status', async () => {
@@ -35,14 +35,12 @@ describe('auth-controller', () => {
         status: STATUS.UNPROCESSABLE_ENTITY,
         data: { errors: { email: ['taken'] } },
       })
-      const mapFields = vi.spyOn(form, 'mapFields').mockReturnValue({ 'register.email': ['taken'] })
-      const addErrors = vi.spyOn(form, 'addErrors').mockImplementation(() => {})
+      const addValidationErrors = vi.spyOn(form, 'addValidationErrors').mockImplementation(() => {})
 
       const result = await AuthController.register(userSeeder.getRegisterForm())
 
-      expect(mapFields).toHaveBeenCalled()
-      expect(addErrors).toHaveBeenCalledWith({ 'register.email': ['taken'] })
-      expect(result).toEqual({ status: STATUS.ERROR })
+      expect(addValidationErrors).toHaveBeenCalledWith({ email: ['taken'] }, 'register')
+      expect(result.status).toBe(STATUS.UNPROCESSABLE_ENTITY)
     })
 
     it('passes other error responses through', async () => {
@@ -64,7 +62,7 @@ describe('auth-controller', () => {
       const result = await AuthController.login(userSeeder.getLoginForm())
 
       expect(AuthRepository.login).toHaveBeenCalledWith({
-        email: 'ghost@ghosty.test',
+        identifier: 'ghost@ghosty.test',
         password: 'Secret123!',
       })
       expect(result.user.id).toBe(42)
@@ -73,15 +71,14 @@ describe('auth-controller', () => {
     it('registers validation errors on 422 and returns an error status', async () => {
       vi.spyOn(AuthRepository, 'login').mockResolvedValue({
         status: STATUS.UNPROCESSABLE_ENTITY,
-        data: { errors: { email: ['invalid'] } },
+        data: { errors: { identifier: ['invalid'] } },
       })
-      vi.spyOn(form, 'mapFields').mockReturnValue({ 'login.email': ['invalid'] })
-      const addErrors = vi.spyOn(form, 'addErrors').mockImplementation(() => {})
+      const addValidationErrors = vi.spyOn(form, 'addValidationErrors').mockImplementation(() => {})
 
       const result = await AuthController.login(userSeeder.getLoginForm())
 
-      expect(addErrors).toHaveBeenCalledWith({ 'login.email': ['invalid'] })
-      expect(result).toEqual({ status: STATUS.ERROR })
+      expect(addValidationErrors).toHaveBeenCalledWith({ identifier: ['invalid'] }, 'login')
+      expect(result.status).toBe(STATUS.UNPROCESSABLE_ENTITY)
     })
   })
 

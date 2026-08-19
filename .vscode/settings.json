@@ -1,0 +1,9 @@
+{
+  "phpstan.configFile": "backend/phpstan.neon",
+  "phpstan.binPath": "backend/vendor/bin/phpstan",
+  "phpstan.rootDir": "backend",
+  "phpstan.enabled": true,
+  "intelephense.diagnostics.undefinedMethods": false,
+  "intelephense.diagnostics.undefinedProperties": false,
+  "intelephense.environment.phpVersion": "8.3.14"
+}

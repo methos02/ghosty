@@ -1,6 +1,5 @@
 import { AuthRepository } from '@/apis/ghosty/repositories/auth-repository.js'
 import { AuthDto } from '@/apis/ghosty/dtos/auth-dto.js'
-import { AuthErrorDto } from '@/apis/ghosty/dtos/auth-error-dto.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { form } from '@/services/shortcuts/services-shortcut.js'
 
@@ -9,8 +8,7 @@ const register = async datas => {
   const response = await AuthRepository.register(data)
 
   if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
-    form.addErrors(AuthErrorDto.registerFields(response.data.errors))
-    return { status: STATUS.ERROR }
+    form.addValidationErrors(response.data.errors, 'register')
   }
 
   if (response.status !== STATUS.SUCCESS) {
@@ -28,8 +26,7 @@ const login = async datas => {
   const response = await AuthRepository.login(data)
 
   if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
-    form.addErrors(AuthErrorDto.loginFields(response.data.errors))
-    return { status: STATUS.ERROR }
+    form.addValidationErrors(response.data.errors, 'login')
   }
 
   if (response.status !== STATUS.SUCCESS) {

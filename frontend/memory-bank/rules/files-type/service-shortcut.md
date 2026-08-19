@@ -6,7 +6,7 @@ paths:
 
 Every vuemann service (`src/services/<name>/`) that exposes an API to consume (components, other services) has a `<name>-shortcut.js` in `src/shortcuts/`. `src/shortcuts/services-shortcut.js` is a **pure barrel** that re-exports from the individual files — no logic.
 
-**Pure primitives don't belong here.** Functions with no `servicesM`/`servicesStores` dependency live in `src/helpers/`. A `*-shortcut.js` file is, by definition, a shortcut access to a runtime-managed service.
+**Pure primitives don't belong here.** Functions with no `servicesM`/`servicesStores` dependency live in `src/core/helpers/`. A `*-shortcut.js` file is, by definition, a shortcut access to a runtime-managed service.
 
 ## Content of a `<name>-shortcut.js`
 

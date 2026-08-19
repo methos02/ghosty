@@ -18,7 +18,7 @@ class ChapterSeeder extends Seeder
         $novels = File::json(database_path('data/chapters.json'));
 
         /** @var array<string, int> $authorIds */
-        $authorIds = User::pluck('id', 'pseudo')->all();
+        $authorIds = User::pluck('id', 'username')->all();
         $this->authorIds = $authorIds;
 
         foreach ($novels as $novel) {
@@ -40,9 +40,6 @@ class ChapterSeeder extends Seeder
     }
 
     /**
-     * Insère un chapitre puis ses suites, en calculant le chemin matérialisé à
-     * l'aller et les compteurs dénormalisés au retour de récursion.
-     *
      * @param  array<mixed, mixed>  $data
      */
     private function createChapter(Novel $novel, array $data, ?Chapter $parent): Chapter
@@ -58,14 +55,17 @@ class ChapterSeeder extends Seeder
             'depth' => $parent === null ? 0 : $parent->depth + 1,
             'status' => Chapter::STATUS_PUBLISHED,
             'published_at' => now(),
-            'last_activity_at' => now(),
         ]);
 
-        $chapter->update([
+        $likeCount = $this->number($data, 'like_count');
+
+        $chapter->forceFill([
             'path' => $parent === null
                 ? Chapter::PATH_SEPARATOR.$chapter->id.Chapter::PATH_SEPARATOR
                 : $parent->path.$chapter->id.Chapter::PATH_SEPARATOR,
-        ]);
+            'like_count' => $likeCount,
+            'branch_like_count' => ($parent === null ? 0 : $parent->branch_like_count) + $likeCount,
+        ])->save();
 
         $children = is_array($data['children'] ?? null) ? $data['children'] : [];
 
@@ -77,11 +77,7 @@ class ChapterSeeder extends Seeder
             $this->createChapter($novel, $child, $chapter);
         }
 
-        $chapter->forceFill([
-            'continuations_count' => count($children),
-            'like_count' => $this->number($data, 'like_count'),
-            'is_main_child' => ($data['main'] ?? false) === true,
-        ])->save();
+        $chapter->forceFill(['continuations_count' => count($children)])->save();
 
         return $chapter->refresh();
     }

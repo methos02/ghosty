@@ -4,7 +4,7 @@ import ErrorForm from '@/services/form/views/ErrorFormComponent.vue'
 import Dropdown from '@/components/DropdownComponent.vue'
 import { formStore } from '@/services/form/src/form-store.js'
 import { t, log } from '@/services/shortcuts/services-shortcut.js'
-import { FormHelper } from '@/helpers/form-helper.js'
+import { FormHelper } from '@/core/helpers/form-helper.js'
 import { useKeyboardNavigation } from '@/services/form/views/inputs/use-keyboard-navigation.js'
 
 const props = defineProps({

@@ -1,0 +1,11 @@
+{
+  "toolbar": {
+    "new_novel": "Nouveau",
+    "read_continue": "Lire / continuer",
+    "genre": "Genre",
+    "all_genres": "Tous",
+    "sort": "Trier par",
+    "sort_top": "Top 10",
+    "sort_unavailable": "Le tri arrivera avec les soutiens"
+  }
+}

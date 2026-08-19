@@ -12,8 +12,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class NovelResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
-     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -22,16 +20,16 @@ class NovelResource extends JsonResource
             'id' => $this->id,
             'slug' => $this->slug,
             'title' => $this->title,
-            'cover_url' => $this->cover_url,
+            'cover_url' => $this->coverUrl(),
             'is_favorite' => $this->is_favorite,
             'chapters_count' => $this->chapter_count,
             'author' => [
-                'id' => $this->author->id,
-                'pseudo' => $this->author->pseudo,
+                'id' => $this->author_id,
+                'username' => $this->whenLoaded('author', fn () => $this->author->username),
             ],
             'genre' => [
-                'id' => $this->genre->id,
-                'name' => $this->genre->name,
+                'id' => $this->genre_id,
+                'name' => $this->whenLoaded('genre', fn () => $this->genre->name),
             ],
         ];
     }

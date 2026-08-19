@@ -8,6 +8,8 @@ import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-st
 import { createChapterStore, CHAPTER_STORE_KEY } from '@/apis/chapters/stores/chapter-store.js'
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
+import { useAuthStore } from '@/services/auth/src/auth-store.js'
+import { userSeeder } from '&/utils/seeders/user-seeder.js'
 import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
 
 const router = routerPlugin.getRouter()
@@ -43,7 +45,7 @@ describe('NovelDetailDialog.vue', () => {
   })
 
   it('loads the main continuity and displays its first chapter', async () => {
-    vi.spyOn(ChapterController, 'mainContinuity').mockResolvedValue(
+    vi.spyOn(ChapterController, 'currentContinuity').mockResolvedValue(
       controllerSuccess({ chapters: [chapter(10, 'Le Réveil', 'Il était une fois...')] }),
     )
 
@@ -51,7 +53,7 @@ describe('NovelDetailDialog.vue', () => {
     const { wrapper } = await mountDialogFor(novel)
     await flushPromises()
 
-    expect(ChapterController.mainContinuity).toHaveBeenCalledWith(novel.slug)
+    expect(ChapterController.currentContinuity).toHaveBeenCalledWith(novel.slug)
     expect(wrapper.find('.dialog-header h2').text()).toBe(novel.title)
     expect(wrapper.text()).toContain('Résumé - 1. Le Réveil')
     expect(wrapper.find('.novel-detail-dialog__summary').text()).toBe('Il était une fois...')
@@ -60,7 +62,7 @@ describe('NovelDetailDialog.vue', () => {
   it('fetches the novel by slug when it is not already in the store (direct access)', async () => {
     const novel = novelSeeder.getNovel()
     vi.spyOn(NovelController, 'getBySlug').mockResolvedValue(controllerSuccess({ novel }))
-    vi.spyOn(ChapterController, 'mainContinuity').mockResolvedValue(
+    vi.spyOn(ChapterController, 'currentContinuity').mockResolvedValue(
       controllerSuccess({ chapters: [chapter(10, 'Ch', '...')] }),
     )
 
@@ -68,12 +70,12 @@ describe('NovelDetailDialog.vue', () => {
     await flushPromises()
 
     expect(NovelController.getBySlug).toHaveBeenCalledWith(novel.slug)
-    expect(ChapterController.mainContinuity).toHaveBeenCalledWith(novel.slug)
+    expect(ChapterController.currentContinuity).toHaveBeenCalledWith(novel.slug)
     expect(wrapper.find('.dialog-header h2').text()).toBe(novel.title)
   })
 
   it('switches chapter from the already loaded continuity without calling the api again', async () => {
-    const loadContinuity = vi.spyOn(ChapterController, 'mainContinuity').mockResolvedValue(
+    const loadContinuity = vi.spyOn(ChapterController, 'currentContinuity').mockResolvedValue(
       controllerSuccess({
         chapters: [chapter(10, 'Premier', 'Début'), chapter(11, 'Second', 'Suite')],
       }),
@@ -96,7 +98,7 @@ describe('NovelDetailDialog.vue', () => {
   })
 
   it('shows the error message when the continuity fails to load', async () => {
-    vi.spyOn(ChapterController, 'mainContinuity').mockResolvedValue(
+    vi.spyOn(ChapterController, 'currentContinuity').mockResolvedValue(
       controllerError(undefined, 'Chargement impossible'),
     )
 
@@ -105,5 +107,57 @@ describe('NovelDetailDialog.vue', () => {
     await flushPromises()
 
     expect(wrapper.text()).toContain('Chargement impossible')
+  })
+
+  it('opens the writing page on the displayed chapter, the only way in from a novel', async () => {
+    vi.spyOn(ChapterController, 'currentContinuity').mockResolvedValue(
+      controllerSuccess({ chapters: [chapter(10, 'Le Réveil', 'Il était une fois...')] }),
+    )
+    const novel = novelSeeder.getNovel()
+    const { wrapper } = await mountDialogFor(novel)
+    await flushPromises()
+
+    await wrapper.find('.novel-detail-dialog__continue').trigger('click')
+
+    await vi.waitFor(() => {
+      expect(router.currentRoute.value.name).toBe('chapter-write')
+    })
+    expect(router.currentRoute.value.params).toEqual({ slug: novel.slug, parentId: '10' })
+  })
+
+  it('offers the correction to the author of the displayed chapter, and to no one else', async () => {
+    const author = userSeeder.getUser()
+    vi.spyOn(ChapterController, 'currentContinuity').mockResolvedValue(
+      controllerSuccess({
+        chapters: [
+          {
+            id: 10,
+            title: 'Le Réveil',
+            summary: 'Il était une fois...',
+            isCorrectable: true,
+            author: { id: author.id },
+          },
+        ],
+      }),
+    )
+
+    const novel = novelSeeder.getNovel()
+    const { wrapper } = await mountDialogFor(novel)
+    await flushPromises()
+
+    expect(wrapper.find('.novel-detail-dialog__correct').exists()).toBe(false)
+
+    useAuthStore().setUser(author)
+    await flushPromises()
+
+    expect(wrapper.find('.novel-detail-dialog__correct').exists()).toBe(true)
+
+    await wrapper.find('.novel-detail-dialog__correct').trigger('click')
+    await vi.waitFor(() => {
+      expect(router.currentRoute.value.name).toBe('chapter-edit')
+    })
+    expect(router.currentRoute.value.params).toEqual({ id: '10' })
+
+    useAuthStore().clear()
   })
 })

@@ -30,7 +30,7 @@ class ChapterModelTest extends TestCase
     {
         $chapter = Chapter::factory()->create();
 
-        $this->assertFalse($chapter->isBranch());
+        $this->assertFalse($chapter->isContinued());
     }
 
     #[Test]
@@ -39,7 +39,7 @@ class ChapterModelTest extends TestCase
         $chapter = Chapter::factory()->create();
         Chapter::factory()->continuing($chapter)->create();
 
-        $this->assertTrue($chapter->refresh()->isBranch());
+        $this->assertTrue($chapter->refresh()->isContinued());
     }
 
     #[Test]
@@ -94,7 +94,7 @@ class ChapterModelTest extends TestCase
         Chapter::factory()->continuing($continued)->create();
         Chapter::factory()->create();
 
-        $branches = Chapter::query()->branches()->get();
+        $branches = Chapter::query()->continued()->get();
 
         $this->assertSame([$continued->id], $branches->pluck('id')->all());
     }

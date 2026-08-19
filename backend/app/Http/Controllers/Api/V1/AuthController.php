@@ -7,6 +7,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Support\TokenCookieSettings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
@@ -22,7 +23,7 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $user = User::create([
-            'pseudo' => $request->pseudo,
+            'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->string('password')->toString()),
             'roles' => [User::ROLE_READER],
@@ -33,17 +34,20 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $user = User::where('email', $request->email)->first();
+        $identifier = $request->string('identifier')->toString();
+
+        $user = User::query()->where('email', $identifier)->first()
+            ?? User::query()->where('username', $identifier)->first();
 
         if (! $user || ! Hash::check($request->string('password')->toString(), $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['Adresse e-mail ou mot de passe incorrect'],
+                'identifier' => ['Pseudo, e-mail ou mot de passe incorrect'],
             ]);
         }
 
         if ($user->isBanned()) {
             throw ValidationException::withMessages([
-                'email' => ['Compte banni jusqu\'au '.$user->banned_until->format('d/m/Y')],
+                'identifier' => ['Compte banni jusqu\'au '.$user->banned_until->format('d/m/Y')],
             ]);
         }
 
@@ -56,11 +60,13 @@ class AuthController extends Controller
         $user = $request->user();
         $user->currentAccessToken()->delete();
 
+        $settings = TokenCookieSettings::fromConfig();
+
         return response()->json([
             'message' => 'Déconnecté avec succès',
         ])
-            ->withCookie($this->forgetCookie(config('sanctum.token_cookie.name')))
-            ->withCookie($this->forgetCookie(config('sanctum.token_cookie.session_name')));
+            ->withCookie($this->forgetCookie($settings->name))
+            ->withCookie($this->forgetCookie($settings->sessionName));
     }
 
     public function me(Request $request): JsonResponse
@@ -83,38 +89,44 @@ class AuthController extends Controller
 
     private function tokenCookie(string $token): SymfonyCookie
     {
+        $settings = TokenCookieSettings::fromConfig();
+
         return Cookie::make(
-            name: config('sanctum.token_cookie.name'),
+            name: $settings->name,
             value: $token,
-            minutes: config('sanctum.token_cookie.lifetime'),
-            path: config('sanctum.token_cookie.path'),
-            domain: config('sanctum.token_cookie.domain'),
-            secure: config('sanctum.token_cookie.secure'),
+            minutes: $settings->lifetime,
+            path: $settings->path,
+            domain: $settings->domain,
+            secure: $settings->secure,
             httpOnly: true,
-            sameSite: config('sanctum.token_cookie.same_site'),
+            sameSite: $settings->sameSite,
         );
     }
 
     private function sessionCookie(): SymfonyCookie
     {
+        $settings = TokenCookieSettings::fromConfig();
+
         return Cookie::make(
-            name: config('sanctum.token_cookie.session_name'),
+            name: $settings->sessionName,
             value: '1',
-            minutes: config('sanctum.token_cookie.lifetime'),
-            path: config('sanctum.token_cookie.path'),
-            domain: config('sanctum.token_cookie.domain'),
-            secure: config('sanctum.token_cookie.secure'),
+            minutes: $settings->lifetime,
+            path: $settings->path,
+            domain: $settings->domain,
+            secure: $settings->secure,
             httpOnly: false,
-            sameSite: config('sanctum.token_cookie.same_site'),
+            sameSite: $settings->sameSite,
         );
     }
 
     private function forgetCookie(string $name): SymfonyCookie
     {
+        $settings = TokenCookieSettings::fromConfig();
+
         return Cookie::forget(
             name: $name,
-            path: config('sanctum.token_cookie.path'),
-            domain: config('sanctum.token_cookie.domain'),
+            path: $settings->path,
+            domain: $settings->domain,
         );
     }
 }

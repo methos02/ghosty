@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { dateHelper } from '@/helpers/date-helper.js'
+import { dateHelper } from '@/core/helpers/date-helper.js'
 
 const isDateDisabled = (date, minDate, maxDate) => {
   if (

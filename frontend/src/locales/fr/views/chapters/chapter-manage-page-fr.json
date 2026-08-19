@@ -1,0 +1,26 @@
+{
+  "chapter_manage": {
+    "title_write": "Proposer une suite",
+    "title_edit": "Reprendre l'écriture",
+    "subtitle": "Votre suite rejoint les autres propositions : aucune n'élimine les précédentes.",
+    "continuing": "Vous poursuivez",
+    "published_warning": "Ce chapitre est publié : il a été lu, et peut avoir été poursuivi. Seules les fautes d'orthographe peuvent encore être corrigées.",
+    "single_correction": "Vous n'avez droit qu'à une seule correction : une fois enregistrée, ce chapitre ne sera plus modifiable.",
+    "correction_spent": "Ce chapitre n'est plus corrigeable : la correction a déjà été utilisée, ou la fenêtre de 48 h est passée.",
+    "words_remaining": "Il vous reste {remaining} mots modifiables sur {allowance}.",
+    "words_exceeded": "Vous dépassez les {allowance} mots modifiables autorisés : la correction sera refusée.",
+    "save_correction": "Enregistrer la correction",
+    "confirm_correction": "Êtes-vous sûr de vouloir enregistrer cette correction ?\nCe chapitre ne sera plus modifiable après.",
+    "login_required": "Connectez-vous pour proposer une suite.",
+    "login_button": "Se connecter",
+    "chapter_title": "Titre du chapitre",
+    "save_draft": "Brouillon",
+    "submit": "Publier",
+    "error_title_required": "Le titre du chapitre est obligatoire",
+    "error_title_size_min": "Le titre doit contenir au moins :size caractères",
+    "error_title_size_max": "Le titre ne peut pas dépasser :size caractères",
+    "error_content_required": "Le texte du chapitre est obligatoire",
+    "error_summary_required": "Le résumé du chapitre est obligatoire",
+    "error_summary_size_max": "Le résumé ne peut pas dépasser :size caractères"
+  }
+}

@@ -5,7 +5,6 @@ import { ConfigLoader } from '@/config/config-loader.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { paginationSeeder } from '&/utils/seeders/pagination-seeder.js'
 
-// Normalized response as the http client returns it to req()
 const httpResponse = (data, status = 200) => ({ data, status, headers: {}, statusText: 'OK' })
 
 describe('ajax-service', () => {

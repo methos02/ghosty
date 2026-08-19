@@ -2,12 +2,11 @@ import { ref, readonly, computed, inject, hasInjectionContext } from 'vue'
 
 export const AUTH_STORE_KEY = Symbol('auth-store')
 
-// @see backend/memory-bank/decisions/ADR-04-token-en-cookie-httponly.md
 const state = {
   clientStore: undefined,
 }
 
-export const createAuthStore = () => {
+const authStore = () => {
   const user = ref()
 
   const hasRole = role => {
@@ -47,6 +46,8 @@ export const createAuthStore = () => {
     },
   }
 }
+
+export const createAuthStore = () => authStore()
 
 export const setClientAuthStore = store => {
   state.clientStore = store

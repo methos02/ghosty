@@ -2,7 +2,7 @@ import { datasForm } from '@/services/form/src/models/datas-form.js'
 import { defaultTests } from '@/services/form/src/default-tests-form.js'
 import { formStore } from '@/services/form/src/form-store.js'
 import { paramsForm } from '@/services/form/src/models/params-form.js'
-import { FormHelper } from '@/helpers/form-helper.js'
+import { FormHelper } from '@/core/helpers/form-helper.js'
 
 const executeGlobal = globalTests => {
   if (globalTests === undefined) {

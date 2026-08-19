@@ -8,7 +8,17 @@ const getBySlug = async options => {
   return await req('novel.show', options)
 }
 
+const create = async options => {
+  return await req('novel.create', options)
+}
+
+const update = async options => {
+  return await req('novel.update', options)
+}
+
 export const NovelRepository = {
   list,
   getBySlug,
+  create,
+  update,
 }

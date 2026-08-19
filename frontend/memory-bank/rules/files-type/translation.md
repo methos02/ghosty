@@ -9,7 +9,7 @@ paths:
 `src/locales/` hierarchy must mirror the source hierarchy it translates.
 
 - `src/views/componentsPage/DialogPage.vue` → `src/locales/{lang}/components/dialog/dialog-component.json`
-- `src/helpers/date-helper.js` → `src/locales/{lang}/helpers/date-helper.json`
+- `src/core/helpers/date-helper.js` → `src/locales/{lang}/core/helpers/date-helper.json`
 - `src/services/form/views/inputs/InputDate/` → `src/locales/{lang}/services/form/views/inputs/InputDate/`
 
 ## Colocated translations

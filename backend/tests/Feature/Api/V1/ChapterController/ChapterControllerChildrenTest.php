@@ -73,4 +73,16 @@ class ChapterControllerChildrenTest extends TestCase
 
         $response->assertOk()->assertJsonCount(0, 'chapters');
     }
+
+    #[Test]
+    public function leaves_the_full_text_out_of_the_continuation_list(): void
+    {
+        $parent = Chapter::factory()->create();
+        Chapter::factory()->continuing($parent)->create();
+
+        $this->getJson("/api/v1/chapters/{$parent->id}/children")
+            ->assertOk()
+            ->assertJsonPath('chapters.0.title', fn ($title) => $title !== null)
+            ->assertJsonMissingPath('chapters.0.content');
+    }
 }

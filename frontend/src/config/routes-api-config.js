@@ -9,8 +9,24 @@ export const routesApi = {
     method: 'get',
     api: 'ghosty',
   },
+  'novel.create': {
+    url: 'v1/novels',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'novel.update': {
+    url: 'v1/novels/{slug}',
+    method: 'put',
+    api: 'ghosty',
+  },
 
-  'chapter.mainContinuity': {
+  'genre.list': {
+    url: 'v1/genres',
+    method: 'get',
+    api: 'ghosty',
+  },
+
+  'chapter.currentContinuity': {
     url: 'v1/novels/{slug}/chapters',
     method: 'get',
     api: 'ghosty',
@@ -22,6 +38,31 @@ export const routesApi = {
   },
   'chapter.children': {
     url: 'v1/chapters/{chapter}/children',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'chapter.create': {
+    url: 'v1/novels/{slug}/chapters',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'chapter.update': {
+    url: 'v1/chapters/{chapter}',
+    method: 'put',
+    api: 'ghosty',
+  },
+  'chapter.publish': {
+    url: 'v1/chapters/{chapter}/publish',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'chapter.destroy': {
+    url: 'v1/chapters/{chapter}',
+    method: 'delete',
+    api: 'ghosty',
+  },
+  'chapter.drafts': {
+    url: 'v1/me/drafts',
     method: 'get',
     api: 'ghosty',
   },

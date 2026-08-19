@@ -2,7 +2,7 @@ import { routerPlugin } from '@/services/router/src/router-plugin.js'
 import { useRouterStore } from '@/services/router/src/router-store.js'
 import { flash } from '@/services/shortcuts/services-shortcut.js'
 import { ConfigLoader } from '@/config/config-loader.js'
-import { FormHelper } from '@/helpers/form-helper.js'
+import { FormHelper } from '@/core/helpers/form-helper.js'
 
 const addRoute = route => {
   if (route.path === undefined) {
@@ -98,7 +98,6 @@ const setUrlIntented = url => {
   urlIntented.value = url
 }
 
-/** @type {import('vuemann/contracts/router-contract.js').RouterService} */
 export const routerService = {
   addRoute,
   currentRoute,
@@ -115,11 +114,13 @@ export const routerService = {
   setUrlIntented,
 }
 
-const isUnknownNamedRoute = route => route.name !== undefined && !routerPlugin.getRouter().hasRoute(route.name)
+const isUnknownNamedRoute = route =>
+  route.name !== undefined && !routerPlugin.getRouter().hasRoute(route.name)
 
 const isUnknownPath = route =>
   route.name === undefined &&
-  routerPlugin.getRouter()
+  routerPlugin
+    .getRouter()
     .getRoutes()
     .every(routeConfig => routeConfig.path !== route.path)
 

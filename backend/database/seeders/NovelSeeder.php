@@ -9,15 +9,12 @@ use Illuminate\Support\Facades\File;
 
 class NovelSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         /** @var array<int, array{title: string, genre_id: int, cover_url: string}> $novels */
         $novels = File::json(database_path('data/novels.json'));
 
-        $authorId = User::where('pseudo', 'auteur1')->value('id');
+        $authorId = User::where('username', 'auteur1')->value('id');
 
         foreach ($novels as $novel) {
             Novel::create([

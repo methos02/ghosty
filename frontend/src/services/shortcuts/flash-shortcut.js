@@ -4,11 +4,9 @@ import { servicesStores } from '@/services/services-stores.js'
 const _store = () => servicesStores.get('flash')
 
 export const flashStore = {
-  // refs
   get flashes() {
     return _store().flashes
   },
-  // methods
   get addFlash() {
     return _store().flashStore.addFlash
   },
@@ -38,7 +36,6 @@ export const flashStore = {
   },
 }
 
-// Public flash API — composes the pure store with log + translation
 export const flash = {
   get flashes() {
     return _store().flashes

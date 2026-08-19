@@ -7,7 +7,7 @@ import { onMounted, onUnmounted, onErrorCaptured, computed } from 'vue'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { servicesM } from '@/services/services-manager.js'
 import { ConfigLoader } from '@/config/config-loader.js'
-import { locationHelper } from '@/helpers/location-helper.js'
+import { locationHelper } from '@/core/helpers/location-helper.js'
 
 const props = defineProps({
   cb: { type: Function, default: undefined },

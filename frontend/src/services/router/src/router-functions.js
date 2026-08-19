@@ -1,7 +1,8 @@
 import { servicesM } from '@/services/services-manager.js'
 import { auth, flash, t } from '@/services/shortcuts/services-shortcut.js'
 import { ConfigLoader } from '@/config/config-loader.js'
-import { utilsH } from '@/helpers/utils-helper.js'
+import { utilsH } from '@/core/helpers/utils-helper.js'
+import { useAuth } from '@/services/auth/src/use-auth.js'
 
 const DOCUMENTATION_PREFIX = '/documentation'
 
@@ -25,6 +26,10 @@ const beforeEach = async (to, _from) => {
     servicesM.service('router:setUrlIntented', [to.fullPath])
     await servicesM.service('auth:login')
     return false
+  }
+
+  if (routerFunctionsInternal.isAuthBlocked(to)) {
+    return routerFunctionsInternal.askForLogin(to)
   }
 
   if (to.meta?.roles === undefined || to.meta.roles.length === 0) {
@@ -51,4 +56,23 @@ const isDocumentationBlocked = to => {
   return to.path.startsWith(DOCUMENTATION_PREFIX) && auth.requiresAuth() && !auth.isAuthenticated()
 }
 
-export const routerFunctionsInternal = { isDocumentationBlocked }
+const isAuthBlocked = to => {
+  return to.meta?.requiresAuth === true && !auth.isAuthenticated()
+}
+
+const askForLogin = to => {
+  if (utilsH.isSsr()) {
+    return '/'
+  }
+
+  servicesM.service('router:setUrlIntented', [to.fullPath])
+  useAuth().openLoginDialog()
+
+  return false
+}
+
+export const routerFunctionsInternal = {
+  isDocumentationBlocked,
+  isAuthBlocked,
+  askForLogin,
+}

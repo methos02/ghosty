@@ -8,29 +8,35 @@ const getChapterApi = (overrides = {}) => ({
   summary: 'Une route de montagne, un virage manqué.',
   content: 'La voiture avait quitté la route au troisième virage...',
   depth: 0,
-  is_main_child: false,
-  is_branch: false,
+  is_continued: false,
   continuations_count: 0,
   like_count: 41,
+  branch_like_count: 41,
   comment_count: 0,
-  author: { id: 7, pseudo: 'GhostWriter' },
+  author: { id: 7, username: 'GhostWriter' },
+  novel: {
+    id: 1,
+    slug: 'nuit-virage',
+    title: 'Nuit virage',
+    genre_id: 3,
+  },
+  is_draft: false,
+  is_correctable: true,
+  is_root: true,
   published_at: '2026-07-31T10:00:00+00:00',
   ...overrides,
 })
 
-/**
- * Continuité principale : la racine, puis les suites mises en avant.
- */
-const getMainContinuityApi = (count = 3) => {
+const getCurrentContinuityApi = (count = 3) => {
   return Array.from({ length: count }, (_, index) =>
     getChapterApi({
       id: index + 10,
       parent_id: index === 0 ? null : index + 9,
       title: `Chapitre ${index + 1}`,
       depth: index,
-      is_main_child: index > 0,
-      is_branch: index < count - 1,
+      is_continued: index < count - 1,
       continuations_count: index < count - 1 ? 1 : 0,
+      branch_like_count: 41 * (index + 1),
     }),
   )
 }
@@ -40,11 +46,21 @@ const getChapter = (overrides = {}) => ({
   ...overrides,
 })
 
-const getMainContinuity = (count = 3) => ChapterDto.fromList(getMainContinuityApi(count))
+const getCurrentContinuity = (count = 3) => ChapterDto.fromList(getCurrentContinuityApi(count))
+
+const getWriteForm = (overrides = {}) => ({
+  parentId: 10,
+  title: 'La route inverse',
+  content: 'La voiture repartit en sens inverse, phares éteints...',
+  summary: 'La voiture repart en sens inverse.',
+  isDraft: false,
+  ...overrides,
+})
 
 export const chapterSeeder = {
   getChapterApi,
-  getMainContinuityApi,
+  getCurrentContinuityApi,
   getChapter,
-  getMainContinuity,
+  getCurrentContinuity,
+  getWriteForm,
 }

@@ -40,14 +40,14 @@ class AuthControllerMeTest extends TestCase
     #[Test]
     public function returns_authenticated_user(): void
     {
-        $user = User::factory()->create(['pseudo' => 'JohnDoe', 'email' => 'john@example.com']);
+        $user = User::factory()->create(['username' => 'JohnDoe', 'email' => 'john@example.com']);
         Sanctum::actingAs($user);
 
         $response = $this->getJson($this->route);
 
         $response->assertOk();
         $response->assertJsonPath('user.id', $user->id);
-        $response->assertJsonPath('user.pseudo', 'JohnDoe');
+        $response->assertJsonPath('user.username', 'JohnDoe');
         $response->assertJsonPath('user.email', 'john@example.com');
         $response->assertJsonMissingPath('user.password');
     }

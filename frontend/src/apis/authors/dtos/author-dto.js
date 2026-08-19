@@ -1,6 +1,6 @@
 const fromShow = data => ({
   id: data.id,
-  pseudo: data.pseudo,
+  username: data.username,
 })
 
 export const AuthorDto = { fromShow }

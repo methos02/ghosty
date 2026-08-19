@@ -12,9 +12,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ChapterResource extends JsonResource
 {
     /**
-     * `is_branch` est dérivé : une proposition devient une branche dès qu'une
-     * suite publiée la poursuit — il n'existe pas d'entité « branche ».
-     *
      * @see memory-bank/decisions/ADR-07-modele-multivers-arbre-de-chapitres.md
      *
      * @return array<string, mixed>
@@ -27,28 +24,28 @@ class ChapterResource extends JsonResource
             'parent_id' => $this->parent_id,
             'title' => $this->title,
             'summary' => $this->summary,
-            'content' => $this->when($this->shouldExposeContent($request), $this->content),
+            'content' => $this->content,
             'depth' => $this->depth,
-            'is_main_child' => $this->is_main_child,
-            'is_branch' => $this->isBranch(),
+            'is_continued' => $this->isContinued(),
             'continuations_count' => $this->continuations_count,
             'like_count' => $this->like_count,
+            'branch_like_count' => $this->branch_like_count,
             'comment_count' => $this->comment_count,
             'status' => $this->status,
+            'is_draft' => $this->isDraft(),
+            'is_correctable' => $this->isCorrectable(),
+            'is_root' => $this->isRoot(),
             'author' => [
                 'id' => $this->author_id,
-                'pseudo' => $this->whenLoaded('author', fn () => $this->author?->pseudo),
+                'username' => $this->whenLoaded('author', fn () => $this->author->username),
             ],
+            'novel' => $this->whenLoaded('novel', fn () => [
+                'id' => $this->novel->id,
+                'slug' => $this->novel->slug,
+                'title' => $this->novel->title,
+                'genre_id' => $this->novel->genre_id,
+            ]),
             'published_at' => $this->published_at?->toIso8601String(),
         ];
-    }
-
-    /**
-     * Le texte intégral n'est servi que sur la fiche d'un chapitre : une liste
-     * de continuité en renverrait autant de `longText` que de chapitres.
-     */
-    private function shouldExposeContent(Request $request): bool
-    {
-        return $request->routeIs('chapters.show');
     }
 }

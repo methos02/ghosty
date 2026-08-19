@@ -4,14 +4,12 @@ import { servicesStores } from '@/services/services-stores.js'
 const _store = () => servicesStores.get('form')
 
 export const formStore = {
-  // refs
   get errors() {
     return _store().errors
   },
   get options() {
     return _store().options
   },
-  // methods
   get addError() {
     return _store().formStore.addError
   },
@@ -53,6 +51,8 @@ export const formStore = {
 export const form = {
   addError: (inputName, error) => servicesM.service('form:addError', [inputName, error]),
   addErrors: errors => servicesM.service('form:addErrors', [errors]),
+  addValidationErrors: (validationErrors, formName) =>
+    servicesM.service('form:addValidationErrors', [validationErrors, formName]),
   clearError: inputName => servicesM.service('form:clearError', [inputName]),
   clearErrors: () => servicesM.service('form:clearErrors'),
   getError: inputName => servicesM.service('form:getError', [inputName]),

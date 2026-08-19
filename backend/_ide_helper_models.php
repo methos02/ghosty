@@ -13,6 +13,25 @@
 
 namespace App\Models{
 /**
+ * @property int $id
+ * @property int $novel_id
+ * @property int|null $parent_id
+ * @property int $author_id
+ * @property string $title
+ * @property string $content
+ * @property string|null $summary
+ * @property string $path
+ * @property int $depth
+ * @property int $continuations_count
+ * @property int $support_count
+ * @property int $comment_count
+ * @property int $read_count
+ * @property int $branch_like_count
+ * @property int $status
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property \Illuminate\Support\Carbon|null $last_activity_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Chapter> $children
  * @property-read int|null $children_count
@@ -25,6 +44,25 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter published()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter roots()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereCommentCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereContinuationsCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereDepth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereIsMainChild($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereLastActivityAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereNovelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereParentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter wherePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter wherePublishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereReadCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereSupportCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -93,7 +131,7 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
- * @property string $pseudo
+ * @property string $username
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password

@@ -11,7 +11,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'pseudo' => 'admin',
+            'username' => 'admin',
             'email' => 'admin@ghosty.fr',
             'password' => Hash::make('password'),
             'roles' => [User::ROLE_READER, User::ROLE_AUTHOR, User::ROLE_MODERATOR, User::ROLE_ADMIN],
@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'pseudo' => 'moderateur1',
+            'username' => 'moderateur1',
             'email' => 'moderateur@ghosty.fr',
             'password' => Hash::make('password'),
             'roles' => [User::ROLE_READER, User::ROLE_MODERATOR],
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'pseudo' => 'auteur1',
+            'username' => 'auteur1',
             'email' => 'auteur@ghosty.fr',
             'password' => Hash::make('password'),
             'roles' => [User::ROLE_READER, User::ROLE_AUTHOR],
@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'pseudo' => 'auteur2',
+            'username' => 'auteur2',
             'email' => 'auteur2@ghosty.fr',
             'password' => Hash::make('password'),
             'roles' => [User::ROLE_READER, User::ROLE_AUTHOR],
@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'pseudo' => 'auteur3',
+            'username' => 'auteur3',
             'email' => 'auteur3@ghosty.fr',
             'password' => Hash::make('password'),
             'roles' => [User::ROLE_READER, User::ROLE_AUTHOR],
@@ -51,7 +51,7 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'pseudo' => 'lecteur1',
+            'username' => 'lecteur1',
             'email' => 'lecteur@ghosty.fr',
             'password' => Hash::make('password'),
             'roles' => [User::ROLE_READER],

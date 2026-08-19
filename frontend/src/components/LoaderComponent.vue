@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { pixelHelper } from '@/helpers/pixel-helper.js'
+import { pixelHelper } from '@/core/helpers/pixel-helper.js'
 
 const props = defineProps({
   type: { type: String, default: 'bars' },
@@ -103,9 +103,11 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
-.btn-loading {
+.btn.btn-loading {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--neutral-100);
   cursor: not-allowed;
-  opacity: 0.7;
 }
 
 .btn-content {

@@ -2,12 +2,12 @@ import { ref, readonly, inject } from 'vue'
 
 export const CHAPTER_STORE_KEY = Symbol('chapter-store')
 
-export const createChapterStore = () => {
-  const mainContinuity = ref([])
+const chapterStore = () => {
+  const currentContinuity = ref([])
   const currentChapter = ref()
 
-  const setMainContinuity = chapters => {
-    mainContinuity.value = chapters
+  const setCurrentContinuity = chapters => {
+    currentContinuity.value = chapters
   }
 
   const setCurrentChapter = chapter => {
@@ -19,12 +19,12 @@ export const createChapterStore = () => {
   }
 
   const clear = () => {
-    mainContinuity.value = []
+    currentContinuity.value = []
     currentChapter.value = undefined
   }
 
   const serialize = () => ({
-    mainContinuity: mainContinuity.value,
+    currentContinuity: currentContinuity.value,
     currentChapter: currentChapter.value,
   })
 
@@ -32,14 +32,14 @@ export const createChapterStore = () => {
     if (!data) {
       return
     }
-    mainContinuity.value = data.mainContinuity ?? []
+    currentContinuity.value = data.currentContinuity ?? []
     currentChapter.value = data.currentChapter
   }
 
   return {
-    mainContinuity: readonly(mainContinuity),
+    currentContinuity: readonly(currentContinuity),
     currentChapter: readonly(currentChapter),
-    setMainContinuity,
+    setCurrentContinuity,
     setCurrentChapter,
     clearCurrentChapter,
     clear,
@@ -47,5 +47,7 @@ export const createChapterStore = () => {
     hydrate,
   }
 }
+
+export const createChapterStore = () => chapterStore()
 
 export const useChapterStore = () => inject(CHAPTER_STORE_KEY)

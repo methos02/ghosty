@@ -5,7 +5,6 @@ const headersDefault = {
   'X-Requested-With': 'XMLHttpRequest',
 }
 
-// @see backend/memory-bank/decisions/ADR-04-token-en-cookie-httponly.md
 export const requestInterceptor = (config = {}) => {
   if (abortManager.getAbort() !== undefined) {
     config.signal = abortManager.abortSignal()

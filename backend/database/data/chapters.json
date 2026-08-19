@@ -11,7 +11,6 @@
                 {
                     "title": "Ce que le ravin gardait",
                     "author": "auteur2",
-                    "main": true,
                     "summary": "Sous les fougères, un second véhicule, immatriculé douze ans plus tôt.",
                     "content": "Il fallut trois heures pour descendre. Sous les fougères, à quarante mètres de la première épave, une carcasse rongée par la rouille attendait depuis douze ans. Même modèle. Même couleur. Même virage.",
                     "like_count": 33,
@@ -19,7 +18,6 @@
                         {
                             "title": "L'homme qui revenait",
                             "author": "auteur3",
-                            "main": true,
                             "summary": "Un habitant du village prétend avoir déjà vécu cette nuit-là.",
                             "content": "Le vieux Marceau ne s'étonna de rien. Il répéta simplement, en tassant sa pipe : « La route reprend ce qu'elle a prêté. » Puis il raconta la nuit de 2013, mot pour mot, jusqu'au détail du siège vide.",
                             "like_count": 21,
@@ -27,7 +25,6 @@
                                 {
                                     "title": "Le registre des disparus",
                                     "author": "auteur1",
-                                    "main": true,
                                     "summary": "Douze noms, douze virages, un intervalle régulier.",
                                     "content": "La mairie conservait un registre que personne n'ouvrait plus. Douze noms, douze accidents, tous au même endroit, tous espacés d'un an jour pour jour. Le treizième nom était déjà écrit, à l'encre fraîche.",
                                     "like_count": 15,
@@ -55,7 +52,6 @@
                         {
                             "title": "Trois kilomètres à pied",
                             "author": "auteur2",
-                            "main": true,
                             "summary": "Les empreintes s'arrêtent au milieu de la chaussée.",
                             "content": "Les empreintes suivaient l'asphalte sur trois kilomètres, régulières, sans hésitation. Puis elles s'arrêtaient net au milieu de la chaussée, comme si le marcheur avait été cueilli en pleine foulée.",
                             "like_count": 18,
@@ -78,7 +74,6 @@
                 {
                     "title": "18 h 39",
                     "author": "auteur1",
-                    "main": true,
                     "summary": "Il y va quand même, une minute trop tôt.",
                     "content": "J'y suis allé. Bien sûr que j'y suis allé. À 18 h 39, la rue était vide, et mon téléphone a commencé à enregistrer tout seul.",
                     "like_count": 19,

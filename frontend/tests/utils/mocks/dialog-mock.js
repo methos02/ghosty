@@ -1,4 +1,3 @@
-// jsdom n'implémente pas l'API <dialog>, utilisée par DialogComponent et les dialogs d'auth.
 export const dialogMock = () => {
   if (typeof HTMLDialogElement === 'undefined') {
     return

@@ -12,7 +12,6 @@ hydrateStores(stores, globalThis.__INITIAL_STATE__)
 await router.isReady()
 app.mount('#app')
 
-// @see backend/memory-bank/decisions/ADR-06-rendu-ssr-authentifie.md
 if (!stores.auth.isAuthenticated.value) {
   await auth.fetchCurrentUser()
 }

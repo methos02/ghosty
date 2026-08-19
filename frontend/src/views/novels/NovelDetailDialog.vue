@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { t, route, router } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
@@ -8,12 +8,14 @@ import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import { useChapterStore } from '@/apis/chapters/stores/chapter-store.js'
 import { useNovelDetailHead } from '@/head/use-novel-detail-head.js'
 import DialogComponent from '@/components/DialogComponent.vue'
+import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import PaginatorChapterComponent from '@/components/paginators/PaginatorChapterComponent.vue'
 
 useNovelDetailHead()
 
+const authStore = useAuthStore()
 const { selectedNovel, setSelectedNovel, clearSelectedNovel } = useNovelStore()
-const { mainContinuity, currentChapter, setMainContinuity, setCurrentChapter, clear } =
+const { currentContinuity, currentChapter, setCurrentContinuity, setCurrentChapter, clear } =
   useChapterStore()
 
 const dialog = ref()
@@ -37,7 +39,7 @@ const ensureNovel = async slug => {
 }
 
 const showChapterAt = chapterNumber => {
-  const chapter = mainContinuity.value[chapterNumber - 1]
+  const chapter = currentContinuity.value[chapterNumber - 1]
   if (!chapter) {
     return
   }
@@ -46,7 +48,7 @@ const showChapterAt = chapterNumber => {
   currentChapterNumber.value = chapterNumber
 }
 
-const loadMainContinuity = async () => {
+const loadCurrentContinuity = async () => {
   if (!selectedNovel.value) {
     return
   }
@@ -54,7 +56,7 @@ const loadMainContinuity = async () => {
   isLoading.value = true
   errorMessage.value = ''
 
-  const response = await ChapterController.mainContinuity(selectedNovel.value.slug)
+  const response = await ChapterController.currentContinuity(selectedNovel.value.slug)
 
   if (response.status !== STATUS.SUCCESS) {
     errorMessage.value = response.error
@@ -62,7 +64,7 @@ const loadMainContinuity = async () => {
     return
   }
 
-  setMainContinuity(response.chapters)
+  setCurrentContinuity(response.chapters)
   showChapterAt(1)
   isLoading.value = false
 }
@@ -87,7 +89,7 @@ const openForSlug = async slug => {
     return
   }
 
-  await loadMainContinuity()
+  await loadCurrentContinuity()
 }
 
 const handleChapterChange = ({ chapter }) => {
@@ -97,8 +99,23 @@ const handleChapterChange = ({ chapter }) => {
   showChapterAt(chapter)
 }
 
-const readCurrentChapter = () => {
-  // TODO: naviguer vers la lecture du chapitre courant
+const readCurrentChapter = () => {}
+
+const canCorrectCurrentChapter = computed(
+  () =>
+    currentChapter.value?.isCorrectable === true &&
+    currentChapter.value?.author?.id === authStore.user.value?.id,
+)
+
+const correctCurrentChapter = async () => {
+  await router.push({ name: 'chapter-edit', params: { id: currentChapter.value.id } })
+}
+
+const continueCurrentChapter = async () => {
+  await router.push({
+    name: 'chapter-write',
+    params: { slug: selectedNovel.value.slug, parentId: currentChapter.value.id },
+  })
 }
 
 const handleDialogClose = () => {
@@ -153,9 +170,9 @@ watch(() => route.get('slug'), openForSlug)
           </div>
 
           <PaginatorChapterComponent
-            v-if="mainContinuity.length > 0"
+            v-if="currentContinuity.length > 0"
             :currentChapter="currentChapterNumber"
-            :totalChapters="mainContinuity.length"
+            :totalChapters="currentContinuity.length"
             @p-chapter="handleChapterChange"
           />
         </div>
@@ -180,13 +197,30 @@ watch(() => route.get('slug'), openForSlug)
               {{ currentChapter.summary }}
             </div>
 
-            <button
-              type="button"
-              class="btn btn-primary | align-self-center"
-              @click="readCurrentChapter"
-            >
-              Lire ce chapitre
-            </button>
+            <div class="d-flex f-wrap j-center g-10">
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="readCurrentChapter"
+              >
+                Lire ce chapitre
+              </button>
+              <button
+                type="button"
+                class="novel-detail-dialog__continue | btn btn-primary-alt"
+                @click="continueCurrentChapter"
+              >
+                {{ t('novel.continue_chapter') }}
+              </button>
+              <button
+                v-if="canCorrectCurrentChapter"
+                type="button"
+                class="novel-detail-dialog__correct | btn btn-primary-alt"
+                @click="correctCurrentChapter"
+              >
+                {{ t('novel.correct_chapter') }}
+              </button>
+            </div>
           </div>
 
           <div

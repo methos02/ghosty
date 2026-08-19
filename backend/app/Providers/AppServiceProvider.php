@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
+use App\Support\TokenCookieSettings;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
     private function resolveAccessTokenFromCookie(): void
     {
         Sanctum::getAccessTokenFromRequestUsing(function (Request $request): ?string {
-            $cookieToken = $request->cookie(config('sanctum.token_cookie.name'));
+            $cookieToken = $request->cookie(TokenCookieSettings::fromConfig()->name);
 
             return is_string($cookieToken) && $cookieToken !== '' ? $cookieToken : null;
         });
@@ -42,11 +42,13 @@ class AppServiceProvider extends ServiceProvider
     private function defineAuthRateLimiters(): void
     {
         RateLimiter::for('login', function (Request $request): Limit {
-            return Limit::perMinute(5)->by(Str::lower($request->input('email', '')).'|'.$request->ip());
+            $identifier = $request->string('identifier')->lower()->toString();
+
+            return Limit::perMinute(5)->by($identifier.'|'.$request->ip());
         });
 
         RateLimiter::for('register', function (Request $request): Limit {
-            return Limit::perHour(5)->by($request->ip());
+            return Limit::perHour(5)->by($request->ip() ?? '');
         });
     }
 }

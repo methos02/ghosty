@@ -1,0 +1,25 @@
+{
+  "novel_manage": {
+    "title": "Créer un roman",
+    "subtitle": "Écrivez le chapitre d'origine : les autres auteurs pourront le poursuivre, dans autant de réalités qu'ils le souhaitent.",
+    "draft_resume": "Reprendre un brouillon",
+    "draft_new": "Nouveau roman",
+    "draft_untitled": "Sans titre",
+    "novel_title": "Titre du roman",
+    "genre": "Genre",
+    "first_chapter": "Chapitre d'origine",
+    "chapter_title": "Titre du chapitre",
+    "submit": "Publier",
+    "error_title_required": "Le titre du roman est obligatoire",
+    "error_title_size_min": "Le titre doit contenir au moins :size caractères",
+    "error_title_size_max": "Le titre ne peut pas dépasser :size caractères",
+    "error_genre_required": "Le genre est obligatoire",
+    "error_chapter_title_required": "Le titre du chapitre est obligatoire",
+    "error_chapter_title_size_min": "Le titre du chapitre doit contenir au moins :size caractères",
+    "error_chapter_title_size_max": "Le titre du chapitre ne peut pas dépasser :size caractères",
+    "error_chapter_content_required": "Le texte du chapitre est obligatoire",
+    "error_chapter_summary_required": "Le résumé du chapitre est obligatoire",
+    "error_chapter_summary_size_max": "Le résumé ne peut pas dépasser :size caractères",
+    "save_draft": "Brouillon"
+  }
+}

@@ -64,12 +64,12 @@ const close = () => {
       >
         <div class="form-row">
           <InputComponent
-            v-model="datas.email"
-            name="email"
-            type="email"
-            :label="t('auth.login_email')"
+            v-model="datas.identifier"
+            name="identifier"
+            type="text"
+            :label="t('auth.login_identifier')"
             :required="true"
-            autocomplete="email"
+            autocomplete="username"
             form="login"
           />
         </div>

@@ -4,8 +4,6 @@ import { STATUS } from '@/constants/ajax-constants.js'
 
 const authDialogs = useAuth()
 
-// Ghosty (JWT mono-API, pas de refresh-token) : stubs alignés sur ce que la nouvelle
-// archi attend d'un service auth (ajax-service, router-functions, AppComponent).
 const isApiSkipped = () => false
 const refreshToken = async () => ({ status: STATUS.UNAUTHORIZED })
 

@@ -10,7 +10,7 @@ export const useNovelDetailHead = () => {
     if (!novel) {
       return ''
     }
-    return [novel.title, novel.genre?.label, novel.author?.pseudo && `par ${novel.author.pseudo}`]
+    return [novel.title, novel.genre?.label, novel.author?.username && `par ${novel.author.username}`]
       .filter(Boolean)
       .join(' — ')
   })

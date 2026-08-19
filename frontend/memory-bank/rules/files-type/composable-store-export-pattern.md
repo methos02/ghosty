@@ -6,6 +6,8 @@ paths:
 ---
 # Composable Store Export Pattern
 
+Applies to composables and **client-only** stores. A store rendered at SSR follows `request-scoped-store.md` instead — the module-level refs below leak between visitors on the server.
+
 Composables and stores must return refs/computed at the top level and group functions in a named object matching the store name.
 
 The named object contains **only functions** — never refs. Refs live at the top level of the composable.

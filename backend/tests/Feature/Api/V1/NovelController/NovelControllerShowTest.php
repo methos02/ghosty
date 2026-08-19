@@ -13,7 +13,7 @@ class NovelControllerShowTest extends TestCase
     #[Test]
     public function returns_novel_by_slug_with_author_genre_and_chapters_count(): void
     {
-        $author = User::factory()->create(['pseudo' => 'Victor Hugo']);
+        $author = User::factory()->create(['username' => 'Victor Hugo']);
         $genre = Genre::factory()->create(['name' => 'Roman']);
         $novel = Novel::factory()->create([
             'title' => 'Les Misérables',
@@ -31,7 +31,7 @@ class NovelControllerShowTest extends TestCase
         $response->assertJsonPath('title', 'Les Misérables');
         $response->assertJsonPath('chapters_count', 2);
         $response->assertJsonPath('author.id', $author->id);
-        $response->assertJsonPath('author.pseudo', 'Victor Hugo');
+        $response->assertJsonPath('author.username', 'Victor Hugo');
         $response->assertJsonPath('genre.id', $genre->id);
         $response->assertJsonPath('genre.name', 'Roman');
     }

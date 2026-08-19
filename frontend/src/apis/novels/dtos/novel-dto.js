@@ -16,8 +16,30 @@ const fromList = (datas = []) => {
   return datas.map(data => fromShow(data))
 }
 
-const toListParams = page => {
-  return { page }
+const toCreate = formData => ({
+  novel: {
+    title: formData.novel.title,
+    genre_id: formData.novel.genreId,
+  },
+  chapter: {
+    title: formData.chapter.title,
+    content: formData.chapter.content,
+    summary: formData.chapter.summary,
+    is_draft: formData.chapter.isDraft,
+  },
+})
+
+const toUpdate = formData => ({
+  title: formData.title,
+  genre_id: formData.genreId,
+})
+
+const toListParams = filters => {
+  return {
+    page: filters.page,
+    search: filters.search,
+    genre_id: filters.genreId,
+  }
 }
 
 const toShowParams = slug => {
@@ -27,6 +49,8 @@ const toShowParams = slug => {
 export const NovelDto = {
   fromList,
   fromShow,
+  toCreate,
+  toUpdate,
   toListParams,
   toShowParams,
 }

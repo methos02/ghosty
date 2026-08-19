@@ -1,5 +1,5 @@
 import { ref, readonly } from 'vue'
-import { ssrStorage } from '@/helpers/ssr-storage.js'
+import { ssrStorage } from '@/core/helpers/ssr-storage.js'
 
 const currentLocale = ref('fr')
 

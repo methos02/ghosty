@@ -68,8 +68,8 @@ describe('utils-hydrate', () => {
       HydrateFunctions.registerController(
         'author',
         makeController([
-          { id: 7, pseudo: 'Alice' },
-          { id: 8, pseudo: 'Bob' },
+          { id: 7, username: 'Alice' },
+          { id: 8, username: 'Bob' },
         ]),
       )
 
@@ -80,8 +80,8 @@ describe('utils-hydrate', () => {
 
       const result = await HydrateFunctions.hydrate(data, ['author'])
 
-      expect(result[0].author).toEqual({ id: 7, pseudo: 'Alice' })
-      expect(result[1].author).toEqual({ id: 8, pseudo: 'Bob' })
+      expect(result[0].author).toEqual({ id: 7, username: 'Alice' })
+      expect(result[1].author).toEqual({ id: 8, username: 'Bob' })
     })
 
     it('leaves items untouched when the controller call fails', async () => {

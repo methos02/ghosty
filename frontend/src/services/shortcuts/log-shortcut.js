@@ -1,10 +1,6 @@
 /* eslint-disable no-console */
 
-// Ghosty opt-out : pas de télémétrie backend, `send` reste un no-op.
-// TODO: remplacer ce stub par le vrai service de log quand l'endpoint backend de logging sera créé.
-const send = async () => {
-  // no-op stub
-}
+const send = async () => {}
 
 const error = (message, ...arguments_) => {
   console.error('[Error]', message, ...arguments_)

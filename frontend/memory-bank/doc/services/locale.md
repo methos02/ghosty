@@ -16,6 +16,17 @@ Locale persisted in `localStorage` key `'locale'`.
 
 JSON key/value pairs in `src/locales/{lang}/`. Dynamic params: `"hello": "Hello {name}!"` → `t('hello', { name: 'John' })`. Also: `t('key:name=John|age=20')`.
 
+**Pluralization** — pass a number instead of a params object; vue-i18n picks the form by index. Three forms give zero / one / many, and `{count}` is filled automatically.
+
+```json
+"drafts": "Rédiger un nouveau roman | 1 brouillon en cours | {count} brouillons en cours"
+```
+```javascript
+t('user_summary.drafts', draftsCount)
+```
+
+Replaces the usual `if (count === 0) … if (count === 1) …` chain. See `views/parts/UserSummary.vue`.
+
 Vite plugin auto-compiles from: `./src/locales/`, `./src/apis/*/locales/`, `./src/services/*/locales/`, `node_modules/@brugmann/vuemann/src/...`. Auto-versioning, HMR, cleanup.
 
 ## Methods

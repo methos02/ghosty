@@ -2,18 +2,31 @@ import { ref, readonly, inject } from 'vue'
 
 export const NOVEL_STORE_KEY = Symbol('novel-store')
 
-export const createNovelStore = () => {
-  const novels = ref([])
-  const isLoading = ref(false)
-  const selectedNovel = ref()
-  const currentChapter = ref()
+const defaultPagination = () => ({
+  nextPage: 1,
+  lastPage: 1,
+})
 
-  const setNovels = newNovels => {
-    novels.value = newNovels
+const novelStore = () => {
+  const novels = ref([])
+  const pagination = ref(defaultPagination())
+  const selectedNovel = ref()
+
+  const addNovels = loaded => {
+    novels.value.push(...loaded)
   }
 
-  const setLoading = loading => {
-    isLoading.value = loading
+  const setPagination = value => {
+    pagination.value = value
+  }
+
+  const reset = () => {
+    novels.value = []
+    pagination.value = defaultPagination()
+  }
+
+  const hasMore = () => {
+    return pagination.value.nextPage <= pagination.value.lastPage
   }
 
   const setSelectedNovel = novel => {
@@ -22,17 +35,12 @@ export const createNovelStore = () => {
 
   const clearSelectedNovel = () => {
     selectedNovel.value = undefined
-    currentChapter.value = undefined
-  }
-
-  const setCurrentChapter = chapter => {
-    currentChapter.value = chapter
   }
 
   const serialize = () => ({
     novels: novels.value,
+    pagination: pagination.value,
     selectedNovel: selectedNovel.value,
-    currentChapter: currentChapter.value,
   })
 
   const hydrate = data => {
@@ -40,23 +48,25 @@ export const createNovelStore = () => {
       return
     }
     novels.value = data.novels ?? []
+    pagination.value = data.pagination ?? defaultPagination()
     selectedNovel.value = data.selectedNovel
-    currentChapter.value = data.currentChapter
   }
 
   return {
     novels: readonly(novels),
-    isLoading: readonly(isLoading),
+    pagination: readonly(pagination),
     selectedNovel: readonly(selectedNovel),
-    currentChapter: readonly(currentChapter),
-    setNovels,
-    setLoading,
+    addNovels,
+    setPagination,
+    reset,
+    hasMore,
     setSelectedNovel,
     clearSelectedNovel,
-    setCurrentChapter,
     serialize,
     hydrate,
   }
 }
+
+export const createNovelStore = () => novelStore()
 
 export const useNovelStore = () => inject(NOVEL_STORE_KEY)

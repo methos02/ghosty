@@ -10,7 +10,7 @@ describe('utils shortcut', () => {
     HydrateFunctions.clearControllers()
   })
 
-   it('delegates store methods and refs to the utils store', () => {
+  it('delegates store methods and refs to the utils store', () => {
     utilsStore.setAppStatus(APP_STATUS.LOADED)
 
     expect(utilsStore.getAppStatus()).toBe(APP_STATUS.LOADED)
@@ -21,12 +21,12 @@ describe('utils shortcut', () => {
     utils.registerController('author', {
       byIds: async ids => ({
         status: STATUS.SUCCESS,
-        data: [{ id: 7, pseudo: 'Alice' }].filter(entity => ids.includes(entity.id)),
+        data: [{ id: 7, username: 'Alice' }].filter(entity => ids.includes(entity.id)),
       }),
     })
 
     const result = await utils.hydrate([{ id: 1, author: { id: 7 } }], ['author'])
 
-    expect(result[0].author).toEqual({ id: 7, pseudo: 'Alice' })
+    expect(result[0].author).toEqual({ id: 7, username: 'Alice' })
   })
 })

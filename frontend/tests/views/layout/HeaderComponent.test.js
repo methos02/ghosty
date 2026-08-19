@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { mount, shallowMount } from '@vue/test-utils'
 import HeaderComponent from '@/views/layout/HeaderComponent.vue'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { useAuth } from '@/services/auth/src/use-auth.js'
@@ -38,26 +38,61 @@ describe('HeaderComponent.vue', () => {
 
       expect(useAuth().showRegisterDialog.value).toBe(true)
     })
+
+    it('offers no menu', () => {
+      useAuthStore().clear()
+      const wrapper = mount(HeaderComponent)
+
+      expect(wrapper.find('.header-menu').exists()).toBe(false)
+    })
   })
 
   describe('when authenticated', () => {
-    it('shows the pseudo and a logout button', () => {
-      useAuthStore().setUser({ pseudo: 'GhostWriter' })
+    it('replaces the buttons with the username and a menu', () => {
+      useAuthStore().setUser({ username: 'GhostWriter' })
 
-      const wrapper = shallowMount(HeaderComponent)
+      const wrapper = mount(HeaderComponent)
 
       expect(wrapper.find('.header-username').text()).toBe('GhostWriter')
-      expect(wrapper.find('.btn-auth').text()).toBe('Déconnexion')
+      expect(wrapper.find('.header-menu').exists()).toBe(true)
+      expect(wrapper.findAll('.btn-auth')).toHaveLength(0)
     })
 
-    it('calls auth.logout when clicking the logout button', async () => {
-      useAuthStore().setUser({ pseudo: 'GhostWriter' })
+    it('gathers writing, drafts and favorites in the menu', () => {
+      useAuthStore().setUser({ username: 'GhostWriter' })
+
+      const wrapper = mount(HeaderComponent)
+
+      expect(wrapper.findComponent('.header-create').props('to')).toEqual({ name: 'novel-create' })
+      expect(wrapper.findComponent('.header-drafts').props('to')).toEqual({ name: 'drafts' })
+      expect(wrapper.findComponent('.header-favorites').props('to')).toEqual({ name: 'favorites' })
+    })
+
+    it('tints the bar while the side menu is open', async () => {
+      useAuthStore().setUser({ username: 'GhostWriter' })
+
+      const wrapper = mount(HeaderComponent)
+      await wrapper.find('.header-burger').trigger('click')
+
+      expect(wrapper.find('.header').classes('header--menu-open')).toBe(true)
+    })
+
+    it('calls auth.logout from the menu', async () => {
+      useAuthStore().setUser({ username: 'GhostWriter' })
       const logout = vi.spyOn(auth, 'logout').mockResolvedValue({ status: 200 })
 
-      const wrapper = shallowMount(HeaderComponent)
-      await wrapper.find('.btn-auth').trigger('click')
+      const wrapper = mount(HeaderComponent)
+      await wrapper.find('.header-logout').trigger('click')
 
       expect(logout).toHaveBeenCalledOnce()
     })
+  })
+
+  it('carries its own background unless the page asks for transparency', () => {
+    const opaque = mount(HeaderComponent)
+    const overHero = mount(HeaderComponent, { props: { transparent: true } })
+
+    expect(opaque.find('.header').classes()).not.toContain('header--transparent')
+    expect(overHero.find('.header').classes()).toContain('header--transparent')
   })
 })

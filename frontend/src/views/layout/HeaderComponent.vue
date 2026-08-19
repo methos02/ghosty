@@ -1,20 +1,27 @@
 <script setup>
+import { ref } from 'vue'
+import HeaderSideMenu from '@/views/layout/HeaderSideMenu.vue'
 import LoginDialog from '@/services/auth/views/LoginDialog.vue'
 import RegisterDialog from '@/services/auth/views/RegisterDialog.vue'
 import { useAuth } from '@/services/auth/src/use-auth.js'
-import { auth } from '@/services/shortcuts/services-shortcut.js'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
+
+defineProps({
+  transparent: { type: Boolean, default: false },
+})
 
 const authDialogs = useAuth()
 const authStore = useAuthStore()
 
-const handleLogout = async () => {
-  await auth.logout()
-}
+const isMenuOpen = ref(false)
 </script>
 
 <template>
-  <header class="header | d-flex j-between a-center py-5">
+  <header
+    class="header | d-flex j-between a-center py-5"
+    :class="{ 'header--transparent': transparent, 'header--menu-open': isMenuOpen }"
+  >
     <div class="header-right">
       <router-link
         to="/"
@@ -31,30 +38,28 @@ const handleLogout = async () => {
         </p>
       </router-link>
     </div>
-    <div class="header-left | d-flex g-25">
-      <template v-if="authStore.isAuthenticated.value">
-        <span class="header-username | color-neutral-100 fs-500">
-          {{ authStore.user.value?.pseudo }}
-        </span>
-        <button
-          @click="handleLogout"
-          class="btn-auth | btn btn-neutral-100 py-10"
-        >
-          Déconnexion
-        </button>
-      </template>
+
+    <div class="header-left | d-flex a-center g-25">
+      <div
+        v-if="authStore.isAuthenticated.value"
+        class="header-menu | d-flex a-center g-15 color-neutral-100"
+      >
+        <span class="header-username | fs-500">{{ authStore.user.value?.username }}</span>
+        <HeaderSideMenu v-model:open="isMenuOpen" />
+      </div>
+
       <template v-if="!authStore.isAuthenticated.value">
         <button
           @click="authDialogs.openLoginDialog()"
-          class="btn-auth | btn btn-neutral-100 py-10"
+          class="btn-auth | btn btn-neutral-100 py-5"
         >
-          Connexion
+          {{ t('header.login') }}
         </button>
         <button
           @click="authDialogs.openRegisterDialog()"
-          class="btn-auth | btn btn-neutral-100 py-10"
+          class="btn-auth | btn btn-neutral-100 py-5"
         >
-          Inscription
+          {{ t('header.register') }}
         </button>
       </template>
     </div>
@@ -66,7 +71,21 @@ const handleLogout = async () => {
 
 <style lang="scss">
 .header {
+  height: 60px;
   padding-inline: 5%;
+
+  position: relative;
+  z-index: 51;
+  background-color: var(--secondary);
+  transition: background-color 300ms;
+
+  &--transparent {
+    background-color: transparent;
+  }
+
+  &--menu-open {
+    background-color: var(--secondary);
+  }
 
   &-logo {
     width: 50px;
@@ -86,12 +105,11 @@ const handleLogout = async () => {
   }
 
   .btn-auth {
-    width: 150px;
+    width: 130px;
+    min-height: 38px;
   }
 
   &-username {
-    display: flex;
-    align-items: center;
     font-weight: 500;
   }
 }

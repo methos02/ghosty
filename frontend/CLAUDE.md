@@ -67,10 +67,10 @@ frontend/src/
 │   ├── layout/
 │   │   └── HeaderComponent.vue
 │   └── parts/                 # Sous-composants spécifiques
-├── composables/               # Composables globaux (état partagé)
-│   ├── useAuth.js
-│   ├── useNovels.js
-│   └── useWorks.js
+├── core/                      # JS pur, sans dépendance Vue
+│   └── helpers/
+├── core-vue/                  # Dépend de Vue
+│   └── composables/           # Composables globaux (état partagé)
 ├── services/                  # Services Vuemann
 │   ├── ajax/                 # Service HTTP (req)
 │   ├── locale/               # Service i18n (t)
@@ -155,7 +155,9 @@ L'infra SSR isomorphe est regroupée dans **`src/ssr/`** (hors `server.js`, proc
 ### Règles SSR (à respecter pour tout nouveau code)
 
 1. **Stores request-scoped** : un store consommé au SSR est une **factory** (`createXStore()`) fournie via `provide()` dans `app.js` ; `useXStore()` fait `inject(KEY, false) ?? fallback`. **JAMAIS** de `ref()` au niveau module partagé pour de la donnée rendue au serveur (fuite entre requêtes). Chaque store expose `serialize()` / `hydrate()`. Voir `apis/novels/stores/novel-store.js`.
-2. **Aucun accès navigateur au module-load ou en `setup()`** : `window`, `document`, `localStorage` uniquement derrière un guard. Utiliser **`helpers/ssr-storage.js`** pour le storage. OK dans `onMounted`/handlers (non exécutés au serveur).
+
+   **Forme imposée** : `memory-bank/rules/files-type/request-scoped-store.md` — deux fonctions, `xStore()` pour le comportement et `createXStore()` pour énoncer le type de retour. Le wrapper d'une ligne n'est pas une indirection morte.
+2. **Aucun accès navigateur au module-load ou en `setup()`** : `window`, `document`, `localStorage` uniquement derrière un guard. Utiliser **`core/helpers/ssr-storage.js`** pour le storage. OK dans `onMounted`/handlers (non exécutés au serveur).
 3. **Prefetch des données** : déclarer `meta.asyncData({ stores, route })` sur la route (voir `config/routes-config.js`). `entry-server` l'appelle avant le rendu ; l'état est sérialisé puis hydraté (pas de double fetch au 1er rendu). Prévoir le rechargement client (onMounted) pour les navigations SPA. Pour propager un vrai statut HTTP (ex. **404 sur ressource introuvable**), l'asyncData **retourne `{ statusCode }`** (retour uniforme) ; `runAsyncData` propage les statuts `< 500` à la réponse HTTP et **logue** les erreurs serveur (`≥ 500`) en gardant la coquille résiliente (le client réhydrate).
 4. **Meta/SEO** : `useHead()` de `@unhead/vue` dans les composants de page.
 5. **Fetch serveur** : l'URL d'API doit être **absolue** (`VITE_GHOSTY_API_URL`) et joignable depuis le process Node.
@@ -407,7 +409,7 @@ export const NovelController = { list, getById }
 Stockage d'état partagé uniquement :
 
 ```javascript
-// src/composables/useNovels.js
+// src/core-vue/composables/useNovels.js
 import { ref, computed, readonly } from 'vue'
 
 // ⚠️ État global (hors fonction = partagé)
@@ -452,11 +454,16 @@ export const useNovels = () => {
 }
 ```
 
-**❌ INTERDIT dans les composables** :
-- Appels API (`req()`)
-- Logique métier complexe
+**❌ INTERDIT dans les stores** :
+- `req()` — l'accès HTTP reste dans les repositories
 - Validation de données
 - **États temporaires UI** (loading, error) - à gérer localement dans les composants
+
+Un **store** ne stocke que de l'état. L'orchestration qui lit des stores et appelle un
+controller vit dans un **composable** (`apis/{domaine}/composables/use-*.js`) — c'est le cas
+d'usage décrit par `memory-bank/rules/files-type/composable.md`. Voir
+`apis/novels/composables/use-novel-search.js`, qui combine `novel-store`, `novel-filter-store`
+et `NovelController` sans qu'aucun des trois ne connaisse les autres.
 
 ### 📦 Composables de Services (Pattern Alternatif)
 
@@ -566,7 +573,7 @@ Présentation et interaction utilisateur :
 <script setup>
 import { ref, onMounted } from 'vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
-import { useNovels } from '@/composables/useNovels.js'
+import { useNovels } from '@/core-vue/composables/useNovels.js'
 import { NovelController } from '@/apis/ghosty/controllers/novel-controller.js'
 import { STATUS } from '@/config/constants.js'
 

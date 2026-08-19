@@ -6,4 +6,13 @@ const getMetaApi = (overrides = {}) => ({
   ...overrides,
 })
 
-export const paginationSeeder = { getMetaApi }
+const getPagination = (overrides = {}) => ({
+  nextPage: 2,
+  lastPage: 3,
+  ...overrides,
+})
+
+export const paginationSeeder = {
+  getMetaApi,
+  getPagination,
+}

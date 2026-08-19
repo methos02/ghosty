@@ -5,7 +5,6 @@ import { authFunctions } from '@/services/auth/src/auth-functions.js'
 import { log } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 
-// @see backend/memory-bank/decisions/ADR-06-rendu-ssr-authentifie.md
 const runRestoreSession = async (stores, cookie) => {
   const { status } = await authFunctions.restoreSession(stores.auth, cookie)
 
@@ -65,8 +64,6 @@ export const render = async (url, { cookie } = {}) => {
 
   const route = router.currentRoute.value
 
-  // Statut HTTP : seedé par la route (ex. page 404 → meta.statusCode), puis
-  // surchargeable par un asyncData qui retourne { statusCode } (ex. ressource introuvable).
   const statusCode = await runAsyncData(route, stores)
 
   try {

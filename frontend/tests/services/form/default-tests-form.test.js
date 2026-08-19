@@ -101,7 +101,7 @@ describe('default-tests-form', () => {
   })
 
   describe('date rules', () => {
-        it('dispatches the date rule to dateTests with the given format', () => {
+    it('dispatches the date rule to dateTests with the given format', () => {
       expect(run('date:dd/mm/yyyy', '25/12/2024')).toBe('')
       expect(run('date:dd/mm/yyyy', '32/12/2024')).toBe('date_invalid')
     })

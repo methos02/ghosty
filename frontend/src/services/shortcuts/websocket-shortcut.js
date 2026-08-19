@@ -1,8 +1,4 @@
-// Ghosty opt-out : pas de features temps réel. Stub no-op.
-// TODO: remplacer ce stub par le vrai service WebSocket quand le temps réel (endpoint backend) sera ajouté.
-const noop = () => {
-  // no-op stub
-}
+const noop = () => {}
 
 export const ws = {
   clear: noop,

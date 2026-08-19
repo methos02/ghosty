@@ -2,12 +2,12 @@ import { form } from '@/services/shortcuts/services-shortcut.js'
 
 export const validateRegisterForm = datas => {
   const rules = {
-    pseudo: {
+    username: {
       rules: 'required|min:3|max:50',
       errors: {
-        required: 'auth.register_error_pseudo_required',
-        min: 'auth.register_error_pseudo_min',
-        max: 'auth.register_error_pseudo_max',
+        required: 'auth.register_error_username_required',
+        min: 'auth.register_error_username_min',
+        max: 'auth.register_error_username_max',
       },
     },
     email: {

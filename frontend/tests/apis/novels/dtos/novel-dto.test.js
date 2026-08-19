@@ -16,17 +16,17 @@ describe('novel-dto', () => {
         coverUrl: api.cover_url,
         isFavorite: api.is_favorite,
         chaptersCount: api.chapters_count,
-        author: { id: api.author.id, pseudo: api.author.pseudo },
+        author: { id: api.author.id, username: api.author.username },
         genre: { id: api.genre.id, label: api.genre.name },
       })
     })
 
     it('delegates author mapping to AuthorDto', () => {
-      const api = novelSeeder.getNovelApi({ author: { id: 99, pseudo: 'Ecrivain' } })
+      const api = novelSeeder.getNovelApi({ author: { id: 99, username: 'Ecrivain' } })
 
       const result = NovelDto.fromShow(api)
 
-      expect(result.author).toEqual({ id: 99, pseudo: 'Ecrivain' })
+      expect(result.author).toEqual({ id: 99, username: 'Ecrivain' })
     })
 
     it('delegates genre mapping to GenreDto (name -> label)', () => {
@@ -55,14 +55,36 @@ describe('novel-dto', () => {
   })
 
   describe('toListParams', () => {
-    it('wraps the page number', () => {
-      expect(NovelDto.toListParams(4)).toEqual({ page: 4 })
+    it('carries the page and the searched term', () => {
+      expect(NovelDto.toListParams({ page: 4, search: 'virage' })).toEqual({
+        page: 4,
+        search: 'virage',
+      })
     })
   })
 
   describe('toShowParams', () => {
     it('wraps the slug', () => {
       expect(NovelDto.toShowParams('mon-roman')).toEqual({ slug: 'mon-roman' })
+    })
+  })
+
+  describe('toCreate', () => {
+    it('maps the form data to the novel and root chapter payload', () => {
+      const formData = novelSeeder.getCreateForm()
+
+      expect(NovelDto.toCreate(formData)).toEqual({
+        novel: {
+          title: formData.novel.title,
+          genre_id: formData.novel.genreId,
+        },
+        chapter: {
+          title: formData.chapter.title,
+          content: formData.chapter.content,
+          summary: formData.chapter.summary,
+          is_draft: undefined,
+        },
+      })
     })
   })
 })

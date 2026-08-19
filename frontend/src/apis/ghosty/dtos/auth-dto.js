@@ -1,18 +1,18 @@
 const toRegister = datas => ({
-  pseudo: datas.pseudo,
+  username: datas.username,
   email: datas.email,
   password: datas.password,
   password_confirmation: datas.passwordConfirmation,
 })
 
 const toLogin = datas => ({
-  email: datas.email,
+  identifier: datas.identifier,
   password: datas.password,
 })
 
 const fromUser = userData => ({
   id: userData.id,
-  pseudo: userData.pseudo,
+  username: userData.username,
   email: userData.email,
   roles: userData.roles,
   avatar: userData.avatar,

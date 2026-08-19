@@ -2,10 +2,10 @@
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import ErrorForm from '@/services/form/views/ErrorFormComponent.vue'
 import CalendarPopup from '@/services/form/views/inputs/InputDate/CalendarPopupComponent.vue'
-import { FormHelper } from '@/helpers/form-helper.js'
+import { FormHelper } from '@/core/helpers/form-helper.js'
 import { flash, t } from '@/services/shortcuts/services-shortcut.js'
 import { formStore } from '@/services/form/src/form-store.js'
-import { dateHelper } from '@/helpers/date-helper.js'
+import { dateHelper } from '@/core/helpers/date-helper.js'
 import { InputDate } from '@/services/form/views/inputs/InputDate/src/input-date.js'
 import '@/services/form/views/inputs/InputDate/src/input-date.scss'
 

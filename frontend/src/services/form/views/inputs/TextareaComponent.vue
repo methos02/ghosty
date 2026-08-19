@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick, onMounted, watch } from 'vue'
 import ErrorForm from '@/services/form/views/ErrorFormComponent.vue'
-import { FormHelper } from '@/helpers/form-helper.js'
+import { FormHelper } from '@/core/helpers/form-helper.js'
 const props = defineProps({
   name: { type: String, required: true },
   placeholder: { type: String, default: undefined },
@@ -23,13 +23,22 @@ const characterCount = computed(() => {
 const textarea = ref()
 
 const autoGrow = () => {
-  if (props.autogrow === false) {
+  if (props.autogrow === false || !textarea.value) {
     return
   }
 
   textarea.value.style.height = 'auto'
+
+  if (textarea.value.scrollHeight === 0) {
+    return
+  }
+
   textarea.value.style.height = textarea.value.scrollHeight + 'px'
 }
+
+watch(value, () => nextTick(autoGrow))
+
+onMounted(autoGrow)
 </script>
 
 <template>
@@ -48,8 +57,7 @@ const autoGrow = () => {
         ref="textarea"
         v-model="value"
         @input="autoGrow"
-      >
-      </textarea>
+      ></textarea>
       <label
         v-if="label !== undefined && !noLabel"
         class="form-label"

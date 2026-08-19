@@ -1,0 +1,12 @@
+{
+  "header": {
+    "menu_open": "Ouvrir le menu",
+    "menu_close": "Fermer le menu",
+    "create_novel": "Créer un roman",
+    "drafts": "Mes brouillons",
+    "favorites": "Mes favoris",
+    "login": "Connexion",
+    "register": "Inscription",
+    "logout": "Déconnexion"
+  }
+}

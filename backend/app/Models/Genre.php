@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSlug;
 use Database\Factories\GenreFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * @mixin IdeHelperGenre
@@ -15,18 +15,14 @@ class Genre extends Model
     /** @use HasFactory<GenreFactory> */
     use HasFactory;
 
+    use HasSlug;
+
     protected $fillable = [
         'name',
     ];
 
-    protected static function boot(): void
+    public function slugSource(): string
     {
-        parent::boot();
-
-        static::creating(function (Genre $genre): void {
-            if (empty($genre->slug)) {
-                $genre->slug = Str::slug($genre->name);
-            }
-        });
+        return 'name';
     }
 }

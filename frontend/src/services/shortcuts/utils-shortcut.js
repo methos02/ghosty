@@ -4,7 +4,6 @@ import { servicesStores } from '@/services/services-stores.js'
 const _store = () => servicesStores.get('utils')
 
 export const utilsStore = {
-  // refs
   get errorGlobal() {
     return _store().errorGlobal
   },
@@ -17,7 +16,6 @@ export const utilsStore = {
   get loadingSentence() {
     return _store().loadingSentence
   },
-  // methods
   get setAppStatus() {
     return _store().utilsStore.setAppStatus
   },

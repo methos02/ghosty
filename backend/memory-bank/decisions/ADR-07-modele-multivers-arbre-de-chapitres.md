@@ -28,9 +28,24 @@ Il n'y a plus de colonne `type` discriminante, donc plus de filtre à ne pas oub
 
 **2. L'arbre est parcouru par chemin matérialisé.** Chaque chapitre porte `parent_id` (null pour la racine), `path` et `depth`. Le chemin liste les ancêtres puis le chapitre lui-même, encadré de séparateurs — `/1/12/45/` — afin qu'un préfixe `LIKE '/1/12/%'` sélectionne le sous-arbre de 12 sans jamais capturer 120. Une branche entière, un fil d'Ariane ou les ancêtres d'un chapitre se lisent ainsi en une requête, sans CTE récursive.
 
-**3. La branche n'est pas une entité mais un état dérivé.** Une branche est un chapitre dont `children_count > 0` (§4). Elle emprunte l'identité de son **chapitre-tête** : titre, auteur, résumé, soutiens. Elle n'a donc ni nom ni description propres — aucun champ à saisir nulle part, et l'interface la désigne partout par « *{titre du chapitre}* — par {pseudo} ». « Les branches auxquelles je participe » (§13) se lit dans `path` : les ancêtres d'un chapitre qui sont eux-mêmes des branches.
+**3. La branche n'est pas une entité mais un état dérivé.** Une branche est un chapitre dont `continuations_count > 0` (§4). Elle emprunte l'identité de son **chapitre-tête** : titre, auteur, résumé, soutiens. Elle n'a donc ni nom ni description propres — aucun champ à saisir nulle part, et l'interface la désigne partout par « *{titre du chapitre}* — par {pseudo} ». « Les branches auxquelles je participe » (§13) se lit dans `path` : les ancêtres d'un chapitre qui sont eux-mêmes des branches.
 
-`children_count` ne compte que les suites **publiées** : il est décrémenté quand la modération archive ou masque une suite, pas seulement à la suppression. Sans cela, un parent resterait affiché comme branche active alors que sa seule suite est invisible, ce qu'interdit §9.
+`continuations_count` ne compte que les suites **publiées** : il est décrémenté quand la modération archive ou masque une suite, pas seulement à la suppression. Sans cela, un parent resterait affiché comme branche active alors que sa seule suite est invisible, ce qu'interdit §9.
+
+Il s'appelle `continuations_count` et non `children_count` : Eloquent réserve ce dernier nom au résultat de `withCount('children')`, qui écraserait silencieusement la valeur dénormalisée au premier eager loading.
+
+**4. `ChapterService` est le seul autorisé à écrire dans `chapters`.** Le chemin matérialisé n'est pas une donnée que l'on saisit : il se déduit de la position du chapitre dans l'arbre, et quatre valeurs doivent bouger ensemble à chaque écriture.
+
+| Valeur | Portée | Quand |
+|---|---|---|
+| `path` | le chapitre | à la création, après insertion — il contient son propre id |
+| `depth` | le chapitre | à la création, `parent.depth + 1` |
+| `continuations_count` | le parent direct | à la publication |
+| `chapter_count` | le roman | à la publication |
+
+Un contrôleur qui appellerait `ChapterRepository::create()` directement obtiendrait une ligne valide pour la base et invisible pour l'arbre : sans `path`, aucun préfixe `LIKE` ne la trouve ; sans incrément, le parent n'apparaît pas comme branche. La base ne peut pas l'en empêcher — aucune contrainte n'exprime « ce compteur suit cette insertion ». La règle tient donc au fait que ces calculs n'existent qu'à un seul endroit, privés (`withPath`, `registerPublication`, `attributes`), et que le service enveloppe chaque écriture dans une transaction.
+
+Le service porte le même découpage que le reste du domaine — `createRoot`, `create`, `update`, `publish`, `delete` — et `publish` reste distinct de `update` précisément parce qu'il déclenche ces trois derniers effets.
 
 ## Alternatives Considered
 
@@ -38,18 +53,18 @@ Il n'y a plus de colonne `type` discriminante, donc plus de filtre à ne pas oub
 |---|---|---|
 | **`chapters` + `novel_covers`, branche dérivée (retenu)** | Contraintes FK réelles ; aucune colonne morte ; pas de filtre `type` ; la branche ne peut pas diverger de son chapitre-tête | Deux modèles à écrire ; les tables polymorphes (`likes`, `comments`) ciblent deux types |
 | Garder `works` + `parent_id` + `type` | Aucune refonte immédiate ; une seule table à requêter | ~9 colonnes de l'arbre sans objet pour une couverture, donc nullable pour tous ; FK incapables d'interdire « chapitre comme couverture officielle » ; validation et statuts conditionnés par `type` |
-| Table `branches` explicite | Identifiant stable, métadonnées et compteurs propres ; utile au forum V2 (§15) | Attributs sans propriétaire légitime ; création rétroactive à maintenir dans la transaction d'écriture ; branches imbriquées rendant l'appartenance arbitraire ; état dupliqué avec `children_count` |
+| Table `branches` explicite | Identifiant stable, métadonnées et compteurs propres ; utile au forum V2 (§15) | Attributs sans propriétaire légitime ; création rétroactive à maintenir dans la transaction d'écriture ; branches imbriquées rendant l'appartenance arbitraire ; état dupliqué avec `continuations_count` |
 | Adjacency list seule (`parent_id` sans `path`) | Schéma minimal | Remonter les ancêtres coûte une requête par niveau ; « branches auxquelles je participe » devient récursif |
 | `lft`/`rgt` (nested set) | Lectures de sous-arbre très rapides | Toute insertion réécrit une large partie de la table — rédhibitoire pour un site où l'on publie en continu (§3) |
 
 ## Consequences
 
-- **Positive**: l'arbre est représentable et lisible en une requête ; la base garantit qu'un chapitre ne peut pas devenir une couverture ; aucune notion de branche à administrer, donc aucune question de gouvernance à trancher.
+- **Positive**: l'arbre est représentable et lisible en une requête ; la base garantit qu'un chapitre ne peut pas devenir une couverture ; aucune notion de branche à administrer, donc aucune question de gouvernance à trancher ; les invariants de l'arbre tiennent dans une seule classe, donc une seule à relire quand ils changent.
 - **Negative**: `works` et tout ce qui en dépend sont supprimés (modèle, contrôleur, repository, resource, seeder, factory, test, et côté front `apis/works/`, `use-works.js`, `PaginatorChapterComponent`). La pagination linéaire « chapitre N sur M » disparaît avec `order`, remplacée par la navigation parent → suites.
-- **Risks**: `path` doit être recalculé si un chapitre change de parent — le MVP ne le permet pas, mais toute fonctionnalité future de déplacement devra réécrire le sous-arbre. `children_count` est dénormalisé : incréments atomiques obligatoires, plus une commande de réconciliation. Si des branches nommées deviennent nécessaires (forum V2, §15), la table s'ajoutera par `INSERT … SELECT` sur `chapters WHERE children_count > 0` — la dérivation ne ferme aucune porte.
+- **Risks**: `path` doit être recalculé si un chapitre change de parent — le MVP ne le permet pas, mais toute fonctionnalité future de déplacement devra réécrire le sous-arbre. `continuations_count` est dénormalisé : incréments atomiques obligatoires, plus une commande de réconciliation. Si des branches nommées deviennent nécessaires (forum V2, §15), la table s'ajoutera par `INSERT … SELECT` sur `chapters WHERE continuations_count > 0` — la dérivation ne ferme aucune porte.
 
 ## Références
 
 - [ghosty-mvp.md](../../../ghosty-mvp.md) — §3 (publication continue), §4 (proposition/branche), §8 (navigation), §10 (illustration du roman), §13 (profils)
 - [ghosty-mvp-plan.md](../../../ghosty-mvp-plan.md) — décisions D1 et D4
-- [ADR-08](ADR-08-soutien-positif-et-continuite-automatique.md) — soutien et continuité principale
+- [ADR-08](ADR-08-soutien-positif-et-continuite-automatique.md) — soutien et continuité courante

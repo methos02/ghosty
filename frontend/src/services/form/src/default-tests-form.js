@@ -1,6 +1,6 @@
 import { flash } from '@/services/shortcuts/services-shortcut.js'
 import { dateTests } from '@/services/form/src/defaultTests/dates-test.js'
-import { FormHelper } from '@/helpers/form-helper.js'
+import { FormHelper } from '@/core/helpers/form-helper.js'
 
 export const tests = {
   required: value => (FormHelper.isEmpty(value) ? 'field_required' : ''),

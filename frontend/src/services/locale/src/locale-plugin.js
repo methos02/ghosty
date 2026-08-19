@@ -1,6 +1,6 @@
 import { localeFunctions } from '@/services/locale/src/locale-functions.js'
 import { localeStore } from '@/services/locale/src/locale-store.js'
-import { ssrStorage } from '@/helpers/ssr-storage.js'
+import { ssrStorage } from '@/core/helpers/ssr-storage.js'
 
 const state = {
   translaterPromise: undefined,

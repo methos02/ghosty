@@ -62,7 +62,6 @@ $h4-fs: 1rem;
 $header-height: 100px;
 $input-height: 45px;
 
-// Maps boutons partagées — valeurs en CSS custom properties (résolues au runtime navigateur)
 $btn_colors: (
   'primary': var(--primary),
   'primary-300': var(--primary-300),

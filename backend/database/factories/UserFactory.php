@@ -12,18 +12,12 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     */
     public function definition(): array
     {
         return [
-            'pseudo' => fake()->unique()->userName(),
+            'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
@@ -31,9 +25,6 @@ class UserFactory extends Factory
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -41,9 +32,6 @@ class UserFactory extends Factory
         ]);
     }
 
-    /**
-     * Indicate that the user is banned for a future period.
-     */
     public function banned(): static
     {
         return $this->state(fn (array $attributes) => [

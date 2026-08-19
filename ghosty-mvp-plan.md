@@ -20,7 +20,7 @@ Plan dérivé de [ghosty-mvp.md](ghosty-mvp.md), confronté à l'état réel du 
 
 Le modèle actuel est **linéaire** : `works.order` = numéro de chapitre, un seul fil par roman. Le MVP est un **arbre** : chaque chapitre a un parent, plusieurs suites coexistent, aucune n'est éliminée.
 
-Rien de ce qui fait le cœur du MVP n'existe encore : arbre, propositions/branches, continuité principale, soutiens, suivi de branche, parcours de lecture, commentaires, signalements, covers proposées, profils, archivage.
+Rien de ce qui fait le cœur du MVP n'existe encore : arbre, propositions/branches, continuité courante, soutiens, suivi de branche, parcours de lecture, commentaires, signalements, covers proposées, profils, archivage.
 
 ### ⚠️ Dette documentaire à corriger en premier
 
@@ -65,7 +65,7 @@ continuations_count unsigned default 0        -- suites PUBLIÉES ; > 0 ⇒ bran
 like_count   unsigned default 0
 comment_count   unsigned default 0
 read_count      unsigned default 0
-is_main_child   boolean default false         -- continuité mise en avant parmi les frères
+branch_like_count  int default 0                 -- cumul des soutiens de la racine jusqu'ici
 status          tinyInteger                   -- 1 published (défaut, sans limite de temps)
                                               -- 2 archived : issue douce de modération (qualité,
                                               --   hors sujet) — reste consultable (§9), réversible
@@ -74,7 +74,7 @@ status          tinyInteger                   -- 1 published (défaut, sans limi
 last_activity_at timestamp                    -- alimente « branches actives » (§16) et le tri
 published_at, timestamps
 
-index (novel_id, parent_id), (parent_id, is_main_child), (status, last_activity_at), (path)
+index (novel_id, parent_id), (novel_id, status, branch_like_count), (status, last_activity_at), (path)
 index (novel_id, continuations_count, status, last_activity_at)   -- « branches actives » (§16)
 ```
 
@@ -161,7 +161,7 @@ unique (notifiable_id, group_key) WHERE read_at IS NULL   -- 1 notif vivante par
 | Service | Responsabilité |
 |---|---|
 | `ChapterTreeService` | `createRoot()`, `propose(parent)`, calcul `path`/`depth`, incréments `continuations_count`/`chapter_count`, réactivation du parent archivé, désarchivage en cascade |
-| `MainContinuityService` | Recalcul de `is_main_child` à chaque soutien / nouvelle suite (D3). Départage déterministe à égalité de soutiens : **le plus ancien publié gagne** (une nouvelle proposition ne détrône jamais par hasard) |
+| `BranchService` | Propagation de `branch_like_count` à la descendance du chapitre soutenu, en une requête via le `path` (D3). La continuité courante est la branche au plus fort cumul ; à cumul égal, le plus profond puis le plus ancien publié gagnent. Même cumul sur une feuille = évaluation d'une branche complète, donc classement des meilleures branches par `ORDER BY` |
 | `LikeGuard` | Anti-abus (MVP §7) : email vérifié, ancienneté de compte minimale, 1 soutien par contenu, pas d'auto-soutien, throttle, journalisation IP |
 | `ModerationService` | Seul chemin vers `archived` / `hidden` (D5), toujours déclenché par un modérateur — **jamais par un seuil de signalements**. Applique les sanctions, cohérence avec `users.banned_until` (ADR-01), désarchivage réversible |
 | `MetricsService` | Indicateurs MVP §16 |
@@ -176,7 +176,7 @@ GET    /novels/{slug}                       + root_chapter, cover officielle, st
 GET    /novels/{slug}/tree                  arbre du multivers (exploration, §8)
 GET    /novels/{slug}/archives              propositions archivées par la modération (§9, D5)
 
-GET    /novels/{slug}/chapters/{chapter}    chapitre + ancêtres + suites triées + continuité principale
+GET    /novels/{slug}/chapters/{chapter}    chapitre + ancêtres + suites triées + continuité courante
 POST   /novels/{slug}/chapters              proposer une suite (parent_id — n'importe quel chapitre, §3)
 PUT    /chapters/{chapter}                  éditer (auteur, fenêtre limitée)
 GET    /chapters/{chapter}/children         suites paginées, triées par soutiens
@@ -215,7 +215,7 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 
 1. Réécrire [backend/CLAUDE.md](backend/CLAUDE.md) : schéma multivers, suppression de `VoteCalculationService`/`closeVotingSession`, des statuts `voting|writing` et des `accepted|rejected`.
 2. **ADR-07** — modèle multivers : arbre `chapters` + chemin matérialisé, disparition de `works`, **branche dérivée sans table** (D1, D4). Consigner l'argument décisif : une branche n'a pas de propriétaire légitime pour porter un nom ou une description, elle emprunte l'identité de son chapitre-tête.
-3. **ADR-08** — soutien **positif seul** (aucun downvote, D2), signalement comme unique canal négatif, et continuité principale **automatique** (D3).
+3. **ADR-08** — soutien **positif seul** (aucun downvote, D2), signalement comme unique canal négatif, et continuité courante **automatique** (D3).
    **ADR-09** — aucun archivage automatique ; `archived` / `hidden` sont des issues de modération (D5).
    **ADR-10** — notifications in-app agrégées sur le canal `database` natif (D6).
 4. `config/ghosty.php` (seuils anti-abus des soutiens, profondeur d'arbre affichée, pagination des suites) — **reporté** : créé avec le premier service qui le lit (`LikeGuard`, lot 3), pour ne pas versionner des réglages que rien n'applique.
@@ -235,10 +235,10 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 
 ### Lot 2 — Lecture et navigation · L
 
-- `GET /novels/{slug}/chapters/{id}` (ancêtres, suites triées, continuité principale), `GET /novels/{slug}/tree`.
-- Front : `ChapterReaderPage` (lecture linéaire par défaut = continuité principale), `ContinuationSwitcher` (« ce chapitre a N suites »), `BranchBreadcrumb` (retour à l'embranchement), `MultiversePage` (arbre repliable, vue d'exploration séparée — §8).
+- `GET /novels/{slug}/chapters/{id}` (ancêtres, suites triées, continuité courante), `GET /novels/{slug}/tree`.
+- Front : `ChapterReaderPage` (lecture linéaire par défaut = continuité courante), `ContinuationSwitcher` (« ce chapitre a N suites »), `BranchBreadcrumb` (retour à l'embranchement), `MultiversePage` (arbre repliable, vue d'exploration séparée — §8).
 - **Règle d'affichage (D4)** : une branche n'a jamais de nom propre. Partout — switcher, fil d'Ariane, suivi, profil, arbre — elle est désignée par son chapitre-tête : « *{titre du chapitre}* — par {pseudo} ». Aucun libellé de branche à inventer, donc aucun champ à saisir nulle part.
-- SSR : `asyncData` chapitre + arbre, `useHead` dédié (`src/head/use-chapter-head.js`), **`<link rel="canonical">` vers la continuité principale** pour éviter le contenu dupliqué entre réalités, 404 réel sur chapitre inconnu.
+- SSR : `asyncData` chapitre + arbre, `useHead` dédié (`src/head/use-chapter-head.js`), **`<link rel="canonical">` vers la continuité courante** pour éviter le contenu dupliqué entre réalités, 404 réel sur chapitre inconnu.
 
 > Lots 1+2 = le cœur testable de l'hypothèse du MVP. Une V0 démontrable s'arrête ici.
 
@@ -246,10 +246,10 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 
 Les deux signaux communautaires d'un chapitre — positif et négatif — arrivent ensemble : sans downvote (D2), livrer les soutiens sans le signalement laisserait un contenu raciste ou bâclé sans aucun recours pour les lecteurs.
 
-- `likes` polymorphe, `LikeGuard`, `MainContinuityService` (recalcul + départage à l'ancienneté), throttle dédié.
-- Tri des suites par soutiens, mise en avant **automatique** de la continuité principale (D3).
+- `likes` polymorphe, `LikeGuard`, `BranchService` (propagation du cumul + départage profondeur puis ancienneté), throttle dédié.
+- Tri des suites par soutiens, mise en avant **automatique** de la continuité courante (D3).
 - `reports` + `POST /chapters/{id}/report` avec les motifs de §3 (`poor_quality`, `hate_speech`, `insult`, …), unicité par signaleur.
-- Front : `LikeButton` (optimiste + rollback), tri des propositions, badge « continuité principale », `ReportDialog`.
+- Front : `LikeButton` (optimiste + rollback), tri des propositions, badge « continuité courante », `ReportDialog`.
 
 > ⚠️ Le **traitement** des signalements n'arrive qu'au lot 6. Entre les deux, les signalements s'empilent en base et sont traités à la main (requête SQL / commande artisan). Acceptable en bêta fermée, à ne pas laisser courir en ouverture publique.
 
@@ -264,7 +264,7 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 |---|---|---|
 | `chapter_continued` ★ | quelqu'un publie une suite à mon chapitre | 3b |
 | `like_received` | mon chapitre / ma cover reçoit des soutiens (**agrégé**) | 3b |
-| `main_continuity_gained` | ma suite devient la continuité principale (D3) | 3b |
+| `current_continuity_gained` | ma suite devient la continuité courante (D3) | 3b |
 | `followed_branch_extended` ★ | une branche que je suis reçoit une suite | 4 |
 | `comment_received` / `comment_replied` | commentaire sur mon contenu, réponse à mon commentaire | 5 |
 | `moderation_decision` | mon contenu est archivé/masqué, ou mon signalement est traité | 6 |
@@ -274,7 +274,7 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 
 1. **Agrégation par `group_key`** — 50 soutiens sur un chapitre font *une* notification « 12 personnes ont soutenu *{titre}* », pas 50 lignes. Sans ça, la cloche devient inutilisable dès le premier chapitre populaire, et le soutien (D2) redevient bruyant alors qu'on l'a voulu discret.
 2. **Jamais se notifier soi-même** — §6 autorise explicitement un auteur à poursuivre son propre chapitre : ce cas ne doit déclencher aucune notification.
-3. **Pas de notification de perte** — avec la continuité automatique (D3), une suite peut être détrônée à tout moment. On notifie le gain, jamais la perte : annoncer « vous n'êtes plus la continuité principale » transformerait un classement en défaite, à rebours de §7 (« une proposition moins soutenue peut toujours devenir une branche »).
+3. **Pas de notification de perte** — avec la continuité automatique (D3), une suite peut être détrônée à tout moment. On notifie le gain, jamais la perte : annoncer « vous n'êtes plus la continuité courante » transformerait un classement en défaite, à rebours de §7 (« une proposition moins soutenue peut toujours devenir une branche »).
 
 ### Lot 4 — Suivi et parcours de lecture · M
 
@@ -324,13 +324,13 @@ Forum par roman et espaces privés (§15), **notifications par email et temps r�
 
 | Risque | Mitigation |
 |---|---|
-| **SEO — contenu dupliqué** : N réalités partagent les mêmes chapitres d'amont | Canonical vers la continuité principale, URL stable par chapitre, arbre en `noindex` |
+| **SEO — contenu dupliqué** : N réalités partagent les mêmes chapitres d'amont | Canonical vers la continuité courante, URL stable par chapitre, arbre en `noindex` |
 | **Performance de l'arbre** : un roman très ramifié explose la requête | Chemin matérialisé (1 requête pour une branche entière), profondeur d'affichage plafonnée + chargement à la demande, `continuations_count` dénormalisé |
 | **Compteurs désynchronisés** (`continuations_count`, `like_count`, `chapter_count`) | Incréments atomiques SQL + commande de reconciliation, tests Unit dédiés (cf. `rules/files-type/model.md`) |
 | **Manipulation des soutiens** (§7) | `LikeGuard` : email vérifié + ancienneté + unicité + pas d'auto-soutien + throttle ; signalement `like_manipulation` |
 | **Sans downvote (D2) ni archivage automatique (D5), un contenu médiocre n'est freiné que par la modération** | Signalement livré **avec** les soutiens (lot 3) ; tri par soutiens qui relègue sans exclure ; traitement humain assumé, d'où l'importance de ne pas ouvrir publiquement avant le lot 6 |
 | **Encombrement des suites** : un chapitre à 40 propositions, désormais sans purge par le temps (D5) | Tri par soutiens + pagination « voir les N autres suites » (lot 2/3) — la visibilité décroît proportionnellement, la porte ne se ferme jamais |
-| **Le soutien porte trois rôles à lui seul** : classer les suites (D2), désigner la continuité principale (D3), réguler la visibilité en l'absence d'archivage (D5) | Truquer les soutiens ne fausse plus un classement mais détourne le parcours de lecture par défaut → `LikeGuard` est une pièce critique du lot 3, pas un confort ; motif de signalement `like_manipulation` ; suivre l'indicateur §16 « exploration des réalités alternatives » |
+| **Le soutien porte trois rôles à lui seul** : classer les suites (D2), désigner la continuité courante (D3), réguler la visibilité en l'absence d'archivage (D5) | Truquer les soutiens ne fausse plus un classement mais détourne le parcours de lecture par défaut → `LikeGuard` est une pièce critique du lot 3, pas un confort ; motif de signalement `like_manipulation` ; suivre l'indicateur §16 « exploration des réalités alternatives » |
 | **Notifications bruyantes** (D6) : un chapitre populaire génère des dizaines d'événements | Agrégation par `group_key` imposée dès le socle (lot 3b), in-app seul, `notifications_enabled` en interrupteur |
 | **Continuité automatique (D3) : effet boule de neige** — la suite en tête capte les lecteurs, donc les soutiens, donc reste en tête | Les suites concurrentes restent visibles depuis le chapitre parent (`ContinuationSwitcher`, lot 2) ; à surveiller via l'indicateur « lecteurs qui explorent une réalité alternative » (§16) |
 | **Suppression de `works`** (D1) casse le front existant (`apis/works/`, `use-works`, PaginatorChapter) et 4 fichiers de tests | Fait dans le lot 0, en un seul worktree, tests migrés vers `chapters` dans la même PR |

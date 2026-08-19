@@ -15,12 +15,16 @@ describe('chapter-dto', () => {
         summary: 'Une route de montagne, un virage manqué.',
         content: 'La voiture avait quitté la route au troisième virage...',
         depth: 0,
-        isMainChild: false,
-        isBranch: false,
+        isContinued: false,
         continuationsCount: 0,
         likeCount: 41,
+        branchLikeCount: 41,
         commentCount: 0,
-        author: { id: 7, pseudo: 'GhostWriter' },
+        isDraft: false,
+        isCorrectable: true,
+        isRoot: true,
+        novel: { id: 1, slug: 'nuit-virage', title: 'Nuit virage', genreId: 3 },
+        author: { id: 7, username: 'GhostWriter' },
         publishedAt: '2026-07-31T10:00:00+00:00',
       })
     })
@@ -32,19 +36,19 @@ describe('chapter-dto', () => {
       expect(ChapterDto.fromShow(api).content).toBeUndefined()
     })
 
-    it('exposes a continued chapter as a branch', () => {
-      const api = chapterSeeder.getChapterApi({ is_branch: true, continuations_count: 2 })
+    it('exposes a chapter that has been continued', () => {
+      const api = chapterSeeder.getChapterApi({ is_continued: true, continuations_count: 2 })
 
       const result = ChapterDto.fromShow(api)
 
-      expect(result.isBranch).toBe(true)
+      expect(result.isContinued).toBe(true)
       expect(result.continuationsCount).toBe(2)
     })
   })
 
   describe('fromList', () => {
     it('maps every chapter of the continuity', () => {
-      const result = ChapterDto.fromList(chapterSeeder.getMainContinuityApi(3))
+      const result = ChapterDto.fromList(chapterSeeder.getCurrentContinuityApi(3))
 
       expect(result).toHaveLength(3)
       expect(result[2].title).toBe('Chapitre 3')
@@ -56,15 +60,47 @@ describe('chapter-dto', () => {
     })
   })
 
-  describe('toMainContinuityParams', () => {
+  describe('toCurrentContinuityParams', () => {
     it('builds the novel slug param', () => {
-      expect(ChapterDto.toMainContinuityParams('nuit-virage')).toEqual({ slug: 'nuit-virage' })
+      expect(ChapterDto.toCurrentContinuityParams('nuit-virage')).toEqual({ slug: 'nuit-virage' })
     })
   })
 
-  describe('toShowParams', () => {
+  describe('toChapterParams', () => {
     it('builds the chapter id param', () => {
-      expect(ChapterDto.toShowParams(10)).toEqual({ chapter: 10 })
+      expect(ChapterDto.toChapterParams(10)).toEqual({ chapter: 10 })
+    })
+  })
+
+  describe('toCreateParams', () => {
+    it('builds the novel slug param', () => {
+      expect(ChapterDto.toCreateParams('nuit-virage')).toEqual({ slug: 'nuit-virage' })
+    })
+  })
+
+  describe('toCreate', () => {
+    it('maps the form data to the API payload, parent included', () => {
+      const formData = chapterSeeder.getWriteForm()
+
+      expect(ChapterDto.toCreate(formData)).toEqual({
+        parent_id: formData.parentId,
+        title: formData.title,
+        content: formData.content,
+        summary: formData.summary,
+        is_draft: formData.isDraft,
+      })
+    })
+  })
+
+  describe('toUpdate', () => {
+    it('leaves the parent out, a published chapter never changes branch', () => {
+      const formData = chapterSeeder.getWriteForm()
+
+      expect(ChapterDto.toUpdate(formData)).toEqual({
+        title: formData.title,
+        content: formData.content,
+        summary: formData.summary,
+      })
     })
   })
 })

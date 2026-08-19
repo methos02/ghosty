@@ -25,7 +25,7 @@ Contraintes techniques du projet : hébergement mutualisé O2Switch, `QUEUE_CONN
 |---|---|
 | `chapter_continued` | une suite est publiée sur mon chapitre |
 | `like_received` | mon chapitre ou ma couverture reçoit des soutiens (agrégé) |
-| `main_continuity_gained` | ma suite devient la continuité principale |
+| `current_continuity_gained` | ma suite devient la continuité courante |
 | `followed_branch_extended` | une branche que je suis reçoit une suite |
 | `comment_received` / `comment_replied` | commentaire sur mon contenu, réponse à mon commentaire |
 | `moderation_decision` | mon contenu est archivé ou masqué, ou mon signalement est traité |
@@ -34,7 +34,7 @@ Contraintes techniques du projet : hébergement mutualisé O2Switch, `QUEUE_CONN
 **5. Deux interdits :**
 
 - **Jamais se notifier soi-même.** §6 autorise explicitement un auteur à poursuivre son propre chapitre : ce cas ne déclenche rien.
-- **Jamais notifier une perte.** Voir [ADR-08](ADR-08-soutien-positif-et-continuite-automatique.md) : on notifie le gain de la continuité principale, jamais sa perte.
+- **Jamais notifier une perte.** Voir [ADR-08](ADR-08-soutien-positif-et-continuite-automatique.md) : on notifie le gain de la continuité courante, jamais sa perte.
 
 ## Alternatives Considered
 

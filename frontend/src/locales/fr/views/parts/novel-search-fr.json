@@ -1,0 +1,7 @@
+{
+  "novel_search": {
+    "placeholder": "Chercher un roman par son titre",
+    "submit": "Chercher",
+    "clear": "Effacer la recherche"
+  }
+}

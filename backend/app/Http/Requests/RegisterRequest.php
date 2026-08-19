@@ -17,7 +17,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'pseudo' => 'required|string|min:3|max:50|unique:users,pseudo',
+            'username' => 'required|string|min:3|max:50|unique:users,username',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
         ];
@@ -26,9 +26,9 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'pseudo.required' => __('validation.register.pseudo.required'),
-            'pseudo.min' => __('validation.register.pseudo.min'),
-            'pseudo.unique' => __('validation.register.pseudo.unique'),
+            'username.required' => __('validation.register.username.required'),
+            'username.min' => __('validation.register.username.min'),
+            'username.unique' => __('validation.register.username.unique'),
             'email.required' => __('validation.register.email.required'),
             'email.email' => __('validation.register.email.email'),
             'email.unique' => __('validation.register.email.unique'),

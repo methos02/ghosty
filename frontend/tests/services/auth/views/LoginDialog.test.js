@@ -34,19 +34,19 @@ describe('LoginDialog.vue', () => {
     expect(form.hasError()).toBe(true)
   })
 
-  it('does not call auth.login when the email format is invalid', async () => {
+  it('forwards a username as identifier without asking for an email', async () => {
     const login = vi.spyOn(auth, 'login').mockResolvedValue({ status: STATUS.SUCCESS })
     const wrapper = mount(LoginDialog)
     useAuth().openLoginDialog()
     await flushPromises()
 
-    await wrapper.find('input[name="login.email"]').setValue('pasunemail')
+    await wrapper.find('input[name="login.identifier"]').setValue('methos')
     await wrapper.find('input[name="login.password"]').setValue('Secret123!')
     await wrapper.find('form').trigger('submit')
     await flushPromises()
 
-    expect(login).not.toHaveBeenCalled()
-    expect(form.getError('email')).toBe('auth.login_error_email_invalid')
+    expect(login).toHaveBeenCalledWith({ identifier: 'methos', password: 'Secret123!' })
+    expect(form.hasError()).toBe(false)
   })
 
   it('calls auth.login with the credentials and closes on success', async () => {
@@ -55,12 +55,12 @@ describe('LoginDialog.vue', () => {
     useAuth().openLoginDialog()
     await flushPromises()
 
-    await wrapper.find('input[name="login.email"]').setValue('ghost@ghosty.test')
+    await wrapper.find('input[name="login.identifier"]').setValue('ghost@ghosty.test')
     await wrapper.find('input[name="login.password"]').setValue('Secret123!')
     await wrapper.find('form').trigger('submit')
     await flushPromises()
 
-    expect(login).toHaveBeenCalledWith({ email: 'ghost@ghosty.test', password: 'Secret123!' })
+    expect(login).toHaveBeenCalledWith({ identifier: 'ghost@ghosty.test', password: 'Secret123!' })
     expect(useAuth().showLoginDialog.value).toBe(false)
   })
 
@@ -70,13 +70,13 @@ describe('LoginDialog.vue', () => {
     useAuth().openLoginDialog()
     await flushPromises()
 
-    await wrapper.find('input[name="login.email"]').setValue('ghost@ghosty.test')
+    await wrapper.find('input[name="login.identifier"]').setValue('ghost@ghosty.test')
     await wrapper.find('input[name="login.password"]').setValue('Secret123!')
     await wrapper.find('form').trigger('submit')
     await flushPromises()
 
     expect(useAuth().showLoginDialog.value).toBe(true)
-    expect(wrapper.text()).toContain(t('auth.login_error_token'))
+    expect(wrapper.text()).toContain('Pseudo, email ou mot de passe incorrect')
   })
 
   it('switches to the register dialog', async () => {

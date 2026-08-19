@@ -1,7 +1,7 @@
 import { AuthController } from '@/apis/ghosty/controllers/auth-controller.js'
 import { AUTH_SESSION_COOKIE } from '@/constants/auth-constants.js'
 import { STATUS } from '@/constants/ajax-constants.js'
-import { cookieHelper } from '@/helpers/cookie-helper.js'
+import { cookieHelper } from '@/core/helpers/cookie-helper.js'
 import { useAuthStore } from './auth-store.js'
 
 const login = async datas => {
@@ -48,7 +48,6 @@ const fetchCurrentUser = async () => {
   store.setUser(response.user)
 }
 
-// @see backend/memory-bank/decisions/ADR-06-rendu-ssr-authentifie.md
 const restoreSession = async (store, cookieHeader) => {
   if (!cookieHeader?.includes(`${AUTH_SESSION_COOKIE}=`)) {
     return { status: STATUS.SUCCESS }

@@ -7,7 +7,7 @@ const getNovelApi = (overrides = {}) => ({
   cover_url: 'https://example.test/covers/1.jpg',
   is_favorite: false,
   chapters_count: 12,
-  author: { id: 7, pseudo: 'GhostWriter' },
+  author: { id: 7, username: 'GhostWriter' },
   genre: { id: 3, name: 'Fantastique' },
   ...overrides,
 })
@@ -29,9 +29,24 @@ const getNovel = (overrides = {}) => ({
 
 const getNovels = (count = 3) => NovelDto.fromList(getNovelsApi(count))
 
-export const novelSeeder = { 
-  getNovelApi, 
-  getNovelsApi, 
-  getNovel, 
-  getNovels 
+const getCreateForm = (overrides = {}) => ({
+  novel: {
+    title: 'Le Roman Fantôme',
+    genreId: 3,
+    ...overrides.novel,
+  },
+  chapter: {
+    title: 'Le virage',
+    content: 'La voiture avait quitté la route au troisième virage...',
+    summary: 'Une route de montagne, un virage manqué.',
+    ...overrides.chapter,
+  },
+})
+
+export const novelSeeder = {
+  getNovelApi,
+  getNovelsApi,
+  getNovel,
+  getNovels,
+  getCreateForm,
 }

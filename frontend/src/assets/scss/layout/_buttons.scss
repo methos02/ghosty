@@ -6,7 +6,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 3px 15px;
+  min-height: var(--input-height);
+  padding: 3px 25px;
   border-radius: 7px;
   border: none;
   cursor: pointer;
@@ -23,6 +24,12 @@
     background-color: var(--neutral-500);
     cursor: not-allowed;
   }
+}
+
+.btn-sm {
+  min-height: 32px;
+  padding: 3px 15px;
+  font-size: var(--fs-400);
 }
 
 .btn-icon {

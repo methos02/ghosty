@@ -2,7 +2,7 @@ import { formStore } from '@/services/form/src/form-store.js'
 import { datasForm } from '@/services/form/src/models/datas-form.js'
 import { paramsForm } from '@/services/form/src/models/params-form.js'
 import { FormFunctions } from '@/services/form/src/form-functions.js'
-import { FormHelper } from '@/helpers/form-helper.js'
+import { FormHelper } from '@/core/helpers/form-helper.js'
 
 const validateForm = (params, currentDatas, options = {}) => {
   datasForm.set(currentDatas)
@@ -32,7 +32,6 @@ const validateForm = (params, currentDatas, options = {}) => {
   }
 }
 
-// Custom Ghosty : mappe les erreurs de validation Laravel (champ backend -> champ frontend)
 const mapFields = (validationErrors, mapping) => {
   const mapped = {}
   for (const [field, message] of Object.entries(validationErrors)) {
@@ -42,7 +41,19 @@ const mapFields = (validationErrors, mapping) => {
   return mapped
 }
 
+const addValidationErrors = (validationErrors, formName) => {
+  const mapping = {}
+
+  for (const field of Object.keys(validationErrors)) {
+    mapping[field] = formServiceInternal.toInputName(field, formName)
+  }
+
+  formStore.clearOptions()
+  formStore.addErrors(mapFields(validationErrors, mapping))
+}
+
 export const formService = {
+  addValidationErrors,
   addError: formStore.addError,
   addErrors: formStore.addErrors,
   clearError: formStore.clearError,
@@ -53,3 +64,14 @@ export const formService = {
   mapFields,
   validateForm,
 }
+
+const toInputName = (field, formName) => {
+  const [prefix, ...rest] = field.split('.')
+  const isScoped = rest.length > 0
+  const scope = isScoped ? prefix : formName
+  const name = isScoped ? rest.join('.') : field
+
+  return `${scope}.${name.replaceAll(/_(\w)/g, (_, letter) => letter.toUpperCase())}`
+}
+
+export const formServiceInternal = { toInputName }

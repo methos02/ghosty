@@ -2,11 +2,10 @@ import { form } from '@/services/shortcuts/services-shortcut.js'
 
 export const validateLoginForm = datas => {
   const rules = {
-    email: {
-      rules: 'required|email',
+    identifier: {
+      rules: 'required',
       errors: {
-        required: 'auth.login_error_email_required',
-        email: 'auth.login_error_email_invalid',
+        required: 'auth.login_error_identifier_required',
       },
     },
     password: {

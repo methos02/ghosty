@@ -78,7 +78,7 @@ const handleInputChange = () => {
         @blur="handleInputChange"
         @keyup.enter="handleInputChange"
       />
-      <span class="paginator-chapter__total | fs-400"> / {{ totalChapters }} </span>
+      <span class="paginator-chapter__total | fs-400">/ {{ totalChapters }}</span>
     </div>
 
     <button

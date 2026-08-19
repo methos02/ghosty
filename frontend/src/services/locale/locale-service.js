@@ -1,6 +1,6 @@
 import { localeFunctions } from '@/services/locale/src/locale-functions.js'
 import { flash } from '@/services/shortcuts/services-shortcut.js'
-import { ssrStorage } from '@/helpers/ssr-storage.js'
+import { ssrStorage } from '@/core/helpers/ssr-storage.js'
 
 const localeDefault = 'fr'
 const MAX_PARTS = 2
@@ -24,7 +24,6 @@ const getCurrentLocale = () => {
   return localeDefault
 }
 
-/** @type {import('vuemann/contracts/locale-contract.js').LocaleService} */
 export const localeService = {
   getCurrentLocale,
   t,

@@ -8,14 +8,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Config;
 
 /**
+ * @property-read User $author
+ * @property-read Novel $novel
+ *
  * @mixin IdeHelperChapter
  */
 class Chapter extends Model
 {
     /** @use HasFactory<ChapterFactory> */
     use HasFactory;
+
+    const STATUS_DRAFT = 0;
 
     const STATUS_PUBLISHED = 1;
 
@@ -36,7 +42,7 @@ class Chapter extends Model
         'depth',
         'status',
         'published_at',
-        'last_activity_at',
+        'corrected_at',
     ];
 
     protected function casts(): array
@@ -45,12 +51,12 @@ class Chapter extends Model
             'depth' => 'integer',
             'continuations_count' => 'integer',
             'like_count' => 'integer',
+            'branch_like_count' => 'integer',
             'comment_count' => 'integer',
             'read_count' => 'integer',
-            'is_main_child' => 'boolean',
             'status' => 'integer',
             'published_at' => 'datetime',
-            'last_activity_at' => 'datetime',
+            'corrected_at' => 'datetime',
         ];
     }
 
@@ -79,8 +85,6 @@ class Chapter extends Model
     }
 
     /**
-     * Suites proposées à ce chapitre : elles coexistent, aucune n'élimine les autres.
-     *
      * @return HasMany<Chapter, $this>
      */
     public function children(): HasMany
@@ -99,17 +103,23 @@ class Chapter extends Model
     /**
      * @param  Builder<Chapter>  $query
      */
+    public function scopeDrafts(Builder $query): void
+    {
+        $query->where('status', self::STATUS_DRAFT);
+    }
+
+    /**
+     * @param  Builder<Chapter>  $query
+     */
     public function scopeRoots(Builder $query): void
     {
         $query->whereNull('parent_id');
     }
 
     /**
-     * Une proposition devient une branche dès qu'une suite publiée la poursuit.
-     *
      * @param  Builder<Chapter>  $query
      */
-    public function scopeBranches(Builder $query): void
+    public function scopeContinued(Builder $query): void
     {
         $query->where('continuations_count', '>', 0);
     }
@@ -119,7 +129,7 @@ class Chapter extends Model
         return $this->parent_id === null;
     }
 
-    public function isBranch(): bool
+    public function isContinued(): bool
     {
         return $this->continuations_count > 0;
     }
@@ -129,18 +139,37 @@ class Chapter extends Model
         return $this->status === self::STATUS_PUBLISHED;
     }
 
+    public function isDraft(): bool
+    {
+        return $this->status === self::STATUS_DRAFT;
+    }
+
+    public function isCorrectable(): bool
+    {
+        if ($this->corrected_at !== null || $this->published_at === null) {
+            return false;
+        }
+
+        $window = Config::integer('ghosty.chapters.proofreading.window_hours');
+
+        return $this->published_at->addHours($window)->isFuture();
+    }
+
     /**
-     * Identifiants des ancêtres, lus dans le chemin matérialisé. Le chapitre
-     * lui-même, dernier segment du chemin, est exclu.
-     *
+     * @return list<int>
+     */
+    public function pathChapterIds(): array
+    {
+        $ids = array_filter(explode(self::PATH_SEPARATOR, (string) $this->path));
+
+        return array_values(array_map('intval', $ids));
+    }
+
+    /**
      * @return list<int>
      */
     public function ancestorIds(): array
     {
-        $ids = array_filter(explode(self::PATH_SEPARATOR, (string) $this->path));
-
-        array_pop($ids);
-
-        return array_values(array_map('intval', $ids));
+        return array_slice($this->pathChapterIds(), 0, -1);
     }
 }

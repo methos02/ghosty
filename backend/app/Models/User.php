@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -22,7 +21,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
-        'pseudo',
+        'username',
         'email',
         'password',
         'roles',
@@ -54,7 +53,6 @@ class User extends Authenticatable
         ];
     }
 
-    // Role constants
     const ROLE_READER = 'reader';
 
     const ROLE_AUTHOR = 'author';
@@ -63,7 +61,6 @@ class User extends Authenticatable
 
     const ROLE_ADMIN = 'admin';
 
-    // Helper methods
     public function hasRole(string $role): bool
     {
         return in_array($role, $this->roles ?? []);

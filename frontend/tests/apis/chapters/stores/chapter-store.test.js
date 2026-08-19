@@ -7,17 +7,17 @@ describe('chapter-store', () => {
     const storeA = createChapterStore()
     const storeB = createChapterStore()
 
-    storeA.setMainContinuity(chapterSeeder.getMainContinuity(2))
+    storeA.setCurrentContinuity(chapterSeeder.getCurrentContinuity(2))
 
-    expect(storeB.mainContinuity.value).toEqual([])
+    expect(storeB.currentContinuity.value).toEqual([])
   })
 
-  it('setMainContinuity replaces the continuity', () => {
+  it('setCurrentContinuity replaces the continuity', () => {
     const store = createChapterStore()
 
-    store.setMainContinuity(chapterSeeder.getMainContinuity(3))
+    store.setCurrentContinuity(chapterSeeder.getCurrentContinuity(3))
 
-    expect(store.mainContinuity.value).toHaveLength(3)
+    expect(store.currentContinuity.value).toHaveLength(3)
   })
 
   it('setCurrentChapter stores the chapter being read', () => {
@@ -31,41 +31,41 @@ describe('chapter-store', () => {
 
   it('clearCurrentChapter resets only the chapter being read', () => {
     const store = createChapterStore()
-    store.setMainContinuity(chapterSeeder.getMainContinuity(2))
+    store.setCurrentContinuity(chapterSeeder.getCurrentContinuity(2))
     store.setCurrentChapter(chapterSeeder.getChapter())
 
     store.clearCurrentChapter()
 
     expect(store.currentChapter.value).toBeUndefined()
-    expect(store.mainContinuity.value).toHaveLength(2)
+    expect(store.currentContinuity.value).toHaveLength(2)
   })
 
   it('clear resets the whole store', () => {
     const store = createChapterStore()
-    store.setMainContinuity(chapterSeeder.getMainContinuity(2))
+    store.setCurrentContinuity(chapterSeeder.getCurrentContinuity(2))
     store.setCurrentChapter(chapterSeeder.getChapter())
 
     store.clear()
 
-    expect(store.mainContinuity.value).toEqual([])
+    expect(store.currentContinuity.value).toEqual([])
     expect(store.currentChapter.value).toBeUndefined()
   })
 
   it('serialize exposes the state for the ssr payload', () => {
     const store = createChapterStore()
-    const continuity = chapterSeeder.getMainContinuity(2)
-    store.setMainContinuity(continuity)
+    const continuity = chapterSeeder.getCurrentContinuity(2)
+    store.setCurrentContinuity(continuity)
 
-    expect(store.serialize()).toEqual({ mainContinuity: continuity, currentChapter: undefined })
+    expect(store.serialize()).toEqual({ currentContinuity: continuity, currentChapter: undefined })
   })
 
   it('hydrate restores a serialized state', () => {
     const store = createChapterStore()
-    const continuity = chapterSeeder.getMainContinuity(2)
+    const continuity = chapterSeeder.getCurrentContinuity(2)
 
-    store.hydrate({ mainContinuity: continuity, currentChapter: continuity[0] })
+    store.hydrate({ currentContinuity: continuity, currentChapter: continuity[0] })
 
-    expect(store.mainContinuity.value).toEqual(continuity)
+    expect(store.currentContinuity.value).toEqual(continuity)
     expect(store.currentChapter.value).toEqual(continuity[0])
   })
 
@@ -74,6 +74,6 @@ describe('chapter-store', () => {
 
     store.hydrate(undefined)
 
-    expect(store.mainContinuity.value).toEqual([])
+    expect(store.currentContinuity.value).toEqual([])
   })
 })

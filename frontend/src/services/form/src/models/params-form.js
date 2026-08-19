@@ -1,4 +1,4 @@
-import { FormHelper } from '@/helpers/form-helper.js'
+import { FormHelper } from '@/core/helpers/form-helper.js'
 
 const state = {
   rules: [],

@@ -76,7 +76,6 @@ const req = async (routeName, options = {}) => {
   }
 }
 
-/** @type {import('vuemann/contracts/ajax-contract.js').AjaxService} */
 export const ajaxService = {
   generateSubdirectoryFromRouteName,
   generateUrlFromRouteName,

@@ -21,9 +21,10 @@ Les décisions structurantes sont dans les ADR :
 | ADR | Décision |
 |---|---|
 | [ADR-07](memory-bank/decisions/ADR-07-modele-multivers-arbre-de-chapitres.md) | Arbre `chapters` + chemin matérialisé ; `works` supprimée ; branche **dérivée**, sans table |
-| [ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md) | Soutien **positif seul** (aucun downvote) ; signalement = unique voie négative ; continuité principale **automatique** |
+| [ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md) | Soutien **positif seul** (aucun downvote) ; signalement = unique voie négative ; continuité courante **automatique** |
 | [ADR-09](memory-bank/decisions/ADR-09-pas-d-archivage-automatique.md) | **Aucun archivage automatique** : `archived` / `hidden` sont des issues de modération humaine |
 | [ADR-10](memory-bank/decisions/ADR-10-notifications-in-app-agregees.md) | Notifications in-app **agrégées**, canal `database` natif |
+| [ADR-11](memory-bank/decisions/ADR-11-chapitre-publie-non-reecrivable.md) | Un chapitre publié est **immuable** : corrigeable une seule fois, sous 48 h, et dans une part limitée du texte |
 
 Plan de livraison par lots : [ghosty-mvp-plan.md](../ghosty-mvp-plan.md).
 
@@ -103,19 +104,21 @@ backend/
 │   │   ├── ChapterPolicy.php
 │   │   └── ReportPolicy.php
 │   └── Services/                  # Business Logic
-│       ├── ChapterTreeService.php        # path/depth, compteurs, désarchivage
-│       ├── MainContinuityService.php     # is_main_child automatique (ADR-08)
+│       ├── ChapterService.php             # seul écrivain de chapters (ADR-07)
+│       ├── BranchService.php         # branch_like_count propagé (ADR-08)
 │       ├── LikeGuard.php              # anti-abus des soutiens
 │       ├── ModerationService.php         # seul chemin vers archived/hidden
 │       ├── NotificationService.php       # agrégation par group_key
 │       └── ImageUploadService.php
 ├── database/
 │   ├── migrations/
-│   │   ├── 2024_01_01_000000_create_users_table.php
-│   │   ├── 2024_01_01_000001_create_genres_table.php
-│   │   ├── 2025_10_26_084234_create_genres_table.php
-│   │   ├── 2025_11_05_095500_create_novels_table.php
-│   │   └── 2026_07_31_141503_create_chapters_table.php
+│   │   ├── 0001_create_users_table.php
+│   │   ├── 0002_create_cache_table.php
+│   │   ├── 0003_create_jobs_table.php
+│   │   ├── 0004_create_personal_access_tokens_table.php
+│   │   ├── 0005_create_genres_table.php
+│   │   ├── 0006_create_novels_table.php
+│   │   └── 0007_create_chapters_table.php
 │   ├── seeders/
 │   │   ├── GenresSeeder.php         # ⚠️ Lit database/data/genres.json
 │   │   ├── NovelSeeder.php          # ⚠️ Lit database/data/novels.json
@@ -207,16 +210,17 @@ path VARCHAR                              -- chemin matérialisé "/1/12/45/"
 depth SMALLINT                            -- 0 pour la racine
 continuations_count INT DEFAULT 0         -- suites PUBLIÉES ; > 0 ⇒ branche
 like_count INT DEFAULT 0
+branch_like_count INT DEFAULT 0           -- cumul des soutiens de la racine jusqu'ici (ADR-08)
 comment_count INT DEFAULT 0
 read_count INT DEFAULT 0
-is_main_child BOOLEAN DEFAULT false       -- suite mise en avant (automatique)
-status TINYINT DEFAULT 1                  -- 1 published, 2 archived, 3 hidden
+status TINYINT DEFAULT 1                  -- 0 draft (auteur seul), 1 published,
+                                          -- 2 archived, 3 hidden
 published_at TIMESTAMP NULLABLE
-last_activity_at TIMESTAMP NULLABLE
+corrected_at TIMESTAMP NULLABLE            -- correction unique (ADR-11)
 created_at / updated_at TIMESTAMP
 
-INDEX (novel_id, parent_id), (parent_id, is_main_child), (status, last_activity_at), (path)
-INDEX chapters_active_branches_index (novel_id, continuations_count, status, last_activity_at)
+INDEX (novel_id, parent_id), (novel_id, status, branch_like_count), (status), (path)
+INDEX chapters_active_branches_index (novel_id, continuations_count, status, branch_like_count)
 ```
 
 **Trois pièges à connaître avant d'y toucher** :
@@ -428,7 +432,7 @@ class DatabaseSeeder extends Seeder
 
 ```php
 <?php
-// database/migrations/2026_07_31_141503_create_chapters_table.php
+// database/migrations/0007_create_chapters_table.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -454,16 +458,15 @@ return new class extends Migration
             // résultat de `withCount('children')`, qui écraserait ce compteur.
             $table->unsignedInteger('continuations_count')->default(0);
             $table->unsignedInteger('like_count')->default(0);
+            $table->unsignedInteger('branch_like_count')->default(0);
 
-            $table->boolean('is_main_child')->default(false);
             $table->unsignedTinyInteger('status')->default(1);
 
             $table->timestamp('published_at')->nullable();
-            $table->timestamp('last_activity_at')->nullable();
             $table->timestamps();
 
             $table->index(['novel_id', 'parent_id']);
-            $table->index(['parent_id', 'is_main_child']);
+            $table->index(['novel_id', 'status', 'branch_like_count']);
             $table->index('path');
         });
     }
@@ -605,10 +608,10 @@ class ChapterResource extends JsonResource
             'summary' => $this->summary,
             'content' => $this->when($this->shouldExposeContent($request), $this->content),
             'depth' => $this->depth,
-            'is_main_child' => $this->is_main_child,
-            'is_branch' => $this->isBranch(),
+            'is_continued' => $this->isContinued(),
             'continuations_count' => $this->continuations_count,
             'like_count' => $this->like_count,
+            'branch_like_count' => $this->branch_like_count,
             'author' => [
                 'id' => $this->author_id,
                 'pseudo' => $this->whenLoaded('author', fn () => $this->author?->pseudo),
@@ -619,7 +622,7 @@ class ChapterResource extends JsonResource
 }
 ```
 
-**`is_branch` est dérivé**, jamais stocké : une proposition devient une branche dès qu'une
+**`is_continued` est dérivé**, jamais stocké : une proposition devient une branche dès qu'une
 suite publiée la poursuit. Il n'existe pas d'entité « branche »
 ([ADR-07](memory-bank/decisions/ADR-07-modele-multivers-arbre-de-chapitres.md)).
 
@@ -827,38 +830,50 @@ Décision et alternatives : [ADR-04](memory-bank/decisions/ADR-04-token-en-cooki
 > propositions » (§7), et « une proposition moins soutenue peut toujours être poursuivie et
 > devenir une branche ». **Aucune proposition n'est jamais rejetée.**
 
-### MainContinuityService — la mise en avant, sans élimination
+### BranchService — la continuité courante, sans élimination
 
-La continuité principale est **recalculée**, jamais décidée : parmi les suites publiées d'un
-même chapitre, celle qui totalise le plus de soutiens porte `is_main_child`. Les autres
-restent intégralement lisibles et peuvent encore devenir des branches.
+Aucune colonne ne désigne un gagnant. Chaque chapitre porte `branch_like_count`, le **cumul
+des soutiens depuis la racine jusqu'à lui**, et la continuité courante se déduit : c'est la
+branche du chapitre publié au cumul le plus élevé. Les suites écartées restent intégralement
+lisibles et peuvent encore devenir des branches.
+
+Un soutien remonte donc dans toute la descendance du chapitre, en une seule requête grâce au
+`path` matérialisé :
 
 ```php
-public function recalculate(Chapter $parent): void
+public function applyLike(Chapter $chapter, int $delta = 1): void
 {
-    $winner = $parent->children()
-        ->published()
-        ->orderByDesc('like_count')
-        ->orderBy('published_at')   // à égalité, le plus ancien garde la place
-        ->first();
+    $chapter->increment('like_count', $delta);
 
-    // ... bascule is_main_child sur $winner, retire-le des frères
+    Chapter::where('path', 'like', $chapter->path.'%')
+        ->increment('branch_like_count', $delta);
 }
 ```
 
-**Trois règles à ne pas contourner** :
+À la lecture, `ChapterRepository::currentContinuity()` prend le chapitre au plus fort cumul
+et hydrate sa branche depuis `pathChapterIds()`. Sur une feuille, le même cumul évalue une
+**branche complète** — d'où `bestBranches()`, un simple `ORDER BY` indexé.
+
+**Quatre règles à ne pas contourner** :
 
 1. **Aucun arbitrage humain.** Ni l'auteur du chapitre parent ni celui du roman ne choisit :
    ce serait un parti pris sur le travail des autres
    ([ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md)).
-2. **Départage déterministe** — à égalité de soutiens, la suite publiée en premier conserve
-   la place. Sans lui, la continuité bascule au hasard à chaque nouvelle proposition.
-3. **On notifie le gain, jamais la perte.** Annoncer une rétrogradation transformerait un
+2. **Le cumul, jamais la comparaison entre frères.** Comparer les seules suites directes est
+   glouton : un cul-de-sac très soutenu interromprait la lecture au deuxième chapitre.
+3. **Départage déterministe** — à cumul égal, le chapitre le plus profond l'emporte (sinon
+   la lecture s'arrête avant la fin), puis le plus anciennement publié.
+4. **On notifie le gain, jamais la perte.** Annoncer une rétrogradation transformerait un
    classement en défaite, à rebours de §7.
+
+⚠️ La propagation est **synchrone** et écrit autant de lignes que le sous-arbre en compte.
+C'est sans effet sur des romans courts ; si la latence d'un soutien devient perceptible, la
+sortie prévue est une file groupée par roman, et le point d'appel ci-dessus est le seul à
+changer.
 
 ### LikeGuard — anti-abus
 
-Le soutien porte à lui seul le classement des suites, la continuité principale et la
+Le soutien porte à lui seul le classement des suites, la continuité courante et la
 régulation de la visibilité (rien n'étant archivé par le temps qui passe,
 [ADR-09](memory-bank/decisions/ADR-09-pas-d-archivage-automatique.md)). Le truquer ne fausse
 pas un classement : il détourne le parcours de lecture par défaut. D'où les garde-fous à
@@ -941,7 +956,7 @@ poser `path` et `depth` à la main :
 | State | Effet |
 |---|---|
 | `continuing($parent)` | rattache au parent : `novel_id`, `depth`, `path`, et incrémente `continuations_count` du parent |
-| `mainContinuity()` | marque la suite comme continuité mise en avant |
+| `liked($count)` | pose `like_count` et le cumul de branche correspondant |
 | `archived()` / `hidden()` | issues de modération |
 
 ```php
@@ -962,7 +977,7 @@ class ChapterModelTest extends TestCase
         $chapter = Chapter::factory()->create();
         Chapter::factory()->continuing($chapter)->create();
 
-        $this->assertTrue($chapter->refresh()->isBranch());
+        $this->assertTrue($chapter->refresh()->isContinued());
     }
 
     #[Test]

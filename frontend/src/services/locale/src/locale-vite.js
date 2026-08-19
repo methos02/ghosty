@@ -1,7 +1,7 @@
 import path from 'node:path'
 import fs from 'node:fs'
 import { locales } from '../../../config/locale-config.js'
-import { localeHelper } from '../../../helpers/locale-helper.js'
+import { localeHelper } from '../../../../src/core/helpers/locale-helper.js'
 import { log } from '../../shortcuts/log-shortcut.js'
 
 const compileLocales = projectDirectory => {

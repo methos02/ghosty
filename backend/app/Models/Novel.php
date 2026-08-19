@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasSlug;
+use App\Support\CoverUrl;
 use Database\Factories\NovelFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
+ * @property-read User $author
+ * @property-read Genre $genre
+ *
  * @mixin IdeHelperNovel
  */
 class Novel extends Model
@@ -42,6 +46,11 @@ class Novel extends Model
         return 'slug';
     }
 
+    public function coverUrl(): string
+    {
+        return CoverUrl::forNovel($this);
+    }
+
     /**
      * @return BelongsTo<Genre, $this>
      */
@@ -59,8 +68,6 @@ class Novel extends Model
     }
 
     /**
-     * Tous les chapitres du roman, toutes réalités confondues.
-     *
      * @return HasMany<Chapter, $this>
      */
     public function chapters(): HasMany
@@ -69,8 +76,6 @@ class Novel extends Model
     }
 
     /**
-     * Chapitre d'origine, racine de l'arbre du multivers.
-     *
      * @return HasOne<Chapter, $this>
      */
     public function rootChapter(): HasOne

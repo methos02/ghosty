@@ -52,7 +52,6 @@ const handlePageClick = page => {
 <template>
   <nav class="paginator-container | d-flex j-center">
     <ul class="paginator | d-flex a-center py-15">
-      <!-- Previous Page Link -->
       <template v-if="params.page === 1">
         <li
           class="paginator-li disabled"
@@ -82,7 +81,6 @@ const handlePageClick = page => {
           </button>
         </li>
       </template>
-      <!-- paginator Elements -->
       <template
         v-for="(link, index) in links"
         :key="index"
@@ -120,7 +118,6 @@ const handlePageClick = page => {
           </li>
         </template>
       </template>
-      <!-- Next Page Link -->
       <template v-if="params.page !== params.lastPage">
         <li class="paginator-li">
           <button

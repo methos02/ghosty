@@ -1,6 +1,6 @@
 <script setup>
 import ErrorForm from '@/services/form/views/ErrorFormComponent.vue'
-import { FormHelper } from '@/helpers/form-helper.js'
+import { FormHelper } from '@/core/helpers/form-helper.js'
 const props = defineProps({
   name: { type: String, required: true },
   label: { type: String, default: '' },

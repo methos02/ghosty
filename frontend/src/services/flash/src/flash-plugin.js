@@ -1,6 +1,6 @@
 import Flash from '@/services/flash/views/FlashComponent.vue'
 import { h, render } from 'vue'
-import { utilsH } from '@/helpers/utils-helper.js'
+import { utilsH } from '@/core/helpers/utils-helper.js'
 
 export const flashPlugin = () => ({
   install() {

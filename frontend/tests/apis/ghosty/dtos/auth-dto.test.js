@@ -10,7 +10,7 @@ describe('auth-dto', () => {
       const payload = AuthDto.toRegister(form)
 
       expect(payload).toEqual({
-        pseudo: form.pseudo,
+        username: form.username,
         email: form.email,
         password: form.password,
         password_confirmation: form.passwordConfirmation,
@@ -24,7 +24,7 @@ describe('auth-dto', () => {
 
       const payload = AuthDto.toLogin(form)
 
-      expect(payload).toEqual({ email: form.email, password: form.password })
+      expect(payload).toEqual({ identifier: form.identifier, password: form.password })
     })
   })
 
@@ -36,7 +36,7 @@ describe('auth-dto', () => {
 
       expect(result).toEqual({
         id: api.id,
-        pseudo: api.pseudo,
+        username: api.username,
         email: api.email,
         roles: api.roles,
         avatar: api.avatar,

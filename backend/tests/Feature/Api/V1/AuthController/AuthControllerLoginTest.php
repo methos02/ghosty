@@ -15,7 +15,7 @@ class AuthControllerLoginTest extends TestCase
 
     /** @var array<string, mixed> */
     protected array $datas = [
-        'email' => 'john@example.com',
+        'identifier' => 'john@example.com',
         'password' => 'password123',
     ];
 
@@ -56,7 +56,7 @@ class AuthControllerLoginTest extends TestCase
         $response->assertOk();
         $response->assertJsonPath('user.id', $user->id);
         $response->assertJsonPath('user.email', 'john@example.com');
-        $this->assertArrayNotHasKey('token', $response->json());
+        $response->assertJsonMissingPath('token');
 
         $cookie = $response->getCookie('ghosty_token', false);
         $this->assertNotNull($cookie);
@@ -69,9 +69,12 @@ class AuthControllerLoginTest extends TestCase
     public function the_issued_cookie_authenticates_the_next_request(): void
     {
         $user = User::factory()->create(['email' => 'john@example.com', 'password' => 'password123']);
-        $token = $this->postJson($this->route, $this->getDatas())->getCookie('ghosty_token', false)->getValue();
+        $cookie = $this->postJson($this->route, $this->getDatas())->getCookie('ghosty_token', false);
+        $this->assertNotNull($cookie);
 
-        $response = $this->withCredentials()->withUnencryptedCookie('ghosty_token', $token)->getJson('/api/v1/auth/me');
+        $response = $this->withCredentials()
+            ->withUnencryptedCookie('ghosty_token', (string) $cookie->getValue())
+            ->getJson('/api/v1/auth/me');
 
         $response->assertOk();
         $response->assertJsonPath('user.id', $user->id);
@@ -91,6 +94,56 @@ class AuthControllerLoginTest extends TestCase
     }
 
     #[Test]
+    public function accepts_the_username_in_place_of_the_email(): void
+    {
+        $user = User::factory()->create([
+            'username' => 'methos',
+            'email' => 'john@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response = $this->postJson($this->route, $this->getDatas(['identifier' => 'methos']));
+
+        $response->assertOk();
+        $response->assertJsonPath('user.id', $user->id);
+        $this->assertNotNull($response->getCookie('ghosty_token', false));
+    }
+
+    #[Test]
+    public function rejects_a_wrong_password_given_with_the_username(): void
+    {
+        User::factory()->create(['username' => 'methos', 'password' => 'password123']);
+
+        $response = $this->postJson($this->route, [
+            'identifier' => 'methos',
+            'password' => 'wrong-password',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['identifier']);
+    }
+
+    #[Test]
+    public function the_email_owner_wins_over_a_username_carrying_the_same_string(): void
+    {
+        $owner = User::factory()->create([
+            'username' => 'john',
+            'email' => 'john@example.com',
+            'password' => 'password123',
+        ]);
+        User::factory()->create([
+            'username' => 'john@example.com',
+            'email' => 'usurper@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response = $this->postJson($this->route, $this->getDatas());
+
+        $response->assertOk();
+        $response->assertJsonPath('user.id', $owner->id);
+    }
+
+    #[Test]
     public function rejects_wrong_password(): void
     {
         User::factory()->create(['email' => 'john@example.com', 'password' => 'password123']);
@@ -98,16 +151,16 @@ class AuthControllerLoginTest extends TestCase
         $response = $this->postJson($this->route, $this->getDatas(['password' => 'wrong-password']));
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['email']);
+        $response->assertJsonValidationErrors(['identifier']);
     }
 
     #[Test]
-    public function rejects_unknown_email(): void
+    public function rejects_unknown_identifier(): void
     {
         $response = $this->postJson($this->route, $this->getDatas());
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['email']);
+        $response->assertJsonValidationErrors(['identifier']);
     }
 
     #[Test]
@@ -121,16 +174,16 @@ class AuthControllerLoginTest extends TestCase
         $response = $this->postJson($this->route, $this->getDatas());
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['email']);
+        $response->assertJsonValidationErrors(['identifier']);
     }
 
     #[Test]
-    public function email_is_required(): void
+    public function identifier_is_required(): void
     {
-        $response = $this->postJson($this->route, $this->getDatas(['email' => '']));
+        $response = $this->postJson($this->route, $this->getDatas(['identifier' => '']));
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['email']);
+        $response->assertJsonValidationErrors(['identifier']);
     }
 
     #[Test]

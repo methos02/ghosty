@@ -16,7 +16,7 @@ class AuthControllerRegisterTest extends TestCase
 
     /** @var array<string, mixed> */
     protected array $datas = [
-        'pseudo' => 'JohnDoe',
+        'username' => 'JohnDoe',
         'email' => 'john@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
@@ -42,7 +42,7 @@ class AuthControllerRegisterTest extends TestCase
     {
         for ($attempt = 1; $attempt <= 5; $attempt++) {
             $this->postJson($this->route, $this->getDatas([
-                'pseudo' => 'Ghost'.$attempt,
+                'username' => 'Ghost'.$attempt,
                 'email' => "ghost{$attempt}@example.com",
             ]))->assertCreated();
         }
@@ -56,16 +56,16 @@ class AuthControllerRegisterTest extends TestCase
         $response = $this->postJson($this->route, $this->getDatas());
 
         $response->assertCreated();
-        $response->assertJsonPath('user.pseudo', 'JohnDoe');
+        $response->assertJsonPath('user.username', 'JohnDoe');
         $response->assertJsonPath('user.email', 'john@example.com');
         $response->assertJsonPath('user.roles', [User::ROLE_READER]);
-        $this->assertArrayNotHasKey('token', $response->json());
+        $response->assertJsonMissingPath('token');
 
         $cookie = $response->getCookie('ghosty_token', false);
         $this->assertNotNull($cookie);
         $this->assertTrue($cookie->isHttpOnly());
 
-        $this->assertDatabaseHas('users', ['email' => 'john@example.com', 'pseudo' => 'JohnDoe']);
+        $this->assertDatabaseHas('users', ['email' => 'john@example.com', 'username' => 'JohnDoe']);
     }
 
     #[Test]
@@ -79,32 +79,32 @@ class AuthControllerRegisterTest extends TestCase
     }
 
     #[Test]
-    public function pseudo_is_required(): void
+    public function username_is_required(): void
     {
-        $response = $this->postJson($this->route, $this->getDatas(['pseudo' => '']));
+        $response = $this->postJson($this->route, $this->getDatas(['username' => '']));
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['pseudo']);
+        $response->assertJsonValidationErrors(['username']);
     }
 
     #[Test]
-    public function pseudo_must_be_at_least_three_chars(): void
+    public function username_must_be_at_least_three_chars(): void
     {
-        $response = $this->postJson($this->route, $this->getDatas(['pseudo' => 'ab']));
+        $response = $this->postJson($this->route, $this->getDatas(['username' => 'ab']));
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['pseudo']);
+        $response->assertJsonValidationErrors(['username']);
     }
 
     #[Test]
-    public function pseudo_must_be_unique(): void
+    public function username_must_be_unique(): void
     {
-        User::factory()->create(['pseudo' => 'JohnDoe']);
+        User::factory()->create(['username' => 'JohnDoe']);
 
         $response = $this->postJson($this->route, $this->getDatas());
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['pseudo']);
+        $response->assertJsonValidationErrors(['username']);
     }
 
     #[Test]

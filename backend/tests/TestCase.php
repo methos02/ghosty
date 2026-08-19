@@ -16,8 +16,6 @@ abstract class TestCase extends BaseTestCase
     protected array $datas = [];
 
     /**
-     * Vérifie qu'une action de contrôleur type-hint bien le FormRequest attendu.
-     *
      * @throws ReflectionException
      */
     protected function hasFormRequest(string $class, string $method, string $formRequest): bool
@@ -31,8 +29,6 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Fusionne le jeu de données par défaut avec des surcharges par champ.
-     *
      * @param  array<string, mixed>  $datas
      * @return array<string, mixed>
      */

@@ -1,39 +1,69 @@
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
-import SearchBar from '@/views/parts/SearchBar.vue'
+import Toolbar from '@/views/parts/Toolbar.vue'
 import NovelCard from '@/views/parts/NovelCard.vue'
+import NovelSearch from '@/views/parts/NovelSearch.vue'
+import UserSummary from '@/views/parts/UserSummary.vue'
 import NovelDetailDialog from '@/views/novels/NovelDetailDialog.vue'
 import PaginatorInfinite from '@/components/paginators/PaginatorInfiniteComponent.vue'
-import { useSearchNovels } from '@/composables/use-search-novels.js'
-import { t } from '@/services/shortcuts/services-shortcut.js'
+import NovelManageForm from '@/views/novels/NovelManageForm.vue'
+import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
+import { useNovelSearch } from '@/apis/novels/composables/use-novel-search.js'
+import { route, router, t } from '@/services/shortcuts/services-shortcut.js'
+import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { useHomeHead } from '@/head/use-home-head.js'
 
 useHomeHead()
 
-const activeTab = ref('home')
-const { novels, pagination, loadMore } = useSearchNovels()
+const authStore = useAuthStore()
+const { novels, pagination } = useNovelStore()
+const { novelSearch } = useNovelSearch()
+
+const loadMore = () => novelSearch.loadMore()
+
+const currentRoute = route.current()
+const WRITING_ROUTES = new Set(['novel-create', 'novel-edit'])
+
+const mode = computed(() => (WRITING_ROUTES.has(currentRoute.value.name) ? 'create' : 'read'))
+
+const changeMode = async nextMode => {
+  await router.push(nextMode === 'create' ? { name: 'novel-create' } : { name: 'home' })
+}
 </script>
 
 <template>
   <div class="home-page | f-column">
     <div class="top-container | f-column">
-      <Header />
+      <Header :transparent="true" />
       <div class="w-xl | f-column j-center g-35 flex-1 a-start">
-        <div>
+        <UserSummary v-if="authStore.isAuthenticated.value" />
+
+        <div v-if="!authStore.isAuthenticated.value">
           <h1 class="top-title | color-neutral-100 fw-400">{{ t('homepage.welcome_title') }}</h1>
           <p class="top-subtitle | color-neutral-100 fw-400">
             {{ t('homepage.welcome_subtitle') }}
           </p>
         </div>
-        <button class="btn btn-neutral-100-alt fs-700 px-50 py-10">
+        <button
+          v-if="!authStore.isAuthenticated.value"
+          class="btn btn-neutral-100-alt fs-700 px-50 py-10"
+        >
           {{ t('homepage.principle_button') }}
         </button>
       </div>
-      <SearchBar v-model:activeTab="activeTab" />
+      <Toolbar
+        :mode="mode"
+        @update:mode="changeMode"
+      />
     </div>
 
+    <NovelManageForm v-if="mode === 'create'" />
+
+    <NovelSearch v-if="mode === 'read'" />
+
     <PaginatorInfinite
+      v-if="mode === 'read'"
       :cb="loadMore"
       :params="pagination"
       :options="{ observe: 'window' }"

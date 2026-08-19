@@ -62,10 +62,10 @@ const close = () => {
       >
         <div class="form-row">
           <InputComponent
-            v-model="datas.pseudo"
-            name="pseudo"
+            v-model="datas.username"
+            name="username"
             type="text"
-            :label="t('auth.register_pseudo')"
+            :label="t('auth.register_username')"
             :required="true"
             autocomplete="username"
             form="register"

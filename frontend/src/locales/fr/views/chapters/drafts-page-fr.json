@@ -1,0 +1,13 @@
+{
+  "drafts": {
+    "title": "Mes brouillons",
+    "novels": "Romans",
+    "chapters": "Chapitres",
+    "empty": "Aucun brouillon en cours.",
+    "create_novel": "Créer un roman",
+    "resume": "Reprendre",
+    "discard": "Supprimer",
+    "discard_novel_question": "Supprimer ce brouillon ? Le roman disparaîtra avec son chapitre d'origine.",
+    "discard_chapter_question": "Supprimer ce brouillon ? Le texte sera perdu."
+  }
+}

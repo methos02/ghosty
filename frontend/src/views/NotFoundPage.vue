@@ -13,7 +13,10 @@ useNotFoundHead()
       <p class="not-found-page__code | fw-700 color-primary">404</p>
       <h1 class="fw-400">{{ t('not_found.title') }}</h1>
       <p class="color-neutral-700">{{ t('not_found.message') }}</p>
-      <RouterLink to="/" class="btn btn-primary fs-700 px-50 py-10">
+      <RouterLink
+        to="/"
+        class="btn btn-primary fs-700 px-50 py-10"
+      >
         {{ t('not_found.back_home') }}
       </RouterLink>
     </div>

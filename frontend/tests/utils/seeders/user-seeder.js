@@ -2,7 +2,7 @@ import { AuthDto } from '@/apis/ghosty/dtos/auth-dto.js'
 
 const getUserApi = (overrides = {}) => ({
   id: 42,
-  pseudo: 'GhostWriter',
+  username: 'GhostWriter',
   email: 'ghost@ghosty.test',
   roles: ['user'],
   avatar: null,
@@ -21,7 +21,7 @@ const getUserApi = (overrides = {}) => ({
 const getUser = (overrides = {}) => ({ ...AuthDto.fromUser(getUserApi()), ...overrides })
 
 const getRegisterForm = (overrides = {}) => ({
-  pseudo: 'GhostWriter',
+  username: 'GhostWriter',
   email: 'ghost@ghosty.test',
   password: 'Secret123!',
   passwordConfirmation: 'Secret123!',
@@ -29,7 +29,7 @@ const getRegisterForm = (overrides = {}) => ({
 })
 
 const getLoginForm = (overrides = {}) => ({
-  email: 'ghost@ghosty.test',
+  identifier: 'ghost@ghosty.test',
   password: 'Secret123!',
   ...overrides,
 })

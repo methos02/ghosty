@@ -99,7 +99,6 @@
   }
 }
 
-// Static label - label stays above input, doesn't float
 .label-static {
   .form-label {
     position: static;
@@ -119,7 +118,6 @@
   }
 }
 
-// No label - input without label, removes extra top padding
 .no-label {
   &.form-input {
     padding: 10px 15px;

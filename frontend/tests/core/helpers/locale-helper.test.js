@@ -9,7 +9,7 @@ vi.mock('node:path', async () => (await import('&/utils/mocks/path-mock.js')).cr
 import { localeHelper } from '@/core/helpers/locale-helper.js'
 
 afterEach(() => {
-  vi.clearAllMocks()
+  vi.resetAllMocks()
 })
 
 describe('loadLocaleFiles', () => {

@@ -112,7 +112,7 @@ onMounted(load)
           <div class="d-flex g-10">
             <router-link
               :to="resumeRoute(draft)"
-              class="btn btn-sm btn-primary-alt"
+              class="drafts-page__resume | btn btn-sm btn-primary-alt"
             >
               {{ t('drafts.resume') }}
             </router-link>

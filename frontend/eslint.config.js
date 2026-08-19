@@ -9,13 +9,7 @@ import multilineObjectLiteral from './eslint-rules/multiline-object-literal.js'
 export default [
   js.configs.recommended,
   {
-    ignores: [
-      '**/*.test.js',
-      'dist/**',
-      'coverage/**',
-      'memory-bank/**',
-      '../backend/**',
-    ],
+    ignores: ['**/*.test.js', 'dist/**', 'coverage/**', 'memory-bank/**', '../backend/**'],
   },
   {
     files: ['**/*.vue', '**/*.js'],
@@ -145,6 +139,27 @@ export default [
     rules: {
       'unicorn/no-empty-file': 'off',
       'unicorn/require-module-specifiers': 'off',
+    },
+  },
+  {
+    files: ['tests/**/*.js'],
+    languageOptions: {
+      globals: {
+        HTMLElement: 'readonly',
+        vi: 'readonly',
+      },
+    },
+    rules: {
+      // Les mocks remplacent des APIs absentes de jsdom : patcher globalThis et les
+      // prototypes est leur raison d'etre, pas un effet de bord accidentel.
+      'unicorn/no-global-object-property-assignment': 'off',
+      'unicorn/no-unnecessary-global-this': 'off',
+      'unicorn/no-this-outside-of-class': 'off',
+      // Les seeders reproduisent des charges utiles JSON, ou null est une valeur servie
+      // par l'API : la remplacer par undefined fausserait le scenario teste.
+      'unicorn/no-null': 'off',
+      // Un jeu de donnees est litteral par nature.
+      'no-magic-numbers': 'off',
     },
   },
   {

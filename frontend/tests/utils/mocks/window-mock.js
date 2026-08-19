@@ -88,16 +88,17 @@ export const windowMock = () => {
       fetch: globalThis.fetch,
     }
 
-    Object.defineProperty(globalThis, 'window', {
-      value: mockWindow,
-      writable: true,
-      configurable: true,
-    })
-
-    Object.defineProperty(globalThis, 'document', {
-      value: mockDocument,
-      writable: true,
-      configurable: true,
+    Object.defineProperties(globalThis, {
+      window: {
+        value: mockWindow,
+        writable: true,
+        configurable: true,
+      },
+      document: {
+        value: mockDocument,
+        writable: true,
+        configurable: true,
+      },
     })
   }
 

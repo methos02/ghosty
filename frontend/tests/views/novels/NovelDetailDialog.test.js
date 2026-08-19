@@ -113,6 +113,7 @@ describe('NovelDetailDialog.vue', () => {
     vi.spyOn(ChapterController, 'currentContinuity').mockResolvedValue(
       controllerSuccess({ chapters: [chapter(10, 'Le Réveil', 'Il était une fois...')] }),
     )
+    useAuthStore().setUser(userSeeder.getUser())
     const novel = novelSeeder.getNovel()
     const { wrapper } = await mountDialogFor(novel)
     await flushPromises()
@@ -123,6 +124,8 @@ describe('NovelDetailDialog.vue', () => {
       expect(router.currentRoute.value.name).toBe('chapter-write')
     })
     expect(router.currentRoute.value.params).toEqual({ slug: novel.slug, parentId: '10' })
+
+    useAuthStore().clear()
   })
 
   it('offers the correction to the author of the displayed chapter, and to no one else', async () => {

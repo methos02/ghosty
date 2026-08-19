@@ -10,12 +10,7 @@ import { STATUS } from '@/constants/ajax-constants.js'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { validateChapterForm } from '@/apis/chapters/formRequest/chapter-form-request.js'
 import { proofreadingHelper } from '@/core/helpers/proofreading-helper.js'
-import { useAuthStore } from '@/services/auth/src/auth-store.js'
-import { useAuth } from '@/services/auth/src/use-auth.js'
 import { useChapterManageHead } from '@/head/use-chapter-manage-head.js'
-
-const authStore = useAuthStore()
-const authDialogs = useAuth()
 
 const chapterId = Number(route.get('id')) || undefined
 const parentId = Number(route.get('parentId')) || undefined
@@ -228,22 +223,7 @@ onMounted(async () => {
         </p>
       </div>
 
-      <div
-        v-if="!authStore.isAuthenticated.value"
-        class="d-flex f-column g-15 a-start"
-      >
-        <p>{{ t('chapter_manage.login_required') }}</p>
-        <button
-          type="button"
-          @click="authDialogs.openLoginDialog()"
-          class="btn btn-primary"
-        >
-          {{ t('chapter_manage.login_button') }}
-        </button>
-      </div>
-
       <form
-        v-if="authStore.isAuthenticated.value"
         @submit.prevent="publishButton?.runCallback()"
         class="chapter-manage-page__form | d-flex f-column"
       >

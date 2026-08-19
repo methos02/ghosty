@@ -29,18 +29,16 @@ describe('ChapterManagePage.vue', () => {
     await router.push('/')
   })
 
-  const mountWriting = async ({ authenticated = true } = {}) => {
+  const mountWriting = async () => {
     vi.spyOn(ChapterController, 'getById').mockResolvedValue({
       status: STATUS.SUCCESS,
       chapter: parent(),
     })
+    useAuthStore().setUser(userSeeder.getUser())
     await router.push({
       name: 'chapter-write',
       params: { slug: 'nuit-virage', parentId: 10 },
     })
-    if (authenticated) {
-      useAuthStore().setUser(userSeeder.getUser())
-    }
     wrapper = mount(ChapterManagePage)
     await flushPromises()
     return wrapper
@@ -52,8 +50,8 @@ describe('ChapterManagePage.vue', () => {
         ? { status: STATUS.SUCCESS, chapter: edited }
         : { status: STATUS.SUCCESS, chapter: parent() },
     )
-    await router.push({ name: 'chapter-edit', params: { id: 44 } })
     useAuthStore().setUser(userSeeder.getUser())
+    await router.push({ name: 'chapter-edit', params: { id: 44 } })
     wrapper = mount(ChapterManagePage)
     await flushPromises()
     return wrapper
@@ -75,13 +73,6 @@ describe('ChapterManagePage.vue', () => {
       const notice = wrapper.find('.chapter-manage-page__continuing')
       expect(notice.text()).toContain('Le virage')
       expect(notice.text()).not.toContain('GhostWriter')
-    })
-
-    it('asks a visitor to sign in instead of showing the form', async () => {
-      await mountWriting({ authenticated: false })
-
-      expect(wrapper.find('.chapter-manage-page__form').exists()).toBe(false)
-      expect(wrapper.text()).toContain('Connectez-vous pour proposer une suite.')
     })
 
     it('reopens the draft already started on this parent instead of a blank form', async () => {

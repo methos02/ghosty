@@ -22,21 +22,25 @@ export const routes = [
     path: '/me/drafts',
     name: 'drafts',
     component: () => import('@/views/chapters/DraftsPage.vue'),
+    meta: { requiresAuth: true },
   },
   {
     path: '/me/favorites',
     name: 'favorites',
     component: () => import('@/views/novels/FavoritesPage.vue'),
+    meta: { requiresAuth: true },
   },
   {
     path: '/chapters/:id/edit',
     name: 'chapter-edit',
     component: () => import('@/views/chapters/ChapterManagePage.vue'),
+    meta: { requiresAuth: true },
   },
   {
     path: '/novels/:slug/chapters/:parentId/write',
     name: 'chapter-write',
     component: () => import('@/views/chapters/ChapterManagePage.vue'),
+    meta: { requiresAuth: true },
   },
   {
     path: '/novels/:slug',

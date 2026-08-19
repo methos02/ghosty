@@ -11,8 +11,6 @@
     "words_exceeded": "Vous dépassez les {allowance} mots modifiables autorisés : la correction sera refusée.",
     "save_correction": "Enregistrer la correction",
     "confirm_correction": "Êtes-vous sûr de vouloir enregistrer cette correction ?\nCe chapitre ne sera plus modifiable après.",
-    "login_required": "Connectez-vous pour proposer une suite.",
-    "login_button": "Se connecter",
     "chapter_title": "Titre du chapitre",
     "save_draft": "Brouillon",
     "submit": "Publier",

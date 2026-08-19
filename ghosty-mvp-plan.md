@@ -237,6 +237,7 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 
 - `GET /novels/{slug}/chapters/{id}` (ancêtres, suites triées, continuité courante), `GET /novels/{slug}/tree`.
 - Front : `ChapterReaderPage` (lecture linéaire par défaut = continuité courante), `ContinuationSwitcher` (« ce chapitre a N suites »), `BranchBreadcrumb` (retour à l'embranchement), `MultiversePage` (arbre repliable, vue d'exploration séparée — §8).
+- **Retour après écriture** : dès que `ChapterReaderPage` existe, la modification d'un chapitre (correction d'un publié, enregistrement d'un brouillon repris) et la publication redirigent vers **la page de lecture du chapitre**, et non plus vers la fiche du roman — repli provisoire du lot 1. Même cible pour « Lire ce chapitre » de `NovelDetailDialog`, encore vide.
 - **Règle d'affichage (D4)** : une branche n'a jamais de nom propre. Partout — switcher, fil d'Ariane, suivi, profil, arbre — elle est désignée par son chapitre-tête : « *{titre du chapitre}* — par {pseudo} ». Aucun libellé de branche à inventer, donc aucun champ à saisir nulle part.
 - SSR : `asyncData` chapitre + arbre, `useHead` dédié (`src/head/use-chapter-head.js`), **`<link rel="canonical">` vers la continuité courante** pour éviter le contenu dupliqué entre réalités, 404 réel sur chapitre inconnu.
 

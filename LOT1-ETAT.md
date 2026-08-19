@@ -198,6 +198,8 @@ activité apparaît au lot 3.
 - **« Lire ce chapitre » est une coquille vide** : `readCurrentChapter = () => {}` dans
   `NovelDetailDialog`. Il attend le `ChapterReaderPage` du lot 2.
 - **Aucune page de lecture** : après publication on redirige vers la fiche du roman.
+  Repli provisoire — au lot 2, la modification d'un chapitre comme sa publication
+  devront ramener à la page de lecture du chapitre.
 
 ### Qualité
 

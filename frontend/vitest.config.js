@@ -18,6 +18,9 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    env: {
+      VITE_GHOSTY_APP_URL: 'http://ghosty.test',
+    },
     globals: true,
     globalSetup: './vitest.global-setup.js',
     setupFiles: 'vitest.setup',

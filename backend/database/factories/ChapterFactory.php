@@ -37,7 +37,9 @@ class ChapterFactory extends Factory
         ])->afterCreating(function (Chapter $chapter) use ($parent) {
             $chapter->forceFill([
                 'path' => $parent->path.$chapter->id.Chapter::PATH_SEPARATOR,
-                'branch_like_count' => $parent->branch_like_count + $chapter->like_count,
+                'branch_like_count' => $chapter->isPublished()
+                    ? $parent->branch_like_count + $chapter->like_count
+                    : 0,
             ])->save();
 
             if ($chapter->isPublished()) {

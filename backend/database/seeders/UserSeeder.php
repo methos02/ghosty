@@ -2,60 +2,33 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
+    private const DEFAULT_REGISTERED_HOURS_AGO = 720;
+
     public function run(): void
     {
-        User::create([
-            'username' => 'admin',
-            'email' => 'admin@ghosty.fr',
-            'password' => Hash::make('password'),
-            'roles' => [User::ROLE_READER, User::ROLE_AUTHOR, User::ROLE_MODERATOR, User::ROLE_ADMIN],
-            'email_verified_at' => now(),
-        ]);
+        /** @var array<int, array{username: string, email: string, roles: list<string>, email_verified?: bool, registered_hours_ago?: int}> $users */
+        $users = File::json(database_path('data/users.json'));
 
-        User::create([
-            'username' => 'moderateur1',
-            'email' => 'moderateur@ghosty.fr',
-            'password' => Hash::make('password'),
-            'roles' => [User::ROLE_READER, User::ROLE_MODERATOR],
-            'email_verified_at' => now(),
-        ]);
+        foreach ($users as $user) {
+            $registeredAt = now()->subHours($user['registered_hours_ago'] ?? self::DEFAULT_REGISTERED_HOURS_AGO);
+            $hasVerifiedEmail = $user['email_verified'] ?? true;
 
-        User::create([
-            'username' => 'auteur1',
-            'email' => 'auteur@ghosty.fr',
-            'password' => Hash::make('password'),
-            'roles' => [User::ROLE_READER, User::ROLE_AUTHOR],
-            'email_verified_at' => now(),
-        ]);
-
-        User::create([
-            'username' => 'auteur2',
-            'email' => 'auteur2@ghosty.fr',
-            'password' => Hash::make('password'),
-            'roles' => [User::ROLE_READER, User::ROLE_AUTHOR],
-            'email_verified_at' => now(),
-        ]);
-
-        User::create([
-            'username' => 'auteur3',
-            'email' => 'auteur3@ghosty.fr',
-            'password' => Hash::make('password'),
-            'roles' => [User::ROLE_READER, User::ROLE_AUTHOR],
-            'email_verified_at' => now(),
-        ]);
-
-        User::create([
-            'username' => 'lecteur1',
-            'email' => 'lecteur@ghosty.fr',
-            'password' => Hash::make('password'),
-            'roles' => [User::ROLE_READER],
-            'email_verified_at' => now(),
-        ]);
+            DB::table('users')->insert([
+                'username' => $user['username'],
+                'email' => $user['email'],
+                'password' => Hash::make('password'),
+                'roles' => json_encode($user['roles']),
+                'email_verified_at' => $hasVerifiedEmail ? $registeredAt : null,
+                'created_at' => $registeredAt,
+                'updated_at' => $registeredAt,
+            ]);
+        }
     }
 }

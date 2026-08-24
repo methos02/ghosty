@@ -39,6 +39,10 @@ return new class extends Migration
             $table->index(['novel_id', 'status', 'branch_like_count']);
             $table->index('status');
             $table->index('path');
+
+            /* @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md */
+            $table->index(['novel_id', 'updated_at']);
+
             $table->index(
                 ['novel_id', 'continuations_count', 'status', 'branch_like_count'],
                 'chapters_active_branches_index'

@@ -48,4 +48,13 @@ return [
             'too_many' => 'Trop de mots modifiés : une correction ne doit pas changer le récit, seulement le corriger',
         ],
     ],
+    'report' => [
+        'reason' => [
+            'required' => 'Le motif du signalement est obligatoire',
+            'enum' => 'Le motif sélectionné est invalide',
+        ],
+        'description' => [
+            'max' => 'La description ne peut pas dépasser :max caractères',
+        ],
+    ],
 ];

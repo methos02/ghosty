@@ -260,7 +260,7 @@ reports   : reporter_id, reportable_type (Chapter|Comment|NovelCover|User), repo
                         'spam','hate_speech','insult','harassment','personal_attack',
                         'like_manipulation','illegal'),
             description, status ENUM('pending','processed'), moderator_id,
-            resolution ENUM('dismissed','hidden','removed','sanction'), processed_at, timestamps
+            resolution ENUM('dismissed','hidden','archived','removed','sanction'), processed_at, timestamps
             UNIQUE (reporter_id, reportable_type, reportable_id)
 
 sanctions : user_id, moderator_id, type ENUM('warning','like_ban','write_ban',
@@ -837,18 +837,29 @@ des soutiens depuis la racine jusqu'à lui**, et la continuité courante se déd
 branche du chapitre publié au cumul le plus élevé. Les suites écartées restent intégralement
 lisibles et peuvent encore devenir des branches.
 
-Un soutien remonte donc dans toute la descendance du chapitre, en une seule requête grâce au
-`path` matérialisé :
+Un soutien n'écrit **qu'une ligne** — `like_count` sur le chapitre, le chiffre que le lecteur
+voit revenir de son clic :
 
 ```php
 public function applyLike(Chapter $chapter, int $delta = 1): void
 {
     $chapter->increment('like_count', $delta);
-
-    Chapter::where('path', 'like', $chapter->path.'%')
-        ->increment('branch_like_count', $delta);
 }
 ```
+
+Il ne marque rien : cet `UPDATE` pousse déjà `chapters.updated_at`, et c'est ce que la
+commande planifiée `ghosty:recompute-branch-likes` interroge toutes les cinq minutes — un
+roman est à recalculer dès qu'un de ses chapitres porte
+`updated_at >= novels.branch_recomputed_at`, ou que cette date est nulle.
+
+`recompute()` ne rejoue pas des deltas : il reconstruit le roman depuis la racine et n'écrit
+que les lignes dont la valeur change, puis pose `branch_recomputed_at` à l'instant **capturé
+avant la lecture**. Une bascule aller-retour n'écrit donc rien, un soutien arrivé pendant la
+passe est repris par la suivante, et un recalcul manqué est rattrapé sans intervention.
+
+⛔ **Les écritures de `recompute()` passent par `toBase()`**, donc sans horodatage. Une seule
+de ces lignes qui toucherait `chapters.updated_at` rendrait le roman éternellement sale et le
+recalculerait toutes les cinq minutes à perpétuité.
 
 À la lecture, `ChapterRepository::currentContinuity()` prend le chapitre au plus fort cumul
 et hydrate sa branche depuis `pathChapterIds()`. Sur une feuille, le même cumul évalue une
@@ -866,10 +877,13 @@ et hydrate sa branche depuis `pathChapterIds()`. Sur une feuille, le même cumul
 4. **On notifie le gain, jamais la perte.** Annoncer une rétrogradation transformerait un
    classement en défaite, à rebours de §7.
 
-⚠️ La propagation est **synchrone** et écrit autant de lignes que le sous-arbre en compte.
-C'est sans effet sur des romans courts ; si la latence d'un soutien devient perceptible, la
-sortie prévue est une file groupée par roman, et le point d'appel ci-dessus est le seul à
-changer.
+⚠️ Le cumul accuse donc **jusqu'à cinq minutes de retard**. Il ne sert qu'au tri — parcours
+de lecture par défaut et classement des branches — jamais à une autorisation. C'est pourquoi
+`POST /chapters/{id}/like` **ne renvoie pas `branch_like_count`** : servir la valeur d'avant
+le clic serait pire que ne rien servir. Le champ reste exposé sur la lecture d'un chapitre.
+Le lot modération réutilisera `recompute()` après chaque retrait de contenu
+([ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md),
+amendement du 2026-08-24).
 
 ### LikeGuard — anti-abus
 

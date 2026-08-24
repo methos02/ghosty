@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('cover_url')->nullable();
             $table->boolean('is_favorite')->default(false);
             $table->unsignedInteger('chapter_count')->default(0);
+
+            /* @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md */
+            $table->timestamp('branch_recomputed_at')->nullable();
+
             $table->timestamps();
 
             $table->index('author_id');

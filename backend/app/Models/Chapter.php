@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasLikes;
+use App\Models\Concerns\Reportable;
 use Database\Factories\ChapterFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,7 +21,7 @@ use Illuminate\Support\Facades\Config;
 class Chapter extends Model
 {
     /** @use HasFactory<ChapterFactory> */
-    use HasFactory;
+    use HasFactory, HasLikes, Reportable;
 
     const STATUS_DRAFT = 0;
 

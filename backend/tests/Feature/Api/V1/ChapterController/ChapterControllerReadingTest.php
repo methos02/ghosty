@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api\V1\ChapterController;
 
 use App\Models\Chapter;
+use App\Models\Like;
 use App\Models\Novel;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\Test;
@@ -240,5 +241,33 @@ class ChapterControllerReadingTest extends TestCase
             ->getJson("/api/v1/novels/{$novel->slug}/chapters/{$draft->id}")
             ->assertOk()
             ->assertJsonPath('chapter.id', $draft->id);
+    }
+
+    #[Test]
+    public function the_reader_sees_their_own_support_on_the_ancestors_too(): void
+    {
+        [$novel, $root] = $this->novelWithRoot();
+        $second = Chapter::factory()->continuing($root)->create();
+        $reader = User::factory()->create();
+        Like::factory()->on($root)->create(['user_id' => $reader->id]);
+
+        $this->actingAs($reader)
+            ->getJson("/api/v1/novels/{$novel->slug}/chapters/{$second->id}")
+            ->assertOk()
+            ->assertJsonPath('ancestors.0.id', $root->id)
+            ->assertJsonPath('ancestors.0.is_liked', true)
+            ->assertJsonPath('chapter.is_liked', false);
+    }
+
+    #[Test]
+    public function a_visitor_sees_nobody_elses_support_as_their_own(): void
+    {
+        [$novel, $root] = $this->novelWithRoot();
+        $second = Chapter::factory()->continuing($root)->create();
+        Like::factory()->on($root)->create();
+
+        $this->getJson("/api/v1/novels/{$novel->slug}/chapters/{$second->id}")
+            ->assertOk()
+            ->assertJsonPath('ancestors.0.is_liked', false);
     }
 }

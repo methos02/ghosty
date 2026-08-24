@@ -28,7 +28,7 @@ class ChapterRepository
         }
 
         $branch = Chapter::query()
-            ->with('author')
+            ->with(['author', 'viewerLikes'])
             ->published()
             ->whereIn('id', $branchEnd->pathChapterIds())
             ->orderBy('depth')
@@ -53,14 +53,18 @@ class ChapterRepository
             ->get();
     }
 
-    public function find(int $id): Chapter
+    public function find(int $id, bool $withoutRelations = false): Chapter
     {
-        return Chapter::with(['author', 'novel'])->findOrFail($id);
+        if ($withoutRelations) {
+            return Chapter::findOrFail($id);
+        }
+
+        return Chapter::with(['author', 'novel', 'viewerLikes'])->findOrFail($id);
     }
 
     public function findInNovel(int $chapterId, string $novelSlug): Chapter
     {
-        return Chapter::with('author')
+        return Chapter::with(['author', 'viewerLikes'])
             ->whereKey($chapterId)
             ->whereRelation('novel', 'slug', $novelSlug)
             ->firstOrFail();
@@ -140,7 +144,7 @@ class ChapterRepository
     public function children(int $parentId): Collection
     {
         return Chapter::query()
-            ->with('author')
+            ->with(['author', 'viewerLikes'])
             ->published()
             ->where('parent_id', $parentId)
             ->orderByDesc('like_count')
@@ -160,7 +164,7 @@ class ChapterRepository
         }
 
         return Chapter::query()
-            ->with('author')
+            ->with(['author', 'viewerLikes'])
             ->published()
             ->whereIn('id', $ancestorIds)
             ->orderBy('depth')
@@ -177,7 +181,7 @@ class ChapterRepository
         $branchEnd = $this->mostPopularDescendantOf($chapter) ?? $chapter;
 
         $branch = Chapter::query()
-            ->with('author')
+            ->with(['author', 'viewerLikes'])
             ->published()
             ->whereIn('id', $branchEnd->pathChapterIds())
             ->orderBy('depth')
@@ -211,7 +215,7 @@ class ChapterRepository
     public function branchEndingWith(Chapter $chapter): Collection
     {
         return Chapter::query()
-            ->with('author')
+            ->with(['author', 'viewerLikes'])
             ->published()
             ->whereIn('id', $chapter->pathChapterIds())
             ->orderBy('depth')
@@ -246,7 +250,7 @@ class ChapterRepository
     private function treeQuery(string $novelSlug): Builder
     {
         return Chapter::query()
-            ->with('author')
+            ->with(['author', 'viewerLikes'])
             ->published()
             ->whereRelation('novel', 'slug', $novelSlug)
             ->orderBy('depth')

@@ -17,4 +17,15 @@ return [
         'children_per_page' => 15,
     ],
 
+    /* @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md */
+    'likes' => [
+        'requires_verified_email' => true,
+        'min_account_age_hours' => 24,
+        'per_minute' => 5,
+    ],
+
+    'reports' => [
+        'description_max_length' => 1000,
+    ],
+
 ];

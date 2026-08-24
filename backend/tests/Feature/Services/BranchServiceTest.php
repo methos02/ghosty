@@ -4,16 +4,22 @@ namespace Tests\Feature\Services;
 
 use App\DTO\ChapterDTO;
 use App\Models\Chapter;
+use App\Models\Novel;
 use App\Models\User;
 use App\Services\BranchService;
 use App\Services\ChapterService;
-use Illuminate\Database\Events\QueryExecuted;
-use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class BranchServiceTest extends TestCase
 {
+    private function recompute(Chapter $chapter): int
+    {
+        return app(BranchService::class)->recompute(
+            Novel::findOrFail($chapter->novel_id)
+        );
+    }
+
     #[Test]
     public function a_like_raises_the_weight_of_the_chapter_and_of_everything_it_leads_to(): void
     {
@@ -21,7 +27,8 @@ class BranchServiceTest extends TestCase
         $second = Chapter::factory()->continuing($root)->liked(6)->create();
         $third = Chapter::factory()->continuing($second)->liked(1)->create();
 
-        app(BranchService::class)->applyLike($second);
+        $second->increment('like_count');
+        $this->recompute($root);
 
         $this->assertSame(4, $root->refresh()->branch_like_count);
         $this->assertSame(11, $second->refresh()->branch_like_count);
@@ -35,20 +42,11 @@ class BranchServiceTest extends TestCase
         $supported = Chapter::factory()->continuing($root)->liked(3)->create();
         $alternative = Chapter::factory()->continuing($root)->liked(3)->create();
 
-        app(BranchService::class)->applyLike($supported);
+        $supported->increment('like_count');
+        $this->recompute($root);
 
         $this->assertSame(4, $supported->refresh()->branch_like_count);
         $this->assertSame(3, $alternative->refresh()->branch_like_count);
-    }
-
-    #[Test]
-    public function a_like_also_counts_for_the_chapter_itself(): void
-    {
-        $chapter = Chapter::factory()->liked(2)->create();
-
-        app(BranchService::class)->applyLike($chapter);
-
-        $this->assertSame(3, $chapter->refresh()->like_count);
     }
 
     #[Test]
@@ -56,13 +54,39 @@ class BranchServiceTest extends TestCase
     {
         $root = Chapter::factory()->liked(5)->create();
         $second = Chapter::factory()->continuing($root)->create();
-        $service = app(BranchService::class);
 
-        $service->applyLike($root);
-        $service->applyLike($root, -1);
+        $root->increment('like_count');
+        $root->decrement('like_count');
+        $this->recompute($root);
 
         $this->assertSame(5, $root->refresh()->branch_like_count);
         $this->assertSame(5, $second->refresh()->branch_like_count);
+    }
+
+    #[Test]
+    public function supporting_then_withdrawing_costs_no_branch_write_at_all(): void
+    {
+        $root = Chapter::factory()->liked(5)->create();
+        Chapter::factory()->continuing($root)->create();
+
+        $root->increment('like_count');
+        $root->decrement('like_count');
+
+        $this->assertSame(0, $this->recompute($root));
+    }
+
+    #[Test]
+    public function repeated_toggling_is_collapsed_into_a_single_recompute(): void
+    {
+        $root = Chapter::factory()->create();
+        $second = Chapter::factory()->continuing($root)->create();
+
+        $root->increment('like_count');
+        $root->decrement('like_count');
+        $root->increment('like_count');
+
+        $this->assertSame(2, $this->recompute($root));
+        $this->assertSame(1, $second->refresh()->branch_like_count);
     }
 
     #[Test]
@@ -79,33 +103,39 @@ class BranchServiceTest extends TestCase
 
         $this->assertSame(0, $draft->refresh()->branch_like_count);
 
-        app(BranchService::class)->applyLike($root, 5);
+        $root->increment('like_count', 5);
+        $this->recompute($root);
         $service->publish($draft);
 
         $this->assertSame(105, $draft->refresh()->branch_like_count);
     }
 
     #[Test]
-    public function a_like_costs_a_single_write_whatever_the_branch_length(): void
+    public function a_recompute_leaves_drafts_out_of_the_branch(): void
+    {
+        $root = Chapter::factory()->liked(7)->create();
+        $draft = Chapter::factory()->continuing($root)->draft()->create();
+
+        $this->recompute($root);
+
+        $this->assertSame(7, $root->refresh()->branch_like_count);
+        $this->assertSame(0, $draft->refresh()->branch_like_count);
+    }
+
+    #[Test]
+    public function a_recompute_does_not_make_the_novel_look_touched_again(): void
     {
         $root = Chapter::factory()->create();
-        $deepest = $root;
+        Chapter::factory()->continuing($root)->create();
+        $root->increment('like_count');
 
-        for ($i = 0; $i < 8; $i++) {
-            $deepest = Chapter::factory()->continuing($deepest)->create();
-        }
+        $this->travel(1)->seconds();
+        $this->recompute($root);
 
-        $writes = 0;
-
-        DB::listen(function (QueryExecuted $query) use (&$writes) {
-            if (str_starts_with(strtolower($query->sql), 'update')) {
-                $writes++;
-            }
-        });
-
-        app(BranchService::class)->applyLike($root);
-
-        $this->assertSame(2, $writes);
-        $this->assertSame(1, $deepest->refresh()->branch_like_count);
+        $this->assertTrue(
+            Chapter::where('novel_id', $root->novel_id)
+                ->where('updated_at', '>=', Novel::findOrFail($root->novel_id)->branch_recomputed_at)
+                ->doesntExist()
+        );
     }
 }

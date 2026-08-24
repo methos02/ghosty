@@ -38,6 +38,7 @@ class Novel extends Model
     {
         return [
             'is_favorite' => 'boolean',
+            'branch_recomputed_at' => 'datetime',
         ];
     }
 

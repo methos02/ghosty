@@ -38,4 +38,18 @@ class UserFactory extends Factory
             'banned_until' => now()->addDays(7),
         ]);
     }
+
+    public function moderator(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'roles' => [User::ROLE_READER, User::ROLE_MODERATOR],
+        ]);
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'roles' => [User::ROLE_READER, User::ROLE_ADMIN],
+        ]);
+    }
 }

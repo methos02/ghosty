@@ -30,6 +30,7 @@ class ChapterResource extends JsonResource
             'children_count' => $this->continuations_count,
             'like_count' => $this->like_count,
             'branch_like_count' => $this->branch_like_count,
+            'is_liked' => $this->isLikedByViewer(),
             'comment_count' => $this->comment_count,
             'status' => $this->status,
             'is_draft' => $this->isDraft(),

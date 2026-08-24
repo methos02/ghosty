@@ -1,0 +1,44 @@
+[
+  {
+    "username": "admin",
+    "email": "admin@ghosty.fr",
+    "roles": ["reader", "author", "moderator", "admin"]
+  },
+  {
+    "username": "moderateur1",
+    "email": "moderateur@ghosty.fr",
+    "roles": ["reader", "moderator"]
+  },
+  {
+    "username": "auteur1",
+    "email": "auteur@ghosty.fr",
+    "roles": ["reader", "author"]
+  },
+  {
+    "username": "auteur2",
+    "email": "auteur2@ghosty.fr",
+    "roles": ["reader", "author"]
+  },
+  {
+    "username": "auteur3",
+    "email": "auteur3@ghosty.fr",
+    "roles": ["reader", "author"]
+  },
+  {
+    "username": "lecteur1",
+    "email": "lecteur@ghosty.fr",
+    "roles": ["reader"]
+  },
+  {
+    "username": "lecteur_unverified",
+    "email": "lecteur-unverified@ghosty.fr",
+    "roles": ["reader"],
+    "email_verified": false
+  },
+  {
+    "username": "lecteur_today",
+    "email": "lecteur-today@ghosty.fr",
+    "roles": ["reader"],
+    "registered_hours_ago": 1
+  }
+]

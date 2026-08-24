@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ChapterController;
 use App\Http\Controllers\Api\V1\GenreController;
+use App\Http\Controllers\Api\V1\LikeController;
 use App\Http\Controllers\Api\V1\NovelController;
+use App\Http\Controllers\Api\V1\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +35,16 @@ Route::prefix('v1')->group(function () {
         Route::post('/chapters/{chapter}/publish', [ChapterController::class, 'publish'])->name('chapters.publish');
         Route::delete('/chapters/{chapter}', [ChapterController::class, 'destroy'])->name('chapters.destroy');
         Route::get('/me/drafts', [ChapterController::class, 'drafts'])->name('chapters.drafts');
+
+        Route::post('/chapters/{chapter}/like', [LikeController::class, 'store'])
+            ->middleware('throttle:like')
+            ->name('chapters.like');
+        Route::delete('/chapters/{chapter}/like', [LikeController::class, 'destroy'])
+            ->middleware('throttle:like')
+            ->name('chapters.unlike');
+        Route::post('/chapters/{chapter}/report', [ReportController::class, 'storeForChapter'])
+            ->name('chapters.report');
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     });
 });
 

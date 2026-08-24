@@ -2,10 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\Chapter;
+use App\Models\Novel;
+use App\Models\User;
 use App\Support\TokenCookieSettingsSupport;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -20,8 +25,19 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         JsonResource::withoutWrapping();
 
+        $this->enforceMorphMap();
         $this->resolveAccessTokenFromCookie();
         $this->defineAuthRateLimiters();
+        $this->defineContentRateLimiters();
+    }
+
+    private function enforceMorphMap(): void
+    {
+        Relation::enforceMorphMap([
+            'chapter' => Chapter::class,
+            'novel' => Novel::class,
+            'user' => User::class,
+        ]);
     }
 
     /**
@@ -49,6 +65,18 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('register', function (Request $request): Limit {
             return Limit::perHour(5)->by($request->ip() ?? '');
+        });
+    }
+
+    /**
+     * @see backend/memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
+     */
+    private function defineContentRateLimiters(): void
+    {
+        RateLimiter::for('like', function (Request $request): Limit {
+            $perMinute = Config::integer('ghosty.likes.per_minute');
+
+            return Limit::perMinute($perMinute)->by((string) $request->user()?->id);
         });
     }
 }

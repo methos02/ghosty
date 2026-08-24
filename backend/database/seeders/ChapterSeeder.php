@@ -50,7 +50,7 @@ class ChapterSeeder extends Seeder
             'author_id' => $this->authorIds[$this->text($data, 'author')],
             'title' => $this->text($data, 'title'),
             'summary' => $this->text($data, 'summary'),
-            'content' => $this->text($data, 'content'),
+            'content' => $this->paragraphs($data, 'content'),
             'path' => '',
             'depth' => $parent === null ? 0 : $parent->depth + 1,
             'status' => Chapter::STATUS_PUBLISHED,
@@ -90,6 +90,20 @@ class ChapterSeeder extends Seeder
         $value = $data[$key] ?? '';
 
         return is_string($value) ? $value : '';
+    }
+
+    /**
+     * @param  array<mixed, mixed>  $data
+     */
+    private function paragraphs(array $data, string $key): string
+    {
+        $value = $data[$key] ?? [];
+
+        if (! is_array($value)) {
+            return '';
+        }
+
+        return implode("\n\n", array_filter($value, 'is_string'));
     }
 
     /**

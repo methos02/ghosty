@@ -7,7 +7,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Support\TokenCookieSettings;
+use App\Support\TokenCookieSettingsSupport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
@@ -60,7 +60,7 @@ class AuthController extends Controller
         $user = $request->user();
         $user->currentAccessToken()->delete();
 
-        $settings = TokenCookieSettings::fromConfig();
+        $settings = TokenCookieSettingsSupport::fromConfig();
 
         return response()->json([
             'message' => 'Déconnecté avec succès',
@@ -89,7 +89,7 @@ class AuthController extends Controller
 
     private function tokenCookie(string $token): SymfonyCookie
     {
-        $settings = TokenCookieSettings::fromConfig();
+        $settings = TokenCookieSettingsSupport::fromConfig();
 
         return Cookie::make(
             name: $settings->name,
@@ -105,7 +105,7 @@ class AuthController extends Controller
 
     private function sessionCookie(): SymfonyCookie
     {
-        $settings = TokenCookieSettings::fromConfig();
+        $settings = TokenCookieSettingsSupport::fromConfig();
 
         return Cookie::make(
             name: $settings->sessionName,
@@ -121,7 +121,7 @@ class AuthController extends Controller
 
     private function forgetCookie(string $name): SymfonyCookie
     {
-        $settings = TokenCookieSettings::fromConfig();
+        $settings = TokenCookieSettingsSupport::fromConfig();
 
         return Cookie::forget(
             name: $name,

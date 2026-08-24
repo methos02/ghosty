@@ -119,7 +119,7 @@ class Chapter extends Model
     /**
      * @param  Builder<Chapter>  $query
      */
-    public function scopeContinued(Builder $query): void
+    public function scopeHasChildren(Builder $query): void
     {
         $query->where('continuations_count', '>', 0);
     }
@@ -129,7 +129,7 @@ class Chapter extends Model
         return $this->parent_id === null;
     }
 
-    public function isContinued(): bool
+    public function hasChildren(): bool
     {
         return $this->continuations_count > 0;
     }
@@ -150,7 +150,7 @@ class Chapter extends Model
             return false;
         }
 
-        $window = Config::integer('ghosty.chapters.proofreading.window_hours');
+        $window = Config::integer('ghosty.chapters.correction.window_hours');
 
         return $this->published_at->addHours($window)->isFuture();
     }

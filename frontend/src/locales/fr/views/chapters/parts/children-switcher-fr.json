@@ -1,0 +1,7 @@
+{
+  "children_switcher": {
+    "title": "Suites de ce chapitre : {count}",
+    "empty": "Personne n'a encore poursuivi ce chapitre. La suite reste à écrire.",
+    "show_more": "Voir plus de suites ({count})"
+  }
+}

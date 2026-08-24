@@ -21,15 +21,15 @@ class LimitedTextChange implements ValidationRule
         $corrected = self::split(is_string($value) ? $value : '');
 
         if ($this->exceedsAllowance($published, $corrected, self::allowanceFor($this->published))) {
-            $fail('validation.chapter.proofreading.too_many')->translate();
+            $fail('validation.chapter.correction.too_many')->translate();
         }
     }
 
     public static function allowanceFor(string $text): int
     {
         $words = count(self::split($text));
-        $percent = Config::integer('ghosty.chapters.proofreading.max_changed_percent');
-        $minimum = Config::integer('ghosty.chapters.proofreading.min_changed_words');
+        $percent = Config::integer('ghosty.chapters.correction.max_changed_percent');
+        $minimum = Config::integer('ghosty.chapters.correction.min_changed_words');
 
         return max($minimum, intdiv($words * $percent, 100));
     }
@@ -45,9 +45,6 @@ class LimitedTextChange implements ValidationRule
     }
 
     /**
-     * Les mots communs en tete et en queue ne pesent rien dans la distance :
-     * d(a.x.b, a.y.b) vaut d(x, y). Les retirer reduit le tableau a comparer.
-     *
      * @param  list<string>  $published
      * @param  list<string>  $corrected
      * @return array{0: list<string>, 1: list<string>}
@@ -78,10 +75,6 @@ class LimitedTextChange implements ValidationRule
     }
 
     /**
-     * Distance d'edition de Levenshtein bornee a $allowance : seules les cases
-     * situees a moins de $allowance de la diagonale peuvent appartenir a un
-     * chemin acceptable, le reste du tableau n'est jamais calcule.
-     *
      * @param  list<string>  $published
      * @param  list<string>  $corrected
      */

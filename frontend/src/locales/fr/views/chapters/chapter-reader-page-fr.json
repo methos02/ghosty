@@ -1,0 +1,10 @@
+{
+  "chapter_read": {
+    "loading": "Chargement du chapitre...",
+    "chapter_number": "Chapitre {number}",
+    "draft": "Brouillon",
+    "end_of_chapter": "— fin du chapitre —",
+    "continue": "Poursuivre ce chapitre",
+    "correct": "Corriger ce chapitre"
+  }
+}

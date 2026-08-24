@@ -1,0 +1,10 @@
+{
+  "chapter_card": {
+    "number": "ch. {number} -",
+    "read": "Lire",
+    "summary": "Résumé",
+    "children": "Aucune suite | 1 suite | {count} suites",
+    "change": "Voir les {count} versions de ce chapitre",
+    "correct": "Corriger"
+  }
+}

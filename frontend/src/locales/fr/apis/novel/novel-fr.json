@@ -6,7 +6,7 @@
     "empty": "Aucun roman disponible",
     "load_more": "Charger plus",
     "no_more": "Vous avez vu tous les romans disponibles",
-    "continue_chapter": "Poursuivre ce chapitre",
-    "correct_chapter": "Corriger ce chapitre"
+    "read_chapter": "Lire ce chapitre",
+    "chapter_summary": "Résumé — {chapter}"
   }
 }

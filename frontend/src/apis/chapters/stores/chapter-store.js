@@ -3,11 +3,11 @@ import { ref, readonly, inject } from 'vue'
 export const CHAPTER_STORE_KEY = Symbol('chapter-store')
 
 const chapterStore = () => {
-  const currentContinuity = ref([])
+  const currentBranch = ref([])
   const currentChapter = ref()
 
-  const setCurrentContinuity = chapters => {
-    currentContinuity.value = chapters
+  const setCurrentBranch = chapters => {
+    currentBranch.value = chapters
   }
 
   const setCurrentChapter = chapter => {
@@ -19,12 +19,12 @@ const chapterStore = () => {
   }
 
   const clear = () => {
-    currentContinuity.value = []
+    currentBranch.value = []
     currentChapter.value = undefined
   }
 
   const serialize = () => ({
-    currentContinuity: currentContinuity.value,
+    currentBranch: currentBranch.value,
     currentChapter: currentChapter.value,
   })
 
@@ -32,14 +32,14 @@ const chapterStore = () => {
     if (!data) {
       return
     }
-    currentContinuity.value = data.currentContinuity ?? []
+    currentBranch.value = data.currentBranch ?? []
     currentChapter.value = data.currentChapter
   }
 
   return {
-    currentContinuity: readonly(currentContinuity),
+    currentBranch: readonly(currentBranch),
     currentChapter: readonly(currentChapter),
-    setCurrentContinuity,
+    setCurrentBranch,
     setCurrentChapter,
     clearCurrentChapter,
     clear,

@@ -9,7 +9,7 @@ use Tests\TestCase;
 class ChapterControllerChildrenTest extends TestCase
 {
     #[Test]
-    public function returns_every_proposed_continuation(): void
+    public function returns_every_proposed_child(): void
     {
         $parent = Chapter::factory()->create();
         Chapter::factory()->continuing($parent)->count(3)->create();
@@ -20,7 +20,7 @@ class ChapterControllerChildrenTest extends TestCase
     }
 
     #[Test]
-    public function orders_continuations_by_likes(): void
+    public function orders_children_by_likes(): void
     {
         $parent = Chapter::factory()->create();
         $leastLiked = Chapter::factory()->continuing($parent)->create(['like_count' => 2]);
@@ -52,7 +52,7 @@ class ChapterControllerChildrenTest extends TestCase
     }
 
     #[Test]
-    public function excludes_continuations_hidden_by_moderation(): void
+    public function excludes_children_hidden_by_moderation(): void
     {
         $parent = Chapter::factory()->create();
         $visible = Chapter::factory()->continuing($parent)->create();
@@ -65,7 +65,7 @@ class ChapterControllerChildrenTest extends TestCase
     }
 
     #[Test]
-    public function returns_an_empty_list_for_a_chapter_without_continuation(): void
+    public function returns_an_empty_list_for_a_chapter_without_child(): void
     {
         $chapter = Chapter::factory()->create();
 
@@ -75,7 +75,7 @@ class ChapterControllerChildrenTest extends TestCase
     }
 
     #[Test]
-    public function leaves_the_full_text_out_of_the_continuation_list(): void
+    public function leaves_the_full_text_out_of_the_child_list(): void
     {
         $parent = Chapter::factory()->create();
         Chapter::factory()->continuing($parent)->create();

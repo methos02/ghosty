@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\DTO\DraftFilterDTO;
 use App\Models\Chapter;
+use App\Support\ChapterChainSupport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -12,7 +13,7 @@ class ChapterRepository
     /**
      * @return Collection<int, Chapter>
      */
-    public function currentContinuity(string $novelSlug): Collection
+    public function currentBranch(string $novelSlug): Collection
     {
         $branchEnd = Chapter::query()
             ->published()
@@ -33,13 +34,13 @@ class ChapterRepository
             ->orderBy('depth')
             ->get();
 
-        return $this->chainFromRoot($branch);
+        return ChapterChainSupport::fromRoot($branch);
     }
 
     /**
      * @return Collection<int, Chapter>
      */
-    public function bestBranches(string $novelSlug, int $limit): Collection
+    public function mostPopularBranchEnds(string $novelSlug, int $limit): Collection
     {
         return Chapter::query()
             ->with('author')
@@ -59,7 +60,8 @@ class ChapterRepository
 
     public function findInNovel(int $chapterId, string $novelSlug): Chapter
     {
-        return Chapter::whereKey($chapterId)
+        return Chapter::with('author')
+            ->whereKey($chapterId)
             ->whereRelation('novel', 'slug', $novelSlug)
             ->firstOrFail();
     }
@@ -120,7 +122,7 @@ class ChapterRepository
             ->get();
     }
 
-    public function incrementContinuations(Chapter $parent): void
+    public function incrementChildrenCount(Chapter $parent): void
     {
         $parent->increment('continuations_count');
     }
@@ -132,9 +134,6 @@ class ChapterRepository
         ])->save();
     }
 
-    /**
-     * @param  list<int>  $chapterIds
-     */
     /**
      * @return Collection<int, Chapter>
      */
@@ -150,26 +149,108 @@ class ChapterRepository
     }
 
     /**
-     * @param  Collection<int, Chapter>  $candidates
      * @return Collection<int, Chapter>
      */
-    private function chainFromRoot(Collection $candidates): Collection
+    public function ancestorsOf(Chapter $chapter): Collection
     {
-        $root = $candidates->firstWhere('parent_id', null);
+        $ancestorIds = $chapter->ancestorIds();
 
-        if ($root === null) {
+        if ($ancestorIds === []) {
             return new Collection;
         }
 
-        $byParent = $candidates->groupBy('parent_id');
-        $chain = new Collection([$root]);
-        $current = $root;
+        return Chapter::query()
+            ->with('author')
+            ->published()
+            ->whereIn('id', $ancestorIds)
+            ->orderBy('depth')
+            ->get();
+    }
 
-        while ($next = $byParent->get($current->id)?->first()) {
-            $chain->push($next);
-            $current = $next;
+    /**
+     * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
+     *
+     * @return Collection<int, Chapter>
+     */
+    public function mostPopularBranchWithChapter(Chapter $chapter): Collection
+    {
+        $branchEnd = $this->mostPopularDescendantOf($chapter) ?? $chapter;
+
+        $branch = Chapter::query()
+            ->with('author')
+            ->published()
+            ->whereIn('id', $branchEnd->pathChapterIds())
+            ->orderBy('depth')
+            ->get();
+
+        $chain = ChapterChainSupport::fromRoot($branch);
+
+        if ($chain->contains('id', $chapter->id)) {
+            return $chain;
         }
 
-        return $chain;
+        return new Collection([$chapter]);
+    }
+
+    private function mostPopularDescendantOf(Chapter $chapter): ?Chapter
+    {
+        return Chapter::query()
+            ->published()
+            ->where('novel_id', $chapter->novel_id)
+            ->whereLike('path', $chapter->path.'%')
+            ->whereKeyNot($chapter->id)
+            ->orderByDesc('branch_like_count')
+            ->orderByDesc('depth')
+            ->orderBy('published_at')
+            ->first();
+    }
+
+    /**
+     * @return Collection<int, Chapter>
+     */
+    public function branchEndingWith(Chapter $chapter): Collection
+    {
+        return Chapter::query()
+            ->with('author')
+            ->published()
+            ->whereIn('id', $chapter->pathChapterIds())
+            ->orderBy('depth')
+            ->get();
+    }
+
+    /**
+     * @param  Collection<int, Chapter>  $chapters
+     * @return Collection<int, Chapter>
+     */
+    public function withChildren(string $novelSlug, Collection $chapters): Collection
+    {
+        $parentIds = $chapters->pluck('id')->all();
+
+        if ($parentIds === []) {
+            return new Collection;
+        }
+
+        $children = $this->treeQuery($novelSlug)
+            ->whereIn('parent_id', $parentIds)
+            ->get();
+
+        return $chapters->concat($children)
+            ->unique('id')
+            ->sortBy([['depth', 'asc'], ['branch_like_count', 'desc']])
+            ->values();
+    }
+
+    /**
+     * @return Builder<Chapter>
+     */
+    private function treeQuery(string $novelSlug): Builder
+    {
+        return Chapter::query()
+            ->with('author')
+            ->published()
+            ->whereRelation('novel', 'slug', $novelSlug)
+            ->orderBy('depth')
+            ->orderByDesc('branch_like_count')
+            ->orderBy('published_at');
     }
 }

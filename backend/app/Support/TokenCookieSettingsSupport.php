@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Config;
 /**
  * @see memory-bank/decisions/ADR-04-token-en-cookie-httponly.md
  */
-final readonly class TokenCookieSettings
+final readonly class TokenCookieSettingsSupport
 {
     public function __construct(
         public string $name,

@@ -5,29 +5,118 @@
             "title": "Le virage",
             "author": "auteur1",
             "summary": "Une route de montagne, un virage manqué, et personne au volant quand les secours arrivent.",
-            "content": "La voiture avait quitté la route au troisième virage. Les phares éclairaient encore le vide, deux traits jaunes tendus vers la vallée. Quand les secours sont arrivés, le moteur tournait toujours, la ceinture du conducteur était bouclée, et le siège était vide.",
             "like_count": 41,
+            "content": [
+                "La voiture avait quitté la route au troisième virage.",
+                "C'est la première phrase que le brigadier Delmas écrivit sur son carnet, et il la relut trois fois avant de comprendre qu'elle ne voulait rien dire. Une voiture ne quitte pas une route. Elle glisse, elle dérape, elle s'écrase. Elle ne part pas comme on part de chez soi, en refermant la porte derrière soi. Pourtant c'était l'impression exacte que donnait la scène, et Delmas avait vu assez d'accidents pour se fier à ses impressions avant de se fier aux mesures.",
+                "Il était deux heures quarante. La départementale 41 montait vers le col en sept lacets, et le troisième était le seul que les gens du pays appelaient par son nom. Le virage. Pas le virage de la Croix, pas le virage du Sapin, comme s'il n'y en avait qu'un dans toute la montagne et que les six autres n'étaient là que pour y conduire.",
+                "Les phares éclairaient encore le vide. Deux traits jaunes tendus vers la vallée, parfaitement parallèles, parfaitement immobiles, qui ne se posaient sur rien. En dessous, à quatre-vingts mètres, la rivière faisait un bruit régulier de machine.",
+                "La berline s'était arrêtée contre le muret, à demi couchée, l'avant dans le vide, l'arrière encore sur l'asphalte. Elle n'était pas tombée. Elle aurait dû tomber. Delmas passa le faisceau de sa lampe sous le châssis et ne trouva rien qui puisse expliquer pourquoi elle n'était pas tombée : pas de rocher, pas de souche, rien qu'un muret de pierres sèches vieux d'un siècle qui aurait dû céder au premier choc.",
+                "Le moteur tournait toujours.",
+                "C'est ce détail-là qui déplut le plus au brigadier. Un moteur qui tourne, c'est une voiture qui attend. L'autoradio diffusait une station de nuit, à faible volume, quelqu'un parlait de la météo du lendemain avec cette voix douce qu'ont les gens payés pour tenir compagnie aux insomniaques. Le chauffage était réglé sur vingt et un degrés. Sur le tableau de bord, le voyant de la ceinture ne clignotait pas.",
+                "Delmas ouvrit la portière côté conducteur.",
+                "La ceinture était bouclée. Pas coincée, pas déchirée, pas tranchée : bouclée, tendue en travers d'un siège vide, comme si elle retenait encore quelqu'un que la lumière ne montrait pas. Le cuir était tiède. Le brigadier posa la paume dessus et compta jusqu'à cinq, et pendant ces cinq secondes il eut la certitude parfaitement stupide qu'il ne devait pas la retirer.",
+                "« Chef ? »",
+                "Le gendarme Aubry se tenait à trois mètres, sa lampe braquée sur le bitume. Delmas se releva et vint voir.",
+                "Il n'y avait pas de trace de freinage. Aucune. Sur une route mouillée, avec une chaussée pareille, un conducteur qui manque son virage laisse dix ou quinze mètres de gomme derrière lui, et ces dix ou quinze mètres racontent toute l'histoire : à quel moment il a compris, combien de temps il a lutté, ce qu'il a essayé. Le bitume était propre. La voiture était arrivée jusqu'au muret sans que personne, à aucun instant, n'ait pensé à s'arrêter.",
+                "« Il s'est endormi », dit Aubry, parce qu'il fallait bien dire quelque chose.",
+                "Delmas ne répondit pas. Il regardait le muret. À la lumière rasante de sa lampe, la pierre du dessus portait une marque, une longue éraflure blanche là où la peinture de l'aile avait mordu. Il suivit la trace du regard et s'aperçut qu'elle était doublée. Sous la marque fraîche, dans la même pierre et au même endroit, il y en avait une autre, ancienne, comblée par la mousse et le lichen. Deux voitures avaient touché ce muret exactement au même point.",
+                "Il fit reculer Aubry de trois pas et éteignit sa lampe.",
+                "La nuit revint d'un coup, et avec elle le bruit de la rivière, et le ronronnement du moteur, et la voix de la radio qui annonçait un ciel dégagé pour le lendemain. Les deux phares tenaient toujours le vide au-dessus de la vallée. Delmas resta immobile jusqu'à ce que ses yeux s'habituent, puis il regarda en bas, entre les fougères, là où la pente s'ouvrait.",
+                "Il y avait une deuxième lumière.",
+                "Faible, jaunâtre, presque éteinte, à quarante mètres en contrebas, tournée vers le même vide et selon le même angle. Elle ne bougeait pas. Elle ne clignotait pas. Elle avait l'air d'être là depuis très longtemps.",
+                "« Aubry », dit doucement le brigadier, « appelle les pompiers. Dis-leur d'apporter des cordes. »"
+            ],
             "children": [
                 {
                     "title": "Ce que le ravin gardait",
                     "author": "auteur2",
                     "summary": "Sous les fougères, un second véhicule, immatriculé douze ans plus tôt.",
-                    "content": "Il fallut trois heures pour descendre. Sous les fougères, à quarante mètres de la première épave, une carcasse rongée par la rouille attendait depuis douze ans. Même modèle. Même couleur. Même virage.",
                     "like_count": 33,
+                    "content": [
+                        "Il fallut trois heures pour descendre.",
+                        "Pas parce que la pente était dangereuse — elle l'était, mais les hommes du GRIMP en avaient vu d'autres — plutôt parce que la montagne semblait avoir décidé qu'on n'irait pas vite. Les cordes s'accrochaient. Les pierres roulaient sous les pieds au mauvais moment. Deux fois, le chef d'équipe crut avoir atteint le fond et se retrouva à mi-pente, sur une terrasse de fougères qu'aucune carte ne mentionnait.",
+                        "Le jour se levait quand ils touchèrent la carcasse.",
+                        "Elle était couchée sur le flanc gauche, prise dans les racines d'un frêne qui avait poussé autour d'elle, à travers elle, par la vitre arrière et jusque dans l'habitacle. La rouille avait mangé les portières par le bas et laissé le toit presque intact. Sous la crasse, la peinture tenait encore : un bleu sombre, métallisé, exactement le même que celui de la berline restée là-haut contre le muret.",
+                        "Même modèle. Même couleur. Même virage.",
+                        "L'un des pompiers dégagea la plaque à la brosse métallique. Les chiffres apparurent lentement, comme une photographie dans le bain. L'immatriculation datait de douze ans.",
+                        "« Elle a douze ans et personne ne l'a jamais cherchée ? » demanda-t-il.",
+                        "Personne ne répondit. La question était mauvaise et tout le monde le savait : à quarante mètres sous une route très fréquentée, dans un ravin qu'on survolait deux fois par an en hélicoptère pour compter les chamois, une épave ne reste pas douze ans invisible. On l'avait forcément vue. Quelqu'un l'avait forcément signalée. Et pourtant elle était là, avalée par un arbre, dans un silence administratif parfait.",
+                        "Delmas descendit vers dix heures, avec le procureur et un photographe.",
+                        "L'habitacle avait été fouillé par les rongeurs et par le temps. Il restait un tapis de sol, deux ressorts nus à la place des sièges, une bouteille en plastique déformée par le gel, et le rétroviseur intérieur, arraché, posé bien à plat sur le tableau de bord, face vers le haut. Delmas le regarda longtemps sans le toucher. On n'arrache pas un rétroviseur par accident, et si on l'arrache, on ne le repose pas soigneusement.",
+                        "La ceinture du conducteur était bouclée. Le siège était vide.",
+                        "Le procureur, un homme méthodique qui n'aimait ni la montagne ni les métaphores, écrivit dans son carnet : véhicule accidenté ancien, occupant probablement éjecté, restes à rechercher dans un périmètre de cinquante mètres. Puis il referma son carnet et ne dit plus rien pendant le reste de la matinée.",
+                        "Les chiens arrivèrent à midi. Ils fouillèrent le périmètre pendant quatre heures et ne marquèrent nulle part. Pas d'ossements, pas de vêtements, rien. Un maître-chien expliqua que douze ans dans un ravin humide, avec les sangliers et les renards, cela ne laissait pas grand-chose. Il l'expliqua deux fois, une fois pour les autres et une fois pour lui-même.",
+                        "Vers seize heures, un des jeunes appela depuis le frêne.",
+                        "Il avait grimpé sur le tronc pour dégager une branche et, de là-haut, il voyait la scène sous un autre angle. Les deux véhicules — celui de la nuit, là-haut contre le muret, et celui d'en bas, dans les racines — n'étaient pas simplement tombés au même endroit. Ils étaient alignés. Le même axe, la même orientation, le même cap vers la vallée. Comme deux voitures garées l'une derrière l'autre sur un parking, à quarante mètres de dénivelé près.",
+                        "Delmas remonta seul, en fin d'après-midi.",
+                        "Sur la route, les techniciens finissaient de charger la berline sur le plateau. Le moteur avait fini par s'arrêter, faute de carburant, à onze heures dix. Quelqu'un avait coupé la radio. Le brigadier passa la main sur le muret, à l'endroit de la double éraflure, et cette fois il compta.",
+                        "Il n'y en avait pas deux. Il y en avait cinq. Toutes au même point, à quelques centimètres près, séparées par des couches de mousse d'épaisseurs différentes. La plus ancienne était presque effacée par le temps.",
+                        "Il n'en parla à personne ce soir-là. Il rentra chez lui, se servit un verre qu'il ne but pas, et resta longtemps assis dans le noir à essayer de se rappeler pourquoi, en posant la main sur cette ceinture tiède, il avait été aussi certain qu'il ne fallait pas la détacher."
+                    ],
                     "children": [
                         {
                             "title": "L'homme qui revenait",
                             "author": "auteur3",
                             "summary": "Un habitant du village prétend avoir déjà vécu cette nuit-là.",
-                            "content": "Le vieux Marceau ne s'étonna de rien. Il répéta simplement, en tassant sa pipe : « La route reprend ce qu'elle a prêté. » Puis il raconta la nuit de 2013, mot pour mot, jusqu'au détail du siège vide.",
                             "like_count": 21,
+                            "content": [
+                                "Le vieux Marceau ne s'étonna de rien.",
+                                "C'est ce qui frappa Delmas en premier, avant même ce que l'homme allait dire. Il avait interrogé assez de témoins pour connaître la mécanique : on écarquille les yeux, on porte la main à la bouche, on demande deux fois si c'est bien vrai. Marceau, lui, écouta le récit de la nuit avec la patience polie qu'on accorde à quelqu'un qui raconte un film qu'on a déjà vu.",
+                                "Il habitait la dernière maison avant le col, une bâtisse basse aux volets décolorés, avec un banc devant la porte orienté vers la route. Il s'y tenait presque toute la journée. Le brigadier comprit assez vite que ce banc n'était pas là pour prendre le soleil : de l'endroit exact où il était scellé, on voyait le troisième virage, et rien d'autre.",
+                                "« Vous surveillez la route ? »",
+                                "« Je regarde », corrigea Marceau. « Ce n'est pas pareil. Surveiller, ça voudrait dire que je peux faire quelque chose. »",
+                                "Il tassa sa pipe avec le pouce, longuement, comme si l'opération demandait toute son attention.",
+                                "« La route reprend ce qu'elle a prêté », dit-il enfin.",
+                                "Delmas nota la phrase, autant pour se donner une contenance que par méthode. Il en avait entendu, des formules de vieux paysans sur les montagnes qui se vengent et les torrents qui réclament leur dû ; en général, cela signifiait qu'on n'apprendrait plus rien d'utile.",
+                                "Puis Marceau se mit à raconter la nuit de 2013.",
+                                "Il la raconta sans notes, sans hésiter, dans l'ordre. La voiture arrêtée contre le muret, l'avant dans le vide, l'arrière sur l'asphalte. Le moteur qui tournait encore. Les deux phares tendus au-dessus de la vallée. La radio, à faible volume, une émission de nuit. Le chauffage réglé haut. L'absence totale de trace de freinage sur la chaussée mouillée.",
+                                "La ceinture bouclée sur un siège vide.",
+                                "Delmas avait cessé d'écrire depuis un moment. Il regardait la main du vieux, posée à plat sur le genou, parfaitement immobile.",
+                                "« Le cuir était tiède », ajouta Marceau. « C'est ça qui vous a retourné, hein. Pas le siège vide. Le cuir tiède. »",
+                                "Le brigadier n'avait mis ce détail dans aucun rapport. Il ne l'avait dit à personne, pas même à Aubry.",
+                                "« Vous étiez sur place cette nuit-là ? »",
+                                "« J'étais à cette place-là », dit Marceau en tapotant le banc. « Comme les autres fois. »",
+                                "« Les autres fois. »",
+                                "« Quatre-vingt-sept, quatre-vingt-dix-neuf, deux mille six, deux mille treize. » Il énuméra les années sur ses doigts, sans effort, comme on récite des dates de naissance. « Et cette nuit. »",
+                                "Delmas fit le calcul dans sa tête et n'aima pas le résultat. Les intervalles n'étaient pas égaux, mais ils n'étaient pas non plus quelconques : douze, sept, sept, douze. Il pensa aux couches de mousse sur le muret, d'épaisseurs différentes, et à sa main qui avait compté cinq éraflures.",
+                                "« Pourquoi personne ne fait rien ? »",
+                                "Pour la première fois, le vieux parut sincèrement surpris par la question. Il retira la pipe de sa bouche et regarda le brigadier comme on regarde un enfant qui demande pourquoi il fait nuit.",
+                                "« Mais on fait quelque chose », dit-il. « On regarde. Il faut bien que quelqu'un se souvienne de ce qui est descendu, sinon ça remonte. »",
+                                "Il se leva, plus vite que son âge ne l'aurait laissé croire, et rentra chez lui. Delmas resta seul sur le banc, face au troisième virage, dans la lumière déclinante de six heures du soir, et il s'aperçut qu'il n'avait pas envie de se lever tout de suite.",
+                                "Avant de refermer sa porte, Marceau ajouta une dernière chose, sans se retourner :",
+                                "« Allez voir à la mairie. Demandez le grand registre, celui de l'armoire du fond. Ne demandez pas à la secrétaire : demandez au maire. »"
+                            ],
                             "children": [
                                 {
                                     "title": "Le registre des disparus",
                                     "author": "auteur1",
                                     "summary": "Douze noms, douze virages, un intervalle régulier.",
-                                    "content": "La mairie conservait un registre que personne n'ouvrait plus. Douze noms, douze accidents, tous au même endroit, tous espacés d'un an jour pour jour. Le treizième nom était déjà écrit, à l'encre fraîche.",
                                     "like_count": 15,
+                                    "content": [
+                                        "La mairie conservait un registre que personne n'ouvrait plus.",
+                                        "Il fallut vingt minutes au maire pour se décider, et deux de plus pour retrouver la clé de l'armoire du fond, qu'il gardait dans une boîte à cigares avec des trombones et une pile de cartes de visite périmées. Il était maire depuis dix-neuf ans. Il n'avait ouvert cette armoire que trois fois.",
+                                        "« Vous savez ce qu'il y a dedans ? » demanda Delmas.",
+                                        "« Je sais ce qu'on m'a dit qu'il y avait dedans. Ce n'est pas la même chose, et jusqu'à ce matin ça m'allait très bien. »",
+                                        "Le registre était un in-folio relié de toile noire, gonflé par l'humidité, si lourd qu'il fallut le poser à deux sur la table du conseil. Sur la couverture, une étiquette au crayon, d'une écriture penchée : D. 41 — troisième lacet.",
+                                        "À l'intérieur, une seule colonne par page. Des noms.",
+                                        "Ils étaient inscrits à la main, par des mains différentes, avec des encres différentes, sur un papier qui changeait de grain tous les vingt ou trente feuillets. À côté de chaque nom, une date. Pas de commentaire, pas de circonstances, pas de signature. Rien que des noms et des dates, sur cent quarante ans.",
+                                        "Delmas remonta le temps à l'envers, page après page, et vit sa nuit de la semaine passée arriver vers lui.",
+                                        "Douze noms.",
+                                        "Douze, dans l'intervalle qu'il avait retenu : depuis mille huit cent quatre-vingt-un, date de la première inscription, jusqu'à aujourd'hui. Douze accidents au même endroit. Douze véhicules — d'abord des attelages, puis des automobiles — retrouvés contre ce muret ou en dessous. Douze conducteurs dont aucun corps n'avait jamais été rendu.",
+                                        "Il vérifia les écarts. Douze ans. Sept. Sept. Douze. Douze. Sept. La série alternait sans erreur sur un siècle et demi, et Delmas, qui n'avait jamais eu la bosse des mathématiques, mit un long moment à admettre qu'une superstition de village n'aurait pas tenu une comptabilité aussi rigoureuse.",
+                                        "Il tourna la page.",
+                                        "Le nom du conducteur de la nuit dernière y était. Écrit à l'encre bleue, d'une écriture soignée, avec la date exacte. Rien d'anormal : le maire avait pu l'inscrire lui-même en apprenant l'accident, la veille, avant de faire semblant de ne pas savoir ce que contenait l'armoire.",
+                                        "Delmas allait refermer le registre quand il vit qu'il restait quelque chose en dessous.",
+                                        "Le treizième nom était déjà écrit, à l'encre fraîche.",
+                                        "La date était celle du surlendemain. L'écriture était la même que les douze précédentes, celle qui penchait à droite, celle de l'étiquette sur la couverture. Le brigadier posa le doigt à côté du mot sans le toucher : l'encre avait bavé légèrement, comme lorsqu'on referme un livre trop tôt.",
+                                        "Il regarda le maire. Le maire regardait le registre avec une expression que Delmas connaissait bien pour l'avoir vue chez des gens à qui l'on vient d'annoncer une mort dans la famille.",
+                                        "« Ce n'est pas moi », dit-il.",
+                                        "« Je sais. »",
+                                        "« Comment vous pouvez le savoir ? »",
+                                        "Delmas ne répondit pas tout de suite. Il relisait le nom, et il aurait aimé pouvoir dire au maire qu'il se trompait, que ce genre de choses n'arrive pas, que l'encre fraîche a toujours une explication ennuyeuse.",
+                                        "Le treizième nom était le sien."
+                                    ],
                                     "children": []
                                 }
                             ]
@@ -36,8 +125,31 @@
                             "title": "Les phares dans le rétroviseur",
                             "author": "lecteur1",
                             "summary": "Une autre réalité : les secouristes repartent, et quelque chose les suit.",
-                            "content": "Ils remontèrent sans rien dire. À mi-pente, le brigadier vérifia son rétroviseur : deux phares jaunes les suivaient, à la distance exacte où ils avaient trouvé l'épave.",
                             "like_count": 9,
+                            "content": [
+                                "Ils remontèrent sans rien dire.",
+                                "C'était une équipe bavarde, d'ordinaire. Sur les interventions de nuit, on parle beaucoup en remontant : c'est la façon des hommes fatigués de reposer ce qu'ils viennent de porter. Cette fois, les six firent l'ascension en silence, à la frontale, chacun regardant la nuque de celui qui le précédait.",
+                                "Personne ne parla de l'épave. Personne ne parla non plus du rétroviseur posé bien à plat sur le tableau de bord, face vers le haut, alors que tous les six l'avaient vu.",
+                                "En haut, les gyrophares balayaient la montagne à intervalles réguliers, et le bleu revenait sur les sapins comme une respiration. Le brigadier Delmas les attendait près du muret. Il ne posa pas de question, ce qui, à la réflexion, était étrange aussi.",
+                                "Ils rangèrent le matériel. Le camion démarra à cinq heures dix.",
+                                "La descente du col se fait en sept lacets, et le chauffeur les connaissait par cœur. Il prit le premier à trente, le deuxième à trente, et ralentit avant le troisième par une prudence qui n'avait plus rien de professionnel.",
+                                "C'est là que le brigadier, assis côté passager, vérifia son rétroviseur.",
+                                "Deux phares jaunes les suivaient.",
+                                "Il ne dit rien pendant deux virages, le temps de se persuader qu'il s'agissait d'un véhicule ordinaire — un boulanger, un employé du barrage, quelqu'un qui monte tôt. Puis il s'aperçut de deux choses.",
+                                "La première : la distance ne variait pas. Pas d'un mètre. Dans une descente à sept lacets, avec des rayons de courbure différents et un camion lourd qui freine long, un véhicule qui suit se rapproche dans les épingles et décroche dans les lignes droites. Celui-là restait exactement où il était.",
+                                "La seconde, il mit plus longtemps à la formuler, parce qu'elle demandait de faire un calcul dans une tête qui n'en avait pas envie. La distance qui les séparait était de quarante mètres. Quarante mètres, précisément la profondeur à laquelle ils avaient trouvé l'épave.",
+                                "« Tu vois quelque chose derrière ? » demanda-t-il au chauffeur, du ton le plus neutre qu'il put.",
+                                "Le chauffeur regarda son propre rétroviseur, puis la route, puis de nouveau le rétroviseur.",
+                                "« Non, chef. »",
+                                "Delmas se retourna sur son siège. Par la lunette arrière, entre les casques accrochés et les sangles, il voyait les deux phares. Ils étaient là, francs, jaunes, un peu bas sur la chaussée, avec ce halo un peu sale des optiques anciennes. Aucun des cinq hommes assis à l'arrière ne se retourna. Aucun ne semblait gêné par la lumière.",
+                                "Il regarda ses collègues un par un. Ils fixaient tous le plancher.",
+                                "Le camion prit le dernier lacet et déboucha dans la vallée, où la route devient droite sur trois kilomètres avant le pont. Le chauffeur accéléra sans qu'on le lui demande. Le compteur monta à quatre-vingt-dix, ce qui, pour un engin pareil, n'était pas raisonnable.",
+                                "Les phares restèrent à quarante mètres.",
+                                "Ils les accompagnèrent jusqu'au pont. Là, à l'endroit exact où la départementale rejoint la nationale et où le lampadaire municipal éclaire le carrefour d'une lumière orange, ils s'éteignirent — pas progressivement, comme quelqu'un qui coupe ses feux, mais d'un coup, comme une lampe qu'on débranche.",
+                                "Personne ne fit de commentaire. Le camion rentra à la caserne, les hommes vidèrent leurs poches, prirent leur douche et rentrèrent chez eux.",
+                                "Le lendemain matin, l'un des jeunes trouva sur le pare-brise arrière, du côté intérieur, la trace nette et grasse d'une main posée à plat.",
+                                "Ils étaient six dans le camion. Ils avaient tous les six les mains prises."
+                            ],
                             "children": []
                         }
                     ]
@@ -46,15 +158,66 @@
                     "title": "Le passager",
                     "author": "auteur3",
                     "summary": "Bifurcation : et si quelqu'un d'autre était descendu de la voiture ?",
-                    "content": "Sur le siège passager, la ceinture pendait, tranchée net. Personne n'avait signalé de second occupant. Pourtant la portière de droite était ouverte, et les traces dans la boue montaient vers la route.",
                     "like_count": 27,
+                    "content": [
+                        "Le rapport d'expertise arriva le jeudi, et il contenait une ligne que personne n'avait demandée.",
+                        "Delmas le lut deux fois. La première en diagonale, pour la forme, parce qu'un rapport d'expertise sur un véhicule intact ne dit jamais rien qu'on ne sache déjà. La seconde très lentement, en s'arrêtant à la page quatre.",
+                        "Sur le siège passager, la ceinture pendait, tranchée net.",
+                        "Le laboratoire était formel : section franche, perpendiculaire aux fibres, réalisée d'un seul geste avec une lame propre et bien affûtée. Pas d'arrachement, pas d'effilochage, aucune des déformations qu'on observe quand une sangle cède sous la charge. Quelqu'un avait coupé cette ceinture avec un couteau, et l'avait fait posément.",
+                        "Il n'y avait aucune raison qu'elle soit bouclée. On n'attache pas un siège vide.",
+                        "Delmas rouvrit le dossier au début. Le véhicule appartenait à un homme de quarante-deux ans, commercial, qui rentrait de Grenoble et qu'on n'avait pas retrouvé. Sa femme avait été entendue le lendemain. Elle avait dit qu'il voyageait toujours seul, qu'il détestait la conversation en voiture, qu'il l'avait appelée à minuit vingt depuis une station-service pour dire qu'il serait à la maison vers trois heures.",
+                        "Personne n'avait signalé de second occupant.",
+                        "Le brigadier redescendit à la fourrière et fit ouvrir le hangar. La berline était là, bâchée, l'aile droite marquée par le muret. Il fit le tour deux fois avant de comprendre ce qui, depuis le début, ne collait pas dans ses souvenirs de la nuit.",
+                        "La portière de droite était ouverte.",
+                        "Pas déverrouillée : ouverte. Il avait la photographie sous les yeux, prise à trois heures dix par le photographe de la brigade, et sur ce cliché la portière passager bâillait de vingt bons centimètres, alors que la voiture était couchée sur le flanc, en équilibre au-dessus du vide. Pour ouvrir cette portière-là dans cette position-là, il fallait la soulever. Il fallait la pousser vers le haut, contre son poids, depuis l'intérieur.",
+                        "Il ressortit et appela Aubry.",
+                        "« La nuit du treize, tu es descendu combien de mètres sous la route ? »",
+                        "« Trois ou quatre. Le temps de voir qu'il n'y avait rien dans les fougères. »",
+                        "« Tu as regardé la boue ? »",
+                        "Un silence.",
+                        "« J'ai regardé s'il y avait un corps, chef. Je n'ai pas regardé la boue. »",
+                        "Ils y retournèrent l'après-midi même. Le temps avait été sec, la pente était restée à l'abri sous les fougères, et ce qui était écrit dedans y était encore.",
+                        "Les traces dans la boue montaient vers la route.",
+                        "Elles partaient de sous la voiture, du côté droit, à l'aplomb exact de la portière ouverte. Un pied nu, taille moyenne, appui franc sur l'avant. La première empreinte était profonde — quelqu'un qui se laisse tomber d'une hauteur, qui encaisse. Les suivantes montaient droit dans la pente, sans un écart, sans une glissade, alors que Delmas et Aubry, qui portaient des chaussures de marche, durent s'aider des mains sur les trois derniers mètres.",
+                        "Il y avait quatorze empreintes. Elles s'arrêtaient au bord de l'asphalte.",
+                        "Delmas s'accroupit devant la dernière, celle qui touchait le bitume, et resta là un long moment, les avant-bras sur les genoux.",
+                        "« Il y avait quelqu'un dans la voiture », dit Aubry, avec l'air de quelqu'un qui vient de résoudre l'affaire. « Il a coupé sa ceinture, il est sorti par le haut, il est remonté et il est parti. Il est peut-être blessé, chef. Il faut lancer des recherches. »",
+                        "« Oui », dit Delmas.",
+                        "Il ne bougea pas pour autant. Il regardait l'empreinte, et ce qui le retenait accroupi dans les fougères n'était pas la question qu'Aubry venait de poser.",
+                        "C'était l'autre. Celle qu'on pose quand on a compris que quelqu'un est sorti de cette voiture pieds nus, par une portière qu'il a fallu soulever, après avoir tranché proprement une ceinture qui n'avait servi à personne.",
+                        "Pourquoi la ceinture du conducteur, elle, était-elle restée bouclée ?"
+                    ],
                     "children": [
                         {
                             "title": "Trois kilomètres à pied",
                             "author": "auteur2",
                             "summary": "Les empreintes s'arrêtent au milieu de la chaussée.",
-                            "content": "Les empreintes suivaient l'asphalte sur trois kilomètres, régulières, sans hésitation. Puis elles s'arrêtaient net au milieu de la chaussée, comme si le marcheur avait été cueilli en pleine foulée.",
                             "like_count": 18,
+                            "content": [
+                                "On mit deux jours à relever la route.",
+                                "Deux jours, parce que la technicienne envoyée par le laboratoire refusa de travailler autrement qu'à sa manière : bandes de dix mètres, éclairage rasant, photographie systématique, même là où l'œil ne voyait rien. Delmas la trouva insupportable le premier matin et lui aurait payé un verre le deuxième soir.",
+                                "Les empreintes suivaient l'asphalte sur trois kilomètres.",
+                                "C'était déjà anormal en soi. Un pied nu ne laisse rien sur du bitume sec ; celui-là laissait une trace, faible mais continue, que la lumière rasante révélait comme une écriture invisible. La technicienne préleva, analysa, revint avec un mot qui n'expliquait rien : de la vase. De la vase de rivière, avec la granulométrie et la flore microscopique de la rivière qui coulait quatre-vingts mètres plus bas.",
+                                "Elles étaient régulières, sans hésitation.",
+                                "Delmas apprit à lire ce que la technicienne lisait. La longueur du pas ne variait pas de deux centimètres sur trois kilomètres, ce qu'aucun marcheur ne fait, encore moins un blessé, encore moins un homme pieds nus sur du gravillon. Il n'y avait pas de ralentissement dans les montées, pas d'allongement dans les descentes. Dans le quatrième lacet, où la route longe un ravin sans glissière, les empreintes passaient à quinze centimètres du bord, parfaitement parallèles au vide.",
+                                "« Il ne regardait pas où il allait », dit la technicienne.",
+                                "« Comment vous pouvez dire ça ? »",
+                                "« Parce que quelqu'un qui regarde où il va corrige. Il s'écarte du bord, il rattrape, il oscille. Lui, non. Il a tracé. Soit il connaissait la route par cœur les yeux fermés, soit il ne la voyait pas du tout. »",
+                                "Elles ne s'arrêtaient pas au village. Elles le traversaient.",
+                                "Delmas suivit la piste à pied, en plein jour, sous le regard des gens sur le pas de leur porte. Les empreintes passaient au milieu de la rue principale, devant la mairie, devant le café, sans dévier d'un centimètre pour contourner le banc du vieux Marceau, qui était vide ce matin-là. Elles ressortaient à l'autre bout, prenaient le pont, et continuaient sur la départementale en direction de la vallée.",
+                                "Puis elles s'arrêtaient net au milieu de la chaussée.",
+                                "Pas au bord. Pas devant une maison, pas devant un chemin, pas devant quoi que ce soit. Au milieu, à trois cent quarante mètres du pont, entre deux prés sans clôture, à un endroit de la route absolument quelconque.",
+                                "La dernière empreinte était complète. Talon, plante, orteils. Pas de glissade, pas de demi-tour, pas d'appui de course. La technicienne resta longtemps accroupie devant, puis se releva et rangea son matériel sans rien dire.",
+                                "« Alors ? » demanda Delmas.",
+                                "« Alors la personne qui a posé ce pied-là n'a pas posé l'autre. » Elle referma sa mallette. « Je ne l'écrirai pas comme ça dans mon rapport, évidemment. J'écrirai que la piste devient indétectable en raison de l'état du revêtement. »",
+                                "« Le revêtement est parfait. »",
+                                "« Je sais, brigadier. »",
+                                "Delmas resta sur la route après le départ de la voiture du laboratoire. Le soleil descendait derrière la crête, l'ombre du col avançait sur les prés, et il calcula, parce qu'il ne pouvait plus s'en empêcher, la distance qui séparait cet endroit du troisième virage.",
+                                "Trois kilomètres et quarante mètres.",
+                                "Il refit le calcul deux fois. Trois kilomètres de route, et quarante mètres de dénivelé jusqu'au fond du ravin. Exactement la longueur d'une marche qui serait partie de l'épave d'en bas, aurait remonté la pente, la route, la vallée, et se serait arrêtée là où elle avait fini par manquer de chemin.",
+                                "Il rentra à la brigade et demanda le dossier de l'accident de 2013.",
+                                "On lui répondit qu'il n'existait pas. Aucun accident n'avait été enregistré sur la D. 41 cette année-là, ni cette année-là, ni aucune des autres années que le vieux avait citées sur ses doigts."
+                            ],
                             "children": []
                         }
                     ]
@@ -68,24 +231,398 @@
             "title": "Quatre-vingt-dix secondes",
             "author": "auteur2",
             "summary": "Le message ne dure qu'une minute trente, et il est daté de demain.",
-            "content": "Le fichier faisait quatre-vingt-dix secondes. Ma propre voix y donnait une adresse, une heure, et un conseil : ne pas y aller. L'horodatage indiquait le lendemain, 18 h 40.",
             "like_count": 26,
+            "content": [
+                "Le fichier faisait quatre-vingt-dix secondes.",
+                "Il était apparu dans mes messages vocaux un mardi soir, entre une relance de mon dentiste et un appel manqué de ma sœur. Aucun numéro. La ligne d'expéditeur affichait mon propre numéro, ce que l'opérateur me jura ensuite être techniquement impossible, avec cette assurance particulière des gens qui n'ont jamais eu à le vérifier.",
+                "Je l'ai écouté dans le métro, une oreillette seulement, en pensant à autre chose.",
+                "Ma propre voix y donnait une adresse.",
+                "Pas une imitation, pas un montage : ma voix, avec le petit raclement de gorge que je fais avant les phrases longues, avec cette manière que j'ai d'appuyer sur la première syllabe quand je suis fatigué. Elle disait un nom de rue, un numéro, un code d'entrée. Puis une heure : dix-huit heures quarante.",
+                "Puis un conseil : ne pas y aller.",
+                "J'ai repassé le message trois fois entre deux stations. À la troisième, j'ai commencé à entendre ce qu'il y avait derrière la voix. Un fond continu, mécanique, un souffle de ventilation avec, toutes les onze ou douze secondes, un claquement métallique bref. Le genre de bruit qu'on n'écoute jamais parce qu'on écoute les mots.",
+                "L'horodatage indiquait le lendemain, dix-huit heures quarante.",
+                "Ce n'était pas l'heure de réception. L'heure de réception, elle, était bien celle de mardi soir, vingt heures douze, et je l'avais vue arriver : la notification s'était affichée pendant que je regardais l'écran. Mais l'horodatage interne du fichier — celui que le téléphone inscrit au moment où l'enregistrement commence — était daté du mercredi, dix-huit heures quarante et zéro seconde.",
+                "Un message enregistré le lendemain de son arrivée.",
+                "J'ai fait ce que fait n'importe qui : j'ai cherché l'explication ennuyeuse. Fuseau horaire mal réglé. Horloge du téléphone désynchronisée. Bug connu de l'application. J'ai passé la soirée dessus. Le fuseau était bon. L'horloge était à la seconde près. Le bug n'existait sur aucun forum.",
+                "Vers une heure du matin, j'ai cherché l'adresse.",
+                "Elle existait. Un immeuble de bureaux à trois stations de chez moi, sept étages, une plaque de cabinet comptable au rez-de-chaussée. Sur les photos de la rue, la porte d'entrée était vitrée, avec un digicode à droite. Je n'y étais jamais allé. Je ne connaissais personne dans ce quartier.",
+                "Le code que ma voix donnait faisait six chiffres. Ce n'était pas un code que j'utilise. Ce n'était pas non plus une date que je connaisse.",
+                "J'ai réécouté le message une dernière fois avant de me coucher, et cette fois j'ai fait attention à la fin.",
+                "Les quatre-vingt-dix secondes ne sont pas pleines. La voix parle pendant environ soixante-dix secondes, et puis elle s'arrête. Il reste vingt secondes de fond sonore : la ventilation, le claquement métallique toutes les onze ou douze secondes.",
+                "Et à la quatre-vingt-sixième seconde, très loin derrière, quelqu'un tousse.",
+                "Ce n'est pas moi. Je connais ma toux. Celle-là est plus haute, plus sèche, et suivie d'un très léger tintement, comme une bague qui touche une surface dure.",
+                "Le mercredi matin, je suis allé travailler normalement. J'ai répondu à mes mails, j'ai déjeuné avec un collègue, je me suis surpris à consulter l'heure quatre fois en une demi-heure.",
+                "À dix-sept heures trente, j'ai éteint mon ordinateur.",
+                "Ce que je n'arrivais pas à me sortir de la tête, ce n'était pas l'adresse, ni le code, ni même l'horodatage impossible. C'était la construction de la phrase. Ma voix ne disait pas n'y va pas. Elle disait, très exactement, avec une hésitation avant le dernier mot : « Le mieux, ce serait que tu n'y ailles pas. »",
+                "Le mieux. Comme quelqu'un qui compare des options qu'il connaît déjà toutes."
+            ],
             "children": [
                 {
                     "title": "18 h 39",
                     "author": "auteur1",
                     "summary": "Il y va quand même, une minute trop tôt.",
-                    "content": "J'y suis allé. Bien sûr que j'y suis allé. À 18 h 39, la rue était vide, et mon téléphone a commencé à enregistrer tout seul.",
                     "like_count": 19,
+                    "content": [
+                        "J'y suis allé. Bien sûr que j'y suis allé.",
+                        "J'ai passé la journée à me raconter que non. À dix-sept heures trente j'ai éteint mon ordinateur en me disant que je rentrais chez moi ; à dix-sept heures quarante j'étais dans le métro dans l'autre sens, et je n'ai pas eu l'impression d'avoir pris une décision entre les deux.",
+                        "Il faut dire les choses honnêtement : ce n'était pas du courage. Un message qui vous dit de ne pas venir vous dit d'abord qu'il y a quelque chose à voir, et je n'ai jamais su résister à cette phrase-là.",
+                        "Je suis arrivé en avance. Beaucoup trop en avance, à dix-huit heures onze, et j'ai fait deux fois le tour du pâté de maisons pour tuer le temps, ce qui m'a paru sur le moment très raisonnable et me paraît aujourd'hui la partie la plus stupide de toute cette histoire.",
+                        "L'immeuble était exactement comme sur les photos. Sept étages, façade grise, une plaque de cabinet comptable au rez-de-chaussée avec des horaires qui s'arrêtaient à dix-sept heures. La porte vitrée. Le digicode à droite.",
+                        "À dix-huit heures trente-cinq, je me suis posté en face, sous l'auvent de la pharmacie.",
+                        "La rue était vide.",
+                        "Pas calme : vide. C'est une petite rue de bureaux, elle se dépeuple le soir, je m'y attendais. Mais il n'y avait pas non plus de voitures en stationnement, pas de vélo attaché, pas un chat, et les fenêtres des sept étages étaient toutes éteintes alors qu'il faisait déjà sombre. J'ai regardé au bout de la rue, vers le boulevard, et j'ai vu passer des phares, du monde, un bus. La vie s'arrêtait à l'angle.",
+                        "À dix-huit heures trente-huit, j'ai traversé.",
+                        "J'ai composé le code. Six chiffres, celui que ma propre voix m'avait donné la veille. Le boîtier a émis un bip et le pêne a claqué.",
+                        "Je suis entré dans le hall.",
+                        "Il y faisait la température exacte du dehors, ce qui est impossible pour un hall d'immeuble en février. Un tube au néon clignotait au plafond, et une ventilation tournait quelque part au-dessus de moi avec un souffle continu. Toutes les onze ou douze secondes, une gaine se dilatait avec un claquement métallique bref.",
+                        "J'ai reconnu le bruit avant de comprendre ce que cela voulait dire.",
+                        "C'était le fond sonore du message. Pas un bruit semblable : le même, avec le même intervalle, la même petite irrégularité sur le troisième claquement. L'enregistrement que j'avais reçu la veille avait été fait ici, dans ce hall, à cet endroit.",
+                        "J'ai regardé mon téléphone. Dix-huit heures trente-neuf.",
+                        "Il me restait une minute. Une minute avant l'heure inscrite dans l'horodatage d'un fichier enregistré dans la pièce où je me tenais, par une voix qui était la mienne, et qui m'avait conseillé de ne pas venir.",
+                        "Je me suis dit, très clairement, avec une lucidité dont je suis encore fier : sors d'ici.",
+                        "Et c'est à ce moment que mon téléphone a commencé à enregistrer tout seul.",
+                        "L'écran s'est allumé sans que je le touche. L'application vocale s'est ouverte. Le compteur est parti de zéro et a commencé à monter, et un petit point rouge s'est mis à pulser en haut de l'écran, tranquillement, comme si tout cela était parfaitement prévu.",
+                        "J'ai voulu arrêter. Le bouton ne répondait pas.",
+                        "J'ai regardé la durée s'inscrire : trois secondes, quatre, cinq. Et j'ai eu le temps de penser à une chose avant d'ouvrir la bouche, une chose que j'aurais préféré ne pas comprendre aussi vite.",
+                        "Le message que j'avais reçu la veille durait quatre-vingt-dix secondes.",
+                        "J'étais en train de l'enregistrer."
+                    ],
                     "children": []
                 },
                 {
                     "title": "Celui qui a effacé le fichier",
                     "author": "auteur3",
                     "summary": "Réalité alternative : il supprime le message et attend.",
-                    "content": "J'ai effacé le fichier, vidé la corbeille, éteint l'appareil. À 18 h 40 le lendemain, il s'est rallumé seul, et la lecture a repris exactement là où je l'avais interrompue.",
                     "like_count": 22,
+                    "content": [
+                        "J'ai effacé le fichier.",
+                        "Je l'ai fait le mardi soir, vers minuit, après la quatrième écoute, au moment précis où j'ai entendu la toux à la quatre-vingt-sixième seconde. Il y a une limite à ce qu'on accepte de garder dans son téléphone.",
+                        "J'ai vidé la corbeille. Éteint l'appareil. Posé l'appareil dans le tiroir de la cuisine, sous les torchons, ce qui est ridicule et m'a fait dormir.",
+                        "Le mercredi, je n'ai rien fait de spécial.",
+                        "J'ai travaillé, j'ai déjeuné avec un collègue, je n'ai pas consulté l'heure plus de deux ou trois fois. Je ne suis pas allé dans le quartier de l'adresse. Je ne suis même pas allé du côté du boulevard qui y mène. À dix-sept heures trente j'ai éteint mon ordinateur et je suis rentré chez moi, vraiment chez moi, en achetant du pain en chemin.",
+                        "À dix-huit heures quarante, j'étais dans ma cuisine, et je regardais le tiroir.",
+                        "Il ne s'est rien passé à dix-huit heures quarante. Rien à quarante et une, rien à quarante-cinq. À dix-neuf heures j'ai mangé, et à vingt heures j'avais retrouvé assez de dignité pour trouver toute cette histoire idiote.",
+                        "Le téléphone s'est rallumé seul à vingt heures douze.",
+                        "Je l'ai entendu avant de le voir : le petit carillon du démarrage, étouffé par les torchons. Vingt heures douze, l'heure exacte à laquelle le message était arrivé la veille.",
+                        "J'ai ouvert le tiroir. L'écran était allumé, l'application vocale au premier plan, et le fichier était là. Même nom, même durée, quatre-vingt-dix secondes. Pas restauré depuis la corbeille : recréé, avec une date d'importation à la seconde près.",
+                        "La lecture a repris.",
+                        "Pas depuis le début. Elle a repris exactement là où je l'avais interrompue la veille, à quatre-vingt-six secondes, sur la toux. La barre de progression était déjà aux neuf dixièmes quand le son est sorti du haut-parleur.",
+                        "J'ai écouté les quatre dernières secondes.",
+                        "Après la toux, il y a un très léger tintement, comme une bague qui touche une surface dure. Puis la ventilation continue deux secondes de plus. Et à la toute fin, dans le dernier demi-souffle avant la coupure, ma voix revient. Un seul mot, si bas que je l'ai pris pour du bruit les quatre premières fois.",
+                        "Elle dit : « Encore. »",
+                        "Le fichier s'est arrêté. L'écran est resté allumé sur la fin de la lecture, avec le petit triangle du bouton play qui attend qu'on le presse pour tout recommencer.",
+                        "Je ne l'ai pas pressé.",
+                        "Je suis resté debout devant le tiroir ouvert, dans une cuisine parfaitement éclairée, avec du pain frais sur le plan de travail, et j'ai fait le seul raisonnement qui me restait.",
+                        "Si le message a été enregistré le mercredi à dix-huit heures quarante, et si je ne suis pas allé à cette adresse le mercredi à dix-huit heures quarante, alors il n'a pas pu être enregistré. Donc il n'existe pas. Donc il n'a pas pu être reçu la veille.",
+                        "Sauf qu'il est là, dans ma main, et que je viens de l'entendre.",
+                        "Ce qui laisse une seule possibilité, et c'est celle à laquelle j'essaie de ne pas penser depuis maintenant onze jours.",
+                        "Le message n'a pas besoin que j'y aille mercredi. Il a seulement besoin que j'y aille."
+                    ],
                     "children": []
+                }
+            ]
+        }
+    },
+    {
+        "novel": "Décharge",
+        "data": {
+            "title": "Le camion de 4 h 10",
+            "author": "auteur1",
+            "summary": "Une benne à ordures franchit la barrière de la décharge quatre heures avant l'ouverture, et repart allégée de six cent quarante kilos.",
+            "like_count": 38,
+            "content": [
+                "La barrière de la décharge de Saint-Marcel s'ouvre à six heures, jamais avant. C'est écrit sur le panneau, c'est écrit dans le règlement intérieur, et c'est surtout inscrit dans les habitudes de Vasseur, qui tient la guérite depuis dix-neuf ans et n'a jamais eu de raison de contredire un panneau.",
+                "Le 3 mars, la barrière s'est ouverte à quatre heures dix.",
+                "Vasseur ne l'a pas vue s'ouvrir : il dormait, comme tous les gardiens de nuit du département, dans un fauteuil de bureau réglé trop bas, un thermos vide posé sur les genoux. Ce qui l'a réveillé, c'est le bruit. Une benne à ordures qui recule fait un son que personne ne confond avec autre chose, un bip lent, patient, presque poli, et ce bip-là venait de la fosse nord, à deux cents mètres de la guérite, là où l'on ne décharge plus rien depuis l'automne.",
+                "Le temps qu'il enfile ses chaussures et sorte, le camion redescendait déjà l'allée centrale, phares éteints. Il est passé devant la guérite à quinze kilomètres-heure, sans klaxonner, sans ralentir davantage, et Vasseur a eu le temps de lire le numéro de flotte peint sur la portière : 12. La benne 12 appartenait au dépôt communal et n'avait aucune tournée de nuit.",
+                "Le lendemain matin, le pont-bascule a craché son ticket habituel. La benne 12 était entrée à quatre heures dix avec six cent quarante kilos de plus qu'elle n'en avait en repartant. Vasseur a regardé le chiffre longtemps. Six cent quarante kilos, c'est le poids d'une petite voiture. C'est aussi le poids de beaucoup d'autres choses, et c'est précisément ce qui l'a empêché de dormir la nuit suivante."
+            ],
+            "children": [
+                {
+                    "title": "Le chauffeur remplaçant",
+                    "author": "auteur3",
+                    "summary": "Le dépôt affirme que personne n'a pris la benne 12 cette nuit-là. Le planning, lui, mentionne un remplaçant que personne n'a jamais vu.",
+                    "like_count": 31,
+                    "content": [
+                        "Le dépôt communal reçut les gendarmes avec la politesse inquiète des administrations qui n'ont rien à cacher et le savent mal.",
+                        "Le chef de parc sortit le planning du 2 au 4 mars, une feuille A3 quadrillée, annotée au crayon, corrigée au blanc correcteur en trois endroits. La ligne de la benne 12 portait, pour la nuit du 3, la mention « remplaçant » et rien d'autre. Pas de nom, pas d'initiales, pas de matricule.",
+                        "« C'est courant ? » demanda l'adjudant Perrin.",
+                        "« C'est fréquent », corrigea le chef de parc, qui tenait à la nuance. Les remplacements de nuit se règlent par téléphone, souvent la veille, parfois une heure avant. On note « remplaçant » et on complète après. Sauf que personne, cette fois, n'avait complété, et que les quatre chauffeurs titulaires jurèrent tous les quatre n'avoir appelé personne."
+                    ],
+                    "children": [
+                        {
+                            "title": "Le second tour",
+                            "author": "auteur2",
+                            "summary": "Le pont-bascule a pesé la benne 12 quatre fois cette nuit-là. Les enquêteurs n'ont regardé que les deux premières.",
+                            "like_count": 26,
+                            "content": [
+                                "Le pont-bascule de la décharge pèse chaque véhicule à l'entrée et à la sortie, imprime un ticket et l'archive dans un fichier que personne ne lit jamais.",
+                                "Le fichier du 3 mars contenait quatre lignes pour la benne 12, et non deux. Entrée à 4 h 10, sortie à 4 h 31, entrée à 4 h 44, sortie à 4 h 52.",
+                                "Deux tours. Le premier avait déchargé six cent quarante kilos dans la fosse nord. Le second n'avait rien déchargé du tout : les deux pesées étaient identiques au kilo près.",
+                                "Perrin comprit ce que cela signifiait avant même de le formuler, et il détesta l'avoir compris si vite. Personne ne revient à quatre heures quarante-quatre du matin dans une décharge fermée pour n'y rien déposer. On y revient pour vérifier. Ou pour reprendre."
+                            ],
+                            "children": [
+                                {
+                                    "title": "La route du bas",
+                                    "author": "auteur1",
+                                    "summary": "Entre les deux pesées, treize minutes. Assez pour aller quelque part, à condition de savoir où.",
+                                    "like_count": 24,
+                                    "content": [
+                                        "Treize minutes séparaient la sortie de 4 h 31 de l'entrée de 4 h 44. Perrin passa deux jours sur ces treize minutes.",
+                                        "En treize minutes, une benne à ordures parcourt six kilomètres, huit si le chauffeur est pressé et que la route est vide. Le cercle que cela dessinait sur la carte contenait deux hameaux, une station d'épuration, une carrière fermée et onze fermes.",
+                                        "Il fit le trajet lui-même, une nuit, à la même heure, dans une voiture de service qui sentait le café froid. Il roula jusqu'à la limite du cercle, s'arrêta, fit demi-tour, revint. Il lui restait quatre minutes d'avance.",
+                                        "Quatre minutes pour descendre d'une cabine, faire quelque chose, et remonter. Il nota le chiffre dans son carnet et l'entoura deux fois. Ce n'était plus une enquête sur un camion. C'était une enquête sur quatre minutes."
+                                    ],
+                                    "children": [
+                                        {
+                                            "title": "Le pont de la Sablière",
+                                            "author": "auteur3",
+                                            "summary": "La route du bas passe par un pont à voie unique. Cette nuit-là, quelqu'un d'autre l'a emprunté.",
+                                            "like_count": 20,
+                                            "content": [
+                                                "Le pont de la Sablière ne laisse passer qu'un véhicule à la fois. C'est un ouvrage de 1908 que la commune répare tous les dix ans en promettant de le remplacer.",
+                                                "À quatre heures du matin, un pont à voie unique n'est pas un obstacle. Sauf si quelqu'un arrive en face.",
+                                                "Le boulanger de Saint-Marcel-le-Bas descendait au fournil, comme tous les jours depuis vingt-deux ans. Il s'est rangé sur l'accotement pour laisser passer la benne, parce qu'on laisse toujours passer les plus gros, et il a attendu, moteur au ralenti, en regardant la cabine défiler à un mètre de sa vitre.",
+                                                "Il n'a pas reconnu le chauffeur. Dans un village de neuf cents habitants où les quatre agents du dépôt sont des visages qu'on croise au café, ne pas reconnaître un chauffeur est déjà une information. Il l'a répété aux gendarmes en s'excusant de ne pas pouvoir en dire plus : il faisait nuit, l'homme regardait droit devant lui, et il portait une casquette qui n'était pas celle du service."
+                                            ],
+                                            "children": [
+                                                {
+                                                    "title": "Ce qu'il y avait dans la cabine",
+                                                    "author": "auteur2",
+                                                    "summary": "La benne 12 est saisie. À l'intérieur, rien d'illégal : un gilet, un thermos, et un carnet de tournées qui n'appartient à personne.",
+                                                    "like_count": 18,
+                                                    "content": [
+                                                        "La benne 12 fut saisie un mardi et fouillée le mercredi par deux techniciens qui n'attendaient rien d'elle. Les bennes à ordures sont les véhicules les plus sales et les plus inutiles du monde judiciaire : tout y est contaminé par tout.",
+                                                        "Dans la cabine, ils trouvèrent un gilet haute visibilité à la mauvaise taille, un thermos rincé, une paire de gants de manutention neufs et un carnet à spirale posé dans le vide-poche de la portière.",
+                                                        "Le carnet contenait des tournées manuscrites, datées, notées à la minute. Aucun agent du dépôt ne notait ses tournées à la main depuis l'installation des tablettes, en 2021, et l'écriture ne correspondait à aucun des chauffeurs titulaires.",
+                                                        "La dernière page portait trois lignes, tracées plus vite que les autres : « 3/03 — 4 h 10 — fosse nord ». Puis, en dessous, deux mots que le technicien relut trois fois avant d'appeler son chef : « dernière fois »."
+                                                    ],
+                                                    "children": [
+                                                        {
+                                                            "title": "Sept kilomètres sans caméra",
+                                                            "author": "auteur1",
+                                                            "summary": "Entre le dépôt et la décharge, il existe un itinéraire que personne ne filme. Il fait trois kilomètres de trop.",
+                                                            "like_count": 16,
+                                                            "content": [
+                                                                "Perrin étala la carte du département sur la table de la brigade et traça la route normale au feutre rouge : quatre kilomètres, deux ronds-points, six caméras de vidéoprotection dont trois en état de marche.",
+                                                                "Puis il traça la route du bas au feutre bleu : sept kilomètres, un pont à voie unique, aucune caméra. Trois minutes de plus, exactement, et une invisibilité complète.",
+                                                                "« Un type qui se trompe de chemin prend la route courte et se perd », dit-il à voix haute. « Un type qui prend la longue ne se trompe pas. »",
+                                                                "Il resta un moment devant la carte, à suivre le tracé bleu du doigt. Celui qui avait choisi cette route la connaissait assez pour savoir ce qu'elle ne montrait pas. Ce n'était donc pas un intérimaire arrivé la veille. C'était quelqu'un du dépôt."
+                                                            ],
+                                                            "children": [
+                                                                {
+                                                                    "title": "La femme du péage",
+                                                                    "author": "lecteur1",
+                                                                    "summary": "Elle a vu passer la benne 12 deux fois cette nuit-là. Sa cabine n'a filmé ni l'une ni l'autre.",
+                                                                    "like_count": 14,
+                                                                    "content": [
+                                                                        "Le péage de Saint-Marcel-Ouest ferme ses voies automatiques à minuit et garde une cabine humaine jusqu'à cinq heures. Cette nuit-là, la cabine humaine s'appelait Nadia Berthet.",
+                                                                        "Elle se souvenait de la benne parce qu'une benne à ordures sur l'autoroute, à quatre heures du matin, ne ressemble à rien de connu. Elle se souvenait surtout d'avoir levé la main pour saluer, comme elle salue tous les véhicules de service, et de n'avoir reçu aucune réponse.",
+                                                                        "Elle l'avait vue passer deux fois. Une fois vers l'est, à trois heures cinquante. Une fois vers l'ouest, à quatre heures cinquante-cinq. Entre les deux : la décharge, la fosse nord, et six cent quarante kilos.",
+                                                                        "Les enquêteurs demandèrent les images. Le péage conservait quarante-huit heures d'enregistrement, et les quarante-huit heures avaient expiré depuis six semaines. Il ne restait que la mémoire de Nadia Berthet, qui était excellente, et que la défense allait passer trois mois à démolir."
+                                                                    ],
+                                                                    "children": [
+                                                                        {
+                                                                            "title": "Le double des clés",
+                                                                            "author": "auteur3",
+                                                                            "summary": "Une seule benne du dépôt s'ouvre sans badge. Elle s'ouvre ainsi depuis 2019, et le registre n'en dit rien.",
+                                                                            "like_count": 12,
+                                                                            "content": [
+                                                                                "Le dépôt communal comptait onze bennes et douze jeux de clés. Ce n'était pas une erreur de comptage : c'était une décision, prise un jeudi de 2019 par un chef d'atelier qui en avait assez d'être appelé à cinq heures du matin pour un contact récalcitrant.",
+                                                                                "Le douzième jeu ne portait pas de numéro. Il ouvrait la benne 12 sans passer par le badge, donc sans écrire une ligne dans le journal électronique, donc sans exister.",
+                                                                                "L'adjudant Perrin mit trois jours à comprendre que ce détail expliquait tout le reste : les tournées fantômes, les pleins qui ne correspondaient à rien, les six cent quarante kilos du 3 mars. Il ne cherchait plus un voleur de camion. Il cherchait quelqu'un qui savait qu'un camion pouvait cesser d'exister pendant quarante minutes.",
+                                                                                "Il demanda la liste des agents encore en poste depuis 2019. Il y en avait quatre. Trois répondirent au téléphone dans l'heure. Le quatrième s'appelait Delvaux et n'avait pas pris de congé depuis onze mois."
+                                                                            ],
+                                                                            "children": [
+                                                                                {
+                                                                                    "title": "Ce que Delvaux n'a jamais déclaré",
+                                                                                    "author": "auteur2",
+                                                                                    "summary": "Au bout de la chaîne, un homme qui n'a rien caché : il a seulement répondu aux questions que personne ne lui posait.",
+                                                                                    "like_count": 10,
+                                                                                    "content": [
+                                                                                        "Delvaux reçut les gendarmes dans sa cuisine, en pull, avec le calme des gens qui attendent depuis longtemps qu'on vienne.",
+                                                                                        "Il ne nia rien. On ne lui avait rien demandé : c'est la phrase qu'il répéta quatre fois pendant l'audition, et le procès-verbal la retint mot pour mot. Personne, en douze ans, ne lui avait demandé pourquoi la benne 12 était la seule du dépôt à porter un double des clés, ni pourquoi ce double dormait dans le tiroir d'un homme parti du service en 2019.",
+                                                                                        "« Vous n'avez pas trouvé ça anormal ? » demanda le capitaine.",
+                                                                                        "Delvaux réfléchit honnêtement, ce qui prit un moment. « J'ai trouvé ça pratique », dit-il enfin. Et c'était vrai, et c'était sans doute la phrase la plus terrible du dossier : pendant douze ans, une seule personne avait eu besoin que ce soit pratique, et tout le monde avait trouvé normal que ça le reste."
+                                                                                    ],
+                                                                                    "children": []
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "title": "Quatre minutes de trop",
+                                    "author": "lecteur1",
+                                    "summary": "Et si le second tour n'avait rien à voir avec la fosse nord ? Un homme qui a perdu quelque chose revient toujours le chercher.",
+                                    "like_count": 11,
+                                    "content": [
+                                        "L'hypothèse la plus simple n'intéressait personne, et c'est peut-être pour cela qu'elle était vraie.",
+                                        "Un homme décharge quelque chose dans une fosse à quatre heures du matin. Il repart. Au bout de six kilomètres, il porte la main à sa poche et n'y trouve pas ce qu'il y cherche. Alors il fait demi-tour, il revient, et il repart pour de bon.",
+                                        "Ce n'est pas un plan. C'est une panique de treize minutes, et une panique laisse toujours plus de traces qu'un plan.",
+                                        "Les techniciens retournèrent à la fosse nord avec un détecteur de métaux et une consigne simple : ne pas chercher ce qui avait été jeté, chercher ce qui avait été perdu. Ils trouvèrent le téléphone à onze heures du matin, à quatre mètres du bord, éteint, la carte SIM encore dedans."
+                                    ],
+                                    "children": []
+                                }
+                            ]
+                        },
+                        {
+                            "title": "Fiche de paie",
+                            "author": "auteur1",
+                            "summary": "Le remplaçant fantôme a été payé. La comptabilité, elle, n'oublie jamais un virement.",
+                            "like_count": 14,
+                            "content": [
+                                "Un homme peut disparaître d'un planning. Il disparaît beaucoup moins facilement d'un logiciel de paie.",
+                                "Perrin demanda l'ensemble des virements du dépôt communal pour le mois de mars. La trésorerie mit onze jours à répondre, ce qui, dans le calendrier d'une brigade, revient à répondre trop tard.",
+                                "Il y avait bien une vacation de nuit payée pour le 3 mars. Sept heures, majoration nuit, prime de salissure. Le bénéficiaire était un intérimaire recruté par une agence de Vienne, embauché pour trois nuits en février, jamais revu depuis.",
+                                "L'agence donna une adresse. L'adresse donna un immeuble. L'immeuble donna une boîte aux lettres au nom d'un autre, et une voisine qui expliqua, sans qu'on lui demande rien, que le monsieur du troisième était parti « juste après l'histoire de la décharge »."
+                            ],
+                            "children": []
+                        },
+                        {
+                            "title": "Personne n'a vu le camion",
+                            "author": "moderateur1",
+                            "summary": "Trois agents du dépôt se contredisent, et aucun ne ment. C'est le planning qui a été refait après coup.",
+                            "like_count": 9,
+                            "content": [
+                                "Perrin réentendit les quatre titulaires séparément, à trois semaines d'intervalle, et compara les déclarations ligne à ligne.",
+                                "Elles ne concordaient pas. Le premier plaçait la benne 12 au garage toute la nuit ; le deuxième se souvenait de l'avoir vue dehors ; le troisième affirmait qu'elle était en réparation depuis le lundi, ce que l'atelier démentait formellement.",
+                                "Il envisagea l'entente, puis il l'écarta. Des hommes qui se concertent racontent la même histoire ; ceux-là en racontaient trois différentes avec la même bonne foi.",
+                                "Restait une explication, et elle était pire : le planning qu'on leur montrait n'était pas celui qu'ils avaient consulté en mars. Quelqu'un l'avait refait. Le blanc correcteur, aux trois endroits, recouvrait la même écriture."
+                            ],
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "title": "La benne",
+                    "author": "auteur2",
+                    "summary": "Dans la fosse nord, sous quatre mètres de gravats, un sac de chantier fermé au ruban adhésif.",
+                    "like_count": 29,
+                    "content": [
+                        "La fosse nord n'était plus exploitée depuis octobre. On y avait poussé les gravats du chantier de la déviation, puis on avait tendu un ruban, puis on avait oublié le ruban.",
+                        "La pelleteuse commença à neuf heures et travailla par couches de quarante centimètres, ce qui est une torture pour un conducteur habitué à travailler au mètre.",
+                        "Le sac apparut à seize heures dix, à quatre mètres de profondeur : un sac de chantier bleu, du modèle qu'on vend par lots de cinquante dans toutes les grandes surfaces de bricolage du pays, fermé par six tours de ruban adhésif toilé.",
+                        "Il ne s'était pas déchiré dans la chute. C'est le détail que le procureur nota en premier : un sac qui tombe de six mètres avec six cents kilos de gravats par-dessus ne reste pas intact, sauf si on l'a descendu."
+                    ],
+                    "children": [
+                        {
+                            "title": "Ce que pesait le sac",
+                            "author": "auteur1",
+                            "summary": "Six cent quarante kilos au pont-bascule, quatre-vingt-douze dans le sac. Le reste manque.",
+                            "like_count": 22,
+                            "content": [
+                                "Le sac pesait quatre-vingt-douze kilos. Le pont-bascule avait enregistré six cent quarante.",
+                                "Cinq cent quarante-huit kilos manquaient à l'appel, et l'arithmétique, dans une enquête, est une chose beaucoup plus inquiétante que le sang.",
+                                "Le laboratoire mit sept semaines à rendre son rapport sur le contenu. Sept semaines pendant lesquelles Perrin travailla sur les cinq cent quarante-huit kilos absents, parce que c'était la seule chose sur laquelle il pouvait travailler.",
+                                "Il y avait deux réponses possibles. Soit le camion avait déchargé ailleurs avant d'arriver. Soit il avait déchargé deux fois dans la fosse, et la pelleteuse n'avait pas creusé assez profond."
+                            ],
+                            "children": [
+                                {
+                                    "title": "Le gardien de nuit",
+                                    "author": "auteur3",
+                                    "summary": "Vasseur a dormi. C'est ce qu'il dit depuis le premier jour, et c'est exactement ce qu'on lui reproche.",
+                                    "like_count": 17,
+                                    "content": [
+                                        "Vasseur fut entendu six fois. À la sixième, il pleura, non pas d'être soupçonné, mais d'avoir dormi.",
+                                        "Il raconta sa nuit dans le détail : le thermos, la radio, le fauteuil réglé trop bas, la ronde de deux heures qu'il avait faite, celle de quatre heures qu'il n'avait pas faite.",
+                                        "« Vous n'avez pas fait la ronde de quatre heures depuis combien de temps ? » demanda Perrin, sans méchanceté.",
+                                        "Vasseur mit longtemps à répondre. « Depuis qu'on est passés à un seul gardien », dit-il enfin. Le poste avait été divisé par deux en 2019. Depuis 2019, la décharge de Saint-Marcel était surveillée par un homme seul qui, entre deux heures et six heures du matin, ne surveillait plus rien du tout. Quelqu'un le savait."
+                                    ],
+                                    "children": [
+                                        {
+                                            "title": "Registre d'entrée",
+                                            "author": "auteur2",
+                                            "summary": "Le cahier de la guérite couvre onze ans. Sept nuits y manquent, toutes un lundi.",
+                                            "like_count": 12,
+                                            "content": [
+                                                "La guérite tenait un cahier à couverture cartonnée où Vasseur inscrivait les entrées de nuit à la main, par habitude, parce qu'il avait commencé ainsi en 2006 et que personne ne lui avait dit d'arrêter.",
+                                                "Onze ans de cahiers dormaient dans un placard métallique. Perrin les emporta tous et y passa quatre soirées.",
+                                                "Sept nuits manquaient. Pas des pages arrachées : des nuits simplement non renseignées, dans un cahier où tout le reste l'était, y compris les nuits sans aucune entrée, marquées d'un trait horizontal.",
+                                                "Les sept nuits tombaient toutes un lundi, et les sept lundis précédaient tous de vingt-quatre heures une collecte d'encombrants. Ce n'était plus une nuit à expliquer. C'en était huit."
+                                            ],
+                                            "children": []
+                                        },
+                                        {
+                                            "title": "L'odeur du gasoil",
+                                            "author": "lecteur1",
+                                            "summary": "Vasseur n'a rien vu, mais il a senti quelque chose qu'une benne à ordures ne sent pas.",
+                                            "like_count": 8,
+                                            "content": [
+                                                "Ce que Vasseur avait retenu de cette nuit-là, et qu'il ne mentionna qu'à la quatrième audition parce que personne ne lui avait posé la question, c'était l'odeur.",
+                                                "Une benne à ordures sent l'ordure. C'est une évidence pour tout le monde sauf pour un homme qui vit à côté depuis dix-neuf ans et qui, lui, en distingue les nuances.",
+                                                "Cette nuit-là, l'allée centrale sentait le gasoil. Pas la fuite, pas le plein raté : le gasoil frais, répandu, celui qu'on verse.",
+                                                "Les prélèvements furent faits onze semaines après les faits, sur un sol que la pluie avait lavé quatorze fois. Ils ne donnèrent rien. Perrin garda la déclaration au dossier quand même, en note de bas de page, parce qu'un homme qui invente une odeur invente rarement la bonne."
+                                            ],
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "title": "La caméra morte",
+                            "author": "auteur3",
+                            "summary": "La décharge possède une caméra. Elle filme dans le vide depuis six ans : personne n'a jamais branché l'enregistreur.",
+                            "like_count": 15,
+                            "content": [
+                                "Il y avait une caméra au-dessus de la barrière. Tout le monde à Saint-Marcel le savait, et c'est probablement pour cela que la barrière n'avait jamais été forcée.",
+                                "Elle était en place depuis 2018, alimentée, correctement orientée, avec une petite diode rouge qui clignotait toutes les trois secondes.",
+                                "Elle n'était reliée à aucun enregistreur. Le technicien qui vint la déposer mit deux minutes à le constater et parut sincèrement désolé de l'annoncer : le câble réseau sortait du boîtier, longeait le poteau sur un mètre vingt et s'arrêtait là, dans le vide, proprement scotché.",
+                                "Six ans de dissuasion parfaite et zéro image. Perrin resta un moment à regarder la diode rouge clignoter dans le jour gris, et il pensa que la moitié de son métier consistait à découvrir que les choses qui rassurent les gens ne sont branchées nulle part."
+                            ],
+                            "children": [
+                                {
+                                    "title": "Bande 47",
+                                    "author": "auteur1",
+                                    "summary": "Une caméra du département, à trois kilomètres, a filmé la route cette nuit-là. Il en reste onze secondes.",
+                                    "like_count": 10,
+                                    "content": [
+                                        "Le conseil départemental exploitait onze caméras de comptage routier sur la déviation, dont une à trois kilomètres de la décharge, orientée vers l'ouest.",
+                                        "Elles ne filmaient pas pour la police : elles comptaient les essieux, mesuraient les vitesses, alimentaient des statistiques que personne ne lisait. Les images étaient écrasées toutes les soixante-douze heures, sauf en cas de dépassement de seuil, où un extrait de onze secondes était conservé pour vérification manuelle.",
+                                        "Dans la nuit du 3 mars, à 4 h 03, un véhicule lourd avait dépassé le seuil. Onze secondes avaient été conservées.",
+                                        "Elles montraient une benne à ordures roulant à quatre-vingt-douze kilomètres-heure sur une portion limitée à soixante-dix, phares éteints, sur une route où l'on ne croise personne. Un homme qui transporte quelque chose de compromettant ne roule pas vite : il roule normalement. Sauf s'il est en retard sur quelque chose."
+                                    ],
+                                    "children": []
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "La plainte classée",
+                    "author": "lecteur1",
+                    "summary": "Une famille de Saint-Marcel a signalé une disparition le 4 mars. Le dossier a été classé le 12.",
+                    "like_count": 12,
+                    "content": [
+                        "Il y avait eu une plainte. C'est la première chose que Perrin découvrit en reprenant le dossier, et celle qu'il eut le plus de mal à digérer.",
+                        "Déposée le 4 mars à onze heures par la sœur d'un homme de cinquante-deux ans qui ne répondait plus depuis la veille. Le procès-verbal tenait en une page et demie.",
+                        "Classée le 12 mars, mention « départ volontaire », signature illisible.",
+                        "Entre les deux dates, personne n'avait rapproché une disparition signalée le 4 et un camion entré dans une décharge fermée le 3, à quatre kilomètres de là, avec six cent quarante kilos d'écart au pont-bascule. Les deux dossiers avaient dormi dans le même bâtiment, à deux bureaux l'un de l'autre, pendant huit jours."
+                    ],
+                    "children": [
+                        {
+                            "title": "Le tampon du 3 mars",
+                            "author": "moderateur1",
+                            "summary": "Le classement porte une date. Le tampon, lui, en porte une autre, et c'est celle-là qui compte.",
+                            "like_count": 7,
+                            "content": [
+                                "Perrin demanda l'original du procès-verbal de classement, pas la copie numérisée.",
+                                "Le papier arriva trois jours plus tard dans une chemise cartonnée, et il portait deux dates : celle tapée à la machine, 12 mars, et celle du tampon encreur apposé en bas à droite, réglé au jour de l'apposition et jamais retouché depuis des années.",
+                                "Le tampon indiquait le 3 mars.",
+                                "Un dossier ne peut pas être classé la veille du jour où il est ouvert. Perrin photographia la page, la fit contresigner par son commandant, et comprit que l'enquête venait de changer de bâtiment."
+                            ],
+                            "children": []
+                        }
+                    ]
                 }
             ]
         }

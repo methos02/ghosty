@@ -1,4 +1,8 @@
 import { novelDetailAsyncData } from '@/apis/novels/ssr/novel-async-data.js'
+import {
+  chapterReadingAsyncData,
+  multiverseAsyncData,
+} from '@/apis/chapters/ssr/chapter-async-data.js'
 
 export const routes = [
   {
@@ -41,6 +45,18 @@ export const routes = [
     name: 'chapter-write',
     component: () => import('@/views/chapters/ChapterManagePage.vue'),
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/novels/:slug/chapters/:id',
+    name: 'chapter-read',
+    component: () => import('@/views/chapters/ChapterReaderPage.vue'),
+    meta: { asyncData: chapterReadingAsyncData },
+  },
+  {
+    path: '/novels/:slug/multiverse',
+    name: 'multiverse',
+    component: () => import('@/views/novels/MultiversePage.vue'),
+    meta: { asyncData: multiverseAsyncData },
   },
   {
     path: '/novels/:slug',

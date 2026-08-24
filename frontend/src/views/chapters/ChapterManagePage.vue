@@ -9,7 +9,7 @@ import { route, router, t } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { validateChapterForm } from '@/apis/chapters/formRequest/chapter-form-request.js'
-import { proofreadingHelper } from '@/core/helpers/proofreading-helper.js'
+import { correctionHelper } from '@/core/helpers/correction-helper.js'
 import { useChapterManageHead } from '@/head/use-chapter-manage-head.js'
 
 const chapterId = Number(route.get('id')) || undefined
@@ -28,10 +28,10 @@ const draftButton = ref()
 
 const isPublished = computed(() => chapter.value !== undefined && !chapter.value.isDraft)
 
-const allowance = computed(() => proofreadingHelper.allowanceFor(chapter.value?.content))
+const allowance = computed(() => correctionHelper.allowanceFor(chapter.value?.content))
 
 const usedChanges = computed(() =>
-  proofreadingHelper.changedWords(chapter.value?.content, datas.value.content, allowance.value),
+  correctionHelper.changedWords(chapter.value?.content, datas.value.content, allowance.value),
 )
 
 const remainingChanges = computed(() => Math.max(0, allowance.value - usedChanges.value))
@@ -95,7 +95,7 @@ const create = async () => {
     return
   }
 
-  await leaveForm()
+  await leaveForm(response.chapter.id)
 }
 
 const update = async () => {
@@ -110,6 +110,7 @@ const update = async () => {
   }
 
   if (datas.value.isDraft || isPublished.value) {
+    await leaveForm(chapterId)
     return
   }
 
@@ -118,15 +119,11 @@ const update = async () => {
     return
   }
 
-  await leaveForm()
+  await leaveForm(chapterId)
 }
 
-const leaveForm = async () => {
-  await router.push(
-    datas.value.isDraft
-      ? { name: 'drafts' }
-      : { name: 'novel-detail', params: { slug: novelSlug.value } },
-  )
+const leaveForm = async id => {
+  await router.push({ name: 'chapter-read', params: { slug: novelSlug.value, id } })
 }
 
 const submit = async () => {

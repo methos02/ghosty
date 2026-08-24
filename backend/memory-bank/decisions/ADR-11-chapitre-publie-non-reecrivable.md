@@ -13,7 +13,7 @@ Reste un besoin légitime et minuscule : un auteur qui repère une faute d'ortho
 
 ## Decision
 
-**1. Le contenu publié est immuable.** Il n'existe plus d'endpoint d'édition. `PUT /chapters/{chapter}` devient une **correction** (`chapters.proofread`) : l'auteur soumet le même texte, fautes rattrapées.
+**1. Le contenu publié est immuable.** Il n'existe plus d'endpoint d'édition. `PUT /chapters/{chapter}` devient une **correction** : l'auteur soumet le même texte, fautes rattrapées.
 
 **2. « Même texte » est vérifié par une part de changement**, via la règle `LimitedTextChange` : au plus `max_changed_percent` du texte modifié, mesuré par une distance d'édition **au niveau du mot**, casse ignorée. Appliqué au titre, au texte et au résumé.
 
@@ -37,7 +37,7 @@ Le contrôle lexical est donc remplacé par trois bornes indépendantes, dont ch
 
 | Borne | Valeur | Ce qu'elle empêche |
 |---|---|---|
-| **Fenêtre** — `published_at + proofreading.window_hours` | 48 h | qu'un texte lu, soutenu et prolongé depuis des mois change encore |
+| **Fenêtre** — `published_at + correction.window_hours` | 48 h | qu'un texte lu, soutenu et prolongé depuis des mois change encore |
 | **Quota** — `corrected_at` doit être nul | une seule fois | la dérive par retouches successives, chacune sous le seuil |
 | **Ampleur** — part du texte modifiée | `max_changed_percent` 1 %, plancher `min_changed_words` 5 | la réécriture déguisée en correction |
 

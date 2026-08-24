@@ -7,7 +7,7 @@ use App\Models\Novel;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class ChapterControllerCurrentContinuityTest extends TestCase
+class ChapterControllerCurrentBranchTest extends TestCase
 {
     /**
      * @return array{0: Novel, 1: Chapter}
@@ -127,7 +127,7 @@ class ChapterControllerCurrentContinuityTest extends TestCase
     }
 
     #[Test]
-    public function omits_the_full_text_from_the_continuity(): void
+    public function omits_the_full_text_from_the_branch(): void
     {
         [$novel] = $this->novelWithRoot();
 

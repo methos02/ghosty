@@ -11,36 +11,36 @@ describe('chapter-controller', () => {
     vi.clearAllMocks()
   })
 
-  describe('currentContinuity', () => {
+  describe('currentBranch', () => {
     beforeEach(() => {
-      vi.spyOn(ChapterRepository, 'currentContinuity').mockResolvedValue({
+      vi.spyOn(ChapterRepository, 'currentBranch').mockResolvedValue({
         status: STATUS.SUCCESS,
-        data: { chapters: chapterSeeder.getCurrentContinuityApi(3) },
+        data: { chapters: chapterSeeder.getCurrentBranchApi(3) },
       })
     })
 
     it('forwards the novel slug to the repository', async () => {
-      await ChapterController.currentContinuity('nuit-virage')
+      await ChapterController.currentBranch('nuit-virage')
 
-      expect(ChapterRepository.currentContinuity).toHaveBeenCalledWith({
-        params: ChapterDto.toCurrentContinuityParams('nuit-virage'),
+      expect(ChapterRepository.currentBranch).toHaveBeenCalledWith({
+        params: ChapterDto.toCurrentBranchParams('nuit-virage'),
       })
     })
 
-    it('returns the mapped continuity on success', async () => {
-      const result = await ChapterController.currentContinuity('nuit-virage')
+    it('returns the mapped branch on success', async () => {
+      const result = await ChapterController.currentBranch('nuit-virage')
 
       expect(result.status).toBe(STATUS.SUCCESS)
-      expect(result.chapters).toEqual(chapterSeeder.getCurrentContinuity(3))
+      expect(result.chapters).toEqual(chapterSeeder.getCurrentBranch(3))
     })
 
     it('passes the repository error through untouched', async () => {
-      vi.spyOn(ChapterRepository, 'currentContinuity').mockResolvedValue({
+      vi.spyOn(ChapterRepository, 'currentBranch').mockResolvedValue({
         status: STATUS.ERROR_SERVER,
         error: 'boom',
       })
 
-      const result = await ChapterController.currentContinuity('nuit-virage')
+      const result = await ChapterController.currentBranch('nuit-virage')
 
       expect(result).toEqual({ status: STATUS.ERROR_SERVER, error: 'boom' })
     })
@@ -82,10 +82,10 @@ describe('chapter-controller', () => {
   })
 
   describe('children', () => {
-    it('returns the proposed continuations of a chapter', async () => {
+    it('returns the proposed children of a chapter', async () => {
       vi.spyOn(ChapterRepository, 'children').mockResolvedValue({
         status: STATUS.SUCCESS,
-        data: { chapters: chapterSeeder.getCurrentContinuityApi(2) },
+        data: { chapters: chapterSeeder.getCurrentBranchApi(2) },
       })
 
       const result = await ChapterController.children(10)
@@ -93,7 +93,7 @@ describe('chapter-controller', () => {
       expect(ChapterRepository.children).toHaveBeenCalledWith({
         params: ChapterDto.toChapterParams(10),
       })
-      expect(result.chapters).toEqual(chapterSeeder.getCurrentContinuity(2))
+      expect(result.chapters).toEqual(chapterSeeder.getCurrentBranch(2))
     })
   })
 
@@ -105,7 +105,7 @@ describe('chapter-controller', () => {
       })
     })
 
-    it('sends the novel slug in the url and the continuation in the body', async () => {
+    it('sends the novel slug in the url and the child in the body', async () => {
       const formData = chapterSeeder.getWriteForm()
 
       await ChapterController.create('nuit-virage', formData)

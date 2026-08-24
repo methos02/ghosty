@@ -167,7 +167,7 @@ class ChapterControllerUpdateTest extends TestCase
 
         $this->actingAs($this->author)
             ->putJson($this->route(), $this->getDatas(['content' => $rewritten]))
-            ->assertJsonPath('errors.content.0', __('validation.chapter.proofreading.too_many'))
+            ->assertJsonPath('errors.content.0', __('validation.chapter.correction.too_many'))
             ->assertJsonPath(
                 'errors.content.0',
                 fn (string $message) => ! str_starts_with($message, 'validation.')
@@ -175,7 +175,7 @@ class ChapterControllerUpdateTest extends TestCase
     }
 
     #[Test]
-    public function refuses_more_corrections_than_a_proofreading_allows(): void
+    public function refuses_more_corrections_than_the_window_allows(): void
     {
         $overCorrected = str_replace(
             ['etait', 'ferme', 'lheure', 'barriere', 'fosse'],

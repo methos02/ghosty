@@ -1,0 +1,12 @@
+{
+  "multiverse": {
+    "head_title": "{novel} — explorer le roman",
+    "label": "Explorer le roman",
+    "intro": "Chaque chapitre peut avoir plusieurs suites : voici la version que vous suivez. Cliquez sur une autre suite pour changer de chemin.",
+    "loading": "Chargement des suites...",
+    "empty": "Ce roman n'a encore aucun chapitre publié.",
+    "choices": "Les suites possibles du chapitre {number}",
+    "no_choice": "Personne n'a encore écrit la suite du chapitre {number}.",
+    "write": "Écrire une suite au chapitre {number}"
+  }
+}

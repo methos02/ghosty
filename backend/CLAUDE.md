@@ -852,7 +852,7 @@ public function applyLike(Chapter $chapter, int $delta = 1): void
 
 À la lecture, `ChapterRepository::currentContinuity()` prend le chapitre au plus fort cumul
 et hydrate sa branche depuis `pathChapterIds()`. Sur une feuille, le même cumul évalue une
-**branche complète** — d'où `bestBranches()`, un simple `ORDER BY` indexé.
+**branche complète** — d'où `mostPopularBranchEnds()`, un simple `ORDER BY` indexé.
 
 **Quatre règles à ne pas contourner** :
 

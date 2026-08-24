@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Support\TokenCookieSettings;
+use App\Support\TokenCookieSettingsSupport;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
     private function resolveAccessTokenFromCookie(): void
     {
         Sanctum::getAccessTokenFromRequestUsing(function (Request $request): ?string {
-            $cookieToken = $request->cookie(TokenCookieSettings::fromConfig()->name);
+            $cookieToken = $request->cookie(TokenCookieSettingsSupport::fromConfig()->name);
 
             return is_string($cookieToken) && $cookieToken !== '' ? $cookieToken : null;
         });

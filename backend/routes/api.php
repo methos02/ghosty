@@ -16,7 +16,9 @@ Route::prefix('v1')->group(function () {
     Route::get('/genres', [GenreController::class, 'index']);
     Route::get('/novels', [NovelController::class, 'index']);
     Route::get('/novels/{slug}', [NovelController::class, 'show']);
-    Route::get('/novels/{slug}/chapters', [ChapterController::class, 'currentContinuity'])->name('chapters.current-continuity');
+    Route::get('/novels/{slug}/chapters', [ChapterController::class, 'currentBranch'])->name('chapters.current-branch');
+    Route::get('/novels/{slug}/chapters/{chapter}', [ChapterController::class, 'reading'])->name('chapters.reading');
+    Route::get('/novels/{slug}/tree', [ChapterController::class, 'tree'])->name('chapters.tree');
     Route::get('/chapters/{chapter}', [ChapterController::class, 'show'])->name('chapters.show');
     Route::get('/chapters/{chapter}/children', [ChapterController::class, 'children'])->name('chapters.children');
 

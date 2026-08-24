@@ -59,7 +59,7 @@ class ChapterControllerStoreTest extends TestCase
     }
 
     #[Test]
-    public function publishes_the_continuation_under_its_parent(): void
+    public function publishes_the_child_under_its_parent(): void
     {
         $author = User::factory()->create();
 
@@ -87,7 +87,7 @@ class ChapterControllerStoreTest extends TestCase
     }
 
     #[Test]
-    public function keeps_both_continuations_of_the_same_chapter(): void
+    public function keeps_both_children_of_the_same_chapter(): void
     {
         $this->actingAs(User::factory()->create())->postJson($this->route(), $this->getDatas());
         $this->actingAs(User::factory()->create())
@@ -137,7 +137,7 @@ class ChapterControllerStoreTest extends TestCase
     }
 
     #[Test]
-    public function accepts_a_continuation_of_a_few_words(): void
+    public function accepts_a_child_of_a_few_words(): void
     {
         $this->actingAs(User::factory()->create())
             ->postJson($this->route(), $this->getDatas(['content' => 'Il pleut.']))

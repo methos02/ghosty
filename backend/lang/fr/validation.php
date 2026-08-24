@@ -44,7 +44,7 @@ return [
             'required' => 'Le résumé du chapitre est obligatoire',
             'max' => 'Le résumé ne peut pas dépasser :max caractères',
         ],
-        'proofreading' => [
+        'correction' => [
             'too_many' => 'Trop de mots modifiés : une correction ne doit pas changer le récit, seulement le corriger',
         ],
     ],

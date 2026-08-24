@@ -1,0 +1,10 @@
+{
+  "reading_settings": {
+    "toggle": "Options d'affichage",
+    "night_mode": "Mode lecture",
+    "print": "Imprimer",
+    "width": "Largeur du texte",
+    "font_size": "Taille des caractères",
+    "font_family": "Police"
+  }
+}

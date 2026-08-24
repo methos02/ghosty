@@ -14,9 +14,10 @@ describe('chapter-dto', () => {
         title: 'Le virage',
         summary: 'Une route de montagne, un virage manqué.',
         content: 'La voiture avait quitté la route au troisième virage...',
+        paragraphs: ['La voiture avait quitté la route au troisième virage...'],
         depth: 0,
-        isContinued: false,
-        continuationsCount: 0,
+        hasChildren: false,
+        childrenCount: 0,
         likeCount: 41,
         branchLikeCount: 41,
         commentCount: 0,
@@ -29,6 +30,18 @@ describe('chapter-dto', () => {
       })
     })
 
+    it('cuts the content into paragraphs, whatever the line endings', () => {
+      const api = chapterSeeder.getChapterApi({
+        content: 'Premier bloc.\r\n\r\nDeuxième bloc.\n\n\nTroisième.',
+      })
+
+      expect(ChapterDto.fromShow(api).paragraphs).toEqual([
+        'Premier bloc.',
+        'Deuxième bloc.',
+        'Troisième.',
+      ])
+    })
+
     it('leaves the content undefined when the api omits it', () => {
       const api = chapterSeeder.getChapterApi()
       delete api.content
@@ -37,18 +50,18 @@ describe('chapter-dto', () => {
     })
 
     it('exposes a chapter that has been continued', () => {
-      const api = chapterSeeder.getChapterApi({ is_continued: true, continuations_count: 2 })
+      const api = chapterSeeder.getChapterApi({ has_children: true, children_count: 2 })
 
       const result = ChapterDto.fromShow(api)
 
-      expect(result.isContinued).toBe(true)
-      expect(result.continuationsCount).toBe(2)
+      expect(result.hasChildren).toBe(true)
+      expect(result.childrenCount).toBe(2)
     })
   })
 
   describe('fromList', () => {
-    it('maps every chapter of the continuity', () => {
-      const result = ChapterDto.fromList(chapterSeeder.getCurrentContinuityApi(3))
+    it('maps every chapter of the branch', () => {
+      const result = ChapterDto.fromList(chapterSeeder.getCurrentBranchApi(3))
 
       expect(result).toHaveLength(3)
       expect(result[2].title).toBe('Chapitre 3')
@@ -60,9 +73,9 @@ describe('chapter-dto', () => {
     })
   })
 
-  describe('toCurrentContinuityParams', () => {
+  describe('toCurrentBranchParams', () => {
     it('builds the novel slug param', () => {
-      expect(ChapterDto.toCurrentContinuityParams('nuit-virage')).toEqual({ slug: 'nuit-virage' })
+      expect(ChapterDto.toCurrentBranchParams('nuit-virage')).toEqual({ slug: 'nuit-virage' })
     })
   })
 

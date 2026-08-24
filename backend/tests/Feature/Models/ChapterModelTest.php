@@ -17,7 +17,7 @@ class ChapterModelTest extends TestCase
     }
 
     #[Test]
-    public function a_continuation_is_not_a_root(): void
+    public function a_child_is_not_a_root(): void
     {
         $root = Chapter::factory()->create();
         $child = Chapter::factory()->continuing($root)->create();
@@ -26,11 +26,11 @@ class ChapterModelTest extends TestCase
     }
 
     #[Test]
-    public function a_proposal_without_continuation_is_not_a_branch(): void
+    public function a_proposal_without_child_is_not_a_branch(): void
     {
         $chapter = Chapter::factory()->create();
 
-        $this->assertFalse($chapter->isContinued());
+        $this->assertFalse($chapter->hasChildren());
     }
 
     #[Test]
@@ -39,7 +39,7 @@ class ChapterModelTest extends TestCase
         $chapter = Chapter::factory()->create();
         Chapter::factory()->continuing($chapter)->create();
 
-        $this->assertTrue($chapter->refresh()->isContinued());
+        $this->assertTrue($chapter->refresh()->hasChildren());
     }
 
     #[Test]
@@ -51,7 +51,7 @@ class ChapterModelTest extends TestCase
     }
 
     #[Test]
-    public function the_path_of_a_continuation_extends_its_parent_path(): void
+    public function the_path_of_a_child_extends_its_parent_path(): void
     {
         $root = Chapter::factory()->create();
         $child = Chapter::factory()->continuing($root)->create();
@@ -78,7 +78,7 @@ class ChapterModelTest extends TestCase
     }
 
     #[Test]
-    public function the_depth_grows_with_each_continuation(): void
+    public function the_depth_grows_with_each_child(): void
     {
         $root = Chapter::factory()->create();
         $second = Chapter::factory()->continuing($root)->create();
@@ -94,7 +94,7 @@ class ChapterModelTest extends TestCase
         Chapter::factory()->continuing($continued)->create();
         Chapter::factory()->create();
 
-        $branches = Chapter::query()->continued()->get();
+        $branches = Chapter::query()->hasChildren()->get();
 
         $this->assertSame([$continued->id], $branches->pluck('id')->all());
     }

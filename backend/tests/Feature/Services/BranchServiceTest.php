@@ -71,7 +71,7 @@ class BranchServiceTest extends TestCase
         $root = Chapter::factory()->liked(100)->create();
         $service = app(ChapterService::class);
 
-        $draft = $service->createContinuation($root, User::factory()->create(), new ChapterDTO(
+        $draft = $service->createChild($root, User::factory()->create(), new ChapterDTO(
             title: 'La route inverse',
             content: 'La voiture repartit en sens inverse, phares éteints.',
             asDraft: true,

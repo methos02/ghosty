@@ -7,7 +7,7 @@ use App\Models\Novel;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class CoverUrlTest extends TestCase
+class CoverUrlSupportTest extends TestCase
 {
     #[Test]
     public function serves_the_cover_of_the_genre_when_the_novel_has_none(): void

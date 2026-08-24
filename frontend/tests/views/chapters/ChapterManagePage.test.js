@@ -65,7 +65,7 @@ describe('ChapterManagePage.vue', () => {
     await wrapper.find('textarea[name="chapter.content"]').setValue(formData.content)
   }
 
-  describe('writing a continuation', () => {
+  describe('writing a child', () => {
     it('names the chapter being continued, without crediting its author', async () => {
       await mountWriting()
 
@@ -89,7 +89,7 @@ describe('ChapterManagePage.vue', () => {
       expect(ChapterController.getById).not.toHaveBeenCalled()
     })
 
-    it('does not publish a continuation with an empty text', async () => {
+    it('does not publish a child with an empty text', async () => {
       const create = vi.spyOn(ChapterController, 'create')
       await mountWriting()
 
@@ -101,10 +101,11 @@ describe('ChapterManagePage.vue', () => {
       expect(form.getError('chapter.content')).toBe('chapter_manage.error_content_required')
     })
 
-    it('sends the continuation with its parent and returns to the novel on success', async () => {
+    it('sends the child with its parent and opens it for reading on success', async () => {
+      const published = chapterSeeder.getChapter({ id: 55 })
       const create = vi.spyOn(ChapterController, 'create').mockResolvedValue({
         status: STATUS.SUCCESS,
-        chapter: chapterSeeder.getChapter(),
+        chapter: published,
       })
       const formData = chapterSeeder.getWriteForm({
         content: 'La voiture repartit en sens inverse, phares éteints. '.repeat(5),
@@ -117,7 +118,10 @@ describe('ChapterManagePage.vue', () => {
       await flushPromises()
 
       expect(create).toHaveBeenCalledWith('nuit-virage', formData)
-      expect(push).toHaveBeenCalledWith({ name: 'novel-detail', params: { slug: 'nuit-virage' } })
+      expect(push).toHaveBeenCalledWith({
+        name: 'chapter-read',
+        params: { slug: 'nuit-virage', id: published.id },
+      })
     })
   })
 
@@ -143,7 +147,7 @@ describe('ChapterManagePage.vue', () => {
       expect(ChapterController.getById).toHaveBeenCalledTimes(1)
     })
 
-    it('updates then publishes, and opens the novel', async () => {
+    it('updates then publishes, and opens the chapter for reading', async () => {
       const update = vi
         .spyOn(ChapterController, 'update')
         .mockResolvedValue({ status: STATUS.SUCCESS })
@@ -158,7 +162,10 @@ describe('ChapterManagePage.vue', () => {
 
       expect(update).toHaveBeenCalledWith(44, expect.objectContaining({ title: 'Le virage' }))
       expect(publish).toHaveBeenCalledWith(44)
-      expect(push).toHaveBeenCalledWith({ name: 'novel-detail', params: { slug: 'nuit-virage' } })
+      expect(push).toHaveBeenCalledWith({
+        name: 'chapter-read',
+        params: { slug: 'nuit-virage', id: 44 },
+      })
     })
 
     it('states that the correction can only be spent once', async () => {

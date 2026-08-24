@@ -29,7 +29,7 @@ class LimitedTextChangeTest extends TestCase
     #[Test]
     public function counts_words_not_characters(): void
     {
-        Config::set('ghosty.chapters.proofreading.min_changed_words', 1);
+        Config::set('ghosty.chapters.correction.min_changed_words', 1);
 
         $this->assertFalse($this->fails('le chat dort', 'le chien dort'));
         $this->assertTrue($this->fails('le chat dort', 'le chien court'));
@@ -38,7 +38,7 @@ class LimitedTextChangeTest extends TestCase
     #[Test]
     public function ignores_case_and_repeated_spaces(): void
     {
-        Config::set('ghosty.chapters.proofreading.min_changed_words', 0);
+        Config::set('ghosty.chapters.correction.min_changed_words', 0);
 
         $this->assertFalse($this->fails('Le chat  dort', "le    CHAT\ndort"));
     }
@@ -46,7 +46,7 @@ class LimitedTextChangeTest extends TestCase
     #[Test]
     public function accepts_a_correction_sitting_exactly_on_the_allowance(): void
     {
-        Config::set('ghosty.chapters.proofreading.min_changed_words', 2);
+        Config::set('ghosty.chapters.correction.min_changed_words', 2);
 
         $published = implode(' ', $this->sentence(50));
         $corrected = str_replace(['mot10 ', 'mot20 '], ['autre10 ', 'autre20 '], $published.' ');
@@ -57,7 +57,7 @@ class LimitedTextChangeTest extends TestCase
     #[Test]
     public function refuses_one_change_beyond_the_allowance(): void
     {
-        Config::set('ghosty.chapters.proofreading.min_changed_words', 2);
+        Config::set('ghosty.chapters.correction.min_changed_words', 2);
 
         $published = implode(' ', $this->sentence(50));
         $corrected = str_replace(
@@ -72,7 +72,7 @@ class LimitedTextChangeTest extends TestCase
     #[Test]
     public function refuses_a_length_gap_wider_than_the_allowance_without_scanning(): void
     {
-        Config::set('ghosty.chapters.proofreading.min_changed_words', 3);
+        Config::set('ghosty.chapters.correction.min_changed_words', 3);
 
         $published = implode(' ', $this->sentence(200));
         $corrected = implode(' ', $this->sentence(100));
@@ -97,7 +97,7 @@ class LimitedTextChangeTest extends TestCase
     #[Test]
     public function keeps_counting_changes_sitting_at_both_ends(): void
     {
-        Config::set('ghosty.chapters.proofreading.min_changed_words', 1);
+        Config::set('ghosty.chapters.correction.min_changed_words', 1);
 
         $published = implode(' ', $this->sentence(40));
         $corrected = $published;

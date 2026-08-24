@@ -26,7 +26,7 @@ export const routesApi = {
     api: 'ghosty',
   },
 
-  'chapter.currentContinuity': {
+  'chapter.currentBranch': {
     url: 'v1/novels/{slug}/chapters',
     method: 'get',
     api: 'ghosty',
@@ -38,6 +38,16 @@ export const routesApi = {
   },
   'chapter.children': {
     url: 'v1/chapters/{chapter}/children',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'chapter.reading': {
+    url: 'v1/novels/{slug}/chapters/{chapter}',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'chapter.tree': {
+    url: 'v1/novels/{slug}/tree',
     method: 'get',
     api: 'ghosty',
   },

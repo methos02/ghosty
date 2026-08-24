@@ -13,7 +13,7 @@ describe('UserSummary.vue', () => {
   const mockDrafts = count =>
     vi.spyOn(ChapterController, 'drafts').mockResolvedValue({
       status: STATUS.SUCCESS,
-      chapters: chapterSeeder.getCurrentContinuity(count),
+      chapters: chapterSeeder.getCurrentBranch(count),
     })
 
   const mountFor = async user => {

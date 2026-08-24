@@ -4,7 +4,7 @@ namespace App\Support;
 
 use App\Models\Novel;
 
-final class CoverUrl
+final class CoverUrlSupport
 {
     private const DIRECTORY = 'images/covers';
 

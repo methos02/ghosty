@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasSlug;
-use App\Support\CoverUrl;
+use App\Support\CoverUrlSupport;
 use Database\Factories\NovelFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,7 +48,7 @@ class Novel extends Model
 
     public function coverUrl(): string
     {
-        return CoverUrl::forNovel($this);
+        return CoverUrlSupport::forNovel($this);
     }
 
     /**

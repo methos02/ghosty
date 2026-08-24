@@ -39,7 +39,7 @@ class ChapterControllerDestroyTest extends TestCase
     }
 
     #[Test]
-    public function discards_a_draft_continuation(): void
+    public function discards_a_draft_child(): void
     {
         $root = Chapter::factory()->create();
         $draft = Chapter::factory()->draft()->continuing($root)->create(['author_id' => $this->author->id]);

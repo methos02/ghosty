@@ -38,7 +38,7 @@ class ChapterService
         });
     }
 
-    public function createContinuation(Chapter $parent, User $author, ChapterDTO $datas): Chapter
+    public function createChild(Chapter $parent, User $author, ChapterDTO $datas): Chapter
     {
         return DB::transaction(function () use ($parent, $author, $datas) {
             $chapter = $this->chaptersR->create($this->attributes($datas, $author, [
@@ -110,7 +110,7 @@ class ChapterService
             return;
         }
 
-        $this->chaptersR->incrementContinuations($parent);
+        $this->chaptersR->incrementChildrenCount($parent);
         $this->chaptersR->updateBranchLikeCount($chapter, $parent);
     }
 

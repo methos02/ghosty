@@ -155,11 +155,11 @@ class ChapterControllerDraftsTest extends TestCase
     }
 
     #[Test]
-    public function keeps_only_the_continuations_when_the_roots_are_excluded(): void
+    public function keeps_only_the_children_when_the_roots_are_excluded(): void
     {
         Chapter::factory()->draft()->create(['author_id' => $this->author->id]);
         $parent = Chapter::factory()->create();
-        $continuation = Chapter::factory()->draft()->create([
+        $child = Chapter::factory()->draft()->create([
             'author_id' => $this->author->id,
             'novel_id' => $parent->novel_id,
             'parent_id' => $parent->id,
@@ -169,6 +169,6 @@ class ChapterControllerDraftsTest extends TestCase
             ->getJson($this->route.'?is_root=0')
             ->assertOk()
             ->assertJsonCount(1, 'chapters')
-            ->assertJsonPath('chapters.0.id', $continuation->id);
+            ->assertJsonPath('chapters.0.id', $child->id);
     }
 }

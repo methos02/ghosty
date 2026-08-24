@@ -7,6 +7,15 @@ use App\Models\User;
 
 class ChapterPolicy
 {
+    public function view(?User $user, Chapter $chapter): bool
+    {
+        if (in_array($chapter->status, [Chapter::STATUS_PUBLISHED, Chapter::STATUS_ARCHIVED], true)) {
+            return true;
+        }
+
+        return $user !== null && $user->id === $chapter->author_id;
+    }
+
     public function create(User $user, Chapter $parent): bool
     {
         if ($user->isBanned()) {

@@ -243,14 +243,15 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 
 > Lots 1+2 = le cœur testable de l'hypothèse du MVP. Une V0 démontrable s'arrête ici.
 
-### Lot 3 — Soutiens, classement et signalement · M/L
+### Lot 3 — Soutiens, classement et signalement · M/L ✅
 
 Les deux signaux communautaires d'un chapitre — positif et négatif — arrivent ensemble : sans downvote (D2), livrer les soutiens sans le signalement laisserait un contenu raciste ou bâclé sans aucun recours pour les lecteurs.
 
 - `likes` polymorphe, `LikeGuard`, `BranchService` (propagation du cumul + départage profondeur puis ancienneté), throttle dédié.
 - Tri des suites par soutiens, mise en avant **automatique** de la continuité courante (D3).
 - `reports` + `POST /chapters/{id}/report` avec les motifs de §3 (`poor_quality`, `hate_speech`, `insult`, …), unicité par signaleur.
-- Front : `LikeButton` (optimiste + rollback), tri des propositions, badge « continuité courante », `ReportDialog`.
+- Front : `LikeButton` (compteur appliqué **à la réponse de l'API**, sans mise à jour optimiste : le compteur renvoyé est autoritatif, un `+1` local dérive dès qu'un autre lecteur soutient au même instant), tri des propositions, badge « continuité courante », `ReportDialog`.
+- Unicité du signalement rendue visible : `is_reported` sur le chapitre lu, et le dialogue ouvert sur un chapitre déjà signalé affiche un encart au lieu du formulaire.
 
 > ⚠️ Le **traitement** des signalements n'arrive qu'au lot 6. Entre les deux, les signalements s'empilent en base et sont traités à la main (requête SQL / commande artisan). Acceptable en bêta fermée, à ne pas laisser courir en ouverture publique.
 

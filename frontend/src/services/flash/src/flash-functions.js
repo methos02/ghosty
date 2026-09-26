@@ -1,5 +1,11 @@
+const state = {
+  lastFlashNumber: 0,
+}
+
 const generateFlashId = () => {
-  return crypto.randomUUID()
+  state.lastFlashNumber += 1
+
+  return `flash-${state.lastFlashNumber}`
 }
 
 export const flashFunctions = {

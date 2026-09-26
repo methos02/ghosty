@@ -83,9 +83,9 @@ backend/
 │   │   │   ├── ChapterResource.php
 │   │   │   ├── UserResource.php
 │   │   │   └── ...
-│   │   └── Middleware/
-│   │       ├── CheckRole.php
-│   │       └── RateLimitLikes.php
+│   │   └── Middleware/            # Suffixe Middleware obligatoire
+│   │       ├── CheckRoleMiddleware.php
+│   │       └── RateLimitLikesMiddleware.php
 │   ├── Models/                    # Eloquent Models
 │   │   ├── User.php
 │   │   ├── Novel.php

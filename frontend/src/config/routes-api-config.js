@@ -76,6 +76,21 @@ export const routesApi = {
     method: 'get',
     api: 'ghosty',
   },
+  'chapter.like': {
+    url: 'v1/chapters/{chapter}/like',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'chapter.unlike': {
+    url: 'v1/chapters/{chapter}/like',
+    method: 'delete',
+    api: 'ghosty',
+  },
+  'chapter.report': {
+    url: 'v1/chapters/{chapter}/report',
+    method: 'post',
+    api: 'ghosty',
+  },
 
   'auth.login': {
     url: 'v1/auth/login',

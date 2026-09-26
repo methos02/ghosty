@@ -372,4 +372,25 @@ describe('MultiversePage.vue', () => {
 
     expect(wrapper.find('.multiverse-page__error').text()).toBe('boom')
   })
+
+  it('opens a chapter of the tree in a new tab, leaving the exploration in place', async () => {
+    const treeStore = createTreeStore()
+    const novelStore = createNovelStore()
+    treeStore.setTree(chapterSeeder.getForkedTree())
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    await router.push({ name: 'multiverse', params: { slug: novelStore.selectedNovel.value.slug } })
+
+    const wrapper = mount(MultiversePage, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [TREE_STORE_KEY]: treeStore,
+          [NOVEL_STORE_KEY]: novelStore,
+        },
+      },
+    })
+    await flushPromises()
+
+    expect(wrapper.find('.chapter-card__read').attributes('target')).toBe('_blank')
+  })
 })

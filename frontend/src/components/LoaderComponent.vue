@@ -48,29 +48,19 @@ const setLoad = state => {
   loading.value = state
 }
 
-const EXTRA_PADDING = 5
 const defineButtonSize = () => {
   if (!button.value) {
     return
   }
 
-  const styles = globalThis.getComputedStyle(button.value)
-  const buttonWidth =
-    pixelHelper.pxToNumber(styles.borderRightWidth) +
-    pixelHelper.pxToNumber(styles.borderLeftWidth) +
-    button.value.clientWidth
-  const buttonHeight =
-    pixelHelper.pxToNumber(styles.borderTopWidth) +
-    pixelHelper.pxToNumber(styles.borderBottomWidth) +
-    button.value.clientHeight
-
-  if (buttonHeight === 0) {
+  const { width, height } = button.value.getBoundingClientRect()
+  if (height === 0) {
     return
   }
 
   size.value = {
-    height: pixelHelper.numberToPx(buttonHeight),
-    width: pixelHelper.numberToPx(buttonWidth + EXTRA_PADDING),
+    height: pixelHelper.numberToPx(height),
+    width: pixelHelper.numberToPx(width),
   }
 }
 

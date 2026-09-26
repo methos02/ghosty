@@ -3,6 +3,7 @@ import { mount, flushPromises } from '@vue/test-utils'
 import { createHead } from '@unhead/vue/client'
 import ChapterReaderPage from '@/views/chapters/ChapterReaderPage.vue'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
+import { LikeController } from '@/apis/likes/controllers/like-controller.js'
 import { createReadingStore, READING_STORE_KEY } from '@/apis/chapters/stores/reading-store.js'
 import {
   createReadingSettingsStore,
@@ -12,9 +13,11 @@ import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-st
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { ConfigLoader } from '@/config/config-loader.js'
+import { STATUS } from '@/constants/ajax-constants.js'
 import { readingSettingsHelper } from '@/core/helpers/reading-settings-helper.js'
 import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
+import { likeSeeder } from '&/utils/seeders/like-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
 import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
@@ -124,14 +127,14 @@ describe('ChapterReaderPage.vue', () => {
     await flushPromises()
 
     expect(wrapper.find('.reading-toolbar__branch-label').text()).toBe(
-      'Voie la plus populaire du roman',
+      'Branche principale du roman',
     )
 
     provide[READING_STORE_KEY].setReading({ ...reading, isCurrentBranch: false })
     await flushPromises()
 
     expect(wrapper.find('.reading-toolbar__branch-label').text()).toBe(
-      'Voie la plus populaire depuis ce chapitre',
+      'Branche principale depuis ce chapitre',
     )
   })
 
@@ -172,6 +175,50 @@ describe('ChapterReaderPage.vue', () => {
     expect(ChapterController.reading).toHaveBeenCalledWith('nuit-virage', 12)
   })
 
+  it('keeps the support and the report at hand in the reading bar', async () => {
+    const reading = chapterSeeder.getReading()
+    const provide = readerProvide()
+    provide[READING_STORE_KEY].setReading(reading)
+    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: 'nuit-virage', id: reading.chapter.id },
+    })
+
+    wrapper = mount(ChapterReaderPage, {
+      global: { plugins: [router, createHead()], provide },
+    })
+    await flushPromises()
+
+    expect(wrapper.find('.reading-toolbar .like-button').exists()).toBe(true)
+    expect(wrapper.find('.reading-toolbar__report').exists()).toBe(true)
+  })
+
+  it('counts a support once, wherever the reader gives it from', async () => {
+    const reading = chapterSeeder.getReading()
+    const provide = readerProvide()
+    provide[READING_STORE_KEY].setReading(reading)
+    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
+    useAuthStore().setUser(userSeeder.getUser())
+    vi.spyOn(LikeController, 'like').mockResolvedValue({
+      status: STATUS.SUCCESS,
+      like: likeSeeder.getLike({ likeCount: 42 }),
+    })
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: 'nuit-virage', id: reading.chapter.id },
+    })
+
+    wrapper = mount(ChapterReaderPage, {
+      global: { plugins: [router, createHead()], provide },
+    })
+    await flushPromises()
+    await wrapper.find('.chapter-footer .like-button').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('.reading-toolbar .like-button__count').text()).toBe('42')
+  })
+
   it('keeps the reading surface free of everything that is not the text', async () => {
     const reading = chapterSeeder.getReading()
     const provide = readerProvide()
@@ -189,8 +236,8 @@ describe('ChapterReaderPage.vue', () => {
 
     const article = wrapper.find('.chapter-reader-page__chapter')
     expect(article.find('.children-switcher').exists()).toBe(false)
-    expect(article.find('.chapter-end__actions').exists()).toBe(false)
-    expect(wrapper.find('.chapter-end__continue').exists()).toBe(true)
+    expect(article.find('.chapter-footer__actions').exists()).toBe(false)
+    expect(wrapper.find('.chapter-footer__continue').exists()).toBe(true)
   })
 
   it('renders one paragraph per block of text', async () => {
@@ -240,7 +287,7 @@ describe('ChapterReaderPage.vue', () => {
     })
     await flushPromises()
 
-    expect(wrapper.find('.chapter-end__correct').exists()).toBe(true)
+    expect(wrapper.find('.chapter-footer__correct').exists()).toBe(true)
   })
 
   it('hides the correction from a reader who did not write the chapter', async () => {
@@ -259,7 +306,7 @@ describe('ChapterReaderPage.vue', () => {
     })
     await flushPromises()
 
-    expect(wrapper.find('.chapter-end__correct').exists()).toBe(false)
+    expect(wrapper.find('.chapter-footer__correct').exists()).toBe(false)
   })
 
   it('switches the reading surface to night mode and remembers it', async () => {

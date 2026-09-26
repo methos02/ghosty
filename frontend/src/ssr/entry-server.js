@@ -13,29 +13,30 @@ const runRestoreSession = async (stores, cookie) => {
   }
 }
 
-const runRecordAsyncData = async (record, route, stores) => {
+const runRecordAsyncData = async (record, context) => {
   const asyncData = record.meta?.asyncData
   if (typeof asyncData !== 'function') {
     return {}
   }
 
   try {
-    return (await asyncData({ stores, route })) ?? {}
+    return (await asyncData(context)) ?? {}
   } catch (error) {
     if (import.meta.env.DEV) {
       throw error
     }
 
-    log.error(`[SSR] asyncData a échoué (${route.fullPath}) :`, error)
+    log.error(`[SSR] asyncData a échoué (${context.route.fullPath}) :`, error)
     return {}
   }
 }
 
-const runAsyncData = async (route, stores) => {
+const runAsyncData = async context => {
+  const { route } = context
   let statusCode = route.meta?.statusCode ?? STATUS.SUCCESS
 
   for (const record of route.matched) {
-    const { statusCode: recordStatus } = await runRecordAsyncData(record, route, stores)
+    const { statusCode: recordStatus } = await runRecordAsyncData(record, context)
     if (!recordStatus) {
       continue
     }
@@ -64,7 +65,11 @@ export const render = async (url, { cookie } = {}) => {
 
   const route = router.currentRoute.value
 
-  const statusCode = await runAsyncData(route, stores)
+  const statusCode = await runAsyncData({
+    stores,
+    route,
+    cookie,
+  })
 
   try {
     const html = await renderToString(app)

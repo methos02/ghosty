@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
 import BranchBreadcrumb from '@/views/chapters/parts/BranchBreadcrumb.vue'
-import ChapterEnd from '@/views/chapters/parts/ChapterEnd.vue'
+import ChapterFooter from '@/views/chapters/parts/ChapterFooter.vue'
 import ReadingToolbar from '@/views/chapters/parts/ReadingToolbar.vue'
 import { route, t } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
@@ -131,9 +131,9 @@ watch(chapterId, load)
         </article>
 
         <div class="no-print">
-          <ChapterEnd
+          <ChapterFooter
             :novelSlug="novelSlug"
-            :chapterId="chapter.id"
+            :chapter="chapter"
             :children="children"
             :canCorrect="canCorrect"
           />

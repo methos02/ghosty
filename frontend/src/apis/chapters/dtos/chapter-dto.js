@@ -28,6 +28,8 @@ const fromShow = data => {
     childrenCount: data.children_count,
     likeCount: data.like_count,
     branchLikeCount: data.branch_like_count,
+    isLiked: data.is_liked,
+    isReported: data.is_reported === true,
     commentCount: data.comment_count,
     isDraft: data.is_draft,
     isCorrectable: data.is_correctable,

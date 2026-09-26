@@ -3,9 +3,9 @@
 namespace App\Models\Concerns;
 
 use App\Models\Like;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
@@ -23,15 +23,17 @@ trait HasLikes
     }
 
     /**
-     * @return MorphMany<Like, $this>
+     * @param  Builder<static>  $query
      */
-    public function viewerLikes(): MorphMany
+    public function scopeWithUserLike(Builder $query, ?int $userId): void
     {
-        return $this->likes()->where('user_id', Auth::id() ?? 0);
-    }
-
-    public function isLikedByViewer(): bool
-    {
-        return $this->relationLoaded('viewerLikes') && $this->viewerLikes->isNotEmpty();
+        $query->addSelect([
+            'is_liked' => Like::query()
+                ->selectRaw('1')
+                ->whereColumn('likeable_id', $query->getModel()->getQualifiedKeyName())
+                ->where('likeable_type', $query->getModel()->getMorphClass())
+                ->where('user_id', $userId ?? 0)
+                ->limit(1),
+        ]);
     }
 }

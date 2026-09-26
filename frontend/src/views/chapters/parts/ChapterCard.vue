@@ -12,6 +12,7 @@ const props = defineProps({
   isSelected: { type: Boolean, default: false },
   popularity: { type: String, default: POPULARITY.NONE },
   alternativesCount: { type: Number, default: 0 },
+  opensNewTab: { type: Boolean, default: false },
 })
 
 defineEmits(['pick', 'alternatives'])
@@ -24,11 +25,11 @@ const chapterNumber = computed(() => props.chapter.depth + 1)
 
 const popularLabel = computed(() => {
   if (props.popularity === POPULARITY.NOVEL) {
-    return t('common.most_popular')
+    return t('common.current_continuity')
   }
 
   if (props.popularity === POPULARITY.BRANCH) {
-    return t('common.most_popular_from_here')
+    return t('common.current_continuity_from_here')
   }
 
   return ''
@@ -64,6 +65,15 @@ const correct = async () => {
       </h3>
 
       <div class="chapter-card__badges | d-flex f-wrap a-center g-10">
+        <span
+          class="chapter-card__likes | badge d-flex a-center g-5"
+          :title="t('chapter_card.likes', chapter.likeCount)"
+          :aria-label="t('chapter_card.likes', chapter.likeCount)"
+        >
+          <i class="fa-solid fa-heart color-primary"></i>
+          {{ chapter.likeCount }}
+        </span>
+
         <span class="chapter-card__children | badge badge-info">
           {{ t('chapter_card.children', chapter.childrenCount) }}
         </span>
@@ -91,6 +101,7 @@ const correct = async () => {
         <router-link
           :to="{ name: 'chapter-read', params: { slug: selectedNovel?.slug, id: chapter.id } }"
           class="chapter-card__read | btn btn-sm btn-primary"
+          :target="opensNewTab ? '_blank' : undefined"
           @click.stop
         >
           {{ t('chapter_card.read') }}

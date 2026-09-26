@@ -3,13 +3,18 @@ import { router, t } from '@/services/shortcuts/services-shortcut.js'
 import DropdownComponent from '@/components/DropdownComponent.vue'
 import PaginatorChapter from '@/components/paginators/PaginatorChapterComponent.vue'
 import ReadingSettingsPanel from '@/views/chapters/parts/ReadingSettingsPanel.vue'
+import LikeButton from '@/views/chapters/parts/LikeButton.vue'
+import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
 import { useReadingSettingsStore } from '@/apis/chapters/stores/reading-settings-store.js'
+import { useChapterReport } from '@/apis/reports/composables/use-chapter-report.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import { useReadingPosition } from '@/apis/chapters/composables/use-reading-position.js'
 
 const { selectedNovel } = useNovelStore()
 const { position, branchLength, isCurrentBranch, chapterIdAt } = useReadingPosition()
 const { settings, setSetting, persist } = useReadingSettingsStore()
+const { chapter } = useReadingStore()
+const { canReport, openChapterReport } = useChapterReport()
 
 const goToPosition = async requestedPosition => {
   const targetId = chapterIdAt(requestedPosition)
@@ -35,13 +40,20 @@ const print = () => {
 
 <template>
   <div class="reading-toolbar | d-flex f-wrap a-center j-between g-15">
-    <router-link
-      :to="{ name: 'novel-detail', params: { slug: selectedNovel?.slug } }"
-      class="reading-toolbar__novel | d-flex a-center g-5 fs-300 color-neutral-700"
-    >
-      <i class="fa-solid fa-arrow-left"></i>
-      {{ selectedNovel?.title }}
-    </router-link>
+    <div class="reading-toolbar__support | d-flex a-center g-10">
+      <LikeButton v-if="chapter" />
+
+      <button
+        v-if="chapter && canReport(chapter)"
+        type="button"
+        class="reading-toolbar__report | btn btn-icon btn-sm btn-primary-alt"
+        :title="t('chapter_read.report')"
+        :aria-label="t('chapter_read.report')"
+        @click="openChapterReport(chapter)"
+      >
+        <i class="fa-solid fa-circle-exclamation"></i>
+      </button>
+    </div>
 
     <div
       v-if="branchLength > 1"
@@ -116,8 +128,13 @@ const print = () => {
 
 <style lang="scss" scoped>
 .reading-toolbar {
-  &__novel {
-    text-decoration: none;
+  &__support,
+  &__tools {
+    flex: 1 1 0;
+  }
+
+  &__tools {
+    justify-content: flex-end;
   }
 }
 </style>

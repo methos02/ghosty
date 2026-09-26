@@ -1,0 +1,27 @@
+{
+  "report_dialog": {
+    "title": "Signaler « {chapter} »",
+    "intro": "Un modérateur relira ce chapitre. Le signalement reste anonyme pour l'auteur.",
+    "reason": "Motif",
+    "description": "Précisions (facultatif)",
+    "send": "Envoyer le signalement",
+    "sent": "Signalement envoyé, un modérateur va l'examiner.",
+    "already": "Vous avez déjà signalé ce chapitre. Un modérateur examine votre signalement, inutile d'en envoyer un second.",
+    "close": "Fermer",
+    "error_send": "Le signalement n'a pas pu être envoyé.",
+    "error_reason_required": "Choisissez un motif de signalement.",
+    "error_description_size_max": "Les précisions sont trop longues.",
+    "reasons": {
+      "poor_quality": "Chapitre bâclé ou illisible",
+      "off_topic": "Hors-sujet par rapport au roman",
+      "plagiarism": "Plagiat",
+      "spam": "Spam ou publicité",
+      "hate_speech": "Propos haineux",
+      "insult": "Insulte",
+      "harassment": "Harcèlement",
+      "personal_attack": "Attaque personnelle",
+      "like_manipulation": "Soutiens truqués",
+      "illegal": "Contenu illégal"
+    }
+  }
+}

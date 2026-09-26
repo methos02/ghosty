@@ -1,10 +1,14 @@
-export const chapterReadingAsyncData = async ({ stores, route }) => {
+export const chapterReadingAsyncData = async ({ stores, route, cookie }) => {
   const [{ ChapterController }, { STATUS }] = await Promise.all([
     import('@/apis/chapters/controllers/chapter-controller.js'),
     import('@/constants/ajax-constants.js'),
   ])
 
-  const response = await ChapterController.reading(route.params.slug, route.params.id)
+  const response = await ChapterController.reading(
+    route.params.slug,
+    route.params.id,
+    viewerOptions(cookie),
+  )
   if (response.status === STATUS.SUCCESS) {
     stores.novel.setSelectedNovel(response.novel)
     stores.reading.setReading(response)
@@ -13,7 +17,7 @@ export const chapterReadingAsyncData = async ({ stores, route }) => {
   return { statusCode: response.status }
 }
 
-export const multiverseAsyncData = async ({ stores, route }) => {
+export const multiverseAsyncData = async ({ stores, route, cookie }) => {
   const [{ ChapterController }, { NovelController }, { STATUS }] = await Promise.all([
     import('@/apis/chapters/controllers/chapter-controller.js'),
     import('@/apis/novels/controllers/novel-controller.js'),
@@ -27,10 +31,22 @@ export const multiverseAsyncData = async ({ stores, route }) => {
 
   stores.novel.setSelectedNovel(novelResponse.novel)
 
-  const treeResponse = await ChapterController.tree(route.params.slug, route.query.from)
+  const treeResponse = await ChapterController.tree(
+    route.params.slug,
+    route.query.from,
+    viewerOptions(cookie),
+  )
   if (treeResponse.status === STATUS.SUCCESS) {
     stores.tree.setTree(treeResponse)
   }
 
   return { statusCode: treeResponse.status }
+}
+
+const viewerOptions = cookie => {
+  if (!cookie) {
+    return {}
+  }
+
+  return { headers: { Cookie: cookie } }
 }

@@ -20,6 +20,8 @@ describe('chapter-dto', () => {
         childrenCount: 0,
         likeCount: 41,
         branchLikeCount: 41,
+        isLiked: false,
+        isReported: false,
         commentCount: 0,
         isDraft: false,
         isCorrectable: true,

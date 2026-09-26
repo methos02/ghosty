@@ -17,7 +17,7 @@ class ChapterListResource extends ChapterResource
     {
         $attributes = parent::toArray($request);
 
-        unset($attributes['content']);
+        unset($attributes['content'], $attributes['is_reported']);
 
         return $attributes;
     }

@@ -5,6 +5,7 @@
   "error_not_found": "La ressource demandée n'a pas été trouvée.",
   "error_conflict": "La ressource a été modifiée par un autre utilisateur. Veuillez rafraîchir et réessayer.",
   "error_unprocessable": "Les données envoyées sont invalides.",
+  "error_too_many_requests": "Vous allez trop vite, patientez un instant avant de réessayer.",
   "error_server": "Une erreur est survenue sur le serveur, nous avons été notifiés.",
   "error_unknown": "Une erreur est survenue.",
   "error_empty_parameter": "Vous devez indiquer les paramètres de la route {route_name}.",

@@ -5,6 +5,7 @@
   "error_not_found": "De gevraagde bron werd niet gevonden.",
   "error_conflict": "De bron is door een andere gebruiker gewijzigd. Vernieuw de pagina en probeer het opnieuw.",
   "error_unprocessable": "De ingediende gegevens zijn ongeldig.",
+  "error_too_many_requests": "U gaat te snel, wacht even voordat u het opnieuw probeert.",
   "error_server": "Er is een serverfout opgetreden, we zijn op de hoogte gebracht.",
   "error_unknown": "Er is een fout opgetreden.",
   "error_empty_parameter": "U moet de parameters van de route {route_name} opgeven.",

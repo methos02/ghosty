@@ -41,18 +41,16 @@ describe('ChildrenSwitcher.vue', () => {
     expect(wrapper.find('.children-switcher__title').text()).toBe('Suites de ce chapitre : 2')
   })
 
-  it('says the suite is still to be written when nobody continued the chapter', () => {
+  it('stays out of the reading flow when nobody continued the chapter', () => {
     const wrapper = mount(ChildrenSwitcher, {
       props: { children: [] },
       global: { provide: switcherProvide() },
     })
 
-    expect(wrapper.find('.children-switcher__empty').text()).toBe(
-      "Personne n'a encore poursuivi ce chapitre. La suite reste à écrire.",
-    )
+    expect(wrapper.find('.children-switcher').exists()).toBe(false)
   })
 
-  it('designates the suite that carries the current branch', () => {
+  it('designates the suite that carries the current continuity', () => {
     const children = chapterSeeder.getCurrentBranch(2)
 
     const wrapper = mount(ChildrenSwitcher, {
@@ -61,10 +59,10 @@ describe('ChildrenSwitcher.vue', () => {
     })
 
     expect(wrapper.findAll('.chapter-card__popular')).toHaveLength(1)
-    expect(wrapper.findAll('.children-switcher__item')[1].text()).toContain('La plus populaire')
+    expect(wrapper.findAll('.children-switcher__item')[1].text()).toContain('Branche principale')
   })
 
-  it('scopes the popular badge to the branch when it is not the novel branch', () => {
+  it('scopes the continuity badge to the branch when it is not the novel continuity', () => {
     const children = chapterSeeder.getCurrentBranch(2)
 
     const wrapper = mount(ChildrenSwitcher, {
@@ -72,7 +70,7 @@ describe('ChildrenSwitcher.vue', () => {
       global: { provide: switcherProvide(children[1].id, false) },
     })
 
-    expect(wrapper.find('.chapter-card__popular').text()).toBe('La plus populaire d’ici')
+    expect(wrapper.find('.chapter-card__popular').text()).toBe('Branche principale depuis ici')
   })
 
   it('takes the reader to the suite whose card is clicked', async () => {
@@ -99,9 +97,7 @@ describe('ChildrenSwitcher.vue', () => {
       global: { provide: switcherProvide() },
     })
 
-    expect(wrapper.find('.children-switcher__list').text()).not.toContain(
-      children[0].summary,
-    )
+    expect(wrapper.find('.children-switcher__list').text()).not.toContain(children[0].summary)
 
     await wrapper.find('.chapter-card__summary').trigger('click')
 
@@ -136,5 +132,14 @@ describe('ChildrenSwitcher.vue', () => {
     const item = wrapper.find('.children-switcher__item')
     expect(item.text()).toContain(children[0].title)
     expect(item.text()).toContain(`par ${children[0].author.username}`)
+  })
+
+  it('keeps the reader in the same tab when a suite is opened from the reading page', () => {
+    const wrapper = mount(ChildrenSwitcher, {
+      props: { children: chapterSeeder.getCurrentBranch(2) },
+      global: { provide: switcherProvide() },
+    })
+
+    expect(wrapper.find('.chapter-card__read').attributes('target')).toBeUndefined()
   })
 })

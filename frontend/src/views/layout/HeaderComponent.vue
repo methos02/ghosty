@@ -4,6 +4,7 @@ import HeaderSideMenu from '@/views/layout/HeaderSideMenu.vue'
 import LoginDialog from '@/services/auth/views/LoginDialog.vue'
 import RegisterDialog from '@/services/auth/views/RegisterDialog.vue'
 import ChapterSummaryDialog from '@/views/chapters/parts/ChapterSummaryDialog.vue'
+import ReportDialog from '@/views/chapters/parts/ReportDialog.vue'
 import { useAuth } from '@/services/auth/src/use-auth.js'
 import { t } from '@/services/shortcuts/services-shortcut.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
@@ -69,6 +70,7 @@ const isMenuOpen = ref(false)
   <LoginDialog />
   <RegisterDialog />
   <ChapterSummaryDialog />
+  <ReportDialog />
 </template>
 
 <style lang="scss">

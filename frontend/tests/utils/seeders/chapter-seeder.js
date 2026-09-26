@@ -13,6 +13,8 @@ const getChapterApi = (overrides = {}) => ({
   children_count: 0,
   like_count: 41,
   branch_like_count: 41,
+  is_liked: false,
+  is_reported: false,
   comment_count: 0,
   author: { id: 7, username: 'GhostWriter' },
   novel: {
@@ -99,7 +101,12 @@ const getTreeApi = (overrides = {}) => ({
 
 const getForkedTreeApi = (overrides = {}) => ({
   chapters: [
-    getChapterApi({ id: 10, children_count: 2, has_children: true, branch_like_count: 41 }),
+    getChapterApi({
+      id: 10,
+      children_count: 2,
+      has_children: true,
+      branch_like_count: 41,
+    }),
     getChapterApi({
       id: 11,
       parent_id: 10,

@@ -7,9 +7,18 @@ const VISIBLE_BY_DEFAULT = 3
 
 const props = defineProps({
   children: { type: Array, default: () => [] },
+  title: { type: String, default: '' },
 })
 
 const isShowingAllSuites = ref(false)
+
+const heading = computed(() => {
+  if (props.title !== '') {
+    return props.title
+  }
+
+  return t('children_switcher.title', { count: props.children.length })
+})
 
 const visibleSuites = computed(() => {
   if (isShowingAllSuites.value) {
@@ -23,17 +32,13 @@ const hiddenCount = computed(() => props.children.length - visibleSuites.value.l
 </script>
 
 <template>
-  <section class="children-switcher | d-flex f-column g-15">
+  <section
+    v-if="children.length > 0"
+    class="children-switcher | d-flex f-column g-15"
+  >
     <h2 class="children-switcher__title | fs-500 fw-500">
-      {{ t('children_switcher.title', { count: children.length }) }}
+      {{ heading }}
     </h2>
-
-    <p
-      v-if="children.length === 0"
-      class="children-switcher__empty | color-neutral-700"
-    >
-      {{ t('children_switcher.empty') }}
-    </p>
 
     <ul class="children-switcher__list | d-flex f-column g-10">
       <li

@@ -4,7 +4,13 @@
     "chapter_number": "Chapitre {number}",
     "draft": "Brouillon",
     "end_of_chapter": "— fin du chapitre —",
-    "continue": "Poursuivre ce chapitre",
-    "correct": "Corriger ce chapitre"
+    "continue": "Écrire la suite",
+    "correct": "Corriger ce chapitre",
+    "alternative_branch": "Branche alternative",
+    "fork_suites": "Autres branches depuis « {chapter} »",
+    "support_hint": "Un soutien fait avancer ce chapitre vers la branche principale.",
+    "other_novel": "Autre roman",
+    "suggestions_title": "Romans que vous aimeriez peut-être",
+    "report": "Signaler ce chapitre"
   }
 }

@@ -1,0 +1,9 @@
+{
+  "like_button": {
+    "support": "Soutenir ce chapitre",
+    "withdraw": "Retirer mon soutien",
+    "own_chapter": "On ne soutient pas son propre chapitre",
+    "supported": "Votre soutien est enregistré",
+    "withdrawn": "Votre soutien a été retiré"
+  }
+}

@@ -5,6 +5,7 @@ namespace Tests\Feature\Api\V1\ChapterController;
 use App\Models\Chapter;
 use App\Models\Like;
 use App\Models\Novel;
+use App\Models\Report;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -260,6 +261,21 @@ class ChapterControllerReadingTest extends TestCase
     }
 
     #[Test]
+    public function the_reader_signed_in_by_their_token_cookie_sees_their_own_support(): void
+    {
+        [$novel, $root] = $this->novelWithRoot();
+        $reader = User::factory()->create();
+        Like::factory()->on($root)->create(['user_id' => $reader->id]);
+        $token = $reader->createToken('auth-token')->plainTextToken;
+
+        $this->withCredentials()
+            ->withUnencryptedCookie('ghosty_token', $token)
+            ->getJson("/api/v1/novels/{$novel->slug}/chapters/{$root->id}")
+            ->assertOk()
+            ->assertJsonPath('chapter.is_liked', true);
+    }
+
+    #[Test]
     public function a_visitor_sees_nobody_elses_support_as_their_own(): void
     {
         [$novel, $root] = $this->novelWithRoot();
@@ -269,5 +285,30 @@ class ChapterControllerReadingTest extends TestCase
         $this->getJson("/api/v1/novels/{$novel->slug}/chapters/{$second->id}")
             ->assertOk()
             ->assertJsonPath('ancestors.0.is_liked', false);
+    }
+
+    #[Test]
+    public function the_reader_sees_the_report_they_already_sent_on_the_chapter(): void
+    {
+        [$novel, $root] = $this->novelWithRoot();
+        $reporter = User::factory()->create();
+        Report::factory()->on($root)->create(['reporter_id' => $reporter->id]);
+
+        $this->actingAs($reporter)
+            ->getJson("/api/v1/novels/{$novel->slug}/chapters/{$root->id}")
+            ->assertOk()
+            ->assertJsonPath('chapter.is_reported', true);
+    }
+
+    #[Test]
+    public function a_reader_does_not_see_somebody_elses_report_as_their_own(): void
+    {
+        [$novel, $root] = $this->novelWithRoot();
+        Report::factory()->on($root)->create();
+
+        $this->actingAs(User::factory()->create())
+            ->getJson("/api/v1/novels/{$novel->slug}/chapters/{$root->id}")
+            ->assertOk()
+            ->assertJsonPath('chapter.is_reported', false);
     }
 }

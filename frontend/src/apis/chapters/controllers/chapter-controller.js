@@ -105,9 +105,9 @@ const publish = async id => {
   }
 }
 
-const reading = async (novelSlug, chapterId) => {
+const reading = async (novelSlug, chapterId, options = {}) => {
   const params = ChapterDto.toReadingParams(novelSlug, chapterId)
-  const response = await ChapterRepository.reading({ params })
+  const response = await ChapterRepository.reading({ params, ...options })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -118,9 +118,9 @@ const reading = async (novelSlug, chapterId) => {
   }
 }
 
-const tree = async (novelSlug, fromChapterId) => {
+const tree = async (novelSlug, fromChapterId, options = {}) => {
   const params = ChapterDto.toTreeParams(novelSlug, fromChapterId)
-  const response = await ChapterRepository.tree({ params })
+  const response = await ChapterRepository.tree({ params, ...options })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }

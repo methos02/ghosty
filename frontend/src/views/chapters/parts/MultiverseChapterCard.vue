@@ -28,6 +28,7 @@ const alternativesCount = computed(() => alternativesOf(props.chapter))
     :isSelected="isSelected"
     :popularity="popularity"
     :alternativesCount="alternativesCount"
+    :opensNewTab="true"
     @pick="select(chapter)"
     @alternatives="showAlternatives(chapter)"
   />

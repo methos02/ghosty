@@ -19,6 +19,18 @@ const readingStore = () => {
     nextChapterId.value = reading.nextChapterId
   }
 
+  const setChapterLike = (chapterId, like) => {
+    if (chapter.value?.id !== chapterId) {
+      return
+    }
+
+    chapter.value = {
+      ...chapter.value,
+      isLiked: like.isLiked,
+      likeCount: like.likeCount,
+    }
+  }
+
   const clear = () => {
     chapter.value = undefined
     ancestors.value = []
@@ -57,6 +69,7 @@ const readingStore = () => {
     isCurrentBranch: readonly(isCurrentBranch),
     nextChapterId: readonly(nextChapterId),
     setReading,
+    setChapterLike,
     clear,
     serialize,
     hydrate,

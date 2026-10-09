@@ -1,13 +1,13 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { t, route, router } from '@/services/shortcuts/services-shortcut.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import { useNovelDetail } from '@/apis/novels/composables/use-novel-detail.js'
 import { useChapterStore } from '@/apis/chapters/stores/chapter-store.js'
 import { useNovelDetailHead } from '@/head/use-novel-detail-head.js'
 import DialogComponent from '@/components/DialogComponent.vue'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 useNovelDetailHead()
 
@@ -21,7 +21,7 @@ const errorMessage = ref('')
 
 const selectNovel = async slug => {
   const response = await novelDetail.selectBySlug(slug)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     errorMessage.value = response.error
   }
 
@@ -47,7 +47,7 @@ const loadMainBranch = async () => {
 
   const response = await ChapterController.mainBranch(selectedNovel.value.slug)
 
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     errorMessage.value = response.error
     isLoading.value = false
     return
@@ -73,7 +73,7 @@ const openForSlug = async slug => {
   }
 
   const status = await selectNovel(slug)
-  if (status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(status)) {
     return
   }
 

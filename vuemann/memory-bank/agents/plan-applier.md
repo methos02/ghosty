@@ -43,7 +43,7 @@ Analyze the plan to determine which steps apply to the current context:
 Before implementing, read the relevant rules from `memory-bank/rules/`:
 
 **Always load global rules:**
-- `memory-bank/rules/global/no-else-or-v-else.md`
+- `memory-bank/rules/global/no-else.md`
 - `memory-bank/rules/global/function-body-style.md`
 - `memory-bank/rules/global/naming.md`
 - `memory-bank/rules/global/self-documenting-code.md`

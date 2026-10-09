@@ -7,34 +7,11 @@ import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
 import { createChapterStore, CHAPTER_STORE_KEY } from '@/apis/chapters/stores/chapter-store.js'
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
+import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
 
 const router = routerPlugin.getRouter()
-
-const chapter = (id, title, summary) => ({ id, title, summary })
-
-const mountDialogFor = async (novel, { presetNovel = true } = {}) => {
-  const novelStore = createNovelStore()
-  const chapterStore = createChapterStore()
-  if (presetNovel) {
-    novelStore.setSelectedNovel(novel)
-  }
-
-  await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
-  await router.isReady()
-
-  const wrapper = mount(NovelDetailDialog, {
-    global: {
-      plugins: [router, createHead()],
-      provide: {
-        [NOVEL_STORE_KEY]: novelStore,
-        [CHAPTER_STORE_KEY]: chapterStore,
-      },
-    },
-  })
-  return { wrapper, novelStore, chapterStore }
-}
 
 describe('NovelDetailDialog.vue', () => {
   afterEach(async () => {
@@ -44,11 +21,27 @@ describe('NovelDetailDialog.vue', () => {
 
   it('loads the main branch and displays its first chapter', async () => {
     vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
-      controllerSuccess({ chapters: [chapter(10, 'Le Réveil', 'Il était une fois...')] }),
+      controllerSuccess({
+        chapters: [
+          chapterSeeder.getChapter({ id: 10, title: 'Le Réveil', summary: 'Il était une fois...' }),
+        ],
+      }),
     )
 
     const novel = novelSeeder.getNovel()
-    const { wrapper } = await mountDialogFor(novel)
+    const novelStore = createNovelStore()
+    novelStore.setSelectedNovel(novel)
+    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.isReady()
+    const wrapper = mount(NovelDetailDialog, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [CHAPTER_STORE_KEY]: createChapterStore(),
+        },
+      },
+    })
     await flushPromises()
 
     expect(ChapterController.mainBranch).toHaveBeenCalledWith(novel.slug)
@@ -61,10 +54,23 @@ describe('NovelDetailDialog.vue', () => {
     const novel = novelSeeder.getNovel()
     vi.spyOn(NovelController, 'getBySlug').mockResolvedValue(controllerSuccess({ novel }))
     vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
-      controllerSuccess({ chapters: [chapter(10, 'Ch', '...')] }),
+      controllerSuccess({
+        chapters: [chapterSeeder.getChapter({ id: 10, title: 'Ch', summary: '...' })],
+      }),
     )
 
-    const { wrapper } = await mountDialogFor(novel, { presetNovel: false })
+    const novelStore = createNovelStore()
+    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.isReady()
+    const wrapper = mount(NovelDetailDialog, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [CHAPTER_STORE_KEY]: createChapterStore(),
+        },
+      },
+    })
     await flushPromises()
 
     expect(NovelController.getBySlug).toHaveBeenCalledWith(novel.slug)
@@ -75,12 +81,27 @@ describe('NovelDetailDialog.vue', () => {
   it('opens on the first chapter of the novel, whatever the branch holds after it', async () => {
     vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
       controllerSuccess({
-        chapters: [chapter(10, 'Premier', 'Début'), chapter(11, 'Second', 'Suite')],
+        chapters: [
+          chapterSeeder.getChapter({ id: 10, title: 'Premier', summary: 'Début' }),
+          chapterSeeder.getChapter({ id: 11, title: 'Second', summary: 'Suite' }),
+        ],
       }),
     )
 
     const novel = novelSeeder.getNovel()
-    const { wrapper } = await mountDialogFor(novel)
+    const novelStore = createNovelStore()
+    novelStore.setSelectedNovel(novel)
+    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.isReady()
+    const wrapper = mount(NovelDetailDialog, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [CHAPTER_STORE_KEY]: createChapterStore(),
+        },
+      },
+    })
     await flushPromises()
 
     expect(wrapper.text()).toContain('Résumé — Premier')
@@ -93,7 +114,19 @@ describe('NovelDetailDialog.vue', () => {
     )
 
     const novel = novelSeeder.getNovel()
-    const { wrapper } = await mountDialogFor(novel)
+    const novelStore = createNovelStore()
+    novelStore.setSelectedNovel(novel)
+    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.isReady()
+    const wrapper = mount(NovelDetailDialog, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [CHAPTER_STORE_KEY]: createChapterStore(),
+        },
+      },
+    })
     await flushPromises()
 
     expect(wrapper.text()).toContain('Chargement impossible')
@@ -101,10 +134,26 @@ describe('NovelDetailDialog.vue', () => {
 
   it('opens the multiverse on the displayed chapter, not on the popular branch', async () => {
     vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
-      controllerSuccess({ chapters: [chapter(10, 'Le Réveil', 'Il était une fois...')] }),
+      controllerSuccess({
+        chapters: [
+          chapterSeeder.getChapter({ id: 10, title: 'Le Réveil', summary: 'Il était une fois...' }),
+        ],
+      }),
     )
     const novel = novelSeeder.getNovel()
-    const { wrapper } = await mountDialogFor(novel)
+    const novelStore = createNovelStore()
+    novelStore.setSelectedNovel(novel)
+    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.isReady()
+    const wrapper = mount(NovelDetailDialog, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [CHAPTER_STORE_KEY]: createChapterStore(),
+        },
+      },
+    })
     await flushPromises()
 
     await wrapper.find('.novel-detail-dialog__explore').trigger('click')

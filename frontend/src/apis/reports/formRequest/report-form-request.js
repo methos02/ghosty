@@ -1,5 +1,5 @@
 import { form } from '@/services/shortcuts/services-shortcut.js'
-import { reportConfig } from '@/config/report-config.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 
 export const validateReportForm = datas => {
   const rules = {
@@ -10,7 +10,7 @@ export const validateReportForm = datas => {
       },
     },
     description: {
-      rules: `sizeMax:${reportConfig.descriptionMaxLength}`,
+      rules: `sizeMax:${ConfigLoader.get('report.descriptionMaxLength')}`,
       errors: {
         sizeMax: 'report_dialog.error_description_size_max',
       },

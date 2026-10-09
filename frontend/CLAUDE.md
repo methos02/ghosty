@@ -1051,25 +1051,7 @@ unsetLocale: () => {
 }
 ```
 
-**⚠️ TEMPLATES VUE** : Cette règle s'applique aussi aux templates Vue.
-
-**❌ MAUVAIS - Avec v-else** :
-```vue
-<div v-if="errorMessage" class="error">{{ errorMessage }}</div>
-<div v-else class="content">{{ content }}</div>
-```
-
-**✅ CORRECT - Avec v-if explicite** :
-```vue
-<div v-if="errorMessage" class="error">{{ errorMessage }}</div>
-<div v-if="!errorMessage" class="content">{{ content }}</div>
-```
-
-**Pourquoi ?**
-- Plus explicite et facile à comprendre
-- Condition visible directement
-- Pas de dépendance implicite à l'ordre des éléments
-- Cohérent avec le JavaScript
+**TEMPLATES VUE** : `v-else` et `v-else-if` sont autorisés, un template n'a pas d'early return. Voir `memory-bank/rules/global/no-else.md`.
 
 ### 📐 Convention de Nommage des Classes CSS
 

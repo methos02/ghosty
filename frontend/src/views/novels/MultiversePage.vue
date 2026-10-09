@@ -3,13 +3,13 @@ import { computed, onMounted, ref } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
 import MultiverseChapterCard from '@/views/chapters/parts/MultiverseChapterCard.vue'
 import { route, t } from '@/services/shortcuts/services-shortcut.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import { useTreeStore } from '@/apis/chapters/stores/tree-store.js'
 import { useChapterTree } from '@/apis/chapters/composables/use-chapter-tree.js'
 import { useChapterBranch } from '@/apis/chapters/composables/use-chapter-branch.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import { useNovelDetail } from '@/apis/novels/composables/use-novel-detail.js'
 import { useMultiverseHead } from '@/head/use-multiverse-head.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 useMultiverseHead()
 
@@ -41,7 +41,7 @@ const isAlreadyLoaded = () => {
 
 const reveal = async chapterId => {
   const response = await revealChildren(chapterId)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     errorMessage.value = response.error
   }
 }
@@ -58,7 +58,7 @@ const load = async () => {
   const novelResponse = await novelDetail.selectBySlug(novelSlug.value)
   const treeResponse = await chapterTree.load(novelSlug.value, referenceId.value)
 
-  if (novelResponse.status !== STATUS.SUCCESS || treeResponse.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(novelResponse.status) || !ajaxHelper.isSuccess(treeResponse.status)) {
     errorMessage.value = novelResponse.error ?? treeResponse.error
   }
 

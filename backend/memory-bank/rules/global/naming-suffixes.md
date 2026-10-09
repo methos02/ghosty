@@ -29,7 +29,7 @@ Tests append `Test` to the class name (`CoverUrlSupportTest`); file layout in `t
 ## Injected dependency name
 
 - Repository: MUST be `{entities}R` (`$chaptersR`, `$novelsR`, `$likesR`).
-- Any other class (service, guard, support): MUST be the lowerCamelCase class name (`$chapterService`, `$notificationService`, `$likeGuard`).
+- Any other class (service, support): MUST be the lowerCamelCase class name (`$chapterService`, `$notificationService`, `$likeAuthorizationService`).
 - A bare name (`$novels`, `$genre`) is reserved for data (model, collection, query result).
 
 ```php

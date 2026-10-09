@@ -11,35 +11,25 @@ import { STATUS } from '@/constants/ajax-constants.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { paginationSeeder } from '&/utils/seeders/pagination-seeder.js'
 
-const mountSearch = () => {
-  const filterStore = createNovelFilterStore()
-  const novelStore = createNovelStore()
-  const wrapper = mount(NovelSearch, {
-    global: {
-      provide: {
-        [NOVEL_FILTER_STORE_KEY]: filterStore,
-        [NOVEL_STORE_KEY]: novelStore,
-      },
-    },
-  })
-  return { wrapper, store: filterStore, novelStore }
-}
-
 describe('NovelSearch.vue', () => {
   afterEach(() => {
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
-  const mockList = () =>
-    vi.spyOn(NovelController, 'list').mockResolvedValue({
+  it('sends the typed term to the api', async () => {
+    const list = vi.spyOn(NovelController, 'list').mockResolvedValue({
       status: STATUS.SUCCESS,
       novels: novelSeeder.getNovels(1),
       pagination: paginationSeeder.getPagination(),
     })
-
-  it('sends the typed term to the api', async () => {
-    const list = mockList()
-    const { wrapper } = mountSearch()
+    const wrapper = mount(NovelSearch, {
+      global: {
+        provide: {
+          [NOVEL_FILTER_STORE_KEY]: createNovelFilterStore(),
+          [NOVEL_STORE_KEY]: createNovelStore(),
+        },
+      },
+    })
 
     await wrapper.find('input[name="search"]').setValue('virage')
     await wrapper.find('form').trigger('submit')
@@ -49,8 +39,21 @@ describe('NovelSearch.vue', () => {
   })
 
   it('replaces the grid instead of appending to it', async () => {
-    mockList()
-    const { wrapper, store, novelStore } = mountSearch()
+    vi.spyOn(NovelController, 'list').mockResolvedValue({
+      status: STATUS.SUCCESS,
+      novels: novelSeeder.getNovels(1),
+      pagination: paginationSeeder.getPagination(),
+    })
+    const store = createNovelFilterStore()
+    const novelStore = createNovelStore()
+    const wrapper = mount(NovelSearch, {
+      global: {
+        provide: {
+          [NOVEL_FILTER_STORE_KEY]: store,
+          [NOVEL_STORE_KEY]: novelStore,
+        },
+      },
+    })
     await wrapper.find('form').trigger('submit')
     await flushPromises()
     expect(novelStore.novels.value).toHaveLength(1)
@@ -64,8 +67,20 @@ describe('NovelSearch.vue', () => {
   })
 
   it('clears the search and reloads every novel', async () => {
-    const list = mockList()
-    const { wrapper, store } = mountSearch()
+    const list = vi.spyOn(NovelController, 'list').mockResolvedValue({
+      status: STATUS.SUCCESS,
+      novels: novelSeeder.getNovels(1),
+      pagination: paginationSeeder.getPagination(),
+    })
+    const store = createNovelFilterStore()
+    const wrapper = mount(NovelSearch, {
+      global: {
+        provide: {
+          [NOVEL_FILTER_STORE_KEY]: store,
+          [NOVEL_STORE_KEY]: createNovelStore(),
+        },
+      },
+    })
     await wrapper.find('input[name="search"]').setValue('virage')
     await wrapper.find('form').trigger('submit')
     await flushPromises()
@@ -78,7 +93,14 @@ describe('NovelSearch.vue', () => {
   })
 
   it('offers no way to clear an empty search', () => {
-    const { wrapper } = mountSearch()
+    const wrapper = mount(NovelSearch, {
+      global: {
+        provide: {
+          [NOVEL_FILTER_STORE_KEY]: createNovelFilterStore(),
+          [NOVEL_STORE_KEY]: createNovelStore(),
+        },
+      },
+    })
 
     expect(wrapper.find('.novel-search__clear').exists()).toBe(false)
   })

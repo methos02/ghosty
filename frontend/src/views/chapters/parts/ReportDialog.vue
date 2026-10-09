@@ -6,10 +6,11 @@ import LoaderComponent from '@/components/LoaderComponent.vue'
 import SelectComponent from '@/services/form/views/inputs/SelectComponent.vue'
 import TextareaComponent from '@/services/form/views/inputs/TextareaComponent.vue'
 import { STATUS } from '@/constants/ajax-constants.js'
-import { reportConfig } from '@/config/report-config.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 import { ReportController } from '@/apis/reports/controllers/report-controller.js'
 import { validateReportForm } from '@/apis/reports/formRequest/report-form-request.js'
 import { useChapterReport } from '@/apis/reports/composables/use-chapter-report.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const { reportedChapter, closeChapterReport, isAlreadyReported, markAsReported } =
   useChapterReport()
@@ -56,7 +57,7 @@ const send = async () => {
     return
   }
 
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     refusal.value = response.data.message ?? t('report_dialog.error_send')
     return
   }
@@ -107,7 +108,7 @@ const send = async () => {
         form="report"
       >
         <option
-          v-for="reason in reportConfig.chapterReasons"
+          v-for="reason in ConfigLoader.get('report.chapterReasons')"
           :key="reason"
           :value="reason"
         >
@@ -119,7 +120,7 @@ const send = async () => {
         v-model="datas.description"
         name="description"
         :label="t('report_dialog.description')"
-        :maxLength="reportConfig.descriptionMaxLength"
+        :maxLength="ConfigLoader.get('report.descriptionMaxLength')"
         :autogrow="true"
         form="report"
       />

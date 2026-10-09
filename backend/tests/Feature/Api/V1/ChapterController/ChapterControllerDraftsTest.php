@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api\V1\ChapterController;
 
 use App\Http\Controllers\Api\V1\ChapterController;
+use App\Http\Requests\DraftFilterRequest;
 use App\Models\Chapter;
 use App\Models\Novel;
 use App\Models\User;
@@ -21,6 +22,30 @@ class ChapterControllerDraftsTest extends TestCase
         parent::setUp();
 
         $this->author = User::factory()->create();
+    }
+
+    #[Test]
+    public function uses_draft_filter_request(): void
+    {
+        $this->assertTrue($this->hasFormRequest(ChapterController::class, 'drafts', DraftFilterRequest::class));
+    }
+
+    #[Test]
+    public function rejects_a_non_integer_parent_id(): void
+    {
+        $this->actingAs($this->author)
+            ->getJson($this->route.'?parent_id=abc')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['parent_id' => __('validation.draft_filter.parent_id.integer')]);
+    }
+
+    #[Test]
+    public function rejects_a_non_boolean_is_root(): void
+    {
+        $this->actingAs($this->author)
+            ->getJson($this->route.'?is_root=maybe')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['is_root' => __('validation.draft_filter.is_root.boolean')]);
     }
 
     #[Test]

@@ -3,11 +3,12 @@ import { AUTH_SESSION_COOKIE } from '@/constants/auth-constants.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { cookieHelper } from '@/core/helpers/cookie-helper.js'
 import { useAuthStore } from './auth-store.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const login = async datas => {
   const response = await AuthController.login(datas)
 
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return { status: STATUS.ERROR, error: response.error }
   }
 
@@ -18,7 +19,7 @@ const login = async datas => {
 const register = async datas => {
   const response = await AuthController.register(datas)
 
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return { status: STATUS.ERROR, error: response.error }
   }
 
@@ -40,7 +41,7 @@ const fetchCurrentUser = async () => {
   const store = useAuthStore()
   const response = await AuthController.me()
 
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     store.clear()
     return
   }
@@ -55,7 +56,7 @@ const restoreSession = async (store, cookieHeader) => {
 
   const response = await AuthController.me({ headers: { Cookie: cookieHeader } })
 
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
 

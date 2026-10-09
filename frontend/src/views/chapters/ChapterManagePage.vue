@@ -6,11 +6,11 @@ import InputComponent from '@/services/form/views/inputs/InputComponent.vue'
 import ChapterBodyFields from '@/views/chapters/ChapterBodyFields.vue'
 import ConfirmButton from '@/components/ConfirmButtonComponent.vue'
 import { route, router, t } from '@/services/shortcuts/services-shortcut.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { validateChapterForm } from '@/apis/chapters/formRequest/chapter-form-request.js'
 import { correctionHelper } from '@/core/helpers/correction-helper.js'
 import { useChapterManageHead } from '@/head/use-chapter-manage-head.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const chapterId = Number(route.get('id')) || undefined
 const parentId = Number(route.get('parentId')) || undefined
@@ -44,7 +44,7 @@ const loadParentChapter = async id => {
   }
 
   const response = await ChapterController.getById(id)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 
@@ -53,7 +53,7 @@ const loadParentChapter = async id => {
 
 const loadChapter = async () => {
   const response = await ChapterController.getById(chapterId)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 
@@ -70,7 +70,7 @@ const loadChapter = async () => {
 
 const resumeExistingDraft = async () => {
   const response = await ChapterController.drafts({ parentId })
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return false
   }
 
@@ -91,7 +91,7 @@ const create = async () => {
   }
 
   const response = await ChapterController.create(novelSlug.value, payload)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 
@@ -105,7 +105,7 @@ const update = async () => {
   }
 
   const saved = await ChapterController.update(chapterId, datas.value)
-  if (saved.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(saved.status)) {
     return
   }
 
@@ -115,7 +115,7 @@ const update = async () => {
   }
 
   const published = await ChapterController.publish(chapterId)
-  if (published.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(published.status)) {
     return
   }
 

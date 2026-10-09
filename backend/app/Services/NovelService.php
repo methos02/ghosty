@@ -16,22 +16,22 @@ class NovelService
         private readonly ChapterService $chapterService
     ) {}
 
-    public function create(User $author, NovelDTO $datas, ChapterDTO $origin): Novel
+    public function create(User $author, NovelDTO $novelDTO, ChapterDTO $chapterDTO): Novel
     {
-        return DB::transaction(function () use ($author, $datas, $origin) {
+        return DB::transaction(function () use ($author, $novelDTO, $chapterDTO) {
             $novel = $this->novelsR->create([
-                ...$datas->attributes(),
+                ...$novelDTO->attributes(),
                 'author_id' => $author->id,
             ]);
 
-            $this->chapterService->create($novel, $author, $origin);
+            $this->chapterService->create($novel, $author, $chapterDTO);
 
             return $novel;
         });
     }
 
-    public function update(Novel $novel, NovelDTO $datas): Novel
+    public function update(Novel $novel, NovelDTO $novelDTO): Novel
     {
-        return $this->novelsR->update($novel, $datas->attributes());
+        return $this->novelsR->update($novel, $novelDTO->attributes());
     }
 }

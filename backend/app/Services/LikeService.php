@@ -39,7 +39,7 @@ class LikeService
     public function unlike(User $user, Chapter $chapter): bool
     {
         return DB::transaction(function () use ($user, $chapter): bool {
-            if (! $this->likesR->deleteFor($user->id, $chapter)) {
+            if (! $this->likesR->delete($user->id, $chapter)) {
                 return false;
             }
 

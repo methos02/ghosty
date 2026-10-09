@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createHead } from '@unhead/vue/client'
 import ChapterReaderPage from '@/views/chapters/ChapterReaderPage.vue'
@@ -21,6 +21,8 @@ import { likeSeeder } from '&/utils/seeders/like-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
 import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
+import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
+import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
 
 const router = routerPlugin.getRouter()
 
@@ -33,13 +35,19 @@ const readerProvide = () => ({
 describe('ChapterReaderPage.vue', () => {
   let wrapper
 
+  beforeEach(() => {
+    vi.spyOn(NotificationRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: notificationSeeder.getListApi() }),
+    )
+  })
+
   afterEach(async () => {
     wrapper?.unmount()
     wrapper = undefined
     useAuthStore().clear()
     localStorage.clear()
     await router.push('/')
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it('renders the chapter already prefetched by the server without asking again', async () => {

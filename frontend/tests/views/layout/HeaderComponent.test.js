@@ -1,15 +1,24 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, shallowMount } from '@vue/test-utils'
 import HeaderComponent from '@/views/layout/HeaderComponent.vue'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { useAuth } from '@/services/auth/src/use-auth.js'
 import { auth } from '@/services/shortcuts/services-shortcut.js'
+import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
+import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
+import { controllerSuccess } from '&/utils/helpers/controller-response.js'
 
 describe('HeaderComponent.vue', () => {
+  beforeEach(() => {
+    vi.spyOn(NotificationRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: notificationSeeder.getListApi() }),
+    )
+  })
+
   afterEach(() => {
     useAuthStore().clear()
     useAuth().closeDialogs()
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('when not authenticated', () => {

@@ -1,6 +1,7 @@
 import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import { STATUS } from '@/constants/ajax-constants.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 export const useNovelDetail = () => {
   const novelStore = useNovelStore()
@@ -11,7 +12,7 @@ export const useNovelDetail = () => {
     }
 
     const response = await NovelController.getBySlug(novelSlug)
-    if (response.status !== STATUS.SUCCESS) {
+    if (!ajaxHelper.isSuccess(response.status)) {
       return response
     }
 

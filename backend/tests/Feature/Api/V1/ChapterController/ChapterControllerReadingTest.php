@@ -113,7 +113,7 @@ class ChapterControllerReadingTest extends TestCase
     }
 
     #[Test]
-    public function the_next_chapter_is_the_one_leading_to_the_strongest_branch(): void
+    public function the_next_chapter_is_the_one_leading_to_the_most_liked_branch(): void
     {
         [$novel, $root] = $this->novelWithRoot();
         Chapter::factory()->continuing($root)->liked(25)->create();
@@ -184,7 +184,7 @@ class ChapterControllerReadingTest extends TestCase
     }
 
     #[Test]
-    public function the_chain_follows_the_strongest_branch_of_the_subtree(): void
+    public function the_chain_follows_the_most_liked_branch_of_the_subtree(): void
     {
         [$novel, $root] = $this->novelWithRoot();
         Chapter::factory()->continuing($root)->liked(25)->create();

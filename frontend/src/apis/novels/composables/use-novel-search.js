@@ -2,6 +2,7 @@ import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import { useNovelFilterStore } from '@/apis/novels/stores/novel-filter-store.js'
 import { STATUS } from '@/constants/ajax-constants.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 export const useNovelSearch = () => {
   const novelStore = useNovelStore()
@@ -14,7 +15,7 @@ export const useNovelSearch = () => {
       genreId: filterStore.genreId.value,
     })
 
-    if (response.status !== STATUS.SUCCESS) {
+    if (!ajaxHelper.isSuccess(response.status)) {
       return response
     }
 

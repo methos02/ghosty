@@ -57,4 +57,22 @@ return [
             'max' => 'La description ne peut pas dépasser :max caractères',
         ],
     ],
+    'report_filter' => [
+        'status' => [
+            'enum' => 'Le statut sélectionné est invalide',
+        ],
+    ],
+    'draft_filter' => [
+        'parent_id' => [
+            'integer' => 'Le chapitre parent doit être un identifiant numérique',
+        ],
+        'is_root' => [
+            'boolean' => 'Le filtre « chapitre racine » doit valoir vrai ou faux',
+        ],
+    ],
+    'tree_filter' => [
+        'from' => [
+            'integer' => 'Le chapitre de départ doit être un identifiant numérique',
+        ],
+    ],
 ];

@@ -5,11 +5,11 @@ import InputComponent from '@/services/form/views/inputs/InputComponent.vue'
 import SelectComponent from '@/services/form/views/inputs/SelectComponent.vue'
 import ChapterBodyFields from '@/views/chapters/ChapterBodyFields.vue'
 import { route, router, t } from '@/services/shortcuts/services-shortcut.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import { GenreController } from '@/apis/genres/controllers/genre-controller.js'
 import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { validateNovelForm } from '@/apis/novels/formRequest/novel-form-request.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const datas = ref({ novel: {}, chapter: {} })
 const genres = ref([])
@@ -29,7 +29,7 @@ const selectedDraft = computed({
 
 const loadGenres = async () => {
   const response = await GenreController.list()
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 
@@ -38,7 +38,7 @@ const loadGenres = async () => {
 
 const loadDrafts = async () => {
   const response = await ChapterController.drafts({ isRoot: true })
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 
@@ -62,7 +62,7 @@ const loadDraft = async () => {
   }
 
   const response = await ChapterController.getById(draftId.value)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 
@@ -99,7 +99,7 @@ const createNovel = async () => {
     novel: datas.value.novel,
     chapter: datas.value.chapter,
   })
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 
@@ -113,12 +113,12 @@ const createNovel = async () => {
 
 const saveExisting = async () => {
   const novel = await NovelController.update(novelSlug.value, datas.value.novel)
-  if (novel.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(novel.status)) {
     return
   }
 
   const chapter = await ChapterController.update(draftId.value, datas.value.chapter)
-  if (chapter.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(chapter.status)) {
     return
   }
 
@@ -128,7 +128,7 @@ const saveExisting = async () => {
   }
 
   const published = await ChapterController.publish(draftId.value)
-  if (published.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(published.status)) {
     return
   }
 

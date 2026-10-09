@@ -22,16 +22,16 @@ class ChapterService
         private readonly NotificationService $notificationService
     ) {}
 
-    public function create(Novel $novel, User $author, ChapterDTO $datas): Chapter
+    public function create(Novel $novel, User $author, ChapterDTO $chapterDTO): Chapter
     {
-        return DB::transaction(function () use ($novel, $author, $datas) {
-            $chapter = $this->chaptersR->create($this->attributes($datas, $author, [
+        return DB::transaction(function () use ($novel, $author, $chapterDTO) {
+            $chapter = $this->chaptersR->create($this->attributes($chapterDTO, $author, [
                 'novel_id' => $novel->id,
                 'parent_id' => null,
                 'depth' => 0,
             ]));
 
-            if (! $datas->asDraft) {
+            if (! $chapterDTO->asDraft) {
                 $this->registerPublication($chapter, null);
             }
 
@@ -39,16 +39,16 @@ class ChapterService
         });
     }
 
-    public function createChild(Chapter $parent, User $author, ChapterDTO $datas): Chapter
+    public function createChild(Chapter $parent, User $author, ChapterDTO $chapterDTO): Chapter
     {
-        return DB::transaction(function () use ($parent, $author, $datas) {
-            $chapter = $this->chaptersR->create($this->attributes($datas, $author, [
+        return DB::transaction(function () use ($parent, $author, $chapterDTO) {
+            $chapter = $this->chaptersR->create($this->attributes($chapterDTO, $author, [
                 'novel_id' => $parent->novel_id,
                 'parent_id' => $parent->id,
                 'depth' => $parent->depth + 1,
             ]));
 
-            if (! $datas->asDraft) {
+            if (! $chapterDTO->asDraft) {
                 $this->registerPublication($chapter, $parent);
             }
 
@@ -64,20 +64,20 @@ class ChapterService
                 'published_at' => now(),
             ]);
 
-            $this->registerPublication($published, $this->chaptersR->parentOf($published));
+            $this->registerPublication($published, $this->chaptersR->findParent($published));
 
             return $published;
         });
     }
 
-    public function update(Chapter $chapter, ChapterDTO $datas): Chapter
+    public function update(Chapter $chapter, ChapterDTO $chapterDTO): Chapter
     {
         if ($chapter->isDraft()) {
-            return $this->chaptersR->update($chapter, $datas->attributes());
+            return $this->chaptersR->update($chapter, $chapterDTO->attributes());
         }
 
         return $this->chaptersR->update($chapter, [
-            ...$datas->attributes(),
+            ...$chapterDTO->attributes(),
             'corrected_at' => now(),
         ]);
     }
@@ -103,7 +103,7 @@ class ChapterService
     private function trimMainBranchAt(Chapter $deletedChapter): void
     {
         $lastChapterOfMainBranch = $this->chaptersR->lastChapterOfMainBranch($deletedChapter->novel_id);
-        $parent = $this->chaptersR->parentOf($deletedChapter);
+        $parent = $this->chaptersR->findParent($deletedChapter);
 
         if ($lastChapterOfMainBranch === null || $parent === null) {
             return;
@@ -142,15 +142,15 @@ class ChapterService
      * @param  array<string, mixed>  $position
      * @return array<string, mixed>
      */
-    private function attributes(ChapterDTO $datas, User $author, array $position): array
+    private function attributes(ChapterDTO $chapterDTO, User $author, array $position): array
     {
         return [
             ...$position,
-            ...$datas->attributes(),
+            ...$chapterDTO->attributes(),
             'author_id' => $author->id,
             'path' => '',
-            'status' => $datas->asDraft ? Chapter::STATUS_DRAFT : Chapter::STATUS_PUBLISHED,
-            'published_at' => $datas->asDraft ? null : now(),
+            'status' => $chapterDTO->asDraft ? Chapter::STATUS_DRAFT : Chapter::STATUS_PUBLISHED,
+            'published_at' => $chapterDTO->asDraft ? null : now(),
         ];
     }
 }

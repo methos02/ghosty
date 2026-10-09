@@ -1,13 +1,13 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { auth, t, form } from '@/services/shortcuts/services-shortcut.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import DialogComponent from '@/components/DialogComponent.vue'
 import LoaderComponent from '@/components/LoaderComponent.vue'
 import InputComponent from '@/services/form/views/inputs/InputComponent.vue'
 import ErrorFormComponent from '@/services/form/views/ErrorFormComponent.vue'
 import { useAuth } from '../src/use-auth.js'
 import { validateLoginForm } from '../formRequest/login-form-request.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const authDialogs = useAuth()
 
@@ -34,7 +34,7 @@ const handleLogin = async () => {
   }
 
   const response = await auth.login(datas.value)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     form.addError('login.unauthorize', 'auth.login_error_token')
     return
   }

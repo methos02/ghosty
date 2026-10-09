@@ -24,14 +24,12 @@ class ChapterResource extends JsonResource
             'parent_id' => $this->parent_id,
             'title' => $this->title,
             'summary' => $this->summary,
-            'content' => $this->content,
             'depth' => $this->depth,
             'has_children' => $this->hasChildren(),
             'children_count' => $this->continuations_count,
             'like_count' => $this->like_count,
             'branch_like_count' => $this->branch_like_count,
             'is_liked' => (bool) $this->getAttribute('is_liked'),
-            'is_reported' => (bool) $this->getAttribute('is_reported'),
             'comment_count' => $this->comment_count,
             'status' => $this->status,
             'is_draft' => $this->isDraft(),
@@ -48,6 +46,18 @@ class ChapterResource extends JsonResource
                 'genre_id' => $this->novel->genre_id,
             ]),
             'published_at' => $this->published_at?->toIso8601String(),
+            ...$this->detailAttributes(),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function detailAttributes(): array
+    {
+        return [
+            'content' => $this->content,
+            'is_reported' => (bool) $this->getAttribute('is_reported'),
         ];
     }
 }

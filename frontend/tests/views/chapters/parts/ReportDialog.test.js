@@ -6,18 +6,13 @@ import { useChapterReport } from '@/apis/reports/composables/use-chapter-report.
 import { flash, form } from '@/services/shortcuts/services-shortcut.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { STATUS } from '@/constants/ajax-constants.js'
-import { reportConfig } from '@/config/report-config.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { reportSeeder } from '&/utils/seeders/report-seeder.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
 
 const ALREADY_MESSAGE =
   "Vous avez déjà signalé ce chapitre. Un modérateur examine votre signalement, inutile d'en envoyer un second."
-
-const openOn = async chapter => {
-  useChapterReport().openChapterReport(chapter)
-  await flushPromises()
-}
 
 describe('ReportDialog.vue', () => {
   beforeEach(() => {
@@ -28,14 +23,15 @@ describe('ReportDialog.vue', () => {
 
   afterEach(() => {
     useChapterReport().closeChapterReport()
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it('opens on the chapter the reader chose to report', async () => {
     const chapter = chapterSeeder.getChapter()
     const wrapper = mount(ReportDialog)
 
-    await openOn(chapter)
+    useChapterReport().openChapterReport(chapter)
+    await flushPromises()
 
     expect(wrapper.find('dialog').element.open).toBe(true)
     expect(wrapper.find('.dialog-header').text()).toContain(chapter.title)
@@ -44,20 +40,22 @@ describe('ReportDialog.vue', () => {
   it('offers every motive a chapter can be reported for', async () => {
     const wrapper = mount(ReportDialog)
 
-    await openOn(chapterSeeder.getChapter())
+    useChapterReport().openChapterReport(chapterSeeder.getChapter())
+    await flushPromises()
 
     const motives = wrapper
       .find('select[name="report.reason"]')
       .findAll('option')
       .map(option => option.element.value)
       .filter(Boolean)
-    expect(motives).toEqual(reportConfig.chapterReasons)
+    expect(motives).toEqual(ConfigLoader.get('report.chapterReasons'))
   })
 
   it('does not send the report when no motive is chosen', async () => {
     vi.spyOn(ReportController, 'reportChapter').mockResolvedValue({ status: STATUS.SUCCESS })
     const wrapper = mount(ReportDialog)
-    await openOn(chapterSeeder.getChapter())
+    useChapterReport().openChapterReport(chapterSeeder.getChapter())
+    await flushPromises()
 
     await wrapper.find('form').trigger('submit')
     await flushPromises()
@@ -71,7 +69,8 @@ describe('ReportDialog.vue', () => {
     const datas = reportSeeder.getReportData()
     vi.spyOn(ReportController, 'reportChapter').mockResolvedValue({ status: STATUS.SUCCESS })
     const wrapper = mount(ReportDialog)
-    await openOn(chapter)
+    useChapterReport().openChapterReport(chapter)
+    await flushPromises()
 
     await wrapper.find('select[name="report.reason"]').setValue(datas.reason)
     await wrapper.find('textarea[name="report.description"]').setValue(datas.description)
@@ -91,7 +90,8 @@ describe('ReportDialog.vue', () => {
       data: { message: 'Vous avez déjà signalé ce contenu' },
     })
     const wrapper = mount(ReportDialog)
-    await openOn(chapterSeeder.getChapter({ id: 21 }))
+    useChapterReport().openChapterReport(chapterSeeder.getChapter({ id: 21 }))
+    await flushPromises()
 
     await wrapper.find('select[name="report.reason"]').setValue('spam')
     await wrapper.find('form').trigger('submit')
@@ -105,7 +105,8 @@ describe('ReportDialog.vue', () => {
   it('offers no form to a reader the api already knows as a reporter of the chapter', async () => {
     const wrapper = mount(ReportDialog)
 
-    await openOn(chapterSeeder.getChapter({ isReported: true }))
+    useChapterReport().openChapterReport(chapterSeeder.getChapter({ isReported: true }))
+    await flushPromises()
 
     expect(wrapper.find('.report-dialog__already').text()).toBe(ALREADY_MESSAGE)
     expect(wrapper.find('form').exists()).toBe(false)
@@ -113,7 +114,8 @@ describe('ReportDialog.vue', () => {
 
   it('lets the reader leave the notice by its own button', async () => {
     const wrapper = mount(ReportDialog)
-    await openOn(chapterSeeder.getChapter({ isReported: true }))
+    useChapterReport().openChapterReport(chapterSeeder.getChapter({ isReported: true }))
+    await flushPromises()
 
     await wrapper.find('.report-dialog__close').trigger('click')
 
@@ -123,12 +125,14 @@ describe('ReportDialog.vue', () => {
   it('shows the notice again when the reader reopens a chapter reported a moment ago', async () => {
     vi.spyOn(ReportController, 'reportChapter').mockResolvedValue({ status: STATUS.SUCCESS })
     const wrapper = mount(ReportDialog)
-    await openOn(chapterSeeder.getChapter({ id: 22 }))
+    useChapterReport().openChapterReport(chapterSeeder.getChapter({ id: 22 }))
+    await flushPromises()
     await wrapper.find('select[name="report.reason"]').setValue('spam')
     await wrapper.find('form').trigger('submit')
     await flushPromises()
 
-    await openOn(chapterSeeder.getChapter({ id: 22 }))
+    useChapterReport().openChapterReport(chapterSeeder.getChapter({ id: 22 }))
+    await flushPromises()
 
     expect(wrapper.find('.report-dialog__already').text()).toBe(ALREADY_MESSAGE)
   })

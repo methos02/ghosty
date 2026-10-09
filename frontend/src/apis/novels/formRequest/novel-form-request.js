@@ -1,7 +1,7 @@
 import { form } from '@/services/shortcuts/services-shortcut.js'
-import { chapterConfig } from '@/config/chapter-config.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 
-const titleRules = `required|sizeMin:${chapterConfig.titleMinLength}|sizeMax:${chapterConfig.titleMaxLength}`
+const titleRules = `required|sizeMin:${ConfigLoader.get('chapter.titleMinLength')}|sizeMax:${ConfigLoader.get('chapter.titleMaxLength')}`
 
 const novelFormRules = {
   'novel.title': {
@@ -37,7 +37,7 @@ const novelFormRules = {
     },
   },
   'chapter.summary': {
-    rules: `required|sizeMax:${chapterConfig.summaryMaxLength}`,
+    rules: `required|sizeMax:${ConfigLoader.get('chapter.summaryMaxLength')}`,
     format: datas => datas.chapter?.summary,
     errors: {
       required: 'novel_manage.error_chapter_summary_required',

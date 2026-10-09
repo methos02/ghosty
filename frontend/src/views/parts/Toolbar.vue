@@ -4,8 +4,8 @@ import DropdownComponent from '@/components/DropdownComponent.vue'
 import { useNovelFilterStore } from '@/apis/novels/stores/novel-filter-store.js'
 import { useNovelSearch } from '@/apis/novels/composables/use-novel-search.js'
 import { GenreController } from '@/apis/genres/controllers/genre-controller.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import { t } from '@/services/shortcuts/services-shortcut.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const mode = defineModel('mode', {
   type: String,
@@ -35,7 +35,7 @@ const pickGenre = async genre => {
 
 onMounted(async () => {
   const response = await GenreController.list()
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 

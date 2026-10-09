@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useInfiniteScroll } from '@vueuse/core'
-import { STATUS } from '@/constants/ajax-constants.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const props = defineProps({
   cb: { type: Function, required: true },
@@ -19,7 +19,7 @@ const loadMore = async () => {
 
   isLoading.value = true
   const response = await props.cb()
-  if (response?.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response?.status)) {
     errorMessage.value = response?.error || 'Une erreur est survenue'
   }
   isLoading.value = false

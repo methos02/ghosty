@@ -8,7 +8,7 @@ describe('RegisterDialog.vue', () => {
   afterEach(() => {
     useAuth().closeDialogs()
     form.clearErrors()
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it('opens the dialog when the register dialog flag becomes true', async () => {

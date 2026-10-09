@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import TextareaComponent from '@/services/form/views/inputs/TextareaComponent.vue'
 import { form as formService, t } from '@/services/shortcuts/services-shortcut.js'
-import { chapterConfig } from '@/config/chapter-config.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 
 const content = defineModel('content', { type: String, default: undefined })
 const summary = defineModel('summary', { type: String, default: undefined })
@@ -68,7 +68,7 @@ const sectionClass = section => {
         name="summary"
         :label="t('chapter_body.summary')"
         :required="true"
-        :maxLength="chapterConfig.summaryMaxLength"
+        :maxLength="ConfigLoader.get('chapter.summaryMaxLength')"
         :form="FORM_SCOPE"
       />
     </div>

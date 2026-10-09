@@ -1,6 +1,6 @@
-import { STATUS } from '@/constants/ajax-constants.js'
 import { FormHelper } from '@/core/helpers/form-helper.js'
 import { utilsH } from '@/core/helpers/utils-helper.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const controllerRegistry = new Map()
 
@@ -85,7 +85,7 @@ const hydrateKey = async (data, key, config) => {
   const controller = await HydrateFunctions.loadController(controllerName, key, method)
 
   const result = await controller[method](ids)
-  if (result.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(result.status)) {
     return { key, entities: [] }
   }
 

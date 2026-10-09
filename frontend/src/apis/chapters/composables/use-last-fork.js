@@ -1,7 +1,7 @@
 import { computed, ref, watch } from 'vue'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
-import { STATUS } from '@/constants/ajax-constants.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 export const useLastFork = () => {
   const { chapter, ancestors } = useReadingStore()
@@ -16,7 +16,7 @@ export const useLastFork = () => {
 
   const openLastFork = async () => {
     const response = await ChapterController.children(lastFork.value.id)
-    if (response.status !== STATUS.SUCCESS) {
+    if (!ajaxHelper.isSuccess(response.status)) {
       return
     }
 

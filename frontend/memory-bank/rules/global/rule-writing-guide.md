@@ -8,7 +8,7 @@ paths:
 
 Every rule file MUST have:
 1. **Frontmatter** `paths`: globs where the rule applies.
-2. **Title** `# Rule Name`: the same words as the filename in Title Case (`no-else-or-v-else.md` -> `# No Else Or V-Else`). A file name MUST describe the rule it holds: rename the file when the rule changes.
+2. **Title** `# Rule Name`: the same words as the filename in Title Case (`no-else.md` -> `# No Else`). A file name MUST describe the rule it holds: rename the file when the rule changes.
 3. **Description**: one or two imperative lines, no fluff.
 4. **Examples**: only when the rule is ambiguous without them; **one BAD/GOOD pair per concern**. Examples contain no explanatory comment (only `// BAD` / `// GOOD` labels), use Ghosty names (novel, chapter, notification, comment, user), and reference only names that exist.
 

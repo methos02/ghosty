@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 - **Base de données** : MySQL 8.0
 - **ORM** : Eloquent
 - **Authentification** : Laravel Sanctum
-- **Tests** : Pest ou PHPUnit
+- **Tests** : PHPUnit
 - **Hébergement** : O2Switch (mutualisé)
 
 ⚠️ **IMPORTANT** : ce fichier documente le modèle **multivers** du MVP. Il a été réécrit le 2026-07-31 : le schéma précédent, hérité du legacy PHP 5.6 (romans en `status = voting|writing`, propositions `accepted|rejected`, sessions de vote clôturées par un `VoteCalculationService`), **contredisait** le MVP et ne doit plus servir de référence.
@@ -21,7 +21,7 @@ Les décisions structurantes sont dans les ADR :
 | ADR | Décision |
 |---|---|
 | [ADR-07](memory-bank/decisions/ADR-07-modele-multivers-arbre-de-chapitres.md) | Arbre `chapters` + chemin matérialisé ; `works` supprimée ; branche **dérivée**, sans table |
-| [ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md) | Soutien **positif seul** (aucun downvote) ; signalement = unique voie négative ; continuité courante **automatique** |
+| [ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md) | Soutien **positif seul** (aucun downvote) ; signalement = unique voie négative ; branche principale **automatique** |
 | [ADR-09](memory-bank/decisions/ADR-09-pas-d-archivage-automatique.md) | **Aucun archivage automatique** : `archived` / `hidden` sont des issues de modération humaine |
 | [ADR-10](memory-bank/decisions/ADR-10-notifications-in-app-agregees.md) | Notifications in-app **agrégées**, canal `database` natif |
 | [ADR-11](memory-bank/decisions/ADR-11-chapitre-publie-non-reecrivable.md) | Un chapitre publié est **immuable** : corrigeable une seule fois, sous 48 h, et dans une part limitée du texte |
@@ -37,8 +37,7 @@ cp .env.example .env
 php artisan key:generate
 
 # Base de données
-php artisan migrate
-php artisan db:seed
+php artisan migrate:fresh --seed
 
 # Développement (http://localhost:8000)
 php artisan serve
@@ -106,7 +105,7 @@ backend/
 │   └── Services/                  # Business Logic
 │       ├── ChapterService.php             # seul écrivain de chapters (ADR-07)
 │       ├── BranchService.php         # branch_like_count propagé (ADR-08)
-│       ├── LikeGuard.php              # anti-abus des soutiens
+│       ├── LikeAuthorizationService.php # anti-abus des soutiens
 │       ├── ModerationService.php         # seul chemin vers archived/hidden
 │       ├── NotificationService.php       # seul écrivain des notifications, agrégation par group_key
 │       └── ImageUploadService.php
@@ -161,7 +160,7 @@ backend/
 #### users
 ```sql
 id BIGINT PRIMARY KEY
-pseudo VARCHAR UNIQUE
+username VARCHAR UNIQUE
 email VARCHAR UNIQUE
 password VARCHAR                    -- Bcrypt (pas SHA1!)
 email_verified_at TIMESTAMP
@@ -350,8 +349,6 @@ class GenresSeeder extends Seeder
         $jsonPath = database_path('data/genres.json');
         $genres = json_decode(file_get_contents($jsonPath), true);
 
-        DB::table('genres')->truncate();
-
         foreach ($genres as $genre) {
             DB::table('genres')->insert([
                 'id' => $genre['id'],
@@ -398,8 +395,6 @@ class NovelSeeder extends Seeder
     {
         $jsonPath = database_path('data/novels.json');
         $novels = json_decode(file_get_contents($jsonPath), true);
-
-        DB::table('novels')->truncate();
 
         foreach ($novels as $novel) {
             DB::table('novels')->insert([
@@ -619,7 +614,6 @@ class ChapterResource extends JsonResource
             'parent_id' => $this->parent_id,
             'title' => $this->title,
             'summary' => $this->summary,
-            'content' => $this->when($this->shouldExposeContent($request), $this->content),
             'depth' => $this->depth,
             'is_continued' => $this->isContinued(),
             'continuations_count' => $this->continuations_count,
@@ -627,10 +621,19 @@ class ChapterResource extends JsonResource
             'branch_like_count' => $this->branch_like_count,
             'author' => [
                 'id' => $this->author_id,
-                'pseudo' => $this->whenLoaded('author', fn () => $this->author?->pseudo),
+                'username' => $this->whenLoaded('author', fn () => $this->author->username),
             ],
             'published_at' => $this->published_at?->toIso8601String(),
+            ...$this->detailAttributes(),
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function detailAttributes(): array
+    {
+        return ['content' => $this->content];
     }
 }
 ```
@@ -639,8 +642,9 @@ class ChapterResource extends JsonResource
 suite publiée la poursuit. Il n'existe pas d'entité « branche »
 ([ADR-07](memory-bank/decisions/ADR-07-modele-multivers-arbre-de-chapitres.md)).
 
-**Le texte intégral n'est servi que sur la fiche d'un chapitre** : une liste de continuité
-renverrait autant de `longText` que de chapitres.
+**Le texte intégral n'est servi que sur la fiche d'un chapitre** : une liste de branche
+renverrait autant de `longText` que de chapitres. Les listes utilisent `ChapterListResource`,
+choisie au point d'appel, qui surcharge `detailAttributes()` pour ne pas le produire.
 
 ### 5. Policy (Authorization)
 
@@ -843,10 +847,10 @@ Décision et alternatives : [ADR-04](memory-bank/decisions/ADR-04-token-en-cooki
 > propositions » (§7), et « une proposition moins soutenue peut toujours être poursuivie et
 > devenir une branche ». **Aucune proposition n'est jamais rejetée.**
 
-### BranchService — la continuité courante, sans élimination
+### BranchService — la branche principale, sans élimination
 
 Aucune colonne ne désigne un gagnant. Chaque chapitre porte `branch_like_count`, le **cumul
-des soutiens depuis la racine jusqu'à lui**, et la continuité courante se déduit : c'est la
+des soutiens depuis la racine jusqu'à lui**, et la branche principale se déduit : c'est la
 branche du chapitre publié au cumul le plus élevé. Les suites écartées restent intégralement
 lisibles et peuvent encore devenir des branches.
 
@@ -874,9 +878,9 @@ passe est repris par la suivante, et un recalcul manqué est rattrapé sans inte
 de ces lignes qui toucherait `chapters.updated_at` rendrait le roman éternellement sale et le
 recalculerait toutes les cinq minutes à perpétuité.
 
-À la lecture, `ChapterRepository::currentContinuity()` prend le chapitre au plus fort cumul
+À la lecture, `ChapterRepository::mainBranch()` lit `novels.main_branch_last_chapter_id`
 et hydrate sa branche depuis `pathChapterIds()`. Sur une feuille, le même cumul évalue une
-**branche complète** — d'où `mostPopularBranchEnds()`, un simple `ORDER BY` indexé.
+**branche complète** — d'où `lastChaptersOfMostLikedBranches()`, un simple `ORDER BY` indexé.
 
 **Quatre règles à ne pas contourner** :
 
@@ -902,9 +906,9 @@ Le lot modération réutilisera `recomputeBranchLikes()` après chaque retrait d
 ([ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md),
 amendement du 2026-08-24).
 
-### LikeGuard — anti-abus
+### LikeAuthorizationService — anti-abus
 
-Le soutien porte à lui seul le classement des suites, la continuité courante et la
+Le soutien porte à lui seul le classement des suites, la branche principale et la
 régulation de la visibilité (rien n'étant archivé par le temps qui passe,
 [ADR-09](memory-bank/decisions/ADR-09-pas-d-archivage-automatique.md)). Le truquer ne fausse
 pas un classement : il détourne le parcours de lecture par défaut. D'où les garde-fous à
@@ -915,66 +919,35 @@ throttle — et leurs seuils dans un `config/ghosty.php` créé à ce moment-là
 
 ### Feature Test
 
+`tests/Feature/Api/V1/NovelController/NovelControllerIndexTest.php` :
+
 ```php
 <?php
-// tests/Feature/NovelControllerTest.php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Api\V1\NovelController;
 
-use App\Models\User;
 use App\Models\Genre;
 use App\Models\Novel;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class NovelControllerTest extends TestCase
+class NovelControllerIndexTest extends TestCase
 {
-    use RefreshDatabase;
+    private string $route = '/api/v1/novels';
 
-    public function test_can_list_novels(): void
+    #[Test]
+    public function returns_novels_with_their_genre(): void
     {
-        Novel::factory()->count(3)->create();
+        $genre = Genre::factory()->create(['name' => 'Science Fiction']);
+        $novel = Novel::factory()->create(['title' => 'Dune', 'genre_id' => $genre->id]);
 
-        $response = $this->getJson('/api/v1/novels');
+        $response = $this->getJson($this->route);
 
-        $response->assertStatus(200)
-            ->assertJsonCount(3, 'data');
-    }
-
-    public function test_author_can_create_novel(): void
-    {
-        $author = User::factory()->create(['role' => 'author']);
-        $genre = Genre::factory()->create();
-
-        $response = $this->actingAs($author)
-            ->postJson('/api/v1/novels', [
-                'title' => 'Test Novel',
-                'genre_id' => $genre->id,
-                'first_chapter_title' => 'Chapter 1',
-                'first_chapter_content' => str_repeat('content ', 50)
-            ]);
-
-        $response->assertStatus(201)
-            ->assertJsonPath('data.nov_title', 'Test Novel');
-
-        $this->assertDatabaseHas('novels', [
-            'title' => 'Test Novel',
-            'author_id' => $author->id
-        ]);
-    }
-
-    public function test_reader_cannot_create_novel(): void
-    {
-        $reader = User::factory()->create(['role' => 'reader']);
-        $genre = Genre::factory()->create();
-
-        $response = $this->actingAs($reader)
-            ->postJson('/api/v1/novels', [
-                'title' => 'Test Novel',
-                'genre_id' => $genre->id
-            ]);
-
-        $response->assertStatus(403);
+        $response->assertOk();
+        $response->assertJsonCount(1, 'novels');
+        $response->assertJsonPath('novels.0.id', $novel->id);
+        $response->assertJsonPath('novels.0.title', 'Dune');
+        $response->assertJsonPath('novels.0.genre.name', 'Science Fiction');
     }
 }
 ```
@@ -1106,7 +1079,6 @@ chmod -R 775 /home/user/laravel_app/bootstrap/cache
 - [Laravel 13 Documentation](https://laravel.com/docs/13.x)
 - [Laravel Sanctum](https://laravel.com/docs/13.x/sanctum)
 - [Eloquent ORM](https://laravel.com/docs/13.x/eloquent)
-- [Pest PHP](https://pestphp.com/)
 
 ---
 

@@ -12,9 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * @property-read User $author
- * @property-read Genre $genre
- *
  * @mixin IdeHelperNovel
  */
 class Novel extends Model

@@ -2,13 +2,13 @@ const LAST_CHAPTER = -1
 
 const byPopularity = (first, second) => second.branchLikeCount - first.branchLikeCount
 
-const rootOf = (chapters = []) => {
+const findRoot = (chapters = []) => {
   const loadedIds = new Set(chapters.map(chapter => chapter.id))
 
   return chapters.find(chapter => !loadedIds.has(chapter.parentId))
 }
 
-const childrenOf = (chapters = [], parentId) => {
+const sortedChildren = (chapters = [], parentId) => {
   return chapters.filter(chapter => chapter.parentId === parentId).toSorted(byPopularity)
 }
 
@@ -36,7 +36,7 @@ const defaultSelection = (chapters = [], mainBranchIds = []) => {
     return [...mainBranchIds]
   }
 
-  const root = rootOf(chapters)
+  const root = findRoot(chapters)
   if (root === undefined) {
     return []
   }
@@ -52,7 +52,7 @@ const selectionUpTo = (selectedIds = [], chapterId) => {
   return selectedIds.slice(0, selectedIds.indexOf(chapterId) + 1)
 }
 
-const lastOf = (chapters = []) => chapters.at(LAST_CHAPTER)
+const lastChapter = (chapters = []) => chapters.at(LAST_CHAPTER)
 
 const hasHiddenChildren = (chapters = [], chapterId) => {
   const chapter = chapters.find(candidate => candidate.id === chapterId)
@@ -60,16 +60,16 @@ const hasHiddenChildren = (chapters = [], chapterId) => {
     return false
   }
 
-  return chapter.childrenCount > childrenOf(chapters, chapterId).length
+  return chapter.childrenCount > sortedChildren(chapters, chapterId).length
 }
 
 export const chapterTreeHelper = {
-  rootOf,
-  childrenOf,
+  findRoot,
+  sortedChildren,
   selectedChapters,
   defaultSelection,
   pathTo,
   selectionUpTo,
-  lastOf,
+  lastChapter,
   hasHiddenChildren,
 }

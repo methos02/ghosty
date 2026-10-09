@@ -34,9 +34,9 @@ export const useChapterBranch = () => {
   const branch = computed(() =>
     chapterTreeHelper.selectedChapters(chapters.value, selectedIds.value),
   )
-  const lastSelected = computed(() => chapterTreeHelper.lastOf(branch.value))
+  const lastSelected = computed(() => chapterTreeHelper.lastChapter(branch.value))
   const children = computed(() =>
-    chapterTreeHelper.childrenOf(chapters.value, lastSelected.value?.id),
+    chapterTreeHelper.sortedChildren(chapters.value, lastSelected.value?.id),
   )
 
   const isOnMainBranch = chapter => {
@@ -48,7 +48,7 @@ export const useChapterBranch = () => {
   }
 
   const alternativesOf = chapter => {
-    return chapterTreeHelper.childrenOf(chapters.value, chapter.parentId).length
+    return chapterTreeHelper.sortedChildren(chapters.value, chapter.parentId).length
   }
 
   const hasBranchOf = chapterId => {

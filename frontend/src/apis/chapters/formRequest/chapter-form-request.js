@@ -1,10 +1,10 @@
 import { form } from '@/services/shortcuts/services-shortcut.js'
-import { chapterConfig } from '@/config/chapter-config.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 
 export const validateChapterForm = datas => {
   const rules = {
     title: {
-      rules: `required|sizeMin:${chapterConfig.titleMinLength}|sizeMax:${chapterConfig.titleMaxLength}`,
+      rules: `required|sizeMin:${ConfigLoader.get('chapter.titleMinLength')}|sizeMax:${ConfigLoader.get('chapter.titleMaxLength')}`,
       errors: {
         required: 'chapter_manage.error_title_required',
         sizeMin: 'chapter_manage.error_title_size_min',
@@ -18,7 +18,7 @@ export const validateChapterForm = datas => {
       },
     },
     summary: {
-      rules: `required|sizeMax:${chapterConfig.summaryMaxLength}`,
+      rules: `required|sizeMax:${ConfigLoader.get('chapter.summaryMaxLength')}`,
       errors: {
         required: 'chapter_manage.error_summary_required',
         sizeMax: 'chapter_manage.error_summary_size_max',

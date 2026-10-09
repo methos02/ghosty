@@ -10,21 +10,21 @@ const toLogin = datas => ({
   password: datas.password,
 })
 
-const fromUser = userData => ({
-  id: userData.id,
-  username: userData.username,
-  email: userData.email,
-  roles: userData.roles,
-  avatar: userData.avatar,
-  firstname: userData.firstname,
-  lastname: userData.lastname,
-  birthDate: userData.birth_date,
-  notificationsEnabled: userData.notifications_enabled,
-  warningCount: userData.warning_count,
-  newMessagesCount: userData.new_messages_count,
-  bannedUntil: userData.banned_until,
-  emailVerifiedAt: userData.email_verified_at,
-  createdAt: userData.created_at,
+const fromUser = data => ({
+  id: data.id,
+  username: data.username,
+  email: data.email,
+  roles: data.roles,
+  avatar: data.avatar,
+  firstname: data.firstname,
+  lastname: data.lastname,
+  birthDate: data.birth_date,
+  notificationsEnabled: data.notifications_enabled,
+  warningCount: data.warning_count,
+  newMessagesCount: data.new_messages_count,
+  bannedUntil: data.banned_until,
+  emailVerifiedAt: data.email_verified_at,
+  createdAt: data.created_at,
 })
 
 export const AuthDto = {

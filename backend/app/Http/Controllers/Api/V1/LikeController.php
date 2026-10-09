@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Repositories\ChapterRepository;
-use App\Services\LikeGuard;
+use App\Services\LikeAuthorizationService;
 use App\Services\LikeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,7 +17,7 @@ class LikeController extends Controller
 {
     public function __construct(
         private readonly ChapterRepository $chaptersR,
-        private readonly LikeGuard $likeGuard,
+        private readonly LikeAuthorizationService $likeAuthorizationService,
         private readonly LikeService $likeService
     ) {}
 
@@ -27,7 +27,7 @@ class LikeController extends Controller
         $user = $request->user();
         $chapter = $this->chaptersR->find($chapterId, withoutRelations: true);
 
-        $this->likeGuard->authorizeLike($user, $chapter);
+        $this->likeAuthorizationService->authorize($user, $chapter);
         $this->likeService->like($user, $chapter, $request->ip());
 
         return response()->json([

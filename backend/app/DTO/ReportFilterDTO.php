@@ -4,7 +4,7 @@ namespace App\DTO;
 
 use App\Enums\ReportReason;
 use App\Enums\ReportStatus;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
 final readonly class ReportFilterDTO
 {
@@ -13,7 +13,7 @@ final readonly class ReportFilterDTO
         public ?ReportReason $reason = null
     ) {}
 
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(FormRequest $request): self
     {
         return new self(
             status: ReportStatus::tryFrom($request->integer('status')),

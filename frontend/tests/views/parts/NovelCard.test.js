@@ -4,16 +4,13 @@ import NovelCard from '@/views/parts/NovelCard.vue'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 
-const mountNovelCard = novel =>
-  mount(NovelCard, {
-    props: { novel },
-    global: { provide: { [NOVEL_STORE_KEY]: createNovelStore() } },
-  })
-
 describe('NovelCard.vue', () => {
   it('renders the novel title, genre label and cover image', () => {
     const novel = novelSeeder.getNovel()
-    const wrapper = mountNovelCard(novel)
+    const wrapper = mount(NovelCard, {
+      props: { novel },
+      global: { provide: { [NOVEL_STORE_KEY]: createNovelStore() } },
+    })
 
     expect(wrapper.find('.novel-card__title').text()).toBe(novel.title)
     expect(wrapper.find('.novel-card__genre').text()).toBe(novel.genre.label)
@@ -25,7 +22,10 @@ describe('NovelCard.vue', () => {
 
   it('links to the novel detail page for its slug', () => {
     const novel = novelSeeder.getNovel()
-    const wrapper = mountNovelCard(novel)
+    const wrapper = mount(NovelCard, {
+      props: { novel },
+      global: { provide: { [NOVEL_STORE_KEY]: createNovelStore() } },
+    })
 
     const link = wrapper.getComponent({ name: 'router-link' })
 

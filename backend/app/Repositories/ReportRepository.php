@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ReportRepository
 {
-    public function existsFor(int $reporterId, Model $reportable): bool
+    public function exists(int $reporterId, Model $reportable): bool
     {
         return Report::where('reporter_id', $reporterId)
             ->where('reportable_type', $reportable->getMorphClass())

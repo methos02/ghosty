@@ -6,7 +6,9 @@ use App\DTO\ChapterDTO;
 use App\DTO\DraftFilterDTO;
 use App\DTO\TreeFilterDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DraftFilterRequest;
 use App\Http\Requests\StoreChapterRequest;
+use App\Http\Requests\TreeFilterRequest;
 use App\Http\Requests\UpdateChapterRequest;
 use App\Http\Resources\ChapterListResource;
 use App\Http\Resources\ChapterResource;
@@ -18,7 +20,6 @@ use App\Repositories\NovelRepository;
 use App\Services\ChapterService;
 use App\Support\AuthSupport;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 
@@ -28,12 +29,12 @@ class ChapterController extends Controller
         private readonly ChapterRepository $chaptersR,
         private readonly NovelRepository $novelsR,
         private readonly ChapterService $chapterService,
-        private readonly AuthSupport $auth
+        private readonly AuthSupport $authSupport
     ) {}
 
     public function mainBranch(string $novelSlug): JsonResponse
     {
-        $chapters = $this->chaptersR->mainBranch($novelSlug, $this->auth->id());
+        $chapters = $this->chaptersR->mainBranch($novelSlug, $this->authSupport->id());
 
         return response()->json([
             'chapters' => ChapterListResource::collection($chapters),
@@ -42,7 +43,7 @@ class ChapterController extends Controller
 
     public function show(int $chapterId): ChapterResource
     {
-        $chapter = $this->chaptersR->find($chapterId, $this->auth->id());
+        $chapter = $this->chaptersR->find($chapterId, $this->authSupport->id());
 
         $this->abortIfUnreadable($chapter);
 
@@ -54,7 +55,7 @@ class ChapterController extends Controller
      */
     public function reading(string $novelSlug, int $chapterId): JsonResponse
     {
-        $userId = $this->auth->id();
+        $userId = $this->authSupport->id();
         $chapter = $this->chaptersR->findInNovel($chapterId, $novelSlug, $userId);
 
         $this->abortIfUnreadable($chapter);
@@ -66,7 +67,7 @@ class ChapterController extends Controller
             'novel' => new NovelResource($this->novelsR->findBySlug($novelSlug)),
             'chapter' => new ChapterResource($chapter),
             'ancestors' => ChapterListResource::collection(
-                $this->chaptersR->ancestorsOf($chapter, $userId)
+                $this->chaptersR->ancestors($chapter, $userId)
             ),
             'children' => ChapterListResource::collection(
                 $this->chaptersR->children($chapter->id, $userId)
@@ -77,16 +78,16 @@ class ChapterController extends Controller
         ]);
     }
 
-    public function tree(Request $request, string $novelSlug): JsonResponse
+    public function tree(TreeFilterRequest $request, string $novelSlug): JsonResponse
     {
         $fromChapterId = TreeFilterDTO::fromRequest($request)->fromChapterId;
-        $userId = $this->auth->id();
+        $userId = $this->authSupport->id();
         $mainBranch = $this->chaptersR->mainBranch($novelSlug, $userId);
 
         $branch = $mainBranch;
         if ($fromChapterId !== null) {
             $origin = $this->chaptersR->findInNovel($fromChapterId, $novelSlug);
-            $branch = $this->chaptersR->branchEndingWith($origin, $userId);
+            $branch = $this->chaptersR->branchFromRoot($origin, $userId);
         }
 
         return response()->json([
@@ -99,7 +100,7 @@ class ChapterController extends Controller
 
     public function children(int $chapterId): JsonResponse
     {
-        $children = $this->chaptersR->children($chapterId, $this->auth->id());
+        $children = $this->chaptersR->children($chapterId, $this->authSupport->id());
 
         return response()->json([
             'chapters' => ChapterListResource::collection($children),
@@ -120,7 +121,7 @@ class ChapterController extends Controller
             ChapterDTO::fromRequest($request)
         );
 
-        $chapter = $this->chaptersR->find($created->id, $this->auth->id());
+        $chapter = $this->chaptersR->find($created->id, $this->authSupport->id());
 
         return (new ChapterResource($chapter))
             ->response()
@@ -149,7 +150,7 @@ class ChapterController extends Controller
 
         $this->chapterService->publish($chapter);
 
-        return new ChapterResource($this->chaptersR->find($chapterId, $this->auth->id()));
+        return new ChapterResource($this->chaptersR->find($chapterId, $this->authSupport->id()));
     }
 
     public function destroy(int $chapterId): JsonResponse
@@ -163,7 +164,7 @@ class ChapterController extends Controller
         return response()->json(['message' => __('chapters.draft_discarded')]);
     }
 
-    public function drafts(Request $request): JsonResponse
+    public function drafts(DraftFilterRequest $request): JsonResponse
     {
         /** @var User $author */
         $author = $request->user();

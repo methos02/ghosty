@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
-import { STATUS } from '@/constants/ajax-constants.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const SUGGESTIONS_COUNT = 3
 
@@ -12,7 +12,7 @@ export const useNovelSuggestions = () => {
 
   const loadSuggestions = async () => {
     const response = await NovelController.list()
-    if (response.status !== STATUS.SUCCESS) {
+    if (!ajaxHelper.isSuccess(response.status)) {
       return
     }
 

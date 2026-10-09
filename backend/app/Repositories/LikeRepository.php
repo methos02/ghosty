@@ -37,7 +37,7 @@ class LikeRepository
             ->count();
     }
 
-    public function deleteFor(int $userId, Model $likeable): bool
+    public function delete(int $userId, Model $likeable): bool
     {
         return Like::query()
             ->where('user_id', $userId)

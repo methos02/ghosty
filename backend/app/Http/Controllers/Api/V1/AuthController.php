@@ -7,6 +7,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use App\Support\TokenCookieSettingsSupport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,9 +21,13 @@ use Symfony\Component\HttpFoundation\Cookie as SymfonyCookie;
  */
 class AuthController extends Controller
 {
+    public function __construct(
+        private readonly UserRepository $usersR
+    ) {}
+
     public function register(RegisterRequest $request): JsonResponse
     {
-        $user = User::create([
+        $user = $this->usersR->create([
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->string('password')->toString()),
@@ -36,8 +41,7 @@ class AuthController extends Controller
     {
         $identifier = $request->string('identifier')->toString();
 
-        $user = User::query()->where('email', $identifier)->first()
-            ?? User::query()->where('username', $identifier)->first();
+        $user = $this->usersR->findByEmailOrUsername($identifier);
 
         if (! $user || ! Hash::check($request->string('password')->toString(), $user->password)) {
             throw ValidationException::withMessages([

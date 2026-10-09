@@ -11,22 +11,6 @@ import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { likeSeeder } from '&/utils/seeders/like-seeder.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
 
-const mountButton = chapter => {
-  const readingStore = createReadingStore()
-  readingStore.setReading({ ...chapterSeeder.getReading(), chapter })
-
-  const wrapper = mount(LikeButton, {
-    global: { provide: { [READING_STORE_KEY]: readingStore } },
-  })
-
-  return { wrapper, readingStore }
-}
-
-const support = async wrapper => {
-  await wrapper.find('.like-button').trigger('click')
-  await flushPromises()
-}
-
 describe('LikeButton.vue', () => {
   beforeEach(() => {
     flash.clearFlashes()
@@ -35,17 +19,31 @@ describe('LikeButton.vue', () => {
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it('shows how many readers already carry the chapter', () => {
-    const { wrapper } = mountButton(chapterSeeder.getChapter({ likeCount: 41 }))
+    const readingStore = createReadingStore()
+    readingStore.setReading({
+      ...chapterSeeder.getReading(),
+      chapter: chapterSeeder.getChapter({ likeCount: 41 }),
+    })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
     expect(wrapper.find('.like-button__count').text()).toBe('41')
   })
 
   it('holds the width its digits need, so the toolbar never shifts on a new count', () => {
-    const { wrapper } = mountButton(chapterSeeder.getChapter({ likeCount: 9 }))
+    const readingStore = createReadingStore()
+    readingStore.setReading({
+      ...chapterSeeder.getReading(),
+      chapter: chapterSeeder.getChapter({ likeCount: 9 }),
+    })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
     expect(wrapper.find('.like-button__count').attributes('style')).toBe('width: 1ch;')
   })
@@ -57,9 +55,14 @@ describe('LikeButton.vue', () => {
       like: likeSeeder.getLike({ likeCount: 42 }),
     })
     useAuthStore().setUser(userSeeder.getUser())
-    const { wrapper, readingStore } = mountButton(chapter)
+    const readingStore = createReadingStore()
+    readingStore.setReading({ ...chapterSeeder.getReading(), chapter })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
-    await support(wrapper)
+    await wrapper.find('.like-button').trigger('click')
+    await flushPromises()
 
     expect(LikeController.like).toHaveBeenCalledWith(chapter.id)
     expect(wrapper.find('.like-button__count').text()).toBe('42')
@@ -73,9 +76,14 @@ describe('LikeButton.vue', () => {
       like: likeSeeder.getLike({ isLiked: false, likeCount: 40 }),
     })
     useAuthStore().setUser(userSeeder.getUser())
-    const { wrapper, readingStore } = mountButton(chapter)
+    const readingStore = createReadingStore()
+    readingStore.setReading({ ...chapterSeeder.getReading(), chapter })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
-    await support(wrapper)
+    await wrapper.find('.like-button').trigger('click')
+    await flushPromises()
 
     expect(LikeController.unlike).toHaveBeenCalledWith(chapter.id)
     expect(wrapper.find('.like-button__count').text()).toBe('40')
@@ -90,9 +98,17 @@ describe('LikeButton.vue', () => {
       }),
     )
     useAuthStore().setUser(userSeeder.getUser())
-    const { wrapper } = mountButton(chapterSeeder.getChapter({ isLiked: false, likeCount: 41 }))
+    const readingStore = createReadingStore()
+    readingStore.setReading({
+      ...chapterSeeder.getReading(),
+      chapter: chapterSeeder.getChapter({ isLiked: false, likeCount: 41 }),
+    })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
-    await support(wrapper)
+    await wrapper.find('.like-button').trigger('click')
+    await flushPromises()
 
     expect(wrapper.find('.like-button__count').text()).toBe('41')
 
@@ -108,9 +124,17 @@ describe('LikeButton.vue', () => {
       like: likeSeeder.getLike({ likeCount: 42 }),
     })
     useAuthStore().setUser(userSeeder.getUser())
-    const { wrapper } = mountButton(chapterSeeder.getChapter({ isLiked: false, likeCount: 41 }))
+    const readingStore = createReadingStore()
+    readingStore.setReading({
+      ...chapterSeeder.getReading(),
+      chapter: chapterSeeder.getChapter({ isLiked: false, likeCount: 41 }),
+    })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
-    await support(wrapper)
+    await wrapper.find('.like-button').trigger('click')
+    await flushPromises()
 
     expect(flash.getFlashes().at(-1).content).toBe('Votre soutien est enregistré')
   })
@@ -121,9 +145,17 @@ describe('LikeButton.vue', () => {
       like: likeSeeder.getLike({ isLiked: false, likeCount: 40 }),
     })
     useAuthStore().setUser(userSeeder.getUser())
-    const { wrapper } = mountButton(chapterSeeder.getChapter({ isLiked: true, likeCount: 41 }))
+    const readingStore = createReadingStore()
+    readingStore.setReading({
+      ...chapterSeeder.getReading(),
+      chapter: chapterSeeder.getChapter({ isLiked: true, likeCount: 41 }),
+    })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
-    await support(wrapper)
+    await wrapper.find('.like-button').trigger('click')
+    await flushPromises()
 
     expect(flash.getFlashes().at(-1).content).toBe('Votre soutien a été retiré')
   })
@@ -134,9 +166,17 @@ describe('LikeButton.vue', () => {
       data: { message: 'Votre compte est trop récent pour soutenir un chapitre' },
     })
     useAuthStore().setUser(userSeeder.getUser())
-    const { wrapper } = mountButton(chapterSeeder.getChapter({ isLiked: false, likeCount: 41 }))
+    const readingStore = createReadingStore()
+    readingStore.setReading({
+      ...chapterSeeder.getReading(),
+      chapter: chapterSeeder.getChapter({ isLiked: false, likeCount: 41 }),
+    })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
-    await support(wrapper)
+    await wrapper.find('.like-button').trigger('click')
+    await flushPromises()
 
     expect(wrapper.find('.like-button__count').text()).toBe('41')
     expect(flash.getFlashes().at(-1).content).toBe(
@@ -147,10 +187,19 @@ describe('LikeButton.vue', () => {
   it('closes the button while the api answers, so a second click cannot count twice', async () => {
     vi.spyOn(LikeController, 'like').mockReturnValue(new Promise(() => {}))
     useAuthStore().setUser(userSeeder.getUser())
-    const { wrapper } = mountButton(chapterSeeder.getChapter({ isLiked: false, likeCount: 41 }))
+    const readingStore = createReadingStore()
+    readingStore.setReading({
+      ...chapterSeeder.getReading(),
+      chapter: chapterSeeder.getChapter({ isLiked: false, likeCount: 41 }),
+    })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
-    await support(wrapper)
-    await support(wrapper)
+    await wrapper.find('.like-button').trigger('click')
+    await flushPromises()
+    await wrapper.find('.like-button').trigger('click')
+    await flushPromises()
 
     expect(LikeController.like).toHaveBeenCalledTimes(1)
     expect(wrapper.find('.like-button__spinner').exists()).toBe(true)
@@ -161,7 +210,11 @@ describe('LikeButton.vue', () => {
     const chapter = chapterSeeder.getChapter()
     useAuthStore().setUser(userSeeder.getUser({ id: chapter.author.id }))
 
-    const { wrapper } = mountButton(chapter)
+    const readingStore = createReadingStore()
+    readingStore.setReading({ ...chapterSeeder.getReading(), chapter })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
     expect(wrapper.find('.like-button').attributes('disabled')).toBeDefined()
     expect(wrapper.find('.like-button').attributes('title')).toBe(
@@ -171,9 +224,14 @@ describe('LikeButton.vue', () => {
 
   it('invites a visitor to sign in rather than swallowing the click', async () => {
     vi.spyOn(LikeController, 'like').mockResolvedValue({ status: STATUS.SUCCESS })
-    const { wrapper } = mountButton(chapterSeeder.getChapter())
+    const readingStore = createReadingStore()
+    readingStore.setReading({ ...chapterSeeder.getReading(), chapter: chapterSeeder.getChapter() })
+    const wrapper = mount(LikeButton, {
+      global: { provide: { [READING_STORE_KEY]: readingStore } },
+    })
 
-    await support(wrapper)
+    await wrapper.find('.like-button').trigger('click')
+    await flushPromises()
 
     expect(LikeController.like).not.toHaveBeenCalled()
     expect(useAuth().showLoginDialog.value).toBe(true)

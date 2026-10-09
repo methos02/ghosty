@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createHead } from '@unhead/vue/client'
 import MultiversePage from '@/views/novels/MultiversePage.vue'
@@ -13,14 +13,22 @@ import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
+import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
+import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
 
 const router = routerPlugin.getRouter()
 
 describe('MultiversePage.vue', () => {
+  beforeEach(() => {
+    vi.spyOn(NotificationRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: notificationSeeder.getListApi() }),
+    )
+  })
+
   afterEach(async () => {
     useChapterSummary().closeChapterSummary()
     await router.push('/')
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it('opens on the most supported branch of the novel it had to load', async () => {

@@ -1,7 +1,7 @@
 import { ajaxFunctions } from '@/services/ajax/src/ajax-functions.js'
 import { servicesM } from '@/services/services-manager.js'
 import { Request } from '@/services/ajax/src/models/request.js'
-import { STATUS } from '@/constants/ajax-constants.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 export const responseErrorInterceptor = async error => {
   const requestId = error.config?.requestId
@@ -17,7 +17,7 @@ export const responseErrorInterceptor = async error => {
     Request.get('api', requestId),
     error.response,
   ])
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     throw error
   }
 

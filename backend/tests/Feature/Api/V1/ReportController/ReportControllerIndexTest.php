@@ -5,6 +5,7 @@ namespace Tests\Feature\Api\V1\ReportController;
 use App\Enums\ReportReason;
 use App\Enums\ReportStatus;
 use App\Http\Controllers\Api\V1\ReportController;
+use App\Http\Requests\ReportFilterRequest;
 use App\Models\Chapter;
 use App\Models\Report;
 use App\Models\User;
@@ -14,6 +15,30 @@ use Tests\TestCase;
 
 class ReportControllerIndexTest extends TestCase
 {
+    #[Test]
+    public function uses_report_filter_request(): void
+    {
+        $this->assertTrue($this->hasFormRequest(ReportController::class, 'index', ReportFilterRequest::class));
+    }
+
+    #[Test]
+    public function rejects_an_unknown_status(): void
+    {
+        $this->actingAs(User::factory()->moderator()->create())
+            ->getJson('/api/v1/reports?status=99')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['status' => __('validation.report_filter.status.enum')]);
+    }
+
+    #[Test]
+    public function rejects_an_unknown_reason(): void
+    {
+        $this->actingAs(User::factory()->moderator()->create())
+            ->getJson('/api/v1/reports?reason=unknown')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['reason' => __('validation.report.reason.enum')]);
+    }
+
     #[Test]
     public function has_middleware(): void
     {

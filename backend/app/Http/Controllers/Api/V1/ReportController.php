@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\DTO\ReportFilterDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReportFilterRequest;
 use App\Http\Requests\StoreReportRequest;
 use App\Http\Resources\ReportResource;
 use App\Models\Report;
@@ -12,7 +13,6 @@ use App\Repositories\ChapterRepository;
 use App\Repositories\ReportRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
@@ -27,7 +27,7 @@ class ReportController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function index(Request $request): JsonResponse
+    public function index(ReportFilterRequest $request): JsonResponse
     {
         $this->authorize('viewAny', Report::class);
 
@@ -61,7 +61,7 @@ class ReportController extends Controller
             throw new AuthorizationException(__('reports.denied.own_chapter'));
         }
 
-        if ($this->reportsR->existsFor($reporter->id, $chapter)) {
+        if ($this->reportsR->exists($reporter->id, $chapter)) {
             return response()->json(['message' => __('reports.denied.already_reported')], 409);
         }
 

@@ -45,7 +45,7 @@ For each file, determine its type based on path patterns:
 ### Step 3: Load Applicable Rules
 
 **Always load global rules:**
-- `memory-bank/rules/global/no-else-or-v-else.md`
+- `memory-bank/rules/global/no-else.md`
 - `memory-bank/rules/global/function-body-style.md`
 - `memory-bank/rules/global/naming.md`
 - `memory-bank/rules/global/self-documenting-code.md`

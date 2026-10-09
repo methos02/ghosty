@@ -85,7 +85,7 @@ export default [
       'unicorn/no-unreadable-new-expression': 'off',
       // ADR-004
       'unicorn/prefer-minimal-ternary': 'off',
-      // ADR-007 (memory-bank/decisions/ADR-007-eslint-unicorn-prefer-else-if.md) - contredit no-else-or-v-else
+      // ADR-007 (memory-bank/decisions/ADR-007-eslint-unicorn-prefer-else-if.md) - contredit no-else
       'unicorn/prefer-else-if': 'off',
       // ADR-004
       'unicorn/comment-content': [

@@ -9,7 +9,7 @@ describe('LoginDialog.vue', () => {
   afterEach(() => {
     useAuth().closeDialogs()
     form.clearErrors()
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it('opens the dialog when the login dialog flag becomes true', async () => {

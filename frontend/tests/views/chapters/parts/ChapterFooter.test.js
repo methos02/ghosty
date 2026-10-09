@@ -10,41 +10,39 @@ import { createReadingStore, READING_STORE_KEY } from '@/apis/chapters/stores/re
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 
-const footerProvide = (reading = chapterSeeder.getReading()) => {
-  const novelStore = createNovelStore()
-  const readingStore = createReadingStore()
-  novelStore.setSelectedNovel(novelSeeder.getNovel())
-  readingStore.setReading(reading)
-
-  return { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore }
-}
-
-const mountFooter = (chapter, provide = footerProvide()) => {
-  return mount(ChapterFooter, {
-    props: { novelSlug: novelSeeder.getNovel().slug, chapter },
-    global: { provide },
-  })
-}
-
 describe('ChapterFooter.vue', () => {
   beforeEach(() => {
     useAuthStore().clear()
   })
 
   afterEach(() => {
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it('lets the reader support the chapter that just ended', () => {
     const chapter = chapterSeeder.getChapter({ likeCount: 41 })
 
-    const wrapper = mountFooter(chapter)
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading(chapterSeeder.getReading())
+    const wrapper = mount(ChapterFooter, {
+      props: { novelSlug: novelSeeder.getNovel().slug, chapter },
+      global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
+    })
 
     expect(wrapper.find('.like-button__count').text()).toBe('41')
   })
 
   it('offers an alternative branch when nothing continues the chapter', () => {
-    const wrapper = mountFooter(chapterSeeder.getChapter())
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading(chapterSeeder.getReading())
+    const wrapper = mount(ChapterFooter, {
+      props: { novelSlug: novelSeeder.getNovel().slug, chapter: chapterSeeder.getChapter() },
+      global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
+    })
 
     expect(wrapper.find('.chapter-footer__fork').text()).toBe('Branche alternative')
   })
@@ -55,7 +53,14 @@ describe('ChapterFooter.vue', () => {
       controllerSuccess({ chapters: forkSuites }),
     )
 
-    const wrapper = mountFooter(chapterSeeder.getChapter())
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading(chapterSeeder.getReading())
+    const wrapper = mount(ChapterFooter, {
+      props: { novelSlug: novelSeeder.getNovel().slug, chapter: chapterSeeder.getChapter() },
+      global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
+    })
     await wrapper.find('.chapter-footer__fork').trigger('click')
     await flushPromises()
 
@@ -66,12 +71,18 @@ describe('ChapterFooter.vue', () => {
 
   it('keeps quiet when the branch the reader followed never forked', () => {
     const reading = chapterSeeder.getReading()
-    const provide = footerProvide({
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading({
       ...reading,
       ancestors: [chapterSeeder.getChapter({ id: 10, childrenCount: 1 })],
     })
 
-    const wrapper = mountFooter(chapterSeeder.getChapter(), provide)
+    const wrapper = mount(ChapterFooter, {
+      props: { novelSlug: novelSeeder.getNovel().slug, chapter: chapterSeeder.getChapter() },
+      global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
+    })
 
     expect(wrapper.find('.chapter-footer__fork').exists()).toBe(false)
   })
@@ -81,7 +92,14 @@ describe('ChapterFooter.vue', () => {
       controllerSuccess({ novels: novelSeeder.getNovels(5) }),
     )
 
-    const wrapper = mountFooter(chapterSeeder.getChapter())
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading(chapterSeeder.getReading())
+    const wrapper = mount(ChapterFooter, {
+      props: { novelSlug: novelSeeder.getNovel().slug, chapter: chapterSeeder.getChapter() },
+      global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
+    })
     await wrapper.find('.chapter-footer__suggest').trigger('click')
     await flushPromises()
 
@@ -93,7 +111,14 @@ describe('ChapterFooter.vue', () => {
     const novels = novelSeeder.getNovels(4)
     vi.spyOn(NovelController, 'list').mockResolvedValue(controllerSuccess({ novels }))
 
-    const wrapper = mountFooter(chapterSeeder.getChapter())
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading(chapterSeeder.getReading())
+    const wrapper = mount(ChapterFooter, {
+      props: { novelSlug: novelSeeder.getNovel().slug, chapter: chapterSeeder.getChapter() },
+      global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
+    })
     await wrapper.find('.chapter-footer__suggest').trigger('click')
     await flushPromises()
 
@@ -109,7 +134,14 @@ describe('ChapterFooter.vue', () => {
       controllerSuccess({ novels: novelSeeder.getNovels(5) }),
     )
 
-    const wrapper = mountFooter(chapterSeeder.getChapter())
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading(chapterSeeder.getReading())
+    const wrapper = mount(ChapterFooter, {
+      props: { novelSlug: novelSeeder.getNovel().slug, chapter: chapterSeeder.getChapter() },
+      global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
+    })
     await wrapper.find('.chapter-footer__fork').trigger('click')
     await flushPromises()
     await wrapper.find('.chapter-footer__suggest').trigger('click')
@@ -125,7 +157,14 @@ describe('ChapterFooter.vue', () => {
       controllerSuccess({ novels: novelSeeder.getNovels(5) }),
     )
 
-    const wrapper = mountFooter(chapterSeeder.getChapter())
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading(chapterSeeder.getReading())
+    const wrapper = mount(ChapterFooter, {
+      props: { novelSlug: novelSeeder.getNovel().slug, chapter: chapterSeeder.getChapter() },
+      global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
+    })
     await wrapper.find('.chapter-footer__suggest').trigger('click')
     await flushPromises()
     await wrapper.find('.chapter-footer__suggest').trigger('click')

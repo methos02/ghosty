@@ -4,7 +4,6 @@ import Header from '@/views/layout/HeaderComponent.vue'
 import ChapterFooter from '@/views/chapters/parts/ChapterFooter.vue'
 import ReadingToolbar from '@/views/chapters/parts/ReadingToolbar.vue'
 import { route, t } from '@/services/shortcuts/services-shortcut.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
 import { useReadingSettingsStore } from '@/apis/chapters/stores/reading-settings-store.js'
 import { useChapterReading } from '@/apis/chapters/composables/use-chapter-reading.js'
@@ -14,6 +13,7 @@ import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { correctionHelper } from '@/core/helpers/correction-helper.js'
 import { readingSettingsHelper } from '@/core/helpers/reading-settings-helper.js'
 import { useChapterHead } from '@/head/use-chapter-head.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 useChapterHead()
 
@@ -47,7 +47,7 @@ const load = async () => {
   errorMessage.value = ''
 
   const response = await chapterReading.load(novelSlug.value, chapterId.value)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     errorMessage.value = response.error
   }
 

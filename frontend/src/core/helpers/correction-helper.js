@@ -1,12 +1,14 @@
-import { chapterConfig } from '@/config/chapter-config.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 
 const PERCENT = 100
 
 const allowanceFor = text => {
   const words = correctionHelper.countWords(text)
-  const share = Math.floor((words * chapterConfig.correctionMaxChangedPercent) / PERCENT)
+  const share = Math.floor(
+    (words * ConfigLoader.get('chapter.correctionMaxChangedPercent')) / PERCENT,
+  )
 
-  return Math.max(chapterConfig.correctionMinChangedWords, share)
+  return Math.max(ConfigLoader.get('chapter.correctionMinChangedWords'), share)
 }
 
 const changedWords = (published, corrected, allowance) => {

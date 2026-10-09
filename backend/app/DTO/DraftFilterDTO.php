@@ -2,7 +2,7 @@
 
 namespace App\DTO;
 
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
 final readonly class DraftFilterDTO
 {
@@ -11,7 +11,7 @@ final readonly class DraftFilterDTO
         public ?bool $isRoot = null
     ) {}
 
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(FormRequest $request): self
     {
         return new self(
             parentId: $request->filled('parent_id') ? $request->integer('parent_id') : null,

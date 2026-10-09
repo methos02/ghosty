@@ -15,8 +15,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
  *
- * @property-read User $reporter
- *
  * @mixin IdeHelperReport
  */
 class Report extends Model

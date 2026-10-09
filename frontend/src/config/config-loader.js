@@ -3,6 +3,8 @@ import { routes } from '@/config/routes-config.js'
 import { routesApi } from '@/config/routes-api-config.js'
 import { app } from '@/config/app-config.js'
 import { readingConfig } from '@/config/reading-config.js'
+import { chapterConfig } from '@/config/chapter-config.js'
+import { reportConfig } from '@/config/report-config.js'
 
 const configUser = {
   locales,
@@ -10,6 +12,8 @@ const configUser = {
   routesApi,
   app,
   reading: readingConfig,
+  chapter: chapterConfig,
+  report: reportConfig,
 }
 
 const init = configs => {

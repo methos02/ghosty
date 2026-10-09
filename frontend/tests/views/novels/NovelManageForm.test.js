@@ -9,6 +9,8 @@ import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { useAuth } from '@/services/auth/src/use-auth.js'
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
+import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
+import { controllerSuccess } from '&/utils/helpers/controller-response.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { genreSeeder } from '&/utils/seeders/genre-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
@@ -36,62 +38,13 @@ describe('NovelManageForm.vue', () => {
     useAuth().closeDialogs()
     form.clearErrors()
     await routerPlugin.getRouter().push('/')
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
-  const mountAuthenticated = async () => {
-    useAuthStore().setUser(userSeeder.getUser())
-    wrapper = mount(NovelManageForm)
-    await flushPromises()
-    return wrapper
-  }
-
-  const draft = () =>
-    chapterSeeder.getChapter({ id: 12, isDraft: true, isRoot: true, title: 'Le virage' })
-
-  const mountResuming = async () => {
-    vi.spyOn(ChapterController, 'getById').mockResolvedValue({
-      status: STATUS.SUCCESS,
-      chapter: draft(),
-    })
-    useAuthStore().setUser(userSeeder.getUser())
-    await routerPlugin.getRouter().push({ name: 'novel-edit', params: { id: 12 } })
-    wrapper = mount(NovelManageForm)
-    await flushPromises()
-    return wrapper
-  }
-
-  const mountWithDrafts = async () => {
-    ChapterController.drafts.mockResolvedValue({
-      status: STATUS.SUCCESS,
-      chapters: [
-        chapterSeeder.getChapter({
-          id: 12,
-          isDraft: true,
-          isRoot: true,
-          novel: novelSeeder.getNovel({ title: 'Nuit virage' }),
-        }),
-      ],
-    })
-    useAuthStore().setUser(userSeeder.getUser())
-    wrapper = mount(NovelManageForm)
-    await flushPromises()
-    return wrapper
-  }
-
-  const fillForm = async formData => {
-    await wrapper.find('select[name="novel.genreId"]').setValue(formData.novel.genreId)
-    await wrapper.find('input[name="novel.title"]').setValue(formData.novel.title)
-    await wrapper.find('input[name="chapter.title"]').setValue(formData.chapter.title)
-    await wrapper.find('textarea[name="chapter.content"]').setValue(formData.chapter.content)
-
-    await wrapper.findAll('.chapter-body__section')[1].trigger('click')
-    await wrapper.find('textarea[name="chapter.summary"]').setValue(formData.chapter.summary)
-    await wrapper.findAll('.chapter-body__section')[0].trigger('click')
-  }
-
   it('leaves every field open before a genre is chosen', async () => {
-    await mountAuthenticated()
+    useAuthStore().setUser(userSeeder.getUser())
+    wrapper = mount(NovelManageForm)
+    await flushPromises()
 
     expect(wrapper.find('input[name="novel.title"]').attributes('disabled')).toBeUndefined()
     expect(wrapper.find('input[name="chapter.title"]').attributes('disabled')).toBeUndefined()
@@ -99,7 +52,9 @@ describe('NovelManageForm.vue', () => {
 
   it('refuses to publish an empty form and flags every required field', async () => {
     const create = vi.spyOn(NovelController, 'create')
-    await mountAuthenticated()
+    useAuthStore().setUser(userSeeder.getUser())
+    wrapper = mount(NovelManageForm)
+    await flushPromises()
 
     await wrapper.find('.novel-manage__form').trigger('submit')
     await flushPromises()
@@ -113,7 +68,9 @@ describe('NovelManageForm.vue', () => {
   })
 
   it('reddens the section holding the error without leaving the open one', async () => {
-    await mountAuthenticated()
+    useAuthStore().setUser(userSeeder.getUser())
+    wrapper = mount(NovelManageForm)
+    await flushPromises()
 
     await wrapper.findAll('.chapter-body__section')[1].trigger('click')
     await wrapper.find('.novel-manage__form').trigger('submit')
@@ -126,7 +83,9 @@ describe('NovelManageForm.vue', () => {
   })
 
   it('keeps a section green while its own field is filled', async () => {
-    await mountAuthenticated()
+    useAuthStore().setUser(userSeeder.getUser())
+    wrapper = mount(NovelManageForm)
+    await flushPromises()
 
     await wrapper.find('textarea[name="chapter.content"]').setValue('Il pleut.')
     await wrapper.find('.novel-manage__form').trigger('submit')
@@ -144,9 +103,17 @@ describe('NovelManageForm.vue', () => {
       novel,
     })
     const formData = novelSeeder.getCreateForm({ chapter: { content: 'Il pleut.' } })
-    await mountAuthenticated()
+    useAuthStore().setUser(userSeeder.getUser())
+    wrapper = mount(NovelManageForm)
+    await flushPromises()
 
-    await fillForm(formData)
+    await wrapper.find('select[name="novel.genreId"]').setValue(formData.novel.genreId)
+    await wrapper.find('input[name="novel.title"]').setValue(formData.novel.title)
+    await wrapper.find('input[name="chapter.title"]').setValue(formData.chapter.title)
+    await wrapper.find('textarea[name="chapter.content"]').setValue(formData.chapter.content)
+    await wrapper.findAll('.chapter-body__section')[1].trigger('click')
+    await wrapper.find('textarea[name="chapter.summary"]').setValue(formData.chapter.summary)
+    await wrapper.findAll('.chapter-body__section')[0].trigger('click')
     await wrapper.find('.novel-manage__form').trigger('submit')
     await flushPromises()
 
@@ -165,9 +132,18 @@ describe('NovelManageForm.vue', () => {
       status: STATUS.SUCCESS,
       novel: novelSeeder.getNovel(),
     })
-    await mountAuthenticated()
+    const formData = novelSeeder.getCreateForm()
+    useAuthStore().setUser(userSeeder.getUser())
+    wrapper = mount(NovelManageForm)
+    await flushPromises()
 
-    await fillForm(novelSeeder.getCreateForm())
+    await wrapper.find('select[name="novel.genreId"]').setValue(formData.novel.genreId)
+    await wrapper.find('input[name="novel.title"]').setValue(formData.novel.title)
+    await wrapper.find('input[name="chapter.title"]').setValue(formData.chapter.title)
+    await wrapper.find('textarea[name="chapter.content"]').setValue(formData.chapter.content)
+    await wrapper.findAll('.chapter-body__section')[1].trigger('click')
+    await wrapper.find('textarea[name="chapter.summary"]').setValue(formData.chapter.summary)
+    await wrapper.findAll('.chapter-body__section')[0].trigger('click')
     await wrapper.find('.novel-manage__draft').trigger('click')
     await flushPromises()
 
@@ -177,7 +153,19 @@ describe('NovelManageForm.vue', () => {
   })
 
   it('fills the form with the novel and chapter it resumes', async () => {
-    await mountResuming()
+    vi.spyOn(ChapterController, 'getById').mockResolvedValue({
+      status: STATUS.SUCCESS,
+      chapter: chapterSeeder.getChapter({
+        id: 12,
+        isDraft: true,
+        isRoot: true,
+        title: 'Le virage',
+      }),
+    })
+    useAuthStore().setUser(userSeeder.getUser())
+    await routerPlugin.getRouter().push({ name: 'novel-edit', params: { id: 12 } })
+    wrapper = mount(NovelManageForm)
+    await flushPromises()
 
     expect(wrapper.find('input[name="novel.title"]').element.value).toBe('Nuit virage')
     expect(wrapper.find('input[name="chapter.title"]').element.value).toBe('Le virage')
@@ -185,19 +173,31 @@ describe('NovelManageForm.vue', () => {
   })
 
   it('updates the resumed novel instead of creating a second one', async () => {
+    const resumed = chapterSeeder.getChapter({
+      id: 12,
+      isDraft: true,
+      isRoot: true,
+      title: 'Le virage',
+    })
     const create = vi.spyOn(NovelController, 'create')
     const updateNovel = vi
       .spyOn(NovelController, 'update')
       .mockResolvedValue({ status: STATUS.SUCCESS, novel: novelSeeder.getNovel() })
     const updateChapter = vi
       .spyOn(ChapterController, 'update')
-      .mockResolvedValue({ status: STATUS.SUCCESS, chapter: draft() })
-    await mountResuming()
+      .mockResolvedValue({ status: STATUS.SUCCESS, chapter: resumed })
+    vi.spyOn(ChapterController, 'getById').mockResolvedValue({
+      status: STATUS.SUCCESS,
+      chapter: resumed,
+    })
+    useAuthStore().setUser(userSeeder.getUser())
+    await routerPlugin.getRouter().push({ name: 'novel-edit', params: { id: 12 } })
+    wrapper = mount(NovelManageForm)
+    await flushPromises()
 
     await wrapper.find('.novel-manage__draft').trigger('click')
     await flushPromises()
 
-    const resumed = draft()
     expect(create).not.toHaveBeenCalled()
     expect(updateNovel).toHaveBeenCalledWith('nuit-virage', {
       genreId: 3,
@@ -213,18 +213,31 @@ describe('NovelManageForm.vue', () => {
   })
 
   it('publishes the resumed draft and opens the novel', async () => {
+    const resumed = chapterSeeder.getChapter({
+      id: 12,
+      isDraft: true,
+      isRoot: true,
+      title: 'Le virage',
+    })
     vi.spyOn(NovelController, 'update').mockResolvedValue({
       status: STATUS.SUCCESS,
       novel: novelSeeder.getNovel(),
     })
     vi.spyOn(ChapterController, 'update').mockResolvedValue({
       status: STATUS.SUCCESS,
-      chapter: draft(),
+      chapter: resumed,
     })
     const publish = vi
       .spyOn(ChapterController, 'publish')
-      .mockResolvedValue({ status: STATUS.SUCCESS, chapter: draft() })
-    await mountResuming()
+      .mockResolvedValue({ status: STATUS.SUCCESS, chapter: resumed })
+    vi.spyOn(ChapterController, 'getById').mockResolvedValue({
+      status: STATUS.SUCCESS,
+      chapter: resumed,
+    })
+    useAuthStore().setUser(userSeeder.getUser())
+    await routerPlugin.getRouter().push({ name: 'novel-edit', params: { id: 12 } })
+    wrapper = mount(NovelManageForm)
+    await flushPromises()
 
     await wrapper.find('.novel-manage__form').trigger('submit')
     await flushPromises()
@@ -238,13 +251,28 @@ describe('NovelManageForm.vue', () => {
 
   describe('draft picker', () => {
     it('stays hidden when the author has no novel draft', async () => {
-      await mountAuthenticated()
+      useAuthStore().setUser(userSeeder.getUser())
+      wrapper = mount(NovelManageForm)
+      await flushPromises()
 
       expect(wrapper.find('.novel-manage__draft-select').exists()).toBe(false)
     })
 
     it('asks the api for novel drafts only, a chapter draft belongs to another form', async () => {
-      await mountWithDrafts()
+      ChapterController.drafts.mockResolvedValueOnce({
+        status: STATUS.SUCCESS,
+        chapters: [
+          chapterSeeder.getChapter({
+            id: 12,
+            isDraft: true,
+            isRoot: true,
+            novel: novelSeeder.getNovel({ title: 'Nuit virage' }),
+          }),
+        ],
+      })
+      useAuthStore().setUser(userSeeder.getUser())
+      wrapper = mount(NovelManageForm)
+      await flushPromises()
 
       expect(ChapterController.drafts).toHaveBeenCalledWith({ isRoot: true })
       const labels = wrapper
@@ -255,7 +283,20 @@ describe('NovelManageForm.vue', () => {
     })
 
     it('resumes the picked draft through the edit route', async () => {
-      await mountWithDrafts()
+      ChapterController.drafts.mockResolvedValueOnce({
+        status: STATUS.SUCCESS,
+        chapters: [
+          chapterSeeder.getChapter({
+            id: 12,
+            isDraft: true,
+            isRoot: true,
+            novel: novelSeeder.getNovel({ title: 'Nuit virage' }),
+          }),
+        ],
+      })
+      useAuthStore().setUser(userSeeder.getUser())
+      wrapper = mount(NovelManageForm)
+      await flushPromises()
 
       await wrapper.find('.novel-manage__draft-select select').setValue(12)
 
@@ -263,7 +304,23 @@ describe('NovelManageForm.vue', () => {
     })
 
     it('starts a new novel when picking the first entry', async () => {
-      await mountWithDrafts()
+      ChapterController.drafts.mockResolvedValueOnce({
+        status: STATUS.SUCCESS,
+        chapters: [
+          chapterSeeder.getChapter({
+            id: 12,
+            isDraft: true,
+            isRoot: true,
+            novel: novelSeeder.getNovel({ title: 'Nuit virage' }),
+          }),
+        ],
+      })
+      vi.spyOn(ChapterRepository, 'getById').mockResolvedValue(
+        controllerSuccess({ data: chapterSeeder.getChapterApi({ id: 12, is_draft: true }) }),
+      )
+      useAuthStore().setUser(userSeeder.getUser())
+      wrapper = mount(NovelManageForm)
+      await flushPromises()
       await routerPlugin.getRouter().push({ name: 'novel-edit', params: { id: 12 } })
       await flushPromises()
 

@@ -1,12 +1,12 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { auth, t, form } from '@/services/shortcuts/services-shortcut.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import DialogComponent from '@/components/DialogComponent.vue'
 import LoaderComponent from '@/components/LoaderComponent.vue'
 import InputComponent from '@/services/form/views/inputs/InputComponent.vue'
 import { useAuth } from '../src/use-auth.js'
 import { validateRegisterForm } from '../formRequest/register-form-request.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const authDialogs = useAuth()
 
@@ -33,7 +33,7 @@ const handleRegister = async () => {
   }
 
   const response = await auth.register(datas.value)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 

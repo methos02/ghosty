@@ -48,19 +48,19 @@ class BranchService
 
     private function findNewLastChapterOfMainBranch(Novel $novel): ?Chapter
     {
-        $mostLikedLastChapter = $this->chaptersR->mostLikedLastChapter($novel->id);
+        $lastChapterOfMostLikedBranch = $this->chaptersR->lastChapterOfMostLikedBranch($novel->id);
 
-        if ($mostLikedLastChapter === null) {
+        if ($lastChapterOfMostLikedBranch === null) {
             return null;
         }
 
         $lastChapterOfMainBranch = $this->chaptersR->lastChapterOfMainBranch($novel->id);
 
-        if ($lastChapterOfMainBranch !== null && $mostLikedLastChapter->branch_like_count <= $lastChapterOfMainBranch->branch_like_count) {
+        if ($lastChapterOfMainBranch !== null && $lastChapterOfMostLikedBranch->branch_like_count <= $lastChapterOfMainBranch->branch_like_count) {
             return null;
         }
 
-        return $mostLikedLastChapter;
+        return $lastChapterOfMostLikedBranch;
     }
 
     private function recomputeBranchLikeCounts(Novel $novel): int

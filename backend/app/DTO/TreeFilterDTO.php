@@ -2,7 +2,7 @@
 
 namespace App\DTO;
 
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
 final readonly class TreeFilterDTO
 {
@@ -10,7 +10,7 @@ final readonly class TreeFilterDTO
         public ?int $fromChapterId = null
     ) {}
 
-    public static function fromRequest(Request $request): self
+    public static function fromRequest(FormRequest $request): self
     {
         return new self(
             fromChapterId: $request->filled('from') ? $request->integer('from') : null,

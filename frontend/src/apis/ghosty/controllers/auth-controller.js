@@ -2,6 +2,7 @@ import { AuthRepository } from '@/apis/ghosty/repositories/auth-repository.js'
 import { AuthDto } from '@/apis/ghosty/dtos/auth-dto.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { form } from '@/services/shortcuts/services-shortcut.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const register = async datas => {
   const data = AuthDto.toRegister(datas)
@@ -11,7 +12,7 @@ const register = async datas => {
     form.addValidationErrors(response.data.errors, 'register')
   }
 
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
 
@@ -29,7 +30,7 @@ const login = async datas => {
     form.addValidationErrors(response.data.errors, 'login')
   }
 
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
 
@@ -41,7 +42,7 @@ const login = async datas => {
 
 const logout = async () => {
   const response = await AuthRepository.logout()
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
 
@@ -53,7 +54,7 @@ const logout = async () => {
 
 const me = async (options = {}) => {
   const response = await AuthRepository.me(options)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
 

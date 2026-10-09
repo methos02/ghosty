@@ -3,9 +3,9 @@ import { computed, onMounted, ref } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
 import ConfirmButton from '@/components/ConfirmButtonComponent.vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { useDraftsHead } from '@/head/use-drafts-head.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 useDraftsHead()
 
@@ -22,7 +22,7 @@ const shown = computed(() => {
 
 const load = async () => {
   const response = await ChapterController.drafts()
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 
@@ -47,7 +47,7 @@ const resumeRoute = draft => {
 
 const discard = async draft => {
   const response = await ChapterController.destroy(draft.id)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 

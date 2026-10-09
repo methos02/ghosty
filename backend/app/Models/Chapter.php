@@ -13,9 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Config;
 
 /**
- * @property-read User $author
- * @property-read Novel $novel
- *
  * @mixin IdeHelperChapter
  */
 class Chapter extends Model

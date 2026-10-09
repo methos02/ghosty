@@ -1,9 +1,9 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const authStore = useAuthStore()
 
@@ -19,7 +19,7 @@ const draftsRoute = computed(() =>
 
 const loadDrafts = async () => {
   const response = await ChapterController.drafts()
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 

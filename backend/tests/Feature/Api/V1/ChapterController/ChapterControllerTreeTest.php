@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Api\V1\ChapterController;
 
+use App\Http\Controllers\Api\V1\ChapterController;
+use App\Http\Requests\TreeFilterRequest;
 use App\Models\Chapter;
 use App\Models\Novel;
 use PHPUnit\Framework\Attributes\Test;
@@ -18,6 +20,22 @@ class ChapterControllerTreeTest extends TestCase
         $root = Chapter::factory()->create(['novel_id' => $novel->id]);
 
         return [$novel, $root];
+    }
+
+    #[Test]
+    public function uses_tree_filter_request(): void
+    {
+        $this->assertTrue($this->hasFormRequest(ChapterController::class, 'tree', TreeFilterRequest::class));
+    }
+
+    #[Test]
+    public function rejects_a_non_integer_from(): void
+    {
+        [$novel] = $this->novelWithRoot();
+
+        $this->getJson("/api/v1/novels/{$novel->slug}/tree?from=abc")
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['from' => __('validation.tree_filter.from.integer')]);
     }
 
     #[Test]

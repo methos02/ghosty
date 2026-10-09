@@ -14,23 +14,6 @@ import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
 
-const mountToolbar = chapter => {
-  const novelStore = createNovelStore()
-  const readingStore = createReadingStore()
-  novelStore.setSelectedNovel(novelSeeder.getNovel())
-  readingStore.setReading({ ...chapterSeeder.getReading(), chapter })
-
-  return mount(ReadingToolbar, {
-    global: {
-      provide: {
-        [NOVEL_STORE_KEY]: novelStore,
-        [READING_STORE_KEY]: readingStore,
-        [READING_SETTINGS_STORE_KEY]: createReadingSettingsStore(),
-      },
-    },
-  })
-}
-
 describe('ReadingToolbar.vue', () => {
   beforeEach(() => {
     useAuthStore().clear()
@@ -45,7 +28,19 @@ describe('ReadingToolbar.vue', () => {
     const chapter = chapterSeeder.getChapter()
     useAuthStore().setUser(userSeeder.getUser({ id: chapter.author.id + 1 }))
 
-    const wrapper = mountToolbar(chapter)
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading({ ...chapterSeeder.getReading(), chapter })
+    const wrapper = mount(ReadingToolbar, {
+      global: {
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [READING_STORE_KEY]: readingStore,
+          [READING_SETTINGS_STORE_KEY]: createReadingSettingsStore(),
+        },
+      },
+    })
     await wrapper.find('.reading-toolbar__report').trigger('click')
 
     expect(useChapterReport().reportedChapter.value).toEqual(chapter)
@@ -55,13 +50,37 @@ describe('ReadingToolbar.vue', () => {
     const chapter = chapterSeeder.getChapter()
     useAuthStore().setUser(userSeeder.getUser({ id: chapter.author.id }))
 
-    const wrapper = mountToolbar(chapter)
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading({ ...chapterSeeder.getReading(), chapter })
+    const wrapper = mount(ReadingToolbar, {
+      global: {
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [READING_STORE_KEY]: readingStore,
+          [READING_SETTINGS_STORE_KEY]: createReadingSettingsStore(),
+        },
+      },
+    })
 
     expect(wrapper.find('.reading-toolbar__report').exists()).toBe(false)
   })
 
   it('asks a visitor to sign in before opening the report dialog', async () => {
-    const wrapper = mountToolbar(chapterSeeder.getChapter())
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading({ ...chapterSeeder.getReading(), chapter: chapterSeeder.getChapter() })
+    const wrapper = mount(ReadingToolbar, {
+      global: {
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [READING_STORE_KEY]: readingStore,
+          [READING_SETTINGS_STORE_KEY]: createReadingSettingsStore(),
+        },
+      },
+    })
 
     await wrapper.find('.reading-toolbar__report').trigger('click')
 

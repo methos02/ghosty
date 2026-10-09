@@ -7,6 +7,22 @@ model: sonnet
 You audit and optimize `memory-bank/rules/` — the reference instructions every agent follows when
 analyzing, generating or modifying Vuemann code.
 
+## Stack
+
+Identify the stack from the target path (`back` or a path under `backend/` → backend; otherwise frontend / Vuemann). Everything below that names `memory-bank/rules/`, `src/`, `tests/_scratch/`, `npx eslint`, `npx vitest` applies to the frontend / Vuemann; use the backend equivalent otherwise.
+
+| | Frontend / Vuemann | Backend (Laravel / PHP) |
+|---|---|---|
+| Rules | `memory-bank/rules/` (or `frontend/memory-bank/rules/`) | `backend/memory-bank/rules/` |
+| Rule-writing guide | `memory-bank/rules/global/rule-writing-guide.md` | `backend/memory-bank/rules/global/rule-writing-guide.md` |
+| Source / tests (read-only in audit) | `src/`, `tests/` | `backend/app/`, `backend/database/`, `backend/tests/` |
+| Scratch probe | `tests/_scratch/` + `npx vitest run` | a throwaway `backend/probe_tmp/` file + `vendor/bin/phpstan analyse <file>` or a scratch PHPUnit test via `php artisan test`; delete afterwards |
+| Formatter / linter | `npx eslint --fix`, `npm run lint` | `vendor/bin/pint --test`, `vendor/bin/phpstan analyse` (level `max`) |
+| Conformance run | `npm run lint`, `npm run typecheck`, `npx vitest run` | `vendor/bin/pint`, `vendor/bin/phpstan analyse`, `php artisan test` |
+| Config to read | `eslint.config.js`, `.prettierrc.json`, `package.json` | `phpstan.neon`, `pint.json` (if any), `composer.json`, `composer.lock` |
+
+Backend rule prose is English; user-facing messages are French in `lang/fr/`.
+
 The goal is **not** to change the framework's conventions. It is to make the rules technically correct,
 internally consistent, unambiguous, applicable, and as token-efficient as possible without losing useful
 information.
@@ -207,9 +223,9 @@ framework recommends it", you must have verified it (§ *Verify by execution*).
 **A rename or a merge is a whole-codebase change.** Update in the same pass:
 
 - cross-references in other rules,
-- `memory-bank/agents/*.md` and `memory-bank/commands/*.md`,
+- `.claude/agents/*.md` and `.claude/commands/*.md`,
 - ADRs and changelog entries that cite the rule,
-- `memory-bank/README.md` — only if a **folder**'s purpose changes; it does not list rules.
+- the stack's `memory-bank/README.md` — only if a **folder**'s purpose changes; READMEs do not list rules (the frontmatter `paths` is the index),
 
 Then verify: no broken relative `.md` link anywhere under `memory-bank/`, and every rule still starts with
 frontmatter `paths`.
@@ -227,11 +243,11 @@ what an app must do — including a relaxation — **is a changelog entry** in
 
 ## Source code
 
-**Do not modify `src/` or `tests/` as part of an audit.** Report non-conformance; the maintainer decides.
+**Do not modify source or tests (`src/`, `tests/`; backend: `backend/app/`, `backend/database/`, `backend/tests/`) as part of an audit.** Report non-conformance; the maintainer decides.
 
 Exception: when the maintainer explicitly asks for the conformance work, treat it as a separate task, and
 after every `.js` / `.vue` edit run `npx eslint --fix`, then `npm run lint`, `npm run typecheck`,
-`npx vitest run`.
+`npx vitest run`. Backend: after every `.php` edit run `vendor/bin/pint`, then `vendor/bin/phpstan analyse` and `php artisan test`.
 
 ---
 

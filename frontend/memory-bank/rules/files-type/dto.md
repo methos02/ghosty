@@ -1,329 +1,117 @@
 ---
 paths:
   - "src/**/dtos/**/*.js"
+  - "**/*-dto.js"
 ---
-# DTO Rules
+# DTO
 
-Group related properties into sub-objects. Use camelCase for all properties. `from{Action}`: provide defaults (`?? []`, `?? ''`) — API data is untrusted. `to{Action}`: use validated fields directly — FormRequest guarantees required fields.
-
-`from{Action}` must only map fields present in the API response. Never add fields the API does not provide.
-
-Defaults apply to values that are present but `null`/`undefined`. A missing key means the API contract changed — crash, never silently default.
+The DTO is the only place that knows API field names and the only boundary between API shape and domain shape. Properties are camelCase; related properties are grouped in sub-objects.
 
 ## Naming
 
-Use the **API action name** as suffix — never generic names like `fromApi` or `toApi`.
+Suffix with the **API action**, never `fromApi` / `toApi`, and never an `Api` suffix (`to{Action}` is already an API payload).
 
-- `from{Action}` -- API response to frontend: `fromShow`, `fromList`, `fromIndex`, `fromRead`, `fromSearch`
-- `to{Action}` -- frontend data to API format: `toCreate`, `toUpdate`, `toFilter`, `toSearch`
-- `toForm{Action}` -- stored entity to form-input shape (internal, no API boundary): `toFormManage`, `toFormEdit`
-
-Two naming clarifications:
-
-- **No `Api` suffix on `to{Action}` methods.** Every `to{Action}` already produces an API payload by definition — the suffix is redundant. `toBulkFromRecurrenceApi` → `toBulkFromRecurrence`.
-- **Specific name when an argument shapes the method's behaviour.** When a method's output is materially shaped by an entity passed as an extra argument, encode that entity in the name rather than hiding it as context. `fromSearch(data, author)` → `fromSearchByAuthor(data, author)`.
-- **`from{Action}` parameter is named `data`** (the raw API payload); the plural `from{Action}s` takes **`datas`**. Never name the param after the entity (`position`, `unit`, `user`). `to{Action}` / `toForm{Action}` keep semantic names (`formData`, `occupation`). When extra domain context is passed, only the first (payload) param is `data`; the rest stay semantic — see *Specific name when an argument shapes the method's behaviour* above.
-
-`to{Action}` covers **only the frontend-form → API direction**. For entity → form transformations (input is a stored entity, output is a form-shape consumed by a form composable), use `toForm{Action}`. Example: `toFormManage(occupation)` returns the form-data shape used to edit an existing occupation. Defaults are required on `toForm{Action}` because the input is NOT FormRequest-validated (unlike `to{Action}`).
+- `from{Action}(data)`: API response to domain. Plural `from{Action}s(datas)`. The first parameter is `data` / `datas`, never the entity name.
+- `to{Action}(formData)`: form to API body. `to{Action}Params` builds the query params of a read route (`toListParams`, `toShowParams`; 10 occurrences in the code).
+- `toForm{Action}(entity)`: stored entity to form shape (no API boundary).
+- Encode in the name an entity that shapes the output: `fromSearchByAuthor(data, author)`.
 
 ```js
-// GOOD - from{Action}: defaults for untrusted API data
-const fromShow = (data) => ({
-  id: data.position_id,
-  genre: {
-    id: data.genre?.id,
-    name: data.genre?.name
-  },
-  function: data.function?.name,
-  tags: data.tags ?? []
+// BAD
+const fromApi = user => ({ id: user.id })
+
+// GOOD
+const fromShow = data => ({ id: data.id })
+```
+
+## API names stay in the DTO
+
+Controllers, services, components and templates MUST use domain names. The DTO maps them to API names.
+
+```js
+// BAD
+const searchOptions = ['novel_title', 'author_name']
+const response = await NovelRepository.search({ params: { novel_title: term } })
+
+// GOOD
+const searchOptions = ['title', 'author']
+const response = await NovelRepository.search({ params: NovelDto.toSearch(term, searchType) })
+
+const SEARCH_TYPE_TO_PARAM = { title: 'novel_title', author: 'author_name' }
+const toSearch = (term, searchType) => ({ [SEARCH_TYPE_TO_PARAM[searchType]]: term })
+```
+
+Exception: a repository simulating an absent endpoint writes the raw API shape ([repository](repository.md)).
+
+## Defaults
+
+One rule: **default only the fields the API documents as nullable or optional; read every required field directly.** A required key that is missing means the API contract changed: let it crash.
+
+- `from{Action}`: `??` / `utilsH.voidToEmpty(data, exclude)` on optional fields only. `voidToEmpty` processes the keys present and never invents missing ones.
+- `to{Action}`: no defaults. The form request already guarantees the required fields. `toForm{Action}` needs defaults: its input is not validated.
+- Trust documented types: no `Array.isArray()` polymorphism on a documented array. Fix the API or document the polymorphism.
+- `utilsH.voidToNull(value)` only for a clearable field where the API needs an explicit `null`.
+
+```js
+// BAD
+const fromShow = data => ({
+  title: data.title ?? '-',
+  authorIds: Array.isArray(data.author_ids) ? data.author_ids : [data.author_ids],
 })
 
-// GOOD - to{Action}: validated data, no redundant defaults
-const toCreate = (formData) => ({
-  surname: formData.officialLastname,
-  birthdate: formData.birthdate,
-  gender: formData.gender,
-  phone: formData.phone
-})
-
-// BAD - generic name "fromApi"
-const fromApi = (data) => ({
-  id: data.position_id,
-  genre: data.genre?.name,
-  genreId: data.genre?.id
-})
-
-// BAD - redundant defaults on validated data (inflates complexity)
-const toCreate = (formData) => ({
-  surname: formData.officialLastname ?? '',
-  birthdate: formData.birthdate ?? '',
-  gender: formData.gender ?? ''
+// GOOD
+const fromShow = data => ({
+  title: data.title,
+  authorIds: data.author_ids,
+  summary: data.summary ?? '',
+  tags: data.tags ?? [],
 })
 ```
 
-## Spread Base Shape + Sidecar Metadata
-
-When extending a base DTO via `...fromShow(data)`, never replace an entire array or object field from the base — enrich via a **sidecar key** instead. The base output is the canonical shape; partial overrides corrupt downstream consumers that expect the original entries, and produce half-hydrated arrays where consumers cannot tell which entries are enriched and why.
-
-This applies in particular to search/filter results that need to expose "by which entity did this filter run?" — that metadata gets its own key, never inside the data array.
+Do not guard `to{Action}` assignments with `!== undefined`: the ajax layer drops `undefined` body values (JSON) and query params (`customParamsSerializer`). If a test asserts strict equality on the payload, fix the test.
 
 ```js
-// BAD - overwrites the authors array, losing every entry except the searched one
-// and produces a half-hydrated array (one entry rich, others bare ids)
+// BAD
+if (filters.genreId !== undefined) {
+  payload.genre_id = filters.genreId
+}
+
+// GOOD
+const toSearch = filters => ({ ...buildBase(filters), genre_id: filters.genreId })
+```
+
+## Display
+
+- Display formatting (dates, casing, joined names, placeholders) belongs in `from{Action}`; components render the value as-is. A field needing both raw and display values exposes `x` and `xFormat`; the placeholder (`'-'`) goes on `xFormat` only.
+- Exception: when variants each render their own sentence or link, the DTO only maps the variant data (`lastActorUsername`, `count`); one view component per variant builds the `t()` text and the route.
+- Dispatch variant fields under `payload`, one DTO file per variant, with `if` guards ([if-guards-over-lookup-object](../language/js/if-guards-over-lookup-object.md)); throw first on an unknown variant.
+
+```js
+// BAD
+const fromShow = data => ({ publishedAt: data.published_at ? format(data.published_at) : '-' })
+
+// GOOD
+const fromShow = data => ({
+  publishedAt: data.published_at,
+  publishedAtFormat: data.published_at ? dateHelper.formatDate(data.published_at) : '-',
+})
+```
+
+## Lists
+
+- MUST expose a plural method that maps through the singular; the caller passes the whole array, never loops on the singular.
+- The default order of a list belongs in the plural mapper (via a helper). A consumer with its own ordering overrides locally.
+- When extending a base DTO with `...fromShow(data)`, MUST NOT replace one of its arrays or objects: add a sidecar key (`searchedAuthor`).
+
+```js
+// BAD
+const fromSearchByAuthor = (data, author) => ({ ...fromShow(data), authors: [author] })
+
+// GOOD
 const fromSearchByAuthor = (data, author) => ({
   ...fromShow(data),
-  authors: [{ id: author.id, nameFormat: author.nameFormat }]
-})
-// Input author_ids: [5, 7, 12], searched=5 → output drops 7 and 12
-
-// GOOD - canonical array stays uniform from the spread, searched entity in its own sidecar key
-const fromSearchByAuthor = (data, author) => ({
-  ...fromShow(data),                              // authors: [{id:5},{id:7},{id:12}]
-  searchedAuthor: {
-    id: author.id,
-    nameFormat: author.nameFormat
-  }
-})
-```
-
-## Default Values
-
-Two helpers cover the `null`/`undefined` cases. Pick by direction and intent.
-
-### `from{Action}` → `utilsH.voidToEmpty`
-
-Use `utilsH.voidToEmpty(data, exclude)` to replace `null`/`undefined` with `''` on all keys instead of `?? ''` per field. Only keys **present** in `data` are processed — missing keys are not invented. Use `exclude` for non-string types (IDs, booleans, arrays, dates).
-
-```js
-// GOOD - centralized defaults, single source (safe)
-import { utilsH } from '@brugmann/vuemann/src/helpers/utils-helper.js'
-
-const fromShow = (data) => {
-  const safe = utilsH.voidToEmpty(data, ['id', 'tags'])
-  return {
-    id: safe.id,
-    name: safe.name,
-    genre: safe.genre,
-    tags: safe.tags ?? []
-  }
-}
-
-// BAD - repetitive ?? '' on every field
-const fromShow = (data) => ({
-  id: data.id,
-  name: data.name ?? '',
-  genre: data.genre ?? '',
-  tags: data.tags ?? []
-})
-```
-
-### `to{Action}` clearable field → `utilsH.voidToNull`
-
-`to{Action}` does **not** add defaults on validated data (see top of file). The single exception: a **clearable field** where the API requires an explicit `null` to clear the value (vs. `''` or omission). In that case, use `utilsH.voidToNull(value)` — it centralizes the `unicorn/no-null` eslint disable.
-
-Do not use `voidToNull` as a generic fallback — it is only for the clear-field contract. Empty strings or omission are the default for non-clearable fields.
-
-```js
-// GOOD - clearable field, API expects null to clear
-const toUpdate = (formData) => ({
-  surname: formData.officialLastname,
-  birthdate: formData.birthdate,
-  notes: utilsH.voidToNull(formData.notes)  // null clears the field server-side
+  searchedAuthor: { id: author.id, username: author.username },
 })
 
-// BAD - voidToNull on a non-clearable field, adds noise
-const toCreate = (formData) => ({
-  surname: utilsH.voidToNull(formData.officialLastname),
-  birthdate: utilsH.voidToNull(formData.birthdate)
-})
-```
-
-## Trust ajax cleanup for `undefined`
-
-Vuemann's ajax layer drops `undefined` at serialization time on both sides: `JSON.stringify` omits `undefined` object values for JSON bodies, and `customParamsSerializer` (`src/services/ajax/src/models/http-client.js`) skips `undefined` query params. Do **not** wrap `to{Action}` payload assignments in `if (value !== undefined)` guards — the wire payload is identical, the guard is dead code.
-
-```js
-// BAD - manual undefined guard, redundant with ajax cleanup
-const toSearch = (filters) => {
-  const payload = buildBase(filters)
-  if (filters.resourceTypeId !== undefined) {
-    payload.resource_type_id = filters.resourceTypeId
-  }
-  return payload
-}
-
-// GOOD - direct assignment, ajax drops the key when undefined
-const toSearch = (filters) => ({
-  ...buildBase(filters),
-  resource_type_id: filters.resourceTypeId
-})
-```
-
-Exception: if a test asserts strict object equality on the payload, fix the test (compare only required keys) rather than reintroducing the guard.
-
-## Raw Value + Formatted Display Pair
-
-When a field needs both a raw value (for forms, payloads, downstream DTOs) and a formatted version (for display), expose two fields: `x` (raw) and `xFormat` (formatted). Put the display sentinel (`'-'`) on `xFormat` only — never on the raw.
-
-The raw stays `undefined`/empty when missing so downstream form DTOs (e.g. `fromEdit` reading from `fromShow` output) don't inherit the sentinel as a real form value.
-
-```js
-// GOOD - raw and format separated, sentinel on format only
-const fromAd = (data) => {
-  const language = LanguageService.getByValue(data.preferredLanguage)
-  return {
-    language: data.preferredLanguage,       // raw, may be undefined
-    languageFormat: language?.label || '-'  // formatted with sentinel
-  }
-}
-
-// BAD - sentinel on the raw field, cascades into forms
-const fromAd = (data) => ({
-  language: LanguageService.getByValue(data.preferredLanguage)?.label || '-'
-})
-```
-
-Established instances of the `xFormat` convention: `createdAtFormat`, `updatedAtFormat`, `adSyncDateFormat`, `exchangeSyncDateFormat`.
-
-## Plural Methods
-
-Create a plural method that maps through the singular one. The calling layer (controller **or** service) calls the plural on the whole array — never loop and call singular per item.
-
-```js
-// GOOD - plural DTO method
-const fromSearch = (data) => ({
-  id: data.id,
-  name: data.name,
-  parent: data.parent_gen_id ? { id: data.parent_gen_id } : undefined
-})
-
-const fromSearches = (datas) => datas.map(data => fromSearch(data))
-
-// BAD - singular DTO in controller loop
-for (const genreApi of response.data) {
-  const genre = Dto.fromSearch(genreApi)
-  genres.push(genre)
-}
-
-// GOOD - plural DTO call in controller
-const genres = Dto.fromSearches(response.data)
-```
-
-## Display formatting belongs in the DTO
-
-Any user-facing display transformation (date formatting, casing, joining names, conditional placeholders) belongs in `from{Action}`, not in a per-component helper. Components must render the value as-is without inline `displayValue`/`formatX` helpers.
-
-```js
-// BAD - per-component display helper
-// arno-component.vue
-const displayValue = (v) => FormHelper.isEmpty(v) ? '-' : v
-// template: {{ displayValue(currentUser.arno.lastname) }}
-
-// GOOD - DTO returns display-ready data
-// arno-dto.js
-const fromShow = (data) => ({
-  lastname: data.lastname,
-  dateBorn: data.date_born ? dateHelper.formatDate(data.date_born) : void 0,
-  ...
-})
-// template: {{ currentUser.arno.lastname }}
-```
-
-### Exception: content built per variant
-
-When an entity comes in variants that each render their own content (a translated sentence, a navigation link), the DTO only maps the data of each variant. Building the sentence (`t()`) and the route belongs to one view component per variant. The DTO still formats the data itself (dates, casing).
-
-```js
-// BAD - the DTO composes the sentence and the route, and grows with every variant
-const fromNotification = (data) => ({
-  message: t('like_received.one', { author: data.data.last_actor_username }),
-  link: { name: 'chapter-read', params: { id: data.data.chapter.id } },
-})
-
-// GOOD - the DTO maps the variant data, LikeReceivedNotification.vue renders it
-const fromNotification = (data) => ({
-  lastActorUsername: data.data.last_actor_username,
-  count: data.data.count,
-})
-```
-
-### Variant dispatch
-
-Variant-specific fields live under a `payload` key, mapped by one DTO file per variant (`dtos/types/{variant}-dto.js`). The dispatcher throws first on an unknown variant, then one `if` guard per variant (see `if-guards-over-lookup-object.md`), then returns `{}` for variants without fields.
-
-```js
-// GOOD
-const mapPayload = (data) => {
-  if (!Object.values(NOTIFICATION_TYPES).includes(data.type)) {
-    throw new Error(`Unknown notification type: ${data.type}`)
-  }
-
-  if (data.type === NOTIFICATION_TYPES.LIKE_RECEIVED) {
-    return LikeReceivedDto.fromNotification(data.data)
-  }
-
-  return {}
-}
-```
-
-## Default list ordering belongs in the DTO
-
-A list's **default** order is a pure transformation, so it belongs in the `from{Action}s` mapper (delegating to a helper), not in the store, composable, or view. Every consumer then receives the same already-ordered data from one place.
-
-This sets the default, not a lock: a consumer with its own ordering need (a table column the user sorts, a per-view ranking) overrides locally — it does not push that concern back into the DTO.
-
-```js
-// BAD - default order applied in the store mutation or a view computed
-setAll = (genres) => { genres.value = genres.toSorted(byName) }
-
-// GOOD - default order in the DTO list mapper, via a helper
-const fromIndex = (datas) => GenreHelper.orderByName((datas ?? []).map(fromShow))
-```
-
-## No defensive fallbacks for required fields
-
-Trust the backend contract. Fields the API contractually guarantees as required (e.g. primary identifiers, names) must NOT be wrapped in `?? ''`, `displayValue('-')`, or similar fallbacks. Defensive fallbacks hide real contract regressions and create dead code.
-
-Defaults still apply to **legitimately optional** fields (dates, optional nested resources, arrays). The rule is: default the optional, never the guaranteed.
-
-```js
-// BAD - defensive '-' on fields the API always returns
-const fromShow = (data) => ({
-  firstname: data.firstname ?? '-',
-  lastname: data.lastname ?? '-',
-  matricule: data.matricule ?? '-'
-})
-
-// GOOD - trust the contract for required fields, default only the optional ones
-const fromShow = (data) => ({
-  firstname: data.firstname,
-  lastname: data.lastname,
-  matricule: data.matricule,
-  dateBorn: dateHelper.formatDate(data.date_born),
-  contrats: data.contrats?.map(fromShowContract) || []
-})
-```
-
-## Don't Defensively Polymorph Documented Types
-
-The "API data is untrusted, provide defaults" guidance applies to **nullable values** (a field that may be `null`/missing in a `from{Action}` DTO). It does NOT apply to **documented shapes**: if the API doc says a field is always an array, code as if it's always an array — no `Array.isArray()` polymorphism, no scalar-to-array fallback.
-
-Defensive polymorphism inflates the surface, duplicates the same intent at every consumer, and silently signals doubt about the contract. If the API genuinely returns inconsistent shapes, fix the API or document the polymorphism explicitly in the contract — never paper over it in the DTO.
-
-This is distinct from the "no defensive fallbacks for required fields" rule above: that rule forbids `?? '-'` on guaranteed scalars; this rule forbids `Array.isArray()` branches on guaranteed arrays.
-
-```js
-// Doc says: author_ids is always an array (possibly empty)
-
-// BAD - defensive polymorphism for a documented type
-const fromShow = (data) => ({
-  authorIds: Array.isArray(data.author_ids)
-    ? data.author_ids
-    : (data.author_ids ? [data.author_ids] : [])
-})
-
-// GOOD - trust the contract; default only for the nullable case
-const fromShow = (data) => ({
-  authorIds: data.author_ids ?? []
-})
+const fromList = datas => datas.map(data => fromShow(data))
 ```

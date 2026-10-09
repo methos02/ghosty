@@ -2,6 +2,6 @@
 paths:
   - "src/**/*"
 ---
-# No Test Influence on Prod
+# No Test Influence On Prod
 
-Production code must never contain logic, conditions, or flags that exist solely to accommodate tests (`process.env.NODE_ENV === 'test'`, `isTest`, etc.). If tests need different behavior, mock it in the test setup.
+Production code MUST NOT contain logic, conditions or flags that exist only to accommodate tests (`process.env.NODE_ENV === 'test'`, `isTest`). If tests need a different behaviour, mock it in the test setup.

@@ -4,81 +4,40 @@ paths:
   - "src/**/*.vue"
   - "tests/**/*.js"
 ---
-# Cleanup on Close / onUnmounted / afterAll, Not on Open / onMounted / beforeAll
+# Cleanup On Close Or Unmount
 
-Cleanup state on `close()` / `onUnmounted()` / `afterEach()` / `afterAll()`, never on `open()` / `onMounted()` / `beforeEach()` / `beforeAll()`. Create a dedicated `cleanup()` function when the logic is reused.
+MUST clean state on exit (`close()`, `onUnmounted()`, `afterEach()`, `afterAll()`), never on entry (`open()`, `onMounted()`, `beforeEach()`, `beforeAll()`). Cleaning on entry leaves state dirty for the next consumer. Extract a `cleanup()` function when the logic is reused.
 
-**Why**: Cleaning on open/mount/before leaves state dirty for the next consumer. The next user inherits a clean slate only if the previous one cleaned up on exit. This includes resetting a dialog form: wire it on `@dialog-close`, never in the `openForCreate/openForEdit` handlers (which only set edit data + show the dialog).
+## Dialogs
 
-## Components and dialogs
-
-```js
-// GOOD - cleanup on close
-const cleanup = () => { chapterId.value = undefined; novels.value = [] }
-const close = () => { cleanup(); dialog.value.close() }
-const open = (id) => { chapterId.value = id; loadData(); dialog.value.show() }
-
-// BAD - cleanup on open, state left dirty on close
-const open = (id) => { chapterId.value = undefined; chapterId.value = id; ... }
-const close = () => { dialog.value.close() }
-```
-
-### Dialog form: reset on the `@dialog-close` event, not in open handlers
-
-Bind cleanup to the `@dialog-close` event, not to a wrapper `close()` method. `DialogComponent`'s built-in close (the ✕) emits `dialog-close` without going through your wrapper — only the event binding guarantees the next open starts clean. Open handlers just set edit data (when editing) and call `dialog.value.show()`.
+Wire the reset on `@dialog-close`, not in a wrapper `close()`: `DialogComponent`'s built-in close (the cross) emits `dialog-close` without going through your wrapper. Open handlers only set edit data and call `dialog.value.show()`. Do not clear validation errors by hand (`@dialog-show="form.clearErrors()"`): the form service clears them on submit.
 
 ```vue
-<!-- GOOD - reset wired on the close event -->
+<!-- GOOD -->
 <DialogComponent ref="dialog" @dialog-close="cleanup()">
 <script setup>
 const openForCreate = () => { dialog.value.show() }
-const openForEdit = (entity) => { form.fill(Dto.toFormEdit(entity)); dialog.value.show() }
+const openForEdit = chapter => { formData.value = ChapterDto.toFormEdit(chapter); dialog.value.show() }
 </script>
 
-<!-- BAD - reset on open; next open after the ✕ starts dirty -->
+<!-- BAD -->
 const openForCreate = () => { cleanup(); dialog.value.show() }
 ```
 
-Don't clear validation errors manually either (`@dialog-show="form.clearErrors()"`): vuemann's form service clears them on submit, so the call is dead code and drags an otherwise-unused `form` import into the component.
+## Lifecycle and shared stores
 
-## Lifecycle hooks
+A shared store carrying page-local state (form, wizard, per-page cache) MUST be reset in `onUnmounted`, not at setup top level.
 
 ```js
 // GOOD
-onMounted(() => { ws.open('chapter.ws'); loadData() })
-onUnmounted(() => { ws.close('chapter.ws'); store.clearData() })
-```
+onMounted(() => { loadNotifications() })
+onUnmounted(() => { notificationStore.clear() })
 
-## Shared stores with page-local state
-
-When a page uses a shared store whose state must not leak between visits (form stores, wizard stores, per-page caches), reset in `onUnmounted`, not at script setup top-level.
-
-```vue
-<!-- BAD - reset at setup top-level leaves store dirty on unmount -->
-<script setup>
-const { formData, reset } = useUserCreateForm()
-reset()
-</script>
-
-<!-- GOOD -->
-<script setup>
-import { onUnmounted } from 'vue'
-const { formData, reset } = useUserCreateForm()
-onUnmounted(() => { reset() })
-</script>
+// BAD
+const { resetForm } = useChapterForm()
+resetForm()
 ```
 
 ## Tests
 
-Same principle: teardown in `afterEach`/`afterAll`, never in `beforeEach`/`beforeAll`.
-
-```js
-// GOOD
-afterEach(() => { vi.clearAllMocks() })
-afterAll(() => { store.reset() })
-
-// BAD - cleanup before the test reverses the responsibility
-beforeEach(() => { vi.clearAllMocks(); store.reset() })
-```
-
-See [tests/test-cleanup.md](../tests/test-cleanup.md) for which `vi.*` helper to use.
+Same principle: teardown in `afterEach` / `afterAll`, never `beforeEach` / `beforeAll`. Which `vi.*` helper to use: [test-cleanup](../tests/test-cleanup.md).

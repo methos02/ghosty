@@ -2,9 +2,9 @@
 paths:
   - "src/**/*.vue"
 ---
-# Handler Named After Its Effect
+# Handler Named After Effect
 
-Name a handler after the effect it produces (`openChapterReport`, `toggleNightMode`), never after the business action it merely starts. A handler whose whole body forwards one call to a store or composable is deleted, not renamed: the template calls the target directly, arguments included.
+MUST name a handler after the effect it produces (`openChapterReport`, `toggleNightMode`), never after the business action it merely starts. A handler whose whole body forwards one call to a store or composable MUST be deleted, not renamed: the template calls the target directly, arguments included.
 
 **BAD**
 

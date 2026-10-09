@@ -1,59 +1,49 @@
 ---
 paths:
   - "src/**/formRequest/**/*.js"
+  - "**/*-form-request.js"
 ---
-# Form Request Rules
+# Form Request
 
-The form request is the input-layer. It validates `formData` against a `rules` object via `form.validate()` and returns `{ valid, errors }`. **Synchronous and pure. Single source of truth for validation** — never duplicate in a service, controller, or computed.
+The form request is the input layer. It validates the form data against a rules object via `form.validate(rules, datas)` and returns `{ valid, errors }`. It is **synchronous and pure** and the **single source of truth for validation**.
 
-`validate()` may also mutate `formData` to **inject fixed business constants** (e.g., a `statusId` imposed by usage context). This keeps the controller pure and avoids scattering business semantics downstream.
+- MUST NOT duplicate its rules in a service (`hasActiveFilters`), a controller or a computed (`canSearch`), see [no-passthrough-layers](../global/no-passthrough-layers.md).
+- MUST NOT perform async or network work in `validate`.
+- MAY mutate the form data to inject a **fixed business constant** imposed by the usage context, so the controller stays pure and business semantics are not scattered downstream.
 
 ```js
-// GOOD - business constant injected in validate, controller stays pure
-import { form } from '@brugmann/vuemann/src/shortcuts/services-shortcut.js'
-import { novelConfig } from '@/config/novel-config.js'
+// GOOD
+import { form } from '@/services/shortcuts/services-shortcut.js'
 
-const rules = {
-    authorId: { rules: 'required' },
-    startDate: { rules: 'required' },
+const novelFormRules = {
+  'novel.genreId': {
+    rules: 'required',
+    format: datas => datas.novel?.genreId,
+    errors: { required: 'novel_manage.error_genre_required' },
+  },
 }
 
-const validate = (formData) => {
-    formData.statusId = novelConfig.status.draftId
-    return form.validate(rules, formData)
+export const validateNovelForm = datas => {
+  datas.chapter.isDraft = true
+  return form.validate(novelFormRules, datas)
 }
 
-export const novelSearchFormRequest = { validate }
-
-// BAD - business constant in controller = business semantics leak
-const search = async (formData) => {
-    const params = NovelDto.toSearchParams({
-        ...formData,
-        statusId: novelConfig.status.draftId,
-    })
-    // ...
+// BAD
+const create = async datas => {
+  const body = NovelDto.toCreate({ ...datas, chapter: { ...datas.chapter, isDraft: true } })
 }
 ```
-
-## Forbidden
-
-- **Async or network side-effects in `validate()`** — synchronous only, except local `formData` enrichment.
-- **Duplicate validation rules** in a service (`hasActiveFilters`) or computed (`canSearch`). See [no-passthrough-layers.md](../global/no-passthrough-layers.md).
 
 ## Naming
 
 `{entity}-form-request.js` exporting `validate{Entity}Form` when one rule set covers every write of the entity. Qualify only when several really distinct actions coexist (`password-update`, `password-reset`, `login`, `register`). The form name passed to components and error keys follows (`form="novel"`, `novel.genreId`).
 
-**BAD**
-
 ```js
+// BAD
 chapter-write-form-request.js
 validateChapterWriteForm
-```
 
-**GOOD**
-
-```js
+// GOOD
 chapter-form-request.js
 validateChapterForm
 ```

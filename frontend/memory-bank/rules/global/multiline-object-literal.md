@@ -5,12 +5,12 @@ paths:
 ---
 # Multiline Object Literal
 
-An object literal of 3+ properties breaks one property per line, braces on their own lines, so every item is visible without scrolling. 1-2 properties stay inline.
+An object literal of 3+ properties MUST break one property per line, braces on their own lines, so every item is visible without scrolling. 1-2 properties stay inline.
 
 Count-driven, unlike [no-compact-patterns](no-compact-patterns.md), which is complexity-driven: a 3-property literal of trivial values (`{ id, label, value }`) breaks here even though that rule leaves it alone.
 
 ```js
-// BAD - items hidden past the right edge
+// BAD
 ConfigLoader.init({ routes, app: appConfig, routesApi, resource: resourceConfig })
 
 // GOOD
@@ -22,11 +22,11 @@ ConfigLoader.init({
 })
 ```
 
-This is about line-wrapping, not extraction: the literal stays at the call site. Do not hoist it into a named `const` — the name would only restate the function's.
+This is line-wrapping, not extraction: the literal stays at the call site. MUST NOT hoist it into a named `const` — the name would only restate the function's.
 
 ## Enforcement
 
-Machine-enforced, no longer a review burden ([ADR-010](../../decisions/ADR-010-prettier-formatage.md)):
+Machine-enforced:
 
 - `local/multiline-object-literal` (ESLint, `eslint-rules/multiline-object-literal.js`) reports the 3+ threshold and auto-fixes it by inserting the line breaks.
 - Prettier reindents. It cannot enforce the threshold itself — `objectWrap: "preserve"` keeps a hand-broken object broken, but never breaks an inline one.
@@ -40,7 +40,6 @@ Scope: object **literals** only. Destructuring (`const { one, two, three } = val
 An array of 3+ elements does **not** break. Prettier collapses any array that fits inside `printWidth`, and — unlike objects — offers no `preserve` option for them. An ESLint rule breaking arrays would be collapsed back by `prettier --write` on every run, so the behaviour is not merely unenforced, it is unenforceable while Prettier owns formatting.
 
 ```js
-// stays inline - expected, not a violation
 const voidTags = ['img', 'input', 'br', 'hr', 'meta', 'link']
 plugins: [localeVite(__dirname), vuemannVite(__dirname), vue()]
 ```

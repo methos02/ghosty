@@ -4,7 +4,7 @@ paths:
 ---
 # Forbidden Test Patterns
 
-Avoid loose matchers. Use explicit expected values.
+MUST assert explicit expected values. MUST NOT use loose matchers.
 
 | Forbidden Pattern | Problem |
 |-------------------|---------|
@@ -15,10 +15,10 @@ Avoid loose matchers. Use explicit expected values.
 
 ```js
 // BAD
-expect(result).toEqual({ data: expect.any(Object), items: expect.any(Array) })
+expect(result).toEqual({ data: expect.any(Object) })
 
 // GOOD
-expect(result).toEqual({ data: SiteDto.fromShow(mockApiData), items: [{ id: 1, name: 'Site 1' }] })
+expect(result).toEqual({ data: NovelDto.fromShow(novelSeeder.getNovelApi()) })
 ```
 
-Exception: use loose matchers only for uncontrollable values (generated IDs, timestamps).
+Exception: a loose matcher is allowed only for an uncontrollable value (generated id, timestamp).

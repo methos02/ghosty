@@ -14,6 +14,7 @@ import { computedStyleMock } from '&/utils/mocks/computed-style-mock.js'
 import { popoverMock } from '&/utils/mocks/popover-mock.js'
 import { dialogMock } from '&/utils/mocks/dialog-mock.js'
 import { logMock } from '&/utils/mocks/log-mock.js'
+import { ajaxMock } from '&/utils/mocks/ajax-mock.js'
 import { configureTestUtils } from '&/utils/test-utils-config.js'
 
 // 1. Stubs des APIs navigateur absentes de jsdom.
@@ -33,5 +34,9 @@ app.use(await localePlugin())
 
 // 3. Config globale @vue/test-utils (route courante + stub <router-link>).
 configureTestUtils()
+
+beforeEach(() => {
+  ajaxMock()
+})
 
 await flushPromises()

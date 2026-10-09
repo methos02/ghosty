@@ -1,9 +1,8 @@
 ---
 paths:
   - "package.json"
+  - "package-lock.json"
 ---
 # No Version Bump
 
-Never modify the `version` field of `package.json` (or `package-lock.json`). Versioning is handled by the user / release tooling.
-
-Do not include a "bump version" step in plans. Do not preemptively bump after applying a fix.
+MUST NOT modify the `version` field of `package.json` or `package-lock.json`. The user or the release tooling handles versioning. MUST NOT put a "bump version" step in a plan, nor bump after applying a fix.

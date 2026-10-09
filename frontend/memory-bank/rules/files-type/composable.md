@@ -1,49 +1,39 @@
 ---
 paths:
+  - "**/use-*.js"
   - "src/**/composables/**/*.js"
 ---
-# Composable Rules
+# Composable
 
-A composable is justified by exactly two situations: the same logic is consumed by two or more components, or the component is too large to keep whole and its template must be split (the logic would otherwise be duplicated across the pieces). Otherwise the logic stays in the `.vue` next to its template, even when it reads stores, calls a controller and raises flashes: depending on a store is not a reason to extract.
+A composable is justified by exactly two situations: the same logic is consumed by two or more components, or the component is too large to keep whole and its template must be split (the logic would otherwise be duplicated across the pieces). Otherwise the logic stays in the `.vue` next to its template, even when it reads stores, calls a controller and raises flashes: reading a store is not a reason to extract. Export shape: [composable-store-export-pattern](composable-store-export-pattern.md).
 
-When a composable is justified: use it (not a helper) for a view-oriented function that depends on a store. Helpers are pure JS (`pure-js-no-vue-imports`) and cannot import stores. Keep state in the store; derived UI bindings and orchestration of several stores plus a controller in the composable (`apis/{domain}/composables/use-*.js`).
+When justified, use a composable (not a helper) for a view-oriented function that depends on a store. Helpers are pure JS and cannot import stores ([layer-boundaries](../global/layer-boundaries.md)). The store keeps state; the composable owns derived UI bindings and the orchestration of several stores plus a controller (`apis/{domain}/composables/use-*.js`).
 
 ```js
-// BAD - helper importing a store (violates pure-js-no-vue-imports)
-// src/core/helpers/color-helper.js
-import { colorStore } from '@/core-vue/stores/color-store.js'
-export const colorHelper = {
-  getStyles: (id) => ({ swatch: { backgroundColor: colorStore.get(id)?.hex } })
+// BAD
+import { useNotificationStore } from '@/apis/notifications/stores/notification-store.js'
+
+// BAD
+const getBadge = () => ({ label: unreadCount.value > 99 ? '99+' : String(unreadCount.value) })
+
+// GOOD
+export const useNotificationBadge = () => {
+  const { unreadCount } = useNotificationStore()
+
+  const label = computed(() => (unreadCount.value > 99 ? '99+' : String(unreadCount.value)))
+
+  return { label }
 }
-
-// BAD - UI-specific shape leaking into the store
-// src/core-vue/stores/color-store.js
-const getStyles = (id) => ({
-  text: { color: get(id)?.hex },
-  swatch: { backgroundColor: get(id)?.hex }
-})
-
-// GOOD - composable owns the mapping, store stays pure state
-// src/core-vue/composables/color/use-color-styles.js
-import { colorStore } from '@/core-vue/stores/color-store.js'
-
-const getStyles = (id) => {
-  const hex = colorStore.get(id)?.hex
-  return { hex, text: { color: hex }, swatch: { backgroundColor: hex } }
-}
-
-export const useColorStyles = () => ({ getStyles })
 ```
 
-## Shape API data in the DTO; initialize client state in the composable
+## Client state in the composable, API shape in the DTO
 
-A composable must NOT map raw API/service data into a view-model — API-field shaping belongs in a DTO called by the controller/service. But the composable DOES own **client lifecycle state** of the data it loads (loading status, counters, locally-edited lists); the state of an interaction a component triggers stays in that component (`store-data-only.md`): the DTO cannot provide it because it only maps fields the API actually returns (`dto.md`). So the composable consumes the DTO-mapped result and layers its own state on top.
+A composable MUST NOT map raw API fields into a view-model: that is the DTO's job, called by the controller. The composable DOES own the **client lifecycle state** of the data it loads (loading status, locally-edited lists). The state of an interaction a component triggers stays in that component ([store-data-only](store-data-only.md)).
 
 ```js
-// BAD - composable maps raw API fields into a view-model (the DTO's job)
-genres.value = response.data.map(genre => ({ id: genre.id, name: genre.gen_name, count: 0, status: 'idle' }))
+// BAD
+novels.value = response.data.map(novel => ({ id: novel.id, title: novel.nov_title, status: 'idle' }))
 
-// GOOD - DTO maps the API fields; composable adds the client state it owns
-genres.value = ChangeReportDto.fromManagedGenres(response.data)
-  .map(genre => ({ ...genre, count: 0, status: 'idle', changed: [], unchanged: [] }))
+// GOOD
+novels.value = NovelDto.fromList(response.data).map(novel => ({ ...novel, status: 'idle' }))
 ```

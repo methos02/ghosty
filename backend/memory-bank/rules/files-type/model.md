@@ -4,23 +4,27 @@ paths:
 ---
 # Model Rules
 
-## Column properties live in the ide-helper
+## Column and relation types come from the ide-helper
 
-Column `@property` annotations are generated in `_ide_helper_models.php` via `composer ide-helper` (`--write-mixin`). The model keeps only `@mixin IdeHelperX`, `@property-read` for relations and `@see` ADR pointers. A wrong nullable type is fixed in the migration (make the column non-nullable), never by overriding the annotation.
+`@property` annotations are generated in `_ide_helper_models.php` via `composer ide-helper` (`--write-mixin`), which also types a relation over a non-nullable foreign key as non-nullable (verified: `Chapter::$author` is `User`, `Chapter::$parent` is `Chapter|null`). The model keeps only `@mixin IdeHelperX` and `@see` ADR pointers. MUST fix a wrong nullable type in the migration (make the column non-nullable), never by overriding the annotation.
+
+**BAD**
 
 ```php
-// BAD
 /** @property string $type @property Carbon|null $read_at */
-class Notification extends DatabaseNotification
-
-// GOOD
-/** @see memory-bank/decisions/ADR-10.md @mixin IdeHelperNotification */
 class Notification extends DatabaseNotification
 ```
 
-## Relation guaranteed by the database is non-nullable
+**GOOD**
 
-When a foreign key is non-nullable, declare `@property-read X $relation` in the docblock of the model class (it overrides the `IdeHelper*` mixin, which types every `BelongsTo` as nullable) and read it without a nullsafe guard. Read the id from the column (`$this->author_id`), and guard label access with `whenLoaded()` so serialization never triggers a silent N+1.
+```php
+/** @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md @mixin IdeHelperNotification */
+class Notification extends DatabaseNotification
+```
+
+## Relation over a non-nullable foreign key
+
+Read the id from the column (`$this->author_id`) and guard label access with `whenLoaded()` so serialization never triggers a silent N+1. MUST NOT use a nullsafe on a non-nullable relation.
 
 **BAD**
 
@@ -34,20 +38,10 @@ When a foreign key is non-nullable, declare `@property-read X $relation` in the 
 'author' => $this->whenLoaded('author', fn () => $this->author->username),
 ```
 
-## Reusable behavior → trait in `Concerns/`
+## Reusable behavior goes in a trait in `Models/Concerns/`
 
-Cross-model behavior (slug generation, etc.) lives in a trait under `app/Models/Concerns/`, not inline in the model body. Expose an overridable config hook (e.g. `slugSource()`); the model just does `use TheTrait`. Prefer a native trait over an external package for a simple, single-model need (@see decisions/ADR-02-slug-natif-sans-package.md).
+MUST put cross-model behavior (`HasSlug`, `HasLikes`, `Reportable`) in a trait under `app/Models/Concerns/`, not inline in the model body. Expose an overridable hook (e.g. `slugSource()`); the model only does `use TheTrait`. PREFER a native trait over an external package for a simple need (@see decisions/ADR-02-slug-natif-sans-package.md).
 
-```php
-// GOOD
-class Novel extends Model
-{
-    use HasSlug; // App\Models\Concerns\HasSlug — creating hook + uniqueness
-}
+## Denormalized counters
 
-// BAD - slug/uniqueness logic written inline in the model body
-```
-
-## Denormalized counters must be maintained
-
-A denormalized counter column (`chapter_count`, and future `vote_count` / `comment_count` / `favorites_count`) is read directly by the Resource (no `withCount`). Its value **must** be kept in sync **centrally** — in a model observer or the service that mutates the related records (`increment`/`decrement`) — never left to drift. (@see decisions/ADR-03-compteur-denormalise-chapter-count.md)
+@see global/maintain-invariant-at-source.md

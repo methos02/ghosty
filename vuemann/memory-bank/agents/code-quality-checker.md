@@ -37,8 +37,8 @@ For each file, determine its type based on path patterns:
 | `**/repositories/*.js` | Repository | `files-type/repository.md` |
 | `**/services/*.js` | Service | `files-type/service.md` |
 | `**/dtos/*.js` | DTO | `files-type/dto.md` |
-| `**/*.vue` | Vue Component | `langage/vue/`, `components-vue/` |
-| `**/*.js` (other) | JavaScript | `langage/js/`, `global/` |
+| `**/*.vue` | Vue Component | `language/vue/`, `components-vue/` |
+| `**/*.js` (other) | JavaScript | `language/js/`, `global/` |
 
 **Skip**: `*.test.js`, `*.spec.js` (handled by test-quality-checker)
 
@@ -46,18 +46,15 @@ For each file, determine its type based on path patterns:
 
 **Always load global rules:**
 - `memory-bank/rules/global/no-else-or-v-else.md`
-- `memory-bank/rules/global/function-15-row-max-length.md`
-- `memory-bank/rules/global/no-variable-abbreviations.md`
+- `memory-bank/rules/global/function-body-style.md`
+- `memory-bank/rules/global/naming.md`
 - `memory-bank/rules/global/self-documenting-code.md`
 - `memory-bank/rules/global/prefer-vuemann-helpers.md`
-- `memory-bank/rules/global/keep-it-simple-and-readable.md`
-- `memory-bank/rules/global/prefer-default-values-over-guards.md`
+- `memory-bank/rules/global/prefer-defaults-over-guards.md`
 
 **For Vue files, add:**
-- `memory-bank/rules/langage/vue/inline-class-binding.md`
-- `memory-bank/rules/langage/vue/tag-multiline-attributes-should-have-one-attribute-per-line.md`
-- `memory-bank/rules/langage/vue/prefer-reactive-store-over-events.md`
-- `memory-bank/rules/global/js-logic-in-js-files.md`
+- `memory-bank/rules/language/vue/prefer-reactive-store-over-events.md`
+- `memory-bank/rules/global/layer-boundaries.md`
 
 **For file-type specific, add the corresponding rule.**
 

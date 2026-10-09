@@ -4,28 +4,20 @@ paths:
 ---
 # Interpolation On Own Line
 
-Whenever an HTML element wraps `{{ ... }}` interpolation(s) as its content, format on three lines: opening tag, indented content, closing tag. Applies to **every** element — `<span>`, `<h1>`/`<h2>`/`<h3>`, `<th>`, `<td>`, `<div>`, `<p>`, `<button>`, etc.
+MUST format an element whose content is a `{{ ... }}` interpolation on three lines: opening tag, indented content, closing tag. Applies to every element (`span`, `h1`-`h3`, `th`, `td`, `div`, `p`, `button`...). Targets element **content**, not attributes (Prettier's `singleAttributePerLine` handles those).
 
 ```vue
 <!-- BAD -->
-<span class="label">{{ t('field.lastname') }}</span>
-<h3>{{ t('contracts') }} ({{ count }})</h3>
-<th>{{ t('inscription') }}</th>
-<td>{{ contract.inscription }}</td>
+<span class="label">{{ t('field.title') }}</span>
+<h3>{{ t('chapters') }} ({{ count }})</h3>
 
 <!-- GOOD -->
 <span class="label">
-  {{ t('field.lastname') }}
+  {{ t('field.title') }}
 </span>
 <h3>
-  {{ t('contracts') }} ({{ count }})
+  {{ t('chapters') }} ({{ count }})
 </h3>
-<th>
-  {{ t('inscription') }}
-</th>
-<td>
-  {{ contract.inscription }}
-</td>
 ```
 
-Distinct from the attribute rule (`tag-multiline-attributes-should-have-one-attribute-per-line.md`) — this one targets element **content**, not attributes.
+Accepted cost: **not tool-enforced**. Prettier (`htmlWhitespaceSensitivity: ignore`) collapses short elements such as `<h3>{{ x }}</h3>` onto one line when they fit `printWidth` (verified), so `npm run format` can undo the rule and the repository mixes both forms. Enforcement relies on review.

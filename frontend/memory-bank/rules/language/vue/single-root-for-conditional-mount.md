@@ -2,34 +2,31 @@
 paths:
   - "src/**/*.vue"
 ---
-# Single-Root For Conditional Mount
+# Single Root For Conditional Mount
 
-A `.vue` component mounted by a parent via `v-if` must have a single-root template. Multi-root fragments combined with `v-if` produce rendering glitches under Vue 3 + Vite HMR: partial unmount, ghost siblings, triple render.
+A `.vue` component mounted by a parent through `v-if` MUST have a single-root template. Multi-root fragments combined with `v-if` are reported to glitch under Vue 3 + Vite HMR (partial unmount, ghost siblings, triple render); not re-verified here.
 
-The root must be a **meaningful** element: a class expressing the intent (`f-column`, `card`, component name). Never a bare `<div>` with no attribute. If you already need a wrapper, merge the useful class onto the root rather than adding an extra level.
+The root MUST be a **meaningful** element: a class expressing intent (`f-column`, `card`, the component name), never a bare `<div>`. When a wrapper is needed anyway, put the useful class on the root instead of adding a level.
 
 ```vue
-<!-- BAD - fragment, used as <MyComp v-if="..." /> upstream -->
+<!-- BAD -->
 <template>
   <div>header</div>
   <div>body</div>
-  <SomeDialog />
 </template>
 
-<!-- BAD - single root but empty wrapper -->
+<!-- BAD -->
 <template>
   <div>
-    <div class="f-column g-10">...</div>
-    <div class="d-flex j-end">...</div>
+    <div class="f-column g-10">…</div>
   </div>
 </template>
 
-<!-- GOOD - single root, meaningful class -->
+<!-- GOOD -->
 <template>
-  <div class="my-comp f-column g-10">
+  <div class="chapter-panel f-column g-10">
     <div>header</div>
     <div>body</div>
-    <SomeDialog />
   </div>
 </template>
 ```

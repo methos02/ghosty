@@ -4,8 +4,17 @@ paths:
 ---
 # Boy-Scout Cleanup On Touch
 
-When you touch a file and find it violates an existing convention, bring the **whole file** up to standard in the same change — non-conformance is a defect to fix on sight, not to defer behind an "out of scope" excuse or a separate ticket.
+## Convention violations: fix the whole file
 
-Safe only if the public API and behavior stay identical and tests stay green. Never remove a stub or preview explicitly marked as temporary (e.g. `// ⚠️ TEMP PREVIEW`) — that requires explicit approval.
+When you touch a file that violates an existing convention, MUST bring the **whole file** up to standard in the same change. Non-conformance is a defect to fix on sight, not to defer behind "out of scope" or a separate ticket.
 
-Scope limit: this covers **convention** non-conformance. A distinct functional defect discovered while working is reported, not bundled — see [fix-reported-symptom-only](fix-reported-symptom-only.md).
+Safe only if the public API and the behaviour stay identical and the tests stay green. MUST NOT remove a stub, a preview or a `simulate*` function ([repository](../files-type/repository.md)) without explicit approval.
+
+## Functional defects: report, do not bundle
+
+MUST fix only the symptom actually observed. A **distinct functional defect** found along the way is reported to the developer and fixed only if asked: bundling inflates the diff and mixes an observed bug with a speculative one.
+
+| Found while working | Action |
+|---|---|
+| Convention or style non-conformance in a touched file | Fix in the same change |
+| Distinct functional defect | Report, fix only if asked |

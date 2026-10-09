@@ -44,19 +44,18 @@ Before implementing, read the relevant rules from `memory-bank/rules/`:
 
 **Always load global rules:**
 - `memory-bank/rules/global/no-else-or-v-else.md`
-- `memory-bank/rules/global/function-15-row-max-length.md`
-- `memory-bank/rules/global/no-variable-abbreviations.md`
+- `memory-bank/rules/global/function-body-style.md`
+- `memory-bank/rules/global/naming.md`
 - `memory-bank/rules/global/self-documenting-code.md`
-- `memory-bank/rules/global/keep-it-simple-and-readable.md`
-- `memory-bank/rules/global/prefer-default-values-over-guards.md`
+- `memory-bank/rules/global/prefer-defaults-over-guards.md`
 
 **Based on file types being modified, also load:**
 - Controllers: `memory-bank/rules/files-type/controller.md`
 - Repositories: `memory-bank/rules/files-type/repository.md`
 - Services: `memory-bank/rules/files-type/service.md`
 - DTOs: `memory-bank/rules/files-type/dto.md`
-- Vue components: `memory-bank/rules/langage/vue/` + `memory-bank/rules/components-vue/`
-- JavaScript: `memory-bank/rules/langage/js/`
+- Vue components: `memory-bank/rules/language/vue/` + `memory-bank/rules/components-vue/`
+- JavaScript: `memory-bank/rules/language/js/`
 
 ### Step 4: Execute Plan Steps
 

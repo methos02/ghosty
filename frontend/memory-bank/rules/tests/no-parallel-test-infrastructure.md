@@ -4,23 +4,20 @@ paths:
 ---
 # No Parallel Test Infrastructure
 
-Tests use the infrastructure set up by `setupVuemannTests` (global router, real i18n keys, services manager). Never create local substitutes that shadow the real app infrastructure.
-
-If the global setup is missing something, extend `setup-vuemann-tests.js` or register the missing piece locally (routes, locale keys) — don't build a parallel system.
+Tests use the infrastructure booted by `vitest.setup.js` (services via `servicesBoot.bootServicesOnce()`, global router via `routerPlugin.createAppRouter({ ssr: true })`, translator, `configureTestUtils()` with its `router-link` stub). MUST NOT build local substitutes that shadow it. If something is missing, extend `vitest.setup.js` or `tests/utils/test-utils-config.js`, or register the missing piece locally.
 
 | Violation | Fix |
-|-----------|-----|
-| `createRouter(...)` in a test file | Use the global router from `setupVuemannTests`. Add routes via `routerService.addRoute(...)` in `beforeAll`. |
-| Literal strings passed to `t()` or used as i18n keys (`'app-test'`, `'Home'`, `'My custom message'`) | Register in `src/locales/{lang}/dev-{lang}.json` with `test_` prefix (flat snake_case). Dev locales are in `.npmignore`, not shipped to child apps. |
+|---|---|
+| `createRouter(...)` in a test file | Use the global router; add a route with `routerService.addRoute(...)` in `beforeAll` |
+| A literal string passed to `t()` or used as an i18n key | Use a real key of `src/locales/fr/`; add the key to the matching locale file if absent |
 
 ```js
-// BAD - local router + literal i18n key
+// BAD
 const router = createRouter({ history: createWebHistory(), routes: [...] })
-const wrapper = mount(Comp, { global: { plugins: [router] } })
-expect(wrapper.html()).contains('Api Init') // 'Api Init' used as t() key somewhere
+const wrapper = mount(NotificationsPage, { global: { plugins: [router] } })
 
-// GOOD - extend global setup
-// in beforeAll: routerService.addRoute({ path: '/foo', name: 'foo', component: ... })
-// in src/locales/fr/dev-fr.json: "test_api_init": "Api Init"
-// in test: { label: 'test_api_init' }
+// GOOD
+beforeAll(() => {
+  routerService.addRoute({ path: '/foo', name: 'foo', component: NotificationsPage })
+})
 ```

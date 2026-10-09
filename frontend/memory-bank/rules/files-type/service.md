@@ -1,26 +1,31 @@
 ---
 paths:
-  - "src/**/services/**/*.js"
+  - "src/apis/**/services/**/*.js"
 ---
-# Service Rules
+# Service
 
-Services orchestrate ≥2 controllers. Never call a controller from another controller — create a Service instead.
+A domain service (`src/apis/{domain}/services/`) orchestrates two or more controllers. It is not a Vuemann infrastructure service (`src/services/**`: `ajax`, `form`, `auth`, `locale`...), which follows [layer-boundaries](../global/layer-boundaries.md).
+
+- MUST create a service when a flow needs 2+ controllers. A controller MUST NOT call another controller.
+- MUST NOT create a service around a single controller ([no-passthrough-layers](../global/no-passthrough-layers.md)).
 
 ```
-Component -> Service -> Controller A
-                     -> Controller B
+Component or composable -> Service -> Controller A
+                                   -> Controller B
 ```
 
 ```js
-// GOOD - service orchestrates controllers
-const destroyWithNovels = async (chapterId, novelIds) => {
-  const novelResult = await NovelController.destroys(novelIds)
-  if (!ajaxHelper.isSuccess(novelResult.status)) { return novelResult }
-  return await ChapterController.destroy(chapterId)
+// GOOD
+const publishAndMarkRead = async (chapterId, notificationId) => {
+  const published = await ChapterController.publish(chapterId)
+  if (!ajaxHelper.isSuccess(published.status)) {
+    return published
+  }
+  return await NotificationController.markAsRead(notificationId)
 }
 
-export const NovelChapterService = { destroyWithNovels }
+export const ChapterPublicationService = { publishAndMarkRead }
 
-// BAD - controller imports another controller
-import { NovelController } from './novel-controller.js'
+// BAD
+import { NotificationController } from '@/apis/notifications/controllers/notification-controller.js'
 ```

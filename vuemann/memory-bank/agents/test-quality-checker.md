@@ -32,9 +32,9 @@ Read and apply ALL rule files from `memory-bank/rules/tests/*.md`:
 |----------|------------|
 | Structure | `test-structure.md` |
 | Data | `no-hardcoded-data-but-seeders-instead.md` |
-| Mocking | `test-cleanup.md`, `mock-external-services.md`, `no-mock-current-app-logic.md` |
-| Assertions | `verify-dto-output-in-tests.md`, `compare-with-dto-transformation.md`, `use-toHaveBeenCalledWith-if-argument.md`, `forbidden-test-patterns.md` |
-| Quality | `avoid-redundant-tests.md`, `test-only-useful-behavior.md` |
+| Mocking | `test-cleanup.md`, `no-mock-current-app-logic.md` |
+| Assertions | `test-assertions.md`, `forbidden-test-patterns.md` |
+| Quality | `test-assertions.md` |
 
 For app context, prefix with `node_modules/@brugmann/vuemann/`.
 

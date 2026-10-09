@@ -5,36 +5,34 @@ paths:
 ---
 # No Passthrough Layers
 
-A layer that only delegates without transforming, validating, or orchestrating ≥2 dependencies adds no value. Remove it and consume the underlying layer directly.
+A layer that only delegates, without transforming, validating or orchestrating two or more dependencies, adds nothing. MUST remove it and consume the underlying layer directly.
 
-## Red flags
-
-1. **Composable/context wrapping a singleton store** — if `createXxxContext` + `provide/inject` only exposes a module-level store and wraps a controller call, sibling components must import the store and call the controller directly.
-2. **Service wrapping a single controller** — "orchestrates multiple controllers" is strict: below two, there is nothing to orchestrate. No service; call the controller from the component.
-3. **Single-consumer composable** — a composable used by one component only is inlined: move each function into its sole consumer and delete the file.
-4. **Duplicated validation** — a `service.hasActiveFilters()` or `computed canSearch` that re-checks fields already covered by the form request is duplication. The form request is the single source of truth.
+Red flags:
+1. **Composable or context wrapping a singleton store** and a single controller call: siblings import the store and call the controller directly.
+2. **Service wrapping a single controller**: a service orchestrates at least two ([service](../files-type/service.md)).
+3. **Single-consumer composable**: inline each function in its sole consumer and delete the file.
+4. **Duplicated validation**: a `hasActiveFilters()` or `canSearch` computed re-checking fields the form request already covers. The form request is the single source of truth.
 
 ```js
-// BAD - single-controller service, duplicates form request validation
-const searchByFilters = async (filters) => {
-    if (!hasActiveFilters(filters)) { return { success: false } }
-    const response = await NovelController.search(filters)
-    return { success: ajaxHelper.isSuccess(response.status), data: response.data }
+// BAD
+const searchByFilters = async filters => {
+  if (!hasActiveFilters(filters)) {
+    return { success: false }
+  }
+  const response = await NovelController.list(filters)
+  return { success: ajaxHelper.isSuccess(response.status), data: response.data }
 }
 export const NovelService = { searchByFilters }
 
-// GOOD - no service, logic directly in component
+// GOOD
 const handleSearch = async () => {
-    const validation = searchFormRequest.validate(formData.value)
-    if (!validation.valid) { return }
-    const response = await NovelController.search(formData.value)
-    novelStore.setAll(ajaxHelper.isSuccess(response.status) ? response.data : [])
+  const validation = validateNovelForm(formData.value)
+  if (!validation.valid) {
+    return
+  }
+  const response = await NovelController.list(formData.value)
+  novelStore.addNovels(ajaxHelper.isSuccess(response.status) ? response.data : [])
 }
 ```
 
-## When a layer is justified
-
-- Real transformation (mapping, aggregation, calculation)
-- Orchestration of ≥2 dependencies (≥2 controllers for a service, inter-component coordination for a composable)
-- Page-local state that must not survive unmount (unlike a singleton)
-- Mock injection for integration tests of the component graph
+A layer is justified by: a real transformation (mapping, aggregation, calculation); orchestration of two or more dependencies; page-local state that must not survive unmount; a mock injection point for integration tests of the component graph.

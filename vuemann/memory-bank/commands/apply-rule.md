@@ -64,7 +64,7 @@ For each proposal, answer these questions and reject anything that fails:
 6. **Which folder?**
    - `global/` — applies to all code
    - `files-type/` — applies to a file role (controller, dto, service)
-   - `langage/` — applies to a language (js, vue)
+   - `language/` — applies to a language (js, vue)
    - `tests/` — applies to test files only
 
 7. **Is the proposal an *improvement* to an existing rule rather than a new one?**

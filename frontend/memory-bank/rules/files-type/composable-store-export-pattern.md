@@ -1,74 +1,52 @@
 ---
 paths:
-  - "src/**/stores/**/*.js"
+  - "**/use-*.js"
   - "src/**/composables/**/*.js"
-  - "src/**/composables/**/Use*.js"
+  - "src/**/stores/**/*.js"
 ---
 # Composable Store Export Pattern
 
-Applies to composables and **client-only** stores. A store rendered at SSR follows `request-scoped-store.md` instead — the module-level refs below leak between visitors on the server.
+Applies to composables and **client-only** stores. A store rendered at SSR follows [request-scoped-store](request-scoped-store.md): the module-level refs below leak between visitors on the server.
 
-Composables and stores must return refs/computed at the top level and group functions in a named object matching the store name.
-
-The named object contains **only functions** — never refs. Refs live at the top level of the composable.
-
-Never wrap a composable call in `reactive()` — it masks refs and breaks the contract. Always destructure.
-
-```js
-// GOOD - refs at top level, functions in named object
-const chapter = ref()
-const selectedPrices = ref()
-
-const setChapter = (x) => { chapter.value = x }
-const clearStore = () => { chapter.value = undefined }
-
-export const useChaptersStore = () => {
-  return {
-    chapter,
-    selectedPrices,
-    chaptersStore: {
-      setChapter,
-      clearStore,
-    },
-  }
-}
-
-// Consumer
-const { chapter, selectedPrices, chaptersStore } = useChaptersStore()
-chapter.value                       // script
-chaptersStore.setChapter(x)    // function
-
-// BAD - flat, name collisions, no separation
-export const useChaptersStore = () => ({
-  chapter,
-  selectedPrices,
-  setChapter,
-  clearStore,
-})
-
-// BAD - ref inside the functions object
-export const useChaptersStore = () => ({
-  selectedPrices,
-  chaptersStore: {
-    chapter,        // ← ref inside the named object, forbidden
-    setChapter,
-  },
-})
-
-// BAD - reactive() hides refs and breaks contract
-const chaptersStore = reactive(useChaptersStore())
-chaptersStore.chapter  // looks like a value, actually was a ref
-```
-
-Composables with no refs still group functions in the named object:
+- MUST return refs/computed at the top level of the composable or store.
+- MUST group functions in a named object matching the store name (`useNotificationStore` -> `notificationStore`). The object contains only functions, never refs.
+- MUST destructure the call. MUST NOT wrap it in `reactive()`: it unwraps the refs and hides the contract.
+- A composable without refs still groups its functions in the named object.
+- Exception: a provide/inject helper composable exposes the single function that provides or injects its key (`useHasInlineNotificationDetails`), see [views-vue-only](../global/views-vue-only.md).
 
 ```js
 // GOOD
-export const useTranslatable = () => ({
-  translatable: { translate },
+const notifications = ref([])
+const unreadCount = ref(0)
+
+const markAsRead = notificationId => { ... }
+const clear = () => { ... }
+
+export const useNotificationStore = () => ({
+  notifications: readonly(notifications),
+  unreadCount: readonly(unreadCount),
+  notificationStore: {
+    markAsRead,
+    clear,
+  },
 })
 
-// Consumer
-const { translatable } = useTranslatable()
-translatable.translate(obj, 'label')
+const { notifications, notificationStore } = useNotificationStore()
+notificationStore.markAsRead(notificationId)
+
+// GOOD
+export const useChapterReading = () => ({
+  chapterReading: { load },
+})
+
+// BAD
+export const useNotificationStore = () => ({ notifications, unreadCount, markAsRead, clear })
+
+// BAD
+export const useNotificationStore = () => ({
+  notificationStore: { notifications, markAsRead },
+})
+
+// BAD
+const notificationStore = reactive(useNotificationStore())
 ```

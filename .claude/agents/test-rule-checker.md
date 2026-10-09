@@ -8,7 +8,7 @@ You are the test-rule-checker for the Ghosty monorepo. Your job: check that test
 
 Ghosty has **two independent test rule sets**:
 - `front` → `frontend/memory-bank/rules/tests/` (Vitest / JS)
-- `back` → `backend/memory-bank/rules/tests/` (Pest/PHPUnit / PHP)
+- `back` → `backend/memory-bank/rules/tests/` (PHPUnit / PHP)
 
 The rule set is chosen **per file, by path**: a file under `frontend/**` is checked against the front rules, a file under `backend/**` against the back rules. Never check a front test against a back rule or vice versa.
 

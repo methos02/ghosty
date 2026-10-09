@@ -4,28 +4,22 @@ paths:
 ---
 # Inline Single-Use Assertion Values
 
-A literal used exactly once, only inside one `expect(...)`, must be written inline — not extracted into a named `const` above the assertion. Keep a named variable only when it is reused: across several assertions, or between the call and the expectation.
+Scope: tests of **pure helpers** (no seeder involved, e.g. `date-helper`, `form-helper`). For anything built from entity data, [no-hardcoded-data-but-seeders-instead](no-hardcoded-data-but-seeders-instead.md) wins: read the values from the seeder.
+
+A literal used exactly once, only inside one `expect(...)`, MUST be written inline, not extracted into a named `const` above. Keep a named variable only when it is reused (across assertions, or between the call and the expectation).
 
 ```js
-// BAD - each const is read exactly once, right below its declaration
+// BAD
 it('formats a date to DD/MM/YYYY', () => {
   const inputDate = '2025-04-27'
-  const format = 'DD/MM/YYYY'
   const expected = '27/04/2025'
-  expect(dateHelper.formatDate(inputDate, format)).toBe(expected)
+  expect(dateHelper.formatDate(inputDate, 'DD/MM/YYYY')).toBe(expected)
 })
 
-// GOOD - literals inlined, nothing to name
+// GOOD
 it('formats a date to DD/MM/YYYY', () => {
   expect(dateHelper.formatDate('2025-04-27', 'DD/MM/YYYY')).toBe('27/04/2025')
 })
-
-// GOOD - kept as a variable: `result` is reused across multiple assertions
-it('returns the novel with derived fields', () => {
-  const result = NovelDto.fromShow(getNovelApi())
-  expect(result.title).toBe('The Ghost Ship')
-  expect(result.author.pseudo).toBe('Author 1')
-})
 ```
 
-Grep check: a `const \w+ = '...'` (or a numeric/boolean literal) declared inside an `it` and referenced by name exactly once in the following lines is a violation — inline it.
+Accepted cost: a literal repeated across tests of the same helper is duplicated instead of shared. Grep check: a `const \w+ = '...'` declared in an `it` and referenced once is a violation.

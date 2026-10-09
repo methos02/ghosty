@@ -4,7 +4,7 @@ paths:
 ---
 # Test Structure
 
-One folder per module, one file per method. Always use `.test.js` suffix.
+MUST use one folder per module and one file per method, always with the `.test.js` suffix. Test folders mirror `src/`.
 
 ```
 tests/apis/{domain}/controllers/{controller-name}/
@@ -12,17 +12,19 @@ tests/apis/{domain}/controllers/{controller-name}/
   {controller-name}.{method2}.test.js
 ```
 
-Naming: `{module-name}.{method-name}.test.js`
+Name: `{module-name}.{method-name}.test.js`.
 
 ```js
-// BAD - multiple methods in one file
-describe('controller-name', () => {
-  describe('methodA', () => { ... })
-  describe('methodB', () => { ... }) // SPLIT into separate file
+// BAD
+describe('novel-controller', () => {
+  describe('list', () => { ... })
+  describe('create', () => { ... })
 })
 
-// GOOD - one method per file (auth-store.login.test.js)
-describe('auth-store', () => {
-  describe('login', () => { ... })
+// GOOD
+describe('novel-controller', () => {
+  describe('list', () => { ... })
 })
 ```
+
+Assertion rules: [test-assertions](test-assertions.md).

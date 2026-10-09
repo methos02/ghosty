@@ -5,34 +5,32 @@ paths:
 ---
 # Prefer Reactive Store Over Events
 
-Use reactive composable stores so UI updates automatically. The component that calls an API owns the full consequence: error handling, flash, store update, cleanup.
+MUST use a reactive store so the UI updates on its own. The component that calls an API owns the full consequence: error handling, flash, store update, cleanup. MUST NOT emit an event for the parent to finish the job.
 
 ```js
-// BAD - event-based, split logic
-const deleteSite = async (id) => { await SiteController.delete(id); emit('site-deleted', id) }
-// parent must listen: <Child @site-deleted="onSiteDeleted" />
-
-// GOOD - reactive store, child owns the full action
-// site-store.js
-const sites = ref([])
-const removeSite = (id) => { sites.value = sites.value.filter(site => site.id !== id) }
-export const useSiteStore = () => ({ sites: readonly(sites), removeSite })
-
-// DeleteDialog.vue
-const { removeSite } = useSiteStore()
-const handleDelete = async (id) => {
-    const result = await SiteController.delete(id)
-    if (!ajaxHelper.isSuccess(result.status)) { flash.errorT('error.key'); return }
-    flash.successT('success.key')
-    removeSite(id)
-    close()
+// BAD
+const deleteChapter = async chapterId => {
+  await ChapterController.destroy(chapterId)
+  emit('chapter-deleted', chapterId)
 }
-// ParentComponent.vue — no event handling needed
+
+// GOOD
+const { chapterStore } = useDraftStore()
+
+const deleteChapter = async chapterId => {
+  const result = await ChapterController.destroy(chapterId)
+  if (!ajaxHelper.isSuccess(result.status)) {
+    flash.errorT('error.key')
+    return
+  }
+  flash.successT('success.key')
+  chapterStore.remove(chapterId)
+  close()
+}
 ```
 
-## When events are appropriate
-
-- Component library boundaries (generic reusable components)
-- Native user interactions (`@click`, `@submit`)
-- Passing data to parent (form results, selections): `emit('save', customConfig)`
-- Cross-feature communication where features should not know each other's stores
+Events remain appropriate for:
+- generic reusable components at a library boundary;
+- native interactions (`@click`, `@submit`);
+- handing a result to the parent (`emit('save', formData)`);
+- cross-feature communication where features must not know each other's stores.

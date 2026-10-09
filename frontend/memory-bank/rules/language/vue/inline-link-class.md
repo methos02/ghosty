@@ -5,7 +5,7 @@ paths:
 ---
 # Inline Link Class
 
-A link inside a sentence uses the global `.link-inline` class (`assets/scss/layout/_link.scss`): `--primary` colour, semibold, no underline, underline on hover. Never restyle links locally with `:deep(a)` / `:slotted(a)`.
+A link inside a sentence MUST use the global `.link-inline` class (`assets/scss/layout/_link.scss`): `--primary` colour, semibold, no underline, underline on hover. MUST NOT restyle links locally with `:deep(a)` / `:slotted(a)`.
 
 ```vue
 <!-- BAD -->

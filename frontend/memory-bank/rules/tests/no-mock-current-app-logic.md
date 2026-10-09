@@ -4,30 +4,32 @@ paths:
 ---
 # No Mock Current App Logic
 
-Never mock current app code. Only mock external boundaries.
+MUST mock only external boundaries, never the current app's code. A spy to assert `toHaveBeenCalledWith` is allowed; replacing a return value is not.
 
-| Mock (external) | Don't Mock (current app) |
-|-----------------|--------------------------|
-| Repositories | DTOs |
-| External APIs | Helpers |
-| Browser APIs | Controllers |
-| External services | Services |
+| Mock (external) | Mock method |
+|---|---|
+| Repositories | `vi.spyOn(Repository, 'method').mockResolvedValue(...)` |
+| HTTP / fetch | `globalThis.fetch = vi.fn().mockResolvedValue(...)` |
+| Time | `vi.useFakeTimers()` |
+| Console | `vi.spyOn(console, 'error')` |
 
-You CAN spy on app code to assert `toHaveBeenCalledWith`. You CANNOT mock it to replace its return value.
+| Do not mock (current app) | Do instead |
+|---|---|
+| DTOs, helpers, controllers, services | Run them for real |
+| `utils.hydrate` | Mock the repository its target controller reaches (`byIds`); un-mocked hydration hits the real API and fails with `L'url de l'api ... est invalide` |
+
+`localStorage` / `sessionStorage` work natively in jsdom: do not mock them.
 
 ```js
-// BAD - mocking return value of app code
-vi.spyOn(SiteDto, 'fromList').mockReturnValue(transformedData)
+// BAD
+vi.spyOn(NovelDto, 'fromList').mockReturnValue(transformedData)
+vi.spyOn(utils, 'hydrate').mockResolvedValue(novels)
 
-// BAD - mocking a vuemann helper's return value (utils.hydrate reaches the API)
-vi.spyOn(utils, 'hydrate').mockResolvedValue(dto)
-// -> mock the repository it calls instead (see mock-external-services)
+// GOOD
+vi.spyOn(NovelDto, 'fromList')
+await NovelController.list()
+expect(NovelDto.fromList).toHaveBeenCalledWith(rawNovels)
 
-// GOOD - spy only, assert it was called
-vi.spyOn(SiteDto, 'fromList')
-await SiteController.index()
-expect(SiteDto.fromList).toHaveBeenCalledWith(rawData)
-
-// GOOD - real DTO call in assertion
-expect(SomeService.process).toHaveBeenCalledWith(SiteDto.fromList(rawData))
+// GOOD
+vi.spyOn(AuthorRepository, 'byIds').mockResolvedValueOnce(controllerSuccess({ data: authorsApi }))
 ```

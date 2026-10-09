@@ -4,18 +4,18 @@ paths:
 ---
 # Sync Local State With Store Via Watch
 
-A Vue input that mirrors a shared reactive store value must `watch` it, not initialize once in `onMounted`. The store can be mutated by sibling components, and a one-shot copy will not react.
+A Vue input that mirrors a shared reactive store value MUST `watch` it, not copy it once in `onMounted`: sibling components can mutate the store, and a one-shot copy will not react.
 
-When the input also writes back to the store, prefer `computed({ get, set })` or `defineModel` over a manual `watch` + `@input` pair — the two-way binding stays in one place.
+When the input also writes back to the store, PREFER `computed({ get, set })` or `defineModel` over a manual `watch` + `@input` pair, so the two-way binding stays in one place.
 
 ```js
-// BAD - one-shot copy on mount, ignores later store mutations
+// BAD
 onMounted(() => {
-    searchGenre.value = novelData.value.genre?.name ?? ''
+  searchGenre.value = novelFilter.value.genre?.name ?? ''
 })
 
-// GOOD - reactive sync, picks up sibling-driven store changes
-watch(() => novelData.value.genre?.name, (name) => {
-    searchGenre.value = name ?? ''
+// GOOD
+watch(() => novelFilter.value.genre?.name, name => {
+  searchGenre.value = name ?? ''
 })
 ```

@@ -5,7 +5,7 @@ paths:
 ---
 # Reuse Shared Component First
 
-Before writing button-loading, dialog, dropdown or paginator behaviour, read `src/components/` and the Vuemann equivalent. If the shared component covers the behaviour but not the exact rendering, extend it additively (a named slot, an optional prop) so every caller benefits and nobody maintains a second implementation. Duplicating it in the caller is the last resort, with a stated reason why the shared component could not be extended.
+Before writing button-loading, dialog, dropdown or paginator behaviour, MUST read `src/components/` and the Vuemann equivalent. If the shared component covers the behaviour but not the exact rendering, MUST extend it additively (a named slot, an optional prop) so every caller benefits and nobody maintains a second implementation. Duplicating it in the caller is the last resort, with a stated reason why the shared component could not be extended.
 
 **BAD**
 

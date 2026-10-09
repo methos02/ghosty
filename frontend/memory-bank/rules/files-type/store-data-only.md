@@ -3,7 +3,7 @@ paths:
   - "src/apis/**/stores/**/*.js"
   - "src/**/*.vue"
 ---
-# Store Holds Data Only
+# Store Data Only
 
 A store holds data a request produced and that `serialize()` / `hydrate()` must carry: no `req()`, no controller call. Split stores by concern (filters apart from the collection) instead of growing one.
 

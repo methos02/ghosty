@@ -45,7 +45,7 @@ For each proposal, answer these and reject anything that fails:
 6. **Which folder inside the rule set?**
    - `global/` — applies to all code in the stack
    - `files-type/` — applies to a file role (front: controller, dto, repository, service, composable; back: controller, model, resource, request, policy, seeder)
-   - `langage/` — applies to a language (front: `js`, `vue`, `scss`; back: `php`)
+   - `language/` — applies to a language (front only: `js`, `vue`)
    - `tests/` — test files only
 7. **Improvement to an existing rule?** — If yes → mark **UPDATE** with the target file path.
 
@@ -81,7 +81,7 @@ Read a file before modifying it. Keep changes minimal and focused.
 ## Phase 4: Consume Draft & Report
 
 1. Delete the processed report from `.claude/draft/rules/` (only if at least one proposal was written or explicitly resolved).
-2. Update the rules tree in the relevant `memory-bank/README.md` if it exists (front and/or back).
+2. Do not add the rule to a README tree: READMEs do not list rules (the frontmatter `paths` is the index). Update a README only if a folder's purpose changes.
 3. Report:
 
 ```markdown

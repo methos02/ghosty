@@ -3,63 +3,48 @@ paths:
   - "tests/**/*.test.js"
   - "tests/utils/seeders/**/*.js"
 ---
-# No Hardcoded Data - Use Seeders Instead
+# No Hardcoded Data But Seeders Instead
 
-Never define test data inline in test files. Use seeder files.
+MUST NOT define test data inline in a test file: use the seeders (`tests/utils/seeders/{entity}-seeder.js`, singular, one exported object `{entity}Seeder`). Pure-helper tests follow [inline-single-use-assertion-values](inline-single-use-assertion-values.md) instead.
 
-## Forbidden Patterns
+| Forbidden | Example |
+|---|---|
+| Inline factory | `const createNovel = () => ({ ... })` |
+| Inline test object | `const mockData = { id: 1, name: 'test' }` |
+| Hardcoded assertion value | `expect(result.title).toBe('Le Roman Fantôme')`: read `novel.title` from the seeder |
+| Complex nested override | `getNovel({ author: { id: 1, ... } })` |
+| Inline response object | `{ status: STATUS.SUCCESS, data }`: use `controllerSuccess(data)` |
 
-| Pattern | Example |
-|---------|---------|
-| Inline factory functions | `const createXxx = () => ({...})` |
-| Inline test objects | `const mockData = { id: 1, name: 'test' }` |
-| Hardcoded assertion values | `expect(result.name).toBe('CareUnit1')` -- retrieve dynamically instead |
-| Complex nested overrides | `getUser({ groups: [{ group: { id: 1, ... } }] })` |
-| Inline response objects | `{ status: STATUS.SUCCESS, data: ... }` |
+Only route names and translation keys stay literal. For translated text, the expected value is `t(key, params)` with params read from the seeder.
 
-Exception: imports from `&/utils/helpers/controller-response.js` are shared helpers, not inline data.
+## Seeder forms
 
-## Seeder Location and Naming
-
-Location: `tests/utils/seeders/{entity}-seeder.js` (singular) — export a single object named `{entity}Seeder` (e.g. `novelSeeder`).
+Two forms per entity, both mandatory from the creation of the seeder. The `Api` form is the single source of truth (snake_case, as returned by the backend); the domain form is **derived from it through the real DTO**, so it stays in sync and exercises the actual transformation.
 
 | Suffix | Purpose | Example |
-|--------|---------|---------|
-| `Api` | Raw API payload (snake_case), source of truth | `getSiteApi()`, `getSitesApi(2)` |
-| *(none)* | Domain form (camelCase), derived from the real DTO | `getSite()`, `getSites(2)` |
-| `Data` | Form/user input data | `getSiteData()`, `getSitesData(2)` |
-
-## Seeder Structure
-
-Two forms per entity, like a Laravel factory: the `Api` form is the single source of truth (snake_case, as returned by the backend); the domain form is derived from it through the real DTO, so it stays in sync automatically and exercises the actual transformation instead of a hand-duplicated shape.
+|---|---|---|
+| `Api` | Raw API payload | `getNovelApi()`, `getNovelsApi(2)` |
+| none | Domain form via the DTO | `getNovel()`, `getNovels(2)` |
+| `Form` | Form input data | `getCreateForm()` |
 
 ```js
-// tests/utils/seeders/site-seeder.js
-import { SiteDto } from '@/apis/sites/dtos/site-dto.js'
+import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 
-const getSitesApi = (count = 3, options = {}) => {
-  const sites = []
-  for (let index = 1; index <= count; index++) {
-    sites.push({
-      id: options.startId ? options.startId + index - 1 : index,
-      name: options.name ?? `Site ${index}`
-    })
-  }
-  return sites
-}
-const getSiteApi = (overrides = {}) => getSitesApi(1, overrides)[0]
+const getNovelApi = (overrides = {}) => ({
+  id: 1,
+  slug: 'le-roman-fantome',
+  title: 'Le Roman Fantôme',
+  ...overrides,
+})
 
-const getSite = (overrides = {}) => ({ ...SiteDto.fromShow(getSiteApi()), ...overrides })
-const getSites = (count = 3) => SiteDto.fromList(getSitesApi(count))
+const getNovelsApi = (count = 3) =>
+  Array.from({ length: count }, (_, index) => getNovelApi({ id: index + 1 }))
 
-export const siteSeeder = { getSiteApi, getSitesApi, getSite, getSites }
+const getNovel = (overrides = {}) => ({ ...NovelDto.fromShow(getNovelApi()), ...overrides })
+const getNovels = (count = 3) => NovelDto.fromList(getNovelsApi(count))
+
+export const novelSeeder = { getNovelApi, getNovelsApi, getNovel, getNovels }
 ```
-
-Both forms are mandatory from the moment a seeder is created — never ship `getXxxApi()` alone and defer `getXxx()` to a later change. A seeder without its DTO-derived domain form is incomplete, not a valid intermediate state.
-
-Tests reference seeded fields (`site.slug`, `site.name`) rather than duplicating literals in assertions.
-
-No exception for translated text: the expected value is `t(key, params)` with params read from the seeder. DTO test expectations read from the seeder `Api` data. Only route names and translation keys stay literal.
 
 ```js
 // BAD
@@ -67,17 +52,9 @@ expect(wrapper.text()).toContain('Alice a aimé votre chapitre')
 
 // GOOD
 const api = notificationSeeder.getNotificationApi()
-expect(wrapper.text()).toContain(t('like_received_notification.one', { author: api.data.last_actor_username }))
-```
-
-## Response Helpers
-
-`&/utils/helpers/controller-response.js` — wraps seeder data in the standard controller response format.
-
-```js
-import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
-
-vi.spyOn(Repository, 'index').mockResolvedValueOnce(
-  controllerSuccess({ items: getSitesApi(2), total: 2 })
+expect(wrapper.text()).toContain(
+  t('like_received_notification.one', { author: api.data.last_actor_username }),
 )
 ```
+
+Response helpers `controllerSuccess(data)` / `controllerError(status, error)` (`&/utils/helpers/controller-response.js`) wrap seeder data in the standard controller response.

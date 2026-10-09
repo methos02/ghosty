@@ -1,53 +1,55 @@
 ---
 paths:
   - "src/**/repositories/**/*.js"
+  - "**/*-repository.js"
 ---
-# Repository Rules
+# Repository
 
-Repository functions receive only an `options` object and pass it directly to `req()`. No transformation of params/body. Controller builds `{ params, body }`. Repository may add `headers` or other request options.
+A repository function receives only an `options` object and passes it to `req()` unchanged. The controller builds `{ params, body }`. A repository MAY add request options (`headers`, `empty404`, `no-flash`).
 
 ```js
 // GOOD
-const getBySlug = async (options) => {
+const getBySlug = async options => {
   return await req('novel.show', options)
 }
-// Called with: Repository.getBySlug({ params: { slug } })
 
-// GOOD - repository adds request option
-const getBySlug = async (options) => {
+// GOOD
+const getBySlug = async options => {
   return await req('novel.show', { ...options, empty404: true })
 }
 
-// BAD - individual parameters
-const getBySlug = async (slug) => {
+// BAD
+const getBySlug = async slug => {
   return await req('novel.show', { params: { slug } })
 }
 ```
 
-## Simulating an absent API (mock-first)
+## Simulating an absent API
 
-When the backend route does not exist yet, the repository is the API-simulation layer: after the `req()` call it injects the data the real endpoint will return (or returns a localStorage mock in place of `req()`). Controllers, services and DTOs stay backend-agnostic — when the real API ships you delete the injection and nothing else changes.
+When a backend route does not exist yet, the repository is the only simulation layer: after the `req()` call it injects the data the real endpoint will return. Controllers, services and DTOs stay backend-agnostic: when the real API ships, delete the simulation and nothing else changes.
 
-The repository owns the raw API shape, so here it may read/write **snake_case** API fields — write the exact key the real endpoint will return so the existing DTO already maps it. This is the one place exempt from `no-api-names-outside-dto`.
-
-**Mandatory marker.** Every mock injection must carry a greppable `// ⚠️ MOCK API` marker naming the route that will replace it, so the scaffolding is findable and deletable when the real endpoint ships. An unmarked mock is indistinguishable from real wiring and becomes permanent. Grep `⚠️ MOCK API` to audit what is still simulated.
+- The repository owns the raw API shape: it MAY write the **snake_case** key the real endpoint will return, so the existing DTO already maps it. This is the only exemption to "API names stay in the DTO" ([dto](dto.md)).
+- MUST isolate each simulation in a function named `simulate{Field}`, called from the repository function. `grep simulate` lists what is still simulated; an unnamed injection becomes permanent.
+- MUST NOT simulate in a controller, a service or a DTO.
 
 ```js
-// GOOD - repository writes the snake_case key the real API will return; the DTO maps it downstream
-const getNovel = async (options) => {
-  const response = await req('ghosty.novel.show', { ...options, empty404: true })
-  // ⚠️ MOCK API - remove when ghosty.novel.publication_status exists
+// GOOD
+const simulatePublicationStatus = novel => {
+  novel.publication_status = 'draft'
+}
+
+const getBySlug = async options => {
+  const response = await req('novel.show', { ...options, empty404: true })
   if (response.data?.novel) {
-    response.data.novel.publication_status =
-      PublicationRepository.getStatus(response.data.novel.id)
+    simulatePublicationStatus(response.data.novel)
   }
   return response
 }
 
-// BAD - enrichment leaked into the controller; must be ripped out (and the DTO reworked) when the API ships
-const getNovel = async (slug) => {
-  const response = await NovelController.show(slug)
-  response.data.publicationStatus = PublicationRepository.getStatus(response.data.id)
+// BAD
+const show = async slug => {
+  const response = await NovelRepository.getBySlug({ params: { slug } })
+  response.data.publicationStatus = 'draft'
   return response
 }
 ```

@@ -10,7 +10,7 @@ Apply the plan "$ARGUMENTS" to the current project with full quality assurance. 
 - **Source rules base path** (resolved from context):
   - vuemann: `memory-bank/rules/`
   - app: `node_modules/@brugmann/vuemann/memory-bank/rules/`
-  - Subfolders used below: `global/*.md`, `files-type/*.md`, `langage/**/*.md`, `tests/*.md`
+  - Subfolders used below: `global/*.md`, `files-type/*.md`, `language/**/*.md`, `tests/*.md`
 
 # Workflow
 
@@ -63,7 +63,7 @@ Apply the steps from the plan that match the detected context.
 **Agent**: `code-quality-checker`
 **Input**: Context: `{vuemann|app}`
 
-1. Read ALL source rule files: `{rules-base}/global/*.md`, `{rules-base}/files-type/*.md`, `{rules-base}/langage/**/*.md`
+1. Read ALL source rule files: `{rules-base}/global/*.md`, `{rules-base}/files-type/*.md`, `{rules-base}/language/**/*.md`
 2. Find modified source files via `git diff --name-only` (filter `src/**/*.js`, `src/**/*.vue`)
 3. For each file, check against rules matching its path (use frontmatter `paths` to filter)
 4. Apply corrections
@@ -81,9 +81,8 @@ Exit condition: **ALL_FILES_COMPLIANT**
 3. For each modified source file, create or update the corresponding test file following:
    - File structure from `test-structure.md`
    - Seeder pattern from `no-hardcoded-data-but-seeders-instead.md`
-   - Mock rules from `mock-external-services.md`, `no-mock-current-app-logic.md`, `test-cleanup.md`
-   - Assertion rules from `verify-dto-output-in-tests.md`, `compare-with-dto-transformation.md`, `use-toHaveBeenCalledWith-if-argument.md`, `forbidden-test-patterns.md`
-   - Quality rules from `avoid-redundant-tests.md`, `test-only-useful-behavior.md`
+   - Mock rules from `no-mock-current-app-logic.md`, `test-cleanup.md`
+   - Assertion rules from `test-assertions.md`, `forbidden-test-patterns.md`
 
 ## Step 4: Test Quality Loop
 **Agent**: `test-quality-checker`

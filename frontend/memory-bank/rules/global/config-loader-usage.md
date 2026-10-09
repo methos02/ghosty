@@ -1,49 +1,37 @@
 ---
 paths:
   - "src/config/**/*.js"
-  - "src/main.js"
   - "src/**/*.vue"
   - "src/**/*.js"
 ---
-# ConfigLoader Usage
+# Config Loader Usage
 
-Config modules registered through `ConfigLoader.init({...})` must be **plain data objects**, never service objects with methods. Lookups go through `ConfigLoader.get`/`ConfigLoader.find` directly — no wrapper helper duplicating the lookup. Use `.get` when the value MUST exist (fail loud on broken config); use `.find` with a default when the lookup may legitimately miss. Only register a config in `ConfigLoader.init` if at least one consumer reads it back — dead registrations are noise.
+`src/config/config-loader.js` imports every config module and holds them in one `configUser` object (`locales`, `routes`, `routesApi`, `app`, `reading`). `ConfigLoader.get(key)` throws `Key "..." not found`; `find(key, default)` returns the default; `has(key)` tests; `set(path, value)` writes at runtime; `init(configs)` merges namespaces and is not used by the app.
 
-```js
-// BAD - config module is a service object hiding ConfigLoader behind a method
-const CONFIG = { 1: { suffix: 'box' }, 2: { suffix: 'room' } }
-export const resourceTypeConfig = {
-  getConfig: (id) => CONFIG[id] ?? DEFAULT_CONFIG
-}
-// consumer:
-const mode = resourceTypeConfig.getConfig(id).authorMode
-
-// GOOD - plain data registered once, queried via ConfigLoader at the consumer
-// src/config/resource-type-config.js
-export const resourceTypeConfig = {
-  1: { suffix: 'box',  authorMode: 'single'   },
-  2: { suffix: 'room', authorMode: 'multiple' }
-}
-// src/main.js
-ConfigLoader.init({ resourceType: resourceTypeConfig, ... })
-// anywhere - dynamic path lookup directly in a computed
-const mode = computed(() =>
-  ConfigLoader.find(`resourceType.${id.value}.authorMode`, 'single')
-)
-```
-
-## Read config through ConfigLoader, never by importing the config module
-
-Never `import { xxxConfig } from '@/config/xxx-config.js'` at a consumer — read the value with `ConfigLoader.get('<namespace>.<key>')`. Direct imports are reserved for the `ConfigLoader.init` call sites (`src/main.js`, `vitest.setup.js`). Any namespace read at runtime must be registered in **both** init sites — a missing registration is silent until the first `get`, which throws `Key "…" not found`.
-
-## Never call ConfigLoader.get() at module level
-
-`ConfigLoader.init()` runs in the body of `main.js`, which executes **after** the whole import graph reachable from `App.vue` has been evaluated. A module-level `get()` therefore throws `Key not found` at boot — and the tests do not catch it, because `vitest.setup` runs `init` before the test modules import. Call `get` inside the function that needs the value; if the derived value is expensive, memoize inside the accessor — never hoist it to module scope.
+- A config module (`src/config/*-config.js`) MUST be a plain data object, never a service object with methods.
+- Only `config-loader.js` MAY import a `*-config.js` module. Any other file reads the value with `ConfigLoader.get('<namespace>.<key>')`, which fails loud on a broken config.
+- Use `find` with a default only when the lookup may legitimately miss.
+- MUST register a config module in `configUser` before reading it through `ConfigLoader`, and only if a consumer reads it: a dead registration is noise.
+- MUST NOT wrap `ConfigLoader.get` / `find` in a helper that only duplicates the lookup.
+- MUST NOT read a key at module level when it is written at runtime by `set` / `init`. Namespaces declared statically in `configUser` are available at import time.
 
 ```js
-// BAD - evaluated at import time, before ConfigLoader.init has run
-const dayStartMinutes = timeToMinutes(ConfigLoader.get('calendar.dayStart'))
+// BAD
+import { reportConfig } from '@/config/report-config.js'
+const maxLength = reportConfig.descriptionMaxLength
 
-// GOOD - evaluated at call time
-const dayStartMinutes = () => timeToMinutes(ConfigLoader.get('calendar.dayStart'))
+// BAD
+export const reportConfig = {
+  getMaxLength: () => 1000,
+}
+
+// GOOD
+export const reportConfig = {
+  descriptionMaxLength: 1000,
+}
+const configUser = { app, report: reportConfig }
+
+// GOOD
+const maxLength = ConfigLoader.get('report.descriptionMaxLength')
+const defaultValue = computed(() => ConfigLoader.find(`reading.${setting.value}.default`, 0))
 ```

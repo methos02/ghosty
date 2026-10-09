@@ -2,88 +2,36 @@
 paths:
   - "backend/tests/**/*.php"
 ---
-# Test Structure & Conventions
+# Test Structure
 
-Standards for backend tests (PHPUnit 11, Laravel 13). API pure : JSON + Sanctum.
+PHPUnit 12, Laravel 13, JSON API with Sanctum.
 
-## Organization
+## Layout and file names
 
-Les tests miroir la structure de l'application, dans un dossier par unité source. **Le nom de fichier est obligatoire et non négociable** : il doit à lui seul identifier l'unité source ET le sujet, sans jamais avoir besoin de lire le chemin (onglet IDE, filtre PHPUnit `--filter=...`, stack trace).
+Tests mirror the source, one folder per source unit. The file name MUST identify the source unit and the subject on its own (IDE tab, `--filter`, stack trace); a short subject-only name is non-compliant.
 
-| Source | Dossier de test | Nom de fichier obligatoire |
-|--------|------------------|------------------------------|
-| `app/Http/Controllers/Api/V1/{Controller}.php` | `tests/Feature/Api/V1/{Controller}/` | `{Controller}{Method}Test.php` |
-| `app/Http/Requests/{Request}.php` | `tests/Feature/Requests/` | `{Request}Test.php` |
-| `app/Models/{Model}.php` | `tests/Feature/Models/` | `{Model}ModelTest.php` |
+| Source | Test folder | File name |
+|---|---|---|
+| `Http/Controllers/Api/V1/{Controller}.php` | `tests/Feature/Api/V1/{Controller}/` | `{Controller}{Method}Test.php` |
+| `Models/{Model}.php` | `tests/Feature/Models/` | `{Model}ModelTest.php` |
+| `Services/{Service}.php` | `tests/Feature/Services/` | `{Service}Test.php` |
+| `Support/{Support}.php` | `tests/Feature/Support/` (database-free: `tests/Unit/Support/`) | `{Support}Test.php` |
+| `Rules/`, `Console/Commands/` | `tests/Feature/Rules/`, `tests/Feature/Console/` | `{Class}Test.php` |
 
-**Interdiction stricte** du nom court (sujet seul, sans suffixe d'unité) — comparer nom par nom, pas seulement colonne par colonne :
+**BAD** `RegisterTest.php`, `GenreTest.php`. **GOOD** `AuthControllerRegisterTest.php`, `GenreModelTest.php`.
 
-```
-✅ AuthControllerRegisterTest.php   ❌ RegisterTest.php
-✅ NovelControllerIndexTest.php     ❌ IndexTest.php
-✅ GenreModelTest.php               ❌ GenreTest.php
-```
+The folder + file-name double mention is intended. Class name MUST equal file name (PSR-4), ending in `Test`.
 
-Un nom de test contrôleur qui ne contient pas `Controller` avant le suffixe `{Method}Test`, ou un nom de test modèle qui ne finit pas par `ModelTest`, est **non conforme** : à corriger avant la revue, pas une variante tolérée.
+## Class
 
-Critère vérifiable (grep) : dans `tests/Feature/Api/V1/**`, tout `*Test.php` doit matcher `Controller[A-Z][A-Za-z0-9]*Test\.php$` ; dans `tests/Feature/Models/`, tout fichier doit matcher `ModelTest\.php$`. Un fichier qui ne matche pas est à renommer.
+- MUST use the `#[Test]` attribute (never the `test_` prefix), extend `Tests\TestCase` (provides `RefreshDatabase`, `getDatas`, `hasFormRequest`), name methods in descriptive `snake_case`.
+- One test = one scenario = one reason to fail.
+- Each test is independent. Laravel resets the DB and fakes; clear anything else yourself, e.g. `Cache::flush()` at the start of a cache test (the `array` store persists across tests).
+- Test data: set `protected array $datas` (`username`, `email`...) and override per case with `$this->getDatas(['email' => 'invalid'])`.
+- MUST create models with factories (`User::factory()`), after checking existing states (`banned()`). Unit tests without database build models with `forceFill([...])`: `new Chapter(['id' => 10])` leaves `id` null because the column is guarded.
 
-La double mention (dossier `NovelController/` + fichier `NovelController...Test`) est **assumée** : le dossier évite d'entasser des centaines de fichiers à plat, le nom reste lisible seul — ce n'est pas une redondance à supprimer.
+## Controller tests
 
-Contraintes PHPUnit : le fichier doit finir par `Test.php` (discovery) et le nom de classe == nom de fichier (PSR-4 `Tests\`) — pas de tiret, casse `PascalCase`.
-
-## Class Structure
-
-- Attribut `#[Test]` (jamais le préfixe `test_`)
-- Étendre `Tests\TestCase` (fournit déjà `RefreshDatabase`, `getDatas`, `hasFormRequest`)
-- Nom de méthode descriptif en `snake_case`
-- **Un test = un scénario = une raison d'échouer**
-
-## Controller Tests — 3 volets
-
-1. **FormRequest** (si le contrôleur en a un) :
-   ```php
-   #[Test]
-   public function form_request(): void
-   {
-       $this->assertTrue($this->hasFormRequest(AuthController::class, 'register', RegisterRequest::class));
-   }
-   ```
-2. **Middleware / protection** — pour une route protégée, deux tests complémentaires, pas un seul :
-   - le contrat observable (comportemental) :
-   ```php
-   #[Test]
-   public function requires_authentication(): void
-   {
-       $this->postJson('/api/v1/auth/logout')->assertUnauthorized();
-   }
-   ```
-   - si la route porte des middlewares, un **unique** test structurel `has_middleware()` par route/action qui assert la liste **complète**, insensible à l'ordre (`assertEqualsCanonicalizing`) — jamais un test par middleware, tout ajout ou retrait fait échouer le test :
-   ```php
-   #[Test]
-   public function has_middleware(): void
-   {
-       $route = Route::getRoutes()->getByAction(AuthController::class.'@logout');
-       $this->assertNotNull($route);
-       $this->assertEqualsCanonicalizing(['auth:sanctum'], $route->gatherMiddleware());
-   }
-   ```
-3. **Fonctionnels** — comportement : `registers_user`, `rejects_invalid_password`, une règle de validation par test.
-
-## Factories
-
-**Toujours** utiliser les factories pour créer des modèles (`User::factory()`, `Genre::factory()`, `Novel::factory()`). Vérifier les states custom (ex. `banned()`) avant tout setup manuel.
-
-Unit tests without a database build models with `forceFill([...])`: `new Chapter(['id' => 10])` leaves `id` null because the column is guarded.
-
-## Test Data
-
-```php
-protected array $datas = ['pseudo' => 'John', 'email' => 'john@example.com', ...];
-
-$this->postJson('/api/v1/auth/register', $this->getDatas(['email' => 'invalid']));
-```
-
-## Assertions
-
-`assertOk()`, `assertCreated()`, `assertStatus(422)`, `assertUnauthorized()`, `assertJsonValidationErrors([...])`, `assertJsonStructure([...])`, `assertJsonPath()`, `assertDatabaseHas()`. Relire la DB avec `$model->refresh()` si besoin.
+1. **FormRequest**, if the action has one: `$this->assertTrue($this->hasFormRequest(AuthController::class, 'register', RegisterRequest::class))`.
+2. **Protected route**: one behavioral test (`requires_authentication`: `postJson(...)->assertUnauthorized()`) and, if the route has middleware, ONE `has_middleware()` test per action asserting the full list with `assertEqualsCanonicalizing` against `Route::getRoutes()->getByAction(Controller::class.'@action')->gatherMiddleware()`. MUST NOT write one test per middleware.
+3. **Functional**: `registers_user`, `rejects_invalid_password`; validation rules per @see tests/test-behavior.md.

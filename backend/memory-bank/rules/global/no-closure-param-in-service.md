@@ -2,17 +2,17 @@
 paths:
   - "backend/app/Services/**/*.php"
 ---
-# No Closure Parameter In Service Methods
+# No Closure Param In Service
 
-A service method never takes a closure to run "in the middle" (snapshot before, run, snapshot after). The caller chains the steps explicitly and passes plain values. Closures stay fine for framework callbacks (transactions, collections, `updateOrCreate` data builders).
+A service method MUST NOT take a closure to run "in the middle" (snapshot before, run, snapshot after). The caller chains the steps explicitly and passes plain values. Closures remain allowed for framework callbacks (transactions, collections, `updateOrCreate` data builders).
 
 ```php
 // BAD
-$this->notificationService->watchCurrentBranch($novelId, null, fn () => $this->recomputeBranchLikeCounts($novel));
+$this->notificationService->watchMainBranch($novelId, fn () => $this->branchService->recomputeBranchLikes($novel));
 
 // GOOD
 $previousLastChapter = $this->chaptersR->lastChapterOfMainBranch($novel->id);
-$this->recomputeBranchLikeCounts($novel);
-$newLastChapter = $this->updateLastChapterOfMainBranch($novel);
+$this->branchService->recomputeBranchLikes($novel);
+$newLastChapter = $this->branchService->updateLastChapterOfMainBranch($novel);
 $this->notificationService->mainBranchSwitch($previousLastChapter, $newLastChapter);
 ```

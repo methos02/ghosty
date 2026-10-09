@@ -4,20 +4,20 @@ paths:
 ---
 # Teleport Nested Dialogs
 
-A `DialogComponent` instantiated in the subtree of another `DialogComponent` must be wrapped in `<Teleport to="body">`. The native `<dialog>` element has unreliable visibility when nested inside another open `<dialog>`: the content of the closed inner dialog leaks into the visible parent dialog.
+A `DialogComponent` (native `<dialog>`) instantiated in the subtree of another `DialogComponent` MUST be wrapped in `<Teleport to="body">`. A native `<dialog>` nested in an open one has unreliable visibility: the closed inner content leaks into the parent dialog. This is browser behaviour that jsdom tests do not cover.
 
 ```vue
-<!-- BAD - inner dialog nested in the outer dialog's DOM -->
+<!-- BAD -->
 <DialogComponent ref="outer">
-  <MyFormContent />
-  <ConfirmDialogComponent ref="innerConfirm" />
+  <NovelManageForm />
+  <DialogComponent ref="inner" />
 </DialogComponent>
 
-<!-- GOOD - inner dialog teleported to body -->
+<!-- GOOD -->
 <DialogComponent ref="outer">
-  <MyFormContent />
+  <NovelManageForm />
   <Teleport to="body">
-    <ConfirmDialogComponent ref="innerConfirm" />
+    <DialogComponent ref="inner" />
   </Teleport>
 </DialogComponent>
 ```

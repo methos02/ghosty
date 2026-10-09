@@ -5,11 +5,10 @@ paths:
 ---
 # Pass Data Object To Controllers
 
-When calling a controller that forwards data to an API, pass the source data object as one piece. The DTO of the controller is the single transformation point. Do not destructure fields at the call site — the controller would only re-assemble them, and the DTO loses its role as the boundary.
+When calling a controller that forwards data to an API, MUST pass the source data object as one piece. The controller's DTO is the single transformation point. MUST NOT destructure fields at the call site — the controller would only re-assemble them, and the DTO loses its role as the boundary.
 
 ```js
-// BAD - data destructured at the call site, re-bundled inside the controller
-//       only to be handed to the DTO
+// BAD
 AuthorController.chapterSearch(formData.search, formData.genreId, formData.onlyActive)
 
 const chapterSearch = async (search, genreId, onlyActive) => {
@@ -17,7 +16,7 @@ const chapterSearch = async (search, genreId, onlyActive) => {
     return Repository.search({ params })
 }
 
-// GOOD - the data object travels intact; the DTO owns the transformation
+// GOOD
 AuthorController.chapterSearch(formData)
 
 const chapterSearch = async (filters) => {

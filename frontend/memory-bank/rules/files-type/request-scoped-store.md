@@ -20,7 +20,7 @@ const novelStore = () => {
 
 export const createNovelStore = () => novelStore()
 
-// BAD - module-level ref, shared by every SSR request
+// BAD
 const novels = ref([])
 export const useNovelStore = () => ({ novels, novelStore: { setNovels } })
 ```

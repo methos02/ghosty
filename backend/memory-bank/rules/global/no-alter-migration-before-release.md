@@ -2,7 +2,7 @@
 paths:
   - "backend/database/migrations/**"
 ---
-# No Alter Migration Before First Release
+# No Alter Migration Before Release
 
 While no version runs in production, data is disposable: edit the `create_*` migration of the table and run `php artisan migrate:fresh --seed`. Never add an `add_*` / `alter_*` migration. A foreign key to a table created later is declared in the migration that creates that table.
 

@@ -5,35 +5,32 @@ paths:
 ---
 # Prefer Vuemann Helpers
 
-Always use Vuemann helpers instead of manual checks or custom implementations.
+MUST use the existing helper (`src/core/helpers/`, documented in `memory-bank/doc/helpers/`) instead of a manual check or a custom implementation.
 
 ```js
-// BAD - manual empty check
-hasValue: boxAttribute !== undefined && boxAttribute.value !== null && boxAttribute.value !== ''
+// BAD
+const hasValue = summary !== undefined && summary !== null && summary !== ''
 // GOOD
-import { FormHelper } from '@brugmann/vuemann/src/helpers/form-helper.js'
-hasValue: !FormHelper.isEmpty(boxAttribute)
+import { FormHelper } from '@/core/helpers/form-helper.js'
+const hasValue = !FormHelper.isEmpty(summary)
 
-// BAD - manual date formatting
+// BAD
 const formatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
 // GOOD
-import { dateHelper } from '@brugmann/vuemann/src/helpers/date-helper.js'
+import { dateHelper } from '@/core/helpers/date-helper.js'
 const formatted = dateHelper.formatDate(date, 'DD/MM/YYYY')
 
-// BAD - JSON trick (fails with dates, functions, undefined)
+// BAD
 const copy = JSON.parse(JSON.stringify(original))
 // GOOD
-import { utilsH } from '@brugmann/vuemann/src/helpers/utils-helper.js'
+import { utilsH } from '@/core/helpers/utils-helper.js'
 const copy = utilsH.copyObject(original)
 
-// BAD - direct console usage (bypasses log service, requires eslint-disable)
+// BAD
 console.error('API unreachable')
 // GOOD
-import { log } from '@brugmann/vuemann/src/shortcuts/services-shortcut.js'
+import { log } from '@/services/shortcuts/services-shortcut.js'
 log.error('API unreachable')
-
 ```
 
-**Exception**: `log-service.js` is the only file allowed to use `console` directly (it's the underlying implementation).
-
-See `CLAUDE.md` Helpers section for full list.
+Exception: `src/services/shortcuts/log-shortcut.js` is the only file allowed to use `console` (the `no-console` ESLint rule is a warning and covers the rest).

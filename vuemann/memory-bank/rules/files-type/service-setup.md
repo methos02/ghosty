@@ -1,56 +1,29 @@
 ---
 paths:
-  - "src/**/services/*/*-service.js"
-  - "src/**/services/*/src/*-setup.js"
-  - "src/**/services/**/*-init.js"
+  - "src/services/*/*-service.js"
+  - "src/services/*/src/*-setup.js"
+  - "src/services/*/*-init.js"
 ---
-# Service Setup File
+# Service Setup
 
-Lifecycle code for a service (setup, stop, DOM listeners, handlers, anything tied to service start/teardown) goes in a dedicated `xxx-setup.js` file under the service's `src/`. The `*-init.js` `setup` field references `xxxSetup.setup`. Keep `xxx-service.js` for the public API only — methods consumed by the helper and by child apps.
+MUST put lifecycle code (setup, stop, DOM listeners, handlers) in `src/services/<name>/src/<name>-setup.js`. The init references it with `setup: <name>Setup.setup`. `<name>-service.js` keeps the public API only.
 
-Reason: lifecycle methods registered on the service object leak out via `servicesM.service('xxx:start')`, an unintended public surface. Splitting forces the registry to expose only the methods that have a corresponding helper.
-
-## Layout
-
-```
-src/services/xxx/
-├── xxx-service.js       # public API only (list, get, ...)
-├── xxx-init.js          # setup: xxxSetup.setup
-└── src/
-    ├── xxx-setup.js     # setup, stop, handlers, listeners
-    └── ...              # internal models / state
-```
-
-The matching `xxx-shortcut.js` (public API mirror) lives in `src/shortcuts/`.
-
-## Examples
+Why: a lifecycle method on the registered service object leaks through `servicesM.service('<name>:start')`. Splitting limits the registry to methods that have a shortcut.
 
 ```js
-// BAD - lifecycle on registered service object
-// xxx-service.js
-const start = () => { /* opens BroadcastChannel, adds listeners */ }
-const stop = () => { /* closes channel, removes listeners */ }
-const list = () => { ... }
+// BAD
 export const xxxService = { start, stop, list }
-
-// xxx-init.js
-setup: xxxService.start  // start leaks via servicesM.service('xxx:start')
+setup: xxxService.start
 ```
 
 ```js
-// GOOD - lifecycle isolated, registered service stays minimal
-// xxx-service.js
-const list = () => { ... }
+// GOOD
 export const xxxService = { list }
-
-// xxx-setup.js
-const setup = () => { /* opens channel, adds listeners */ }
-const stop = () => { /* closes channel, removes listeners */ }
 export const xxxSetup = { setup }
-export const xxxSetupInternal = { stop, handlers... }
-
-// xxx-init.js
+export const xxxSetupInternal = { stop, handlePageHide }
 setup: xxxSetup.setup
 ```
 
-Reference implementation: `src/services/tabs/src/tabs-setup.js`.
+BAD puts `start` / `stop` on `xxx-service.js` and references it from `xxx-init.js`. GOOD keeps `xxx-service.js` minimal, exports `xxxSetup` from `src/xxx-setup.js` and references it from `xxx-init.js`.
+
+`setup` returns `{ status: BOOT_STATUS.SUCCESS }` (or an aborted status). Reference: `src/services/tabs/src/tabs-setup.js`. The public mirror of the service lives in `src/shortcuts/<name>-shortcut.js` ([service-shortcut](service-shortcut.md)).

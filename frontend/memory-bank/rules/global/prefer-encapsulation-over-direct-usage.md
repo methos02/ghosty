@@ -5,20 +5,20 @@ paths:
 ---
 # Prefer Encapsulation Over Direct Usage
 
-Never use framework or library APIs directly. If a vuemann wrapper exists, use it. If not, create one. The wrapper is the contract — the underlying implementation can change without impacting consumers.
+MUST NOT use a framework or library API directly when a project wrapper exists; if none exists, create one. The wrapper is the contract: the implementation can change without touching consumers.
 
 ```js
-// BAD - coupled to Vue i18n
+// BAD
 {{ $t('error_not_found') }}
 
-// GOOD - encapsulated via services-shortcut
-import { t } from '@brugmann/vuemann/src/shortcuts/services-shortcut.js'
+// GOOD
+import { t } from '@/services/shortcuts/services-shortcut.js'
 {{ t('error_not_found') }}
 ```
 
-## Library components too
+## Library components
 
-A library component (e.g. vue-i18n `<i18n-t>`) is wrapped in a project component (`services/locale/views/TranslateComponent.vue`, registered as `<Translate>`). Views use only the wrapper.
+A library component (vue-i18n `<i18n-t>`) is wrapped in a project component (`src/services/locale/views/TranslateComponent.vue`, imported as `Translate`). Views use only the wrapper.
 
 ```vue
 <!-- BAD -->
@@ -28,31 +28,30 @@ A library component (e.g. vue-i18n `<i18n-t>`) is wrapped in a project component
 <Translate keypath="like_received_notification.one">…</Translate>
 ```
 
-## Accept the helper's narrower API
+## Accept the shortcut's narrower API
 
-This applies to vuemann's own internal services, not just external libraries: reach them
-through `services-shortcut.js`. If the helper exposes a narrower API than the raw service,
-work within it — never import the raw service to recover a missing method.
+Reach project services through `services-shortcut.js`. If the shortcut exposes a narrower API than the raw service, MUST work within it, never import the raw service to recover a missing method.
 
 ```js
-// BAD - reaching for the raw service to get `resolve`
-import { getRouter } from '@brugmann/vuemann/src/services/router/init/router-plugin.js'
+// BAD
+import { getRouter } from '@/services/router/src/router-plugin.js'
 const href = getRouter().resolve({ name: 'home', query }).href
 
-// GOOD - stay within the helper's API
-import { router } from '@brugmann/vuemann/src/shortcuts/services-shortcut.js'
+// GOOD
+import { router } from '@/services/shortcuts/services-shortcut.js'
 router.push({ name: 'home', query })
 ```
 
 ## Translation belongs in the view
 
-Encapsulation also dictates *where* translation runs: pure JS (helpers, DTOs, services) returns an i18n **key** — or a `key:param=value|param2=value2` string vuemann's `t` parses — never a finished translated phrase. Only the view calls `t` (store the key on the entity, e.g. a `ruleFormat` field). Exception: JS may translate an inner sub-token and pass it as a param, as long as the outer phrase stays a key.
+Pure JS (helpers, DTOs, services) returns an i18n **key** (or the `key:param=value|param2=value2` string `t` parses), never a finished phrase. Only the view calls `t`. Exception: JS may translate an inner sub-token passed as a param, as long as the outer phrase stays a key.
 
 ```js
-// BAD - finished sentence built in pure JS
-const formatForHuman = (recurrence) => t('summary.daily', { interval: recurrence.interval })
+// BAD
+const formatSummary = notification => t('summary.like', { count: notification.count })
 
-// GOOD - key|param string; the view translates
-const formatForHuman = (recurrence) => `summary.daily:interval=${recurrence.interval}`
-// template: {{ t(recurrence.ruleFormat) }}
+// GOOD
+const formatSummary = notification => `summary.like:count=${notification.count}`
 ```
+
+The template renders it with `{{ t(notification.summaryFormat) }}`.

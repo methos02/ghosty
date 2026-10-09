@@ -3,27 +3,25 @@ paths:
   - "src/**/*.js"
   - "src/**/*.vue"
 ---
-# No Facade Re-Exports
+# No Facade Reexports
 
-A module exports only its own symbols. Do not re-export symbols from a sibling module via a facade — call sites must import each module directly. Facades inflate the public surface, hide the real owner, and collect misleading "backward compatibility" comments that mask active call sites.
+A module exports only its own symbols. MUST NOT re-export a sibling module's symbols through a facade: call sites import each module directly. A facade inflates the public surface, hides the real owner and collects "backward compatibility" comments that mask live call sites.
 
-**Exception**: designated public entry points whose explicit role is to expose a curated API surface. Examples in vuemann:
-- `src/shortcuts/services-shortcut.js` — public helper bundle for consumers
-- `src/services/<name>/<name>-service.js` — service entry point that assembles its internal functions
+Exception: a designated public entry point whose explicit role is to expose a curated surface:
+- `src/services/shortcuts/services-shortcut.js` (barrel of the service shortcuts);
+- `src/services/<name>/<name>-service.js` (assembles the service's internal functions).
 
 ```js
-// BAD - facade re-exporting a sibling DTO's method from a regular module
+// BAD
 export const NovelDto = {
-    fromList,
-    toSaveProposition,
-    fromStatusList: NovelStatusDto.fromStatusList,
-    toUpdateStatus: NovelStatusDto.toUpdateStatus,
+  fromList,
+  fromGenreList: GenreDto.fromList,
 }
 
-// GOOD - each module owns and exports only its own symbols
-import { NovelDto } from './novel-dto.js'
-import { NovelStatusDto } from './novel-status-dto.js'
+// GOOD
+import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
+import { GenreDto } from '@/apis/genres/dtos/genre-dto.js'
 
 NovelDto.fromList(items)
-NovelStatusDto.fromStatusList(statuses)
+GenreDto.fromList(genres)
 ```

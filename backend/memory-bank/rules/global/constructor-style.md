@@ -4,7 +4,7 @@ paths:
 ---
 # Constructor Style
 
-Write constructors **multi-line, one promoted parameter per line** — even for a single parameter. Not enforced by Pint; a project convention (scales without reformatting when a dependency is added).
+MUST write constructors **multi-line, one promoted parameter per line** (even for a single parameter). Pint does not enforce it (verified), so it is a project convention.
 
 ```php
 // GOOD

@@ -1,0 +1,6 @@
+{
+  "main_branch_gained_notification": {
+    "one": "« {title} » entre dans la branche principale de {novel}",
+    "many": "{count} de vos chapitres entrent dans la branche principale de {novel}"
+  }
+}

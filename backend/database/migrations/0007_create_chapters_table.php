@@ -48,10 +48,19 @@ return new class extends Migration
                 'chapters_active_branches_index'
             );
         });
+
+        /* @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md */
+        Schema::table('novels', function (Blueprint $table) {
+            $table->foreign('main_branch_last_chapter_id')->references('id')->on('chapters')->nullOnDelete();
+        });
     }
 
     public function down(): void
     {
+        Schema::table('novels', function (Blueprint $table) {
+            $table->dropForeign(['main_branch_last_chapter_id']);
+        });
+
         Schema::dropIfExists('chapters');
     }
 };

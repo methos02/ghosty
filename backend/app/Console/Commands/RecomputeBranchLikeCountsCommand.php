@@ -31,7 +31,7 @@ class RecomputeBranchLikeCountsCommand extends Command
             })
             ->chunkById(50, function (Collection $touched) use ($branchService, &$novels, &$chapters): void {
                 foreach ($touched as $novel) {
-                    $chapters += $branchService->recompute($novel);
+                    $chapters += $branchService->recomputeBranchLikes($novel);
                     $novels++;
                 }
             });

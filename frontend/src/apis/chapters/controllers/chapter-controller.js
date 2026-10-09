@@ -36,9 +36,9 @@ const create = async (novelSlug, formData) => {
   }
 }
 
-const currentBranch = async novelSlug => {
-  const params = ChapterDto.toCurrentBranchParams(novelSlug)
-  const response = await ChapterRepository.currentBranch({ params })
+const mainBranch = async novelSlug => {
+  const params = ChapterDto.toMainBranchParams(novelSlug)
+  const response = await ChapterRepository.mainBranch({ params })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -153,7 +153,7 @@ const update = async (id, formData) => {
 export const ChapterController = {
   children,
   create,
-  currentBranch,
+  mainBranch,
   destroy,
   drafts,
   getById,

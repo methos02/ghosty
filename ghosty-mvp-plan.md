@@ -236,7 +236,7 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 ### Lot 2 — Lecture et navigation · L
 
 - `GET /novels/{slug}/chapters/{id}` (ancêtres, suites triées, continuité courante), `GET /novels/{slug}/tree`.
-- Front : `ChapterReaderPage` (lecture linéaire par défaut = continuité courante), `ContinuationSwitcher` (« ce chapitre a N suites »), `BranchBreadcrumb` (retour à l'embranchement), `MultiversePage` (arbre repliable, vue d'exploration séparée — §8).
+- Front : `ChapterReaderPage` (lecture linéaire par défaut = continuité courante), `ContinuationSwitcher` (« ce chapitre a N suites »), `MultiversePage` (arbre repliable, vue d'exploration séparée — §8).
 - **Retour après écriture** : dès que `ChapterReaderPage` existe, la modification d'un chapitre (correction d'un publié, enregistrement d'un brouillon repris) et la publication redirigent vers **la page de lecture du chapitre**, et non plus vers la fiche du roman — repli provisoire du lot 1. Même cible pour « Lire ce chapitre » de `NovelDetailDialog`, encore vide.
 - **Règle d'affichage (D4)** : une branche n'a jamais de nom propre. Partout — switcher, fil d'Ariane, suivi, profil, arbre — elle est désignée par son chapitre-tête : « *{titre du chapitre}* — par {pseudo} ». Aucun libellé de branche à inventer, donc aucun champ à saisir nulle part.
 - SSR : `asyncData` chapitre + arbre, `useHead` dédié (`src/head/use-chapter-head.js`), **`<link rel="canonical">` vers la continuité courante** pour éviter le contenu dupliqué entre réalités, 404 réel sur chapitre inconnu.
@@ -255,12 +255,14 @@ Les deux signaux communautaires d'un chapitre — positif et négatif — arrive
 
 > ⚠️ Le **traitement** des signalements n'arrive qu'au lot 6. Entre les deux, les signalements s'empilent en base et sont traités à la main (requête SQL / commande artisan). Acceptable en bêta fermée, à ne pas laisser courir en ouverture publique.
 
-### Lot 3b — Notifications (socle transversal) · M
+### Lot 3b — Notifications (socle transversal) · M ✅
 
 Placé ici parce que les deux événements qui portent la rétention — « votre chapitre a été poursuivi » et « votre chapitre a été soutenu » — sont disponibles dès la fin du lot 3. Chaque lot ultérieur y branche ses propres types sans retoucher le socle.
 
 - Table native Laravel (canal `database`), `NotificationService`, `GET /me/notifications` + marquage lu.
 - Front : `apis/notifications/`, `NotificationBell` dans `HeaderComponent` (badge non lues), dropdown (le `DropdownComponent` existe déjà), rafraîchissement **par polling au chargement et à l'ouverture** — le service `websocket` est volontairement exclu du projet, pas de temps réel.
+- `current_continuity_gained` se calcule par **diff de la branche courante** avant / après, autour du recalcul planifié des cumuls *et* des publications : une suite plus profonde publiée à cumul égal fait basculer la continuité, et les auteurs des chapitres entrés sont notifiés (jamais l'auteur qui publie).
+- `UserSummary` affiche le vrai compteur de non lues (il était figé à 2).
 
 | Type | Déclencheur | Livré au lot |
 |---|---|---|

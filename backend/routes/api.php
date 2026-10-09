@@ -4,12 +4,14 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ChapterController;
 use App\Http\Controllers\Api\V1\GenreController;
 use App\Http\Controllers\Api\V1\LikeController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\NovelController;
 use App\Http\Controllers\Api\V1\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::pattern('chapter', '[0-9]+');
+Route::pattern('notification', '[0-9a-fA-F-]{36}');
 
 Route::prefix('v1')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:register');
@@ -18,7 +20,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/genres', [GenreController::class, 'index']);
     Route::get('/novels', [NovelController::class, 'index']);
     Route::get('/novels/{slug}', [NovelController::class, 'show']);
-    Route::get('/novels/{slug}/chapters', [ChapterController::class, 'currentBranch'])->name('chapters.current-branch');
+    Route::get('/novels/{slug}/chapters', [ChapterController::class, 'mainBranch'])->name('chapters.main-branch');
     Route::get('/novels/{slug}/chapters/{chapter}', [ChapterController::class, 'reading'])->name('chapters.reading');
     Route::get('/novels/{slug}/tree', [ChapterController::class, 'tree'])->name('chapters.tree');
     Route::get('/chapters/{chapter}', [ChapterController::class, 'show'])->name('chapters.show');
@@ -45,6 +47,12 @@ Route::prefix('v1')->group(function () {
         Route::post('/chapters/{chapter}/report', [ReportController::class, 'storeForChapter'])
             ->name('chapters.report');
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+        Route::get('/me/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/me/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])
+            ->name('notifications.read');
+        Route::patch('/me/notifications/read-all', [NotificationController::class, 'markAllAsRead'])
+            ->name('notifications.read-all');
     });
 });
 

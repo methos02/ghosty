@@ -13,7 +13,7 @@ describe('UserSummary.vue', () => {
   const mockDrafts = count =>
     vi.spyOn(ChapterController, 'drafts').mockResolvedValue({
       status: STATUS.SUCCESS,
-      chapters: chapterSeeder.getCurrentBranch(count),
+      chapters: chapterSeeder.getMainBranch(count),
     })
 
   const mountFor = async user => {
@@ -31,7 +31,7 @@ describe('UserSummary.vue', () => {
     wrapper?.unmount()
     wrapper = undefined
     useAuthStore().clear()
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it('shows the username of the connected author', async () => {
@@ -77,11 +77,5 @@ describe('UserSummary.vue', () => {
     const link = wrapper.findComponent('.user-summary__drafts')
     expect(link.text()).toBe('Rédiger un nouveau roman')
     expect(link.props('to')).toEqual({ name: 'novel-create' })
-  })
-
-  it('announces the pending notifications', async () => {
-    await mountFor(userSeeder.getUser())
-
-    expect(wrapper.find('.user-summary__notifications').text()).toBe('2 nouvelles notifications')
   })
 })

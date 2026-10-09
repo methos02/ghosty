@@ -3,6 +3,7 @@ import { shallowRef } from 'vue'
 import { matchedRouteKey } from 'vue-router'
 import { createHead } from '@unhead/vue/client'
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
+import { localeFunctions } from '@/services/locale/src/locale-functions.js'
 
 const ROUTER_LINK_STUB = {
   name: 'router-link',
@@ -20,7 +21,11 @@ export const configureTestUtils = () => {
     ...config.global.provide,
     [matchedRouteKey]: shallowRef(routerPlugin.getRouter().resolve('/').matched[0]),
   }
-  config.global.plugins = [...(config.global.plugins ?? []), createHead()]
+  config.global.plugins = [
+    ...(config.global.plugins ?? []),
+    createHead(),
+    localeFunctions.getTranslater(),
+  ]
   config.global.components = {
     ...config.global.components,
     'router-link': ROUTER_LINK_STUB,

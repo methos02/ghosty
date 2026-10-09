@@ -65,8 +65,8 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Déconnecté avec succès',
         ])
-            ->withCookie($this->forgetCookie($settings->name))
-            ->withCookie($this->forgetCookie($settings->sessionName));
+            ->withCookie($settings->forget($settings->name))
+            ->withCookie($settings->forget($settings->sessionName));
     }
 
     public function me(Request $request): JsonResponse
@@ -116,17 +116,6 @@ class AuthController extends Controller
             secure: $settings->secure,
             httpOnly: false,
             sameSite: $settings->sameSite,
-        );
-    }
-
-    private function forgetCookie(string $name): SymfonyCookie
-    {
-        $settings = TokenCookieSettingsSupport::fromConfig();
-
-        return Cookie::forget(
-            name: $name,
-            path: $settings->path,
-            domain: $settings->domain,
         );
     }
 }

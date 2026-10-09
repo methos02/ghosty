@@ -31,9 +31,9 @@ const pathTo = (chapters = [], chapterId) => {
   return path.toReversed()
 }
 
-const defaultSelection = (chapters = [], currentBranchIds = []) => {
-  if (currentBranchIds.length > 0) {
-    return [...currentBranchIds]
+const defaultSelection = (chapters = [], mainBranchIds = []) => {
+  if (mainBranchIds.length > 0) {
+    return [...mainBranchIds]
   }
 
   const root = rootOf(chapters)

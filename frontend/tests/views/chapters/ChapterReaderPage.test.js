@@ -130,7 +130,7 @@ describe('ChapterReaderPage.vue', () => {
       'Branche principale du roman',
     )
 
-    provide[READING_STORE_KEY].setReading({ ...reading, isCurrentBranch: false })
+    provide[READING_STORE_KEY].setReading({ ...reading, isMainBranch: false })
     await flushPromises()
 
     expect(wrapper.find('.reading-toolbar__branch-label').text()).toBe(

@@ -21,6 +21,7 @@ export const windowMock = () => {
 
   if (globalThis.window !== undefined) {
     globalThis.window.scrollTo = vi.fn()
+    globalThis.Element.prototype.scrollIntoView = vi.fn()
   }
 
   if (globalThis.window === undefined) {

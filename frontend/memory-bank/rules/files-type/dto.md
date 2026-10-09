@@ -229,6 +229,43 @@ const fromShow = (data) => ({
 // template: {{ currentUser.arno.lastname }}
 ```
 
+### Exception: content built per variant
+
+When an entity comes in variants that each render their own content (a translated sentence, a navigation link), the DTO only maps the data of each variant. Building the sentence (`t()`) and the route belongs to one view component per variant. The DTO still formats the data itself (dates, casing).
+
+```js
+// BAD - the DTO composes the sentence and the route, and grows with every variant
+const fromNotification = (data) => ({
+  message: t('like_received.one', { author: data.data.last_actor_username }),
+  link: { name: 'chapter-read', params: { id: data.data.chapter.id } },
+})
+
+// GOOD - the DTO maps the variant data, LikeReceivedNotification.vue renders it
+const fromNotification = (data) => ({
+  lastActorUsername: data.data.last_actor_username,
+  count: data.data.count,
+})
+```
+
+### Variant dispatch
+
+Variant-specific fields live under a `payload` key, mapped by one DTO file per variant (`dtos/types/{variant}-dto.js`). The dispatcher throws first on an unknown variant, then one `if` guard per variant (see `if-guards-over-lookup-object.md`), then returns `{}` for variants without fields.
+
+```js
+// GOOD
+const mapPayload = (data) => {
+  if (!Object.values(NOTIFICATION_TYPES).includes(data.type)) {
+    throw new Error(`Unknown notification type: ${data.type}`)
+  }
+
+  if (data.type === NOTIFICATION_TYPES.LIKE_RECEIVED) {
+    return LikeReceivedDto.fromNotification(data.data)
+  }
+
+  return {}
+}
+```
+
 ## Default list ordering belongs in the DTO
 
 A list's **default** order is a pure transformation, so it belongs in the `from{Action}s` mapper (delegating to a helper), not in the store, composable, or view. Every consumer then receives the same already-ordered data from one place.

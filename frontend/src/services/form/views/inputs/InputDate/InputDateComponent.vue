@@ -103,8 +103,8 @@ const handleInput = event => {
   }
 
   if (
-    displayValue.value.length !== DATE_LENGTH ||
-    !dateHelper.isValidDate(displayValue.value, 'DD/MM/YYYY')
+    displayValue.value.length !== DATE_LENGTH
+    || !dateHelper.isValidDate(displayValue.value, 'DD/MM/YYYY')
   ) {
     return
   }
@@ -126,8 +126,8 @@ const handleBlur = () => {
     return
   }
   if (
-    displayValue.value.length === DATE_LENGTH &&
-    dateHelper.isValidDate(displayValue.value, 'DD/MM/YYYY')
+    displayValue.value.length === DATE_LENGTH
+    && dateHelper.isValidDate(displayValue.value, 'DD/MM/YYYY')
   ) {
     return
   }

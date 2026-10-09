@@ -6,7 +6,7 @@ import { useChapterTree } from '@/apis/chapters/composables/use-chapter-tree.js'
 import { chapterTreeHelper } from '@/core/helpers/chapter-tree-helper.js'
 
 export const useChapterBranch = () => {
-  const { chapters, currentBranchIds, chosenIds, setChosenIds } = useTreeStore()
+  const { chapters, mainBranchIds, chosenIds, setChosenIds } = useTreeStore()
   const { chapterTree } = useChapterTree()
   const currentRoute = route.current()
 
@@ -28,7 +28,7 @@ export const useChapterBranch = () => {
       return readBranch
     }
 
-    return chapterTreeHelper.defaultSelection(chapters.value, currentBranchIds.value)
+    return chapterTreeHelper.defaultSelection(chapters.value, mainBranchIds.value)
   })
 
   const branch = computed(() =>
@@ -39,8 +39,8 @@ export const useChapterBranch = () => {
     chapterTreeHelper.childrenOf(chapters.value, lastSelected.value?.id),
   )
 
-  const isOnCurrentBranch = chapter => {
-    return currentBranchIds.value.includes(chapter.id)
+  const isOnMainBranch = chapter => {
+    return mainBranchIds.value.includes(chapter.id)
   }
 
   const isInBranch = chapter => {
@@ -85,7 +85,7 @@ export const useChapterBranch = () => {
     alternativesOf,
     hasBranchOf,
     isInBranch,
-    isOnCurrentBranch,
+    isOnMainBranch,
     revealChildren,
     select,
     showAlternatives,

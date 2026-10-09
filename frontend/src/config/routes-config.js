@@ -29,6 +29,12 @@ export const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/me/notifications',
+    name: 'notifications',
+    component: () => import('@/views/notifications/NotificationsPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/me/favorites',
     name: 'favorites',
     component: () => import('@/views/novels/FavoritesPage.vue'),

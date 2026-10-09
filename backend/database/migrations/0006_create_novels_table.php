@@ -20,6 +20,7 @@ return new class extends Migration
 
             /* @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md */
             $table->timestamp('branch_recomputed_at')->nullable();
+            $table->unsignedBigInteger('main_branch_last_chapter_id')->nullable();
 
             $table->timestamps();
 

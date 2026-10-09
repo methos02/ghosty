@@ -161,18 +161,18 @@ class ChapterControllerReadingTest extends TestCase
     }
 
     #[Test]
-    public function tells_the_reader_the_chain_is_the_current_branch(): void
+    public function tells_the_reader_the_chain_is_the_main_branch(): void
     {
         [$novel, $root] = $this->novelWithRoot();
         $supported = Chapter::factory()->continuing($root)->liked(25)->create();
 
         $response = $this->getJson("/api/v1/novels/{$novel->slug}/chapters/{$supported->id}");
 
-        $response->assertOk()->assertJsonPath('is_current_branch', true);
+        $response->assertOk()->assertJsonPath('is_main_branch', true);
     }
 
     #[Test]
-    public function tells_the_reader_the_chain_left_the_current_branch(): void
+    public function tells_the_reader_the_chain_left_the_main_branch(): void
     {
         [$novel, $root] = $this->novelWithRoot();
         Chapter::factory()->continuing($root)->liked(25)->create();
@@ -180,7 +180,7 @@ class ChapterControllerReadingTest extends TestCase
 
         $response = $this->getJson("/api/v1/novels/{$novel->slug}/chapters/{$discarded->id}");
 
-        $response->assertOk()->assertJsonPath('is_current_branch', false);
+        $response->assertOk()->assertJsonPath('is_main_branch', false);
     }
 
     #[Test]

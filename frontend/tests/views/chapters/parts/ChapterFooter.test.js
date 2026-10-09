@@ -50,7 +50,7 @@ describe('ChapterFooter.vue', () => {
   })
 
   it('shows the suites of that fork in place, without leaving the chapter', async () => {
-    const forkSuites = chapterSeeder.getCurrentBranch(2)
+    const forkSuites = chapterSeeder.getMainBranch(2)
     vi.spyOn(ChapterController, 'children').mockResolvedValue(
       controllerSuccess({ chapters: forkSuites }),
     )
@@ -103,7 +103,7 @@ describe('ChapterFooter.vue', () => {
 
   it('shows one panel at a time, the other choices staying within reach', async () => {
     vi.spyOn(ChapterController, 'children').mockResolvedValue(
-      controllerSuccess({ chapters: chapterSeeder.getCurrentBranch(2) }),
+      controllerSuccess({ chapters: chapterSeeder.getMainBranch(2) }),
     )
     vi.spyOn(NovelController, 'list').mockResolvedValue(
       controllerSuccess({ novels: novelSeeder.getNovels(5) }),

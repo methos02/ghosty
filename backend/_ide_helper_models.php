@@ -41,13 +41,12 @@ namespace App\Models{
  * @property-read Chapter|null $parent
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Report> $reports
  * @property-read int|null $reports_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Like> $viewerLikes
- * @property-read int|null $viewer_likes_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter drafts()
  * @method static \Database\Factories\ChapterFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter hasChildren()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter orderBranchByLike()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter published()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter roots()
@@ -70,6 +69,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereSummary($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter withUserLike(?int $userId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter withUserReport(?int $userId)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -127,6 +128,44 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md
+ * @property string $id
+ * @property string $type
+ * @property string $notifiable_type
+ * @property int $notifiable_id
+ * @property array<array-key, mixed> $data
+ * @property \Illuminate\Support\Carbon|null $read_at
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property string|null $group_key
+ * @property string|null $unread
+ * @property-read \Illuminate\Database\Eloquent\Model $notifiable
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> all($columns = ['*'])
+ * @method static \Database\Factories\NotificationFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Notifications\DatabaseNotificationCollection<int, static> get($columns = ['*'])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification read()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification unread()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereData($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereGroupKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereNotifiableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereNotifiableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereReadAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereUnread($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Notification whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperNotification {}
+}
+
+namespace App\Models{
+/**
  * @property-read User $author
  * @property-read Genre $genre
  * @property int $id
@@ -138,6 +177,7 @@ namespace App\Models{
  * @property bool $is_favorite
  * @property int $chapter_count
  * @property \Illuminate\Support\Carbon|null $branch_recomputed_at
+ * @property int|null $main_branch_last_chapter_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
@@ -155,6 +195,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereGenreId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereIsFavorite($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereMainBranchLastChapterId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereUpdatedAt($value)

@@ -25,11 +25,11 @@ const chapterNumber = computed(() => props.chapter.depth + 1)
 
 const popularLabel = computed(() => {
   if (props.popularity === POPULARITY.NOVEL) {
-    return t('common.current_continuity')
+    return t('common.main_branch')
   }
 
   if (props.popularity === POPULARITY.BRANCH) {
-    return t('common.current_continuity_from_here')
+    return t('common.main_branch_from_here')
   }
 
   return ''

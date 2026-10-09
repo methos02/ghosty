@@ -10,7 +10,7 @@ const fromReading = data => ({
   ancestors: fromList(data.ancestors),
   children: fromList(data.children),
   branchChapterIds: data.branch_chapter_ids ?? [],
-  isCurrentBranch: data.is_current_branch === true,
+  isMainBranch: data.is_main_branch === true,
   nextChapterId: data.next_chapter_id,
 })
 
@@ -50,7 +50,7 @@ const fromShow = data => {
 
 const fromTree = data => ({
   chapters: fromList(data.chapters),
-  currentBranchIds: data.current_branch_ids ?? [],
+  mainBranchIds: data.main_branch_ids ?? [],
 })
 
 const toChapterParams = id => {
@@ -69,7 +69,7 @@ const toCreateParams = novelSlug => {
   return { slug: novelSlug }
 }
 
-const toCurrentBranchParams = novelSlug => {
+const toMainBranchParams = novelSlug => {
   return { slug: novelSlug }
 }
 
@@ -100,7 +100,7 @@ export const ChapterDto = {
   toChapterParams,
   toCreate,
   toCreateParams,
-  toCurrentBranchParams,
+  toMainBranchParams,
   toDraftFilters,
   toReadingParams,
   toTreeParams,

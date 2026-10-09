@@ -35,7 +35,7 @@ describe('chapter-controller', () => {
       expect(result).toEqual({ status: STATUS.SUCCESS, ...chapterSeeder.getReading() })
     })
 
-    it('names the child that prolongs the current branch', async () => {
+    it('names the child that prolongs the main branch', async () => {
       vi.spyOn(ChapterRepository, 'reading').mockResolvedValue({
         status: STATUS.SUCCESS,
         data: chapterSeeder.getReadingApi({ next_chapter_id: 13 }),

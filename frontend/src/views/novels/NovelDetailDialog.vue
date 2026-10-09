@@ -13,8 +13,7 @@ useNovelDetailHead()
 
 const { selectedNovel, clearSelectedNovel } = useNovelStore()
 const { novelDetail } = useNovelDetail()
-const { currentBranch, currentChapter, setCurrentBranch, setCurrentChapter, clear } =
-  useChapterStore()
+const { mainBranch, currentChapter, setMainBranch, setCurrentChapter, clear } = useChapterStore()
 
 const dialog = ref()
 const isLoading = ref(false)
@@ -30,7 +29,7 @@ const selectNovel = async slug => {
 }
 
 const showFirstChapter = () => {
-  const first = currentBranch.value[0]
+  const first = mainBranch.value[0]
   if (!first) {
     return
   }
@@ -38,7 +37,7 @@ const showFirstChapter = () => {
   setCurrentChapter(first)
 }
 
-const loadCurrentBranch = async () => {
+const loadMainBranch = async () => {
   if (!selectedNovel.value) {
     return
   }
@@ -46,7 +45,7 @@ const loadCurrentBranch = async () => {
   isLoading.value = true
   errorMessage.value = ''
 
-  const response = await ChapterController.currentBranch(selectedNovel.value.slug)
+  const response = await ChapterController.mainBranch(selectedNovel.value.slug)
 
   if (response.status !== STATUS.SUCCESS) {
     errorMessage.value = response.error
@@ -54,7 +53,7 @@ const loadCurrentBranch = async () => {
     return
   }
 
-  setCurrentBranch(response.chapters)
+  setMainBranch(response.chapters)
   showFirstChapter()
   isLoading.value = false
 }
@@ -78,7 +77,7 @@ const openForSlug = async slug => {
     return
   }
 
-  await loadCurrentBranch()
+  await loadMainBranch()
 }
 
 const readCurrentChapter = async () => {

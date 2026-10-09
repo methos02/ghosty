@@ -11,36 +11,36 @@ describe('chapter-controller', () => {
     vi.clearAllMocks()
   })
 
-  describe('currentBranch', () => {
+  describe('mainBranch', () => {
     beforeEach(() => {
-      vi.spyOn(ChapterRepository, 'currentBranch').mockResolvedValue({
+      vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue({
         status: STATUS.SUCCESS,
-        data: { chapters: chapterSeeder.getCurrentBranchApi(3) },
+        data: { chapters: chapterSeeder.getMainBranchApi(3) },
       })
     })
 
     it('forwards the novel slug to the repository', async () => {
-      await ChapterController.currentBranch('nuit-virage')
+      await ChapterController.mainBranch('nuit-virage')
 
-      expect(ChapterRepository.currentBranch).toHaveBeenCalledWith({
-        params: ChapterDto.toCurrentBranchParams('nuit-virage'),
+      expect(ChapterRepository.mainBranch).toHaveBeenCalledWith({
+        params: ChapterDto.toMainBranchParams('nuit-virage'),
       })
     })
 
     it('returns the mapped branch on success', async () => {
-      const result = await ChapterController.currentBranch('nuit-virage')
+      const result = await ChapterController.mainBranch('nuit-virage')
 
       expect(result.status).toBe(STATUS.SUCCESS)
-      expect(result.chapters).toEqual(chapterSeeder.getCurrentBranch(3))
+      expect(result.chapters).toEqual(chapterSeeder.getMainBranch(3))
     })
 
     it('passes the repository error through untouched', async () => {
-      vi.spyOn(ChapterRepository, 'currentBranch').mockResolvedValue({
+      vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue({
         status: STATUS.ERROR_SERVER,
         error: 'boom',
       })
 
-      const result = await ChapterController.currentBranch('nuit-virage')
+      const result = await ChapterController.mainBranch('nuit-virage')
 
       expect(result).toEqual({ status: STATUS.ERROR_SERVER, error: 'boom' })
     })
@@ -85,7 +85,7 @@ describe('chapter-controller', () => {
     it('returns the proposed children of a chapter', async () => {
       vi.spyOn(ChapterRepository, 'children').mockResolvedValue({
         status: STATUS.SUCCESS,
-        data: { chapters: chapterSeeder.getCurrentBranchApi(2) },
+        data: { chapters: chapterSeeder.getMainBranchApi(2) },
       })
 
       const result = await ChapterController.children(10)
@@ -93,7 +93,7 @@ describe('chapter-controller', () => {
       expect(ChapterRepository.children).toHaveBeenCalledWith({
         params: ChapterDto.toChapterParams(10),
       })
-      expect(result.chapters).toEqual(chapterSeeder.getCurrentBranch(2))
+      expect(result.chapters).toEqual(chapterSeeder.getMainBranch(2))
     })
   })
 

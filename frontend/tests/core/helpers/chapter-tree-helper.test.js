@@ -19,15 +19,11 @@ describe('chapter-tree-helper', () => {
     it('puts the most supported suite of a fork first', () => {
       const chapters = chapterSeeder.getForkedTree().chapters
 
-      expect(chapterTreeHelper.childrenOf(chapters, 10).map(suite => suite.id)).toEqual([
-        11, 12,
-      ])
+      expect(chapterTreeHelper.childrenOf(chapters, 10).map(suite => suite.id)).toEqual([11, 12])
     })
 
     it('returns nothing for a chapter nobody has continued', () => {
-      expect(chapterTreeHelper.childrenOf(chapterSeeder.getForkedTree().chapters, 13)).toEqual(
-        [],
-      )
+      expect(chapterTreeHelper.childrenOf(chapterSeeder.getForkedTree().chapters, 13)).toEqual([])
     })
   })
 
@@ -54,10 +50,10 @@ describe('chapter-tree-helper', () => {
   })
 
   describe('defaultSelection', () => {
-    it('opens on the current branch when the novel has one', () => {
+    it('opens on the main branch when the novel has one', () => {
       const tree = chapterSeeder.getForkedTree()
 
-      expect(chapterTreeHelper.defaultSelection(tree.chapters, tree.currentBranchIds)).toEqual([
+      expect(chapterTreeHelper.defaultSelection(tree.chapters, tree.mainBranchIds)).toEqual([
         10, 11, 13,
       ])
     })

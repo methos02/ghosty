@@ -29,6 +29,29 @@ class AuthControllerMeTest extends TestCase
     }
 
     #[Test]
+    public function expires_the_auth_cookies_of_a_session_that_no_longer_exists(): void
+    {
+        $response = $this->withCredentials()
+            ->withUnencryptedCookie('ghosty_token', 'revoked-token')
+            ->withUnencryptedCookie('ghosty_session', '1')
+            ->getJson($this->route);
+
+        $response->assertUnauthorized();
+        $response->assertCookieExpired('ghosty_token');
+        $response->assertCookieExpired('ghosty_session');
+    }
+
+    #[Test]
+    public function sets_no_cookie_for_a_visitor_who_never_signed_in(): void
+    {
+        $response = $this->getJson($this->route);
+
+        $response->assertUnauthorized();
+        $response->assertCookieMissing('ghosty_token');
+        $response->assertCookieMissing('ghosty_session');
+    }
+
+    #[Test]
     public function rejects_a_valid_token_sent_as_a_bearer_header(): void
     {
         $user = User::factory()->create();

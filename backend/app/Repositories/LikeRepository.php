@@ -18,6 +18,25 @@ class LikeRepository
         ]) > 0;
     }
 
+    public function findUserLikeId(int $userId, Model $likeable): int
+    {
+        return Like::query()
+            ->where('user_id', $userId)
+            ->where('likeable_type', $likeable->getMorphClass())
+            ->where('likeable_id', $likeable->getKey())
+            ->firstOrFail(['id'])
+            ->id;
+    }
+
+    public function countLikesSinceLikeId(Model $likeable, int $likeId): int
+    {
+        return Like::query()
+            ->where('likeable_type', $likeable->getMorphClass())
+            ->where('likeable_id', $likeable->getKey())
+            ->where('id', '>=', $likeId)
+            ->count();
+    }
+
     public function deleteFor(int $userId, Model $likeable): bool
     {
         return Like::query()

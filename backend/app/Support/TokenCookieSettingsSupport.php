@@ -3,6 +3,8 @@
 namespace App\Support;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Cookie;
+use Symfony\Component\HttpFoundation\Cookie as SymfonyCookie;
 
 /**
  * @see memory-bank/decisions/ADR-04-token-en-cookie-httponly.md
@@ -29,6 +31,15 @@ final readonly class TokenCookieSettingsSupport
             domain: self::domain(),
             secure: Config::boolean('sanctum.token_cookie.secure'),
             sameSite: Config::string('sanctum.token_cookie.same_site'),
+        );
+    }
+
+    public function forget(string $cookieName): SymfonyCookie
+    {
+        return Cookie::forget(
+            name: $cookieName,
+            path: $this->path,
+            domain: $this->domain,
         );
     }
 

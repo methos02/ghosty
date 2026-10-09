@@ -63,7 +63,7 @@ describe('chapter-dto', () => {
 
   describe('fromList', () => {
     it('maps every chapter of the branch', () => {
-      const result = ChapterDto.fromList(chapterSeeder.getCurrentBranchApi(3))
+      const result = ChapterDto.fromList(chapterSeeder.getMainBranchApi(3))
 
       expect(result).toHaveLength(3)
       expect(result[2].title).toBe('Chapitre 3')
@@ -75,9 +75,9 @@ describe('chapter-dto', () => {
     })
   })
 
-  describe('toCurrentBranchParams', () => {
+  describe('toMainBranchParams', () => {
     it('builds the novel slug param', () => {
-      expect(ChapterDto.toCurrentBranchParams('nuit-virage')).toEqual({ slug: 'nuit-virage' })
+      expect(ChapterDto.toMainBranchParams('nuit-virage')).toEqual({ slug: 'nuit-virage' })
     })
   })
 

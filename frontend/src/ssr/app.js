@@ -25,7 +25,7 @@ import {
   NOVEL_FILTER_STORE_KEY,
 } from '@/apis/novels/stores/novel-filter-store.js'
 
-export const createApp = async ({ ssr = false } = {}) => {
+export const createApp = async ({ ssr = false, initialState } = {}) => {
   servicesBoot.bootServicesOnce()
 
   const app = createSSRApp(App)
@@ -39,6 +39,8 @@ export const createApp = async ({ ssr = false } = {}) => {
     readingSettings: createReadingSettingsStore(),
     filter: createNovelFilterStore(),
   }
+
+  hydrateStores(stores, initialState)
 
   if (!ssr) {
     setClientAuthStore(stores.auth)

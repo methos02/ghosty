@@ -2,7 +2,7 @@
   "common": {
     "by_author": "par {author}",
     "explore_novel": "Explorer le roman",
-    "current_continuity": "Branche principale",
-    "current_continuity_from_here": "Branche principale depuis ici"
+    "main_branch": "Branche principale",
+    "main_branch_from_here": "Branche principale depuis ici"
   }
 }

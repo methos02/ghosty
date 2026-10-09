@@ -22,6 +22,15 @@
   }
 }
 
+.link-inline {
+  color: var(--primary);
+  font-weight: 600;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .underline,
 .underline-hover:hover {
   text-decoration: underline;

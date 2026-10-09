@@ -16,6 +16,18 @@ import { t } from '@brugmann/vuemann/src/shortcuts/services-shortcut.js'
 {{ t('error_not_found') }}
 ```
 
+## Library components too
+
+A library component (e.g. vue-i18n `<i18n-t>`) is wrapped in a project component (`services/locale/views/TranslateComponent.vue`, registered as `<Translate>`). Views use only the wrapper.
+
+```vue
+<!-- BAD -->
+<i18n-t keypath="like_received_notification.one" tag="span" scope="global">…</i18n-t>
+
+<!-- GOOD -->
+<Translate keypath="like_received_notification.one">…</Translate>
+```
+
 ## Accept the helper's narrower API
 
 This applies to vuemann's own internal services, not just external libraries: reach them

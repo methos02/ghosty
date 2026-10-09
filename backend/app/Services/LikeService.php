@@ -13,12 +13,13 @@ use Illuminate\Support\Facades\DB;
 class LikeService
 {
     public function __construct(
-        private readonly LikeRepository $likesR
+        private readonly LikeRepository $likesR,
+        private readonly NotificationService $notificationService
     ) {}
 
     public function like(User $user, Chapter $chapter, ?string $ip): bool
     {
-        return DB::transaction(function () use ($user, $chapter, $ip): bool {
+        $isNewLike = DB::transaction(function () use ($user, $chapter, $ip): bool {
             if (! $this->likesR->createIfAbsent($user->id, $chapter, $ip)) {
                 return false;
             }
@@ -27,6 +28,12 @@ class LikeService
 
             return true;
         });
+
+        if ($isNewLike) {
+            $this->notificationService->likeReceived($chapter, $user);
+        }
+
+        return $isNewLike;
     }
 
     public function unlike(User $user, Chapter $chapter): bool

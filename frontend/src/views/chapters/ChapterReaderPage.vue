@@ -1,7 +1,6 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
-import BranchBreadcrumb from '@/views/chapters/parts/BranchBreadcrumb.vue'
 import ChapterFooter from '@/views/chapters/parts/ChapterFooter.vue'
 import ReadingToolbar from '@/views/chapters/parts/ReadingToolbar.vue'
 import { route, t } from '@/services/shortcuts/services-shortcut.js'
@@ -79,8 +78,6 @@ watch(chapterId, load)
     >
       <div class="chapter-reader-page__bar | px-20 d-flex f-column g-10">
         <ReadingToolbar />
-
-        <BranchBreadcrumb />
       </div>
     </div>
 

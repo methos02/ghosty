@@ -7,8 +7,6 @@ import { useAuthStore } from '@/services/auth/src/auth-store.js'
 
 const authStore = useAuthStore()
 
-const PENDING_NOTIFICATIONS = 2
-
 const draftsCount = ref(0)
 
 const user = authStore.user
@@ -57,10 +55,6 @@ onMounted(loadDrafts)
       >
         {{ t('user_summary.drafts', draftsCount) }}
       </router-link>
-
-      <span class="user-summary__notifications | color-neutral-100 fs-400">
-        {{ t('user_summary.notifications', PENDING_NOTIFICATIONS) }}
-      </span>
     </div>
   </div>
 </template>

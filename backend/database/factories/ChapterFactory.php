@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Chapter;
+use App\Services\BranchService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -45,6 +46,8 @@ class ChapterFactory extends Factory
             if ($chapter->isPublished()) {
                 $parent->increment('continuations_count');
             }
+
+            $this->updateLastChapterOfMainBranch($chapter);
         });
     }
 
@@ -82,6 +85,21 @@ class ChapterFactory extends Factory
             }
 
             $chapter->update(['path' => Chapter::PATH_SEPARATOR.$chapter->id.Chapter::PATH_SEPARATOR]);
+        })->afterCreating(function (Chapter $chapter) {
+            if ($chapter->parent_id !== null) {
+                return;
+            }
+
+            $this->updateLastChapterOfMainBranch($chapter);
         });
+    }
+
+    private function updateLastChapterOfMainBranch(Chapter $chapter): void
+    {
+        if (! $chapter->isPublished()) {
+            return;
+        }
+
+        app(BranchService::class)->updateLastChapterOfMainBranch($chapter->novel);
     }
 }

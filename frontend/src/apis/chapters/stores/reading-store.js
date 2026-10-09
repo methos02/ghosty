@@ -7,7 +7,7 @@ const readingStore = () => {
   const ancestors = ref([])
   const children = ref([])
   const branchChapterIds = ref([])
-  const isCurrentBranch = ref(false)
+  const isMainBranch = ref(false)
   const nextChapterId = ref()
 
   const setReading = reading => {
@@ -15,7 +15,7 @@ const readingStore = () => {
     ancestors.value = reading.ancestors
     children.value = reading.children
     branchChapterIds.value = reading.branchChapterIds
-    isCurrentBranch.value = reading.isCurrentBranch
+    isMainBranch.value = reading.isMainBranch
     nextChapterId.value = reading.nextChapterId
   }
 
@@ -36,7 +36,7 @@ const readingStore = () => {
     ancestors.value = []
     children.value = []
     branchChapterIds.value = []
-    isCurrentBranch.value = false
+    isMainBranch.value = false
     nextChapterId.value = undefined
   }
 
@@ -45,7 +45,7 @@ const readingStore = () => {
     ancestors: ancestors.value,
     children: children.value,
     branchChapterIds: branchChapterIds.value,
-    isCurrentBranch: isCurrentBranch.value,
+    isMainBranch: isMainBranch.value,
     nextChapterId: nextChapterId.value,
   })
 
@@ -57,7 +57,7 @@ const readingStore = () => {
     ancestors.value = data.ancestors ?? []
     children.value = data.children ?? []
     branchChapterIds.value = data.branchChapterIds ?? []
-    isCurrentBranch.value = data.isCurrentBranch === true
+    isMainBranch.value = data.isMainBranch === true
     nextChapterId.value = data.nextChapterId
   }
 
@@ -66,7 +66,7 @@ const readingStore = () => {
     ancestors: readonly(ancestors),
     children: readonly(children),
     branchChapterIds: readonly(branchChapterIds),
-    isCurrentBranch: readonly(isCurrentBranch),
+    isMainBranch: readonly(isMainBranch),
     nextChapterId: readonly(nextChapterId),
     setReading,
     setChapterLike,

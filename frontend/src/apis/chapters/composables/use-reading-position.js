@@ -3,7 +3,7 @@ import { route } from '@/services/shortcuts/services-shortcut.js'
 import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
 
 export const useReadingPosition = () => {
-  const { branchChapterIds, isCurrentBranch } = useReadingStore()
+  const { branchChapterIds, isMainBranch } = useReadingStore()
   const currentRoute = route.current()
 
   const readChapterId = computed(() => Number(currentRoute.value.params.id))
@@ -15,7 +15,7 @@ export const useReadingPosition = () => {
   return {
     position,
     branchLength,
-    isCurrentBranch,
+    isMainBranch,
     chapterIdAt,
   }
 }

@@ -26,7 +26,7 @@ export const routesApi = {
     api: 'ghosty',
   },
 
-  'chapter.currentBranch': {
+  'chapter.mainBranch': {
     url: 'v1/novels/{slug}/chapters',
     method: 'get',
     api: 'ghosty',
@@ -89,6 +89,22 @@ export const routesApi = {
   'chapter.report': {
     url: 'v1/chapters/{chapter}/report',
     method: 'post',
+    api: 'ghosty',
+  },
+
+  'notification.list': {
+    url: 'v1/me/notifications',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'notification.read': {
+    url: 'v1/me/notifications/{notification}/read',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'notification.readAll': {
+    url: 'v1/me/notifications/read-all',
+    method: 'patch',
     api: 'ghosty',
   },
 

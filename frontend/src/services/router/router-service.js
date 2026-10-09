@@ -118,8 +118,8 @@ const isUnknownNamedRoute = route =>
   route.name !== undefined && !routerPlugin.getRouter().hasRoute(route.name)
 
 const isUnknownPath = route =>
-  route.name === undefined &&
-  routerPlugin
+  route.name === undefined
+  && routerPlugin
     .getRouter()
     .getRoutes()
     .every(routeConfig => routeConfig.path !== route.path)

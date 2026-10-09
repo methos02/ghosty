@@ -1,0 +1,9 @@
+{
+  "chapter_continued_detail": {
+    "continuations": {
+      "one": "« {title} » a reçu {count} nouvelle suite",
+      "many": "« {title} » a reçu {count} nouvelles suites"
+    },
+    "latest": "La plus récente : « {continuation} », par {author}"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "like_received_detail": {
+    "supports": {
+      "one": "« {title} » a reçu {count} soutien depuis votre dernière lecture",
+      "many": "« {title} » a reçu {count} soutiens depuis votre dernière lecture"
+    },
+    "last_reader": "Dernier soutien : {author}"
+  }
+}

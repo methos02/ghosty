@@ -1,0 +1,9 @@
+{
+  "notification_bell": {
+    "open": "Notifications | Notifications, 1 non lue | Notifications, {count} non lues",
+    "title": "Notifications",
+    "read_all": "Tout marquer comme lu",
+    "see_all": "Voir toutes les notifications",
+    "empty": "Rien de neuf pour le moment : vos suites, soutiens et branches principales s'afficheront ici"
+  }
+}

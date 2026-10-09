@@ -12,14 +12,14 @@ describe('tree-store', () => {
     expect(storeB.chapters.value).toEqual([])
   })
 
-  it('setTree stores the chapters and the current branch', () => {
+  it('setTree stores the chapters and the main branch', () => {
     const store = createTreeStore()
     const tree = chapterSeeder.getTree()
 
     store.setTree(tree)
 
     expect(store.chapters.value).toEqual(tree.chapters)
-    expect(store.currentBranchIds.value).toEqual(tree.currentBranchIds)
+    expect(store.mainBranchIds.value).toEqual(tree.mainBranchIds)
   })
 
   it('addChapters appends a branch loaded on demand', () => {
@@ -49,6 +49,6 @@ describe('tree-store', () => {
     target.hydrate(source.serialize())
 
     expect(target.chapters.value).toEqual(source.chapters.value)
-    expect(target.currentBranchIds.value).toEqual(source.currentBranchIds.value)
+    expect(target.mainBranchIds.value).toEqual(source.mainBranchIds.value)
   })
 })

@@ -209,7 +209,7 @@ describe('MultiversePage.vue', () => {
     const novelStore = createNovelStore()
     treeStore.setTree({
       chapters: [chapterSeeder.getChapter({ id: 10, childrenCount: 1 })],
-      currentBranchIds: [10],
+      mainBranchIds: [10],
     })
     novelStore.setSelectedNovel(novelSeeder.getNovel())
     vi.spyOn(ChapterController, 'tree').mockResolvedValue(
@@ -295,7 +295,7 @@ describe('MultiversePage.vue', () => {
         chapters: [
           chapterSeeder.getChapter({ id: 10, isCorrectable: true, author: { id: author.id } }),
         ],
-        currentBranchIds: [10],
+        mainBranchIds: [10],
       }),
     )
     novelStore.setSelectedNovel(novelSeeder.getNovel())

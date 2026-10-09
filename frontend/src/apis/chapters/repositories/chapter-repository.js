@@ -8,8 +8,8 @@ const create = async options => {
   return await req('chapter.create', options)
 }
 
-const currentBranch = async options => {
-  return await req('chapter.currentBranch', options)
+const mainBranch = async options => {
+  return await req('chapter.mainBranch', options)
 }
 
 const destroy = async options => {
@@ -43,7 +43,7 @@ const update = async options => {
 export const ChapterRepository = {
   children,
   create,
-  currentBranch,
+  mainBranch,
   destroy,
   drafts,
   getById,

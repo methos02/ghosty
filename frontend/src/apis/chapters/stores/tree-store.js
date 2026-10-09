@@ -4,12 +4,12 @@ export const TREE_STORE_KEY = Symbol('tree-store')
 
 const treeStore = () => {
   const chapters = ref([])
-  const currentBranchIds = ref([])
+  const mainBranchIds = ref([])
   const chosenIds = ref([])
 
   const setTree = tree => {
     chapters.value = tree.chapters
-    currentBranchIds.value = tree.currentBranchIds
+    mainBranchIds.value = tree.mainBranchIds
   }
 
   const addChapters = loaded => {
@@ -23,13 +23,13 @@ const treeStore = () => {
 
   const clear = () => {
     chapters.value = []
-    currentBranchIds.value = []
+    mainBranchIds.value = []
     chosenIds.value = []
   }
 
   const serialize = () => ({
     chapters: chapters.value,
-    currentBranchIds: currentBranchIds.value,
+    mainBranchIds: mainBranchIds.value,
   })
 
   const hydrate = data => {
@@ -37,12 +37,12 @@ const treeStore = () => {
       return
     }
     chapters.value = data.chapters ?? []
-    currentBranchIds.value = data.currentBranchIds ?? []
+    mainBranchIds.value = data.mainBranchIds ?? []
   }
 
   return {
     chapters: readonly(chapters),
-    currentBranchIds: readonly(currentBranchIds),
+    mainBranchIds: readonly(mainBranchIds),
     chosenIds: readonly(chosenIds),
     setTree,
     setChosenIds,

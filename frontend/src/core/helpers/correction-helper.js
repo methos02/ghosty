@@ -104,8 +104,8 @@ const trimCommonEnds = (published, corrected) => {
 
   let tail = 0
   while (
-    tail < shortest - head &&
-    published.at(published.length - 1 - tail) === corrected.at(corrected.length - 1 - tail)
+    tail < shortest - head
+    && published.at(published.length - 1 - tail) === corrected.at(corrected.length - 1 - tail)
   ) {
     tail++
   }

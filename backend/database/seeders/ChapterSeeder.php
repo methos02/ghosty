@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Chapter;
 use App\Models\Novel;
 use App\Models\User;
+use App\Services\BranchService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 
@@ -13,7 +14,7 @@ class ChapterSeeder extends Seeder
     /** @var array<string, int> */
     private array $authorIds = [];
 
-    public function run(): void
+    public function run(BranchService $branchService): void
     {
         $novels = File::json(database_path('data/chapters.json'));
 
@@ -36,6 +37,7 @@ class ChapterSeeder extends Seeder
             $this->createChapter($found, $data, null);
 
             $found->update(['chapter_count' => $found->chapters()->count()]);
+            $branchService->updateLastChapterOfMainBranch($found);
         }
     }
 

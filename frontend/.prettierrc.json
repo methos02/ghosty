@@ -5,5 +5,6 @@
   "arrowParens": "avoid",
   "printWidth": 100,
   "singleAttributePerLine": true,
-  "htmlWhitespaceSensitivity": "ignore"
+  "htmlWhitespaceSensitivity": "ignore",
+  "experimentalOperatorPosition": "start"
 }

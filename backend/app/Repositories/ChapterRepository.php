@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\DTO\DraftFilterDTO;
 use App\Models\Chapter;
+use App\Models\Novel;
 use App\Support\ChapterChainSupport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -13,29 +14,59 @@ class ChapterRepository
     /**
      * @return Collection<int, Chapter>
      */
-    public function currentBranch(string $novelSlug, ?int $userId = null): Collection
+    public function mainBranch(string $novelSlug, ?int $userId = null): Collection
     {
-        $branchEnd = Chapter::query()
-            ->published()
-            ->whereRelation('novel', 'slug', $novelSlug)
-            ->orderByDesc('branch_like_count')
-            ->orderByDesc('depth')
-            ->orderBy('published_at')
-            ->first();
+        $novelId = Novel::query()->where('slug', $novelSlug)->first(['id'])?->id;
 
-        if ($branchEnd === null) {
+        if ($novelId === null) {
             return new Collection;
         }
 
-        $branch = Chapter::query()
-            ->with('author')
-            ->withUserLike($userId)
+        $lastChapter = $this->lastChapterOfMainBranch($novelId);
+
+        if ($lastChapter === null) {
+            return new Collection;
+        }
+
+        return $this->branchWithUnlikedContinuations($lastChapter, $userId);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
+     */
+    public function lastChapterOfMainBranch(int $novelId): ?Chapter
+    {
+        return Chapter::query()
             ->published()
-            ->whereIn('id', $branchEnd->pathChapterIds())
+            ->where('novel_id', $novelId)
+            ->whereIn('id', Novel::query()->whereKey($novelId)->select('main_branch_last_chapter_id'))
+            ->first();
+    }
+
+    public function mostLikedLastChapter(int $novelId): ?Chapter
+    {
+        return Chapter::query()
+            ->published()
+            ->where('novel_id', $novelId)
+            ->orderBranchByLike()
+            ->first();
+    }
+
+    /**
+     * @param  list<int>  $ids
+     * @return Collection<int, Chapter>
+     */
+    public function findByIds(array $ids): Collection
+    {
+        if ($ids === []) {
+            return new Collection;
+        }
+
+        return Chapter::query()
+            ->with(['novel', 'author'])
+            ->whereIn('id', $ids)
             ->orderBy('depth')
             ->get();
-
-        return ChapterChainSupport::fromRoot($branch);
     }
 
     /**
@@ -184,25 +215,52 @@ class ChapterRepository
      *
      * @return Collection<int, Chapter>
      */
-    public function mostPopularBranchWithChapter(Chapter $chapter, ?int $userId = null): Collection
+    public function branchToFollow(Chapter $currentChapter, ?int $userId = null): Collection
     {
-        $branchEnd = $this->mostPopularDescendantOf($chapter) ?? $chapter;
+        $chain = $this->branchWithUnlikedContinuations($this->branchEndToFollow($currentChapter), $userId);
 
-        $branch = Chapter::query()
-            ->with('author')
-            ->withUserLike($userId)
-            ->published()
-            ->whereIn('id', $branchEnd->pathChapterIds())
-            ->orderBy('depth')
-            ->get();
-
-        $chain = ChapterChainSupport::fromRoot($branch);
-
-        if ($chain->contains('id', $chapter->id)) {
+        if ($chain->contains('id', $currentChapter->id)) {
             return $chain;
         }
 
-        return new Collection([$chapter]);
+        return new Collection([$currentChapter]);
+    }
+
+    private function branchEndToFollow(Chapter $currentChapter): Chapter
+    {
+        $lastChapterOfMainBranch = $this->lastChapterOfMainBranch($currentChapter->novel_id);
+
+        if ($lastChapterOfMainBranch !== null && in_array($currentChapter->id, $lastChapterOfMainBranch->pathChapterIds(), true)) {
+            return $lastChapterOfMainBranch;
+        }
+
+        $strongestDescendant = $this->mostPopularDescendantOf($currentChapter);
+
+        if ($strongestDescendant === null || $strongestDescendant->branch_like_count <= $currentChapter->branch_like_count) {
+            return $currentChapter;
+        }
+
+        return $strongestDescendant;
+    }
+
+    /**
+     * @return Collection<int, Chapter>
+     */
+    private function branchWithUnlikedContinuations(Chapter $lastChapter, ?int $userId): Collection
+    {
+        $candidates = Chapter::query()
+            ->with('author')
+            ->withUserLike($userId)
+            ->published()
+            ->where('novel_id', $lastChapter->novel_id)
+            ->where(fn (Builder $query) => $query
+                ->whereIn('id', $lastChapter->pathChapterIds())
+                ->orWhereLike('path', $lastChapter->path.'%'))
+            ->orderBy('depth')
+            ->orderBranchByLike()
+            ->get();
+
+        return ChapterChainSupport::fromRoot($candidates);
     }
 
     private function mostPopularDescendantOf(Chapter $chapter): ?Chapter
@@ -212,9 +270,7 @@ class ChapterRepository
             ->where('novel_id', $chapter->novel_id)
             ->whereLike('path', $chapter->path.'%')
             ->whereKeyNot($chapter->id)
-            ->orderByDesc('branch_like_count')
-            ->orderByDesc('depth')
-            ->orderBy('published_at')
+            ->orderBranchByLike()
             ->first();
     }
 

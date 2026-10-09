@@ -126,6 +126,18 @@ class Chapter extends Model
         $query->where('continuations_count', '>', 0);
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
+     *
+     * @param  Builder<Chapter>  $query
+     */
+    public function scopeOrderBranchByLike(Builder $query): void
+    {
+        $query->orderByDesc('branch_like_count')
+            ->orderBy('published_at')
+            ->orderBy('id');
+    }
+
     public function isRoot(): bool
     {
         return $this->parent_id === null;

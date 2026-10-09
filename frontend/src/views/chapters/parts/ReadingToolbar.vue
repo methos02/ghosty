@@ -11,7 +11,7 @@ import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import { useReadingPosition } from '@/apis/chapters/composables/use-reading-position.js'
 
 const { selectedNovel } = useNovelStore()
-const { position, branchLength, isCurrentBranch, chapterIdAt } = useReadingPosition()
+const { position, branchLength, isMainBranch, chapterIdAt } = useReadingPosition()
 const { settings, setSetting, persist } = useReadingSettingsStore()
 const { chapter } = useReadingStore()
 const { canReport, openChapterReport } = useChapterReport()
@@ -66,14 +66,14 @@ const print = () => {
       />
 
       <span
-        v-if="isCurrentBranch"
+        v-if="isMainBranch"
         class="reading-toolbar__branch-label | badge badge-primary"
       >
         {{ t('reading_toolbar.popular_branch') }}
       </span>
 
       <span
-        v-if="!isCurrentBranch"
+        v-if="!isMainBranch"
         class="reading-toolbar__branch-label | badge badge-info"
       >
         {{ t('reading_toolbar.popular_branch_from_chapter') }}

@@ -18,7 +18,8 @@ class ChapterService
 {
     public function __construct(
         private readonly ChapterRepository $chaptersR,
-        private readonly NovelRepository $novelsR
+        private readonly NovelRepository $novelsR,
+        private readonly NotificationService $notificationService
     ) {}
 
     public function create(Novel $novel, User $author, ChapterDTO $datas): Chapter
@@ -85,6 +86,7 @@ class ChapterService
     {
         DB::transaction(function () use ($chapter) {
             if (! $chapter->isRoot()) {
+                $this->trimMainBranchAt($chapter);
                 $this->chaptersR->delete($chapter);
 
                 return;
@@ -93,6 +95,25 @@ class ChapterService
             $this->chaptersR->deleteByNovel($chapter->novel_id);
             $this->novelsR->deleteById($chapter->novel_id);
         });
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
+     */
+    private function trimMainBranchAt(Chapter $deletedChapter): void
+    {
+        $lastChapterOfMainBranch = $this->chaptersR->lastChapterOfMainBranch($deletedChapter->novel_id);
+        $parent = $this->chaptersR->parentOf($deletedChapter);
+
+        if ($lastChapterOfMainBranch === null || $parent === null) {
+            return;
+        }
+
+        if (! in_array($deletedChapter->id, $lastChapterOfMainBranch->pathChapterIds(), true)) {
+            return;
+        }
+
+        $this->novelsR->trimMainBranchTo($deletedChapter->novel_id, $parent->id);
     }
 
     private function withPath(Chapter $chapter, string $prefix): Chapter
@@ -107,11 +128,14 @@ class ChapterService
         $this->novelsR->incrementChapterCount($chapter->novel_id);
 
         if ($parent === null) {
+            $this->novelsR->setLastChapterOfMainBranch($chapter->novel_id, $chapter->id);
+
             return;
         }
 
         $this->chaptersR->incrementChildrenCount($parent);
         $this->chaptersR->updateBranchLikeCount($chapter, $parent);
+        $this->notificationService->chapterContinued($chapter, $parent);
     }
 
     /**

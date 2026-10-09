@@ -62,6 +62,25 @@ class NovelRepository
         Novel::whereKey($novelId)->increment('chapter_count');
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
+     */
+    public function setLastChapterOfMainBranch(int $novelId, int $chapterId): void
+    {
+        Novel::whereKey($novelId)->toBase()->update(['main_branch_last_chapter_id' => $chapterId]);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
+     */
+    public function trimMainBranchTo(int $novelId, int $chapterId): void
+    {
+        Novel::whereKey($novelId)->toBase()->update([
+            'main_branch_last_chapter_id' => $chapterId,
+            'branch_recomputed_at' => null,
+        ]);
+    }
+
     public function deleteById(int $novelId): void
     {
         Novel::whereKey($novelId)->delete();

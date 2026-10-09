@@ -30,7 +30,7 @@ const getChapterApi = (overrides = {}) => ({
   ...overrides,
 })
 
-const getCurrentBranchApi = (count = 3) => {
+const getMainBranchApi = (count = 3) => {
   return Array.from({ length: count }, (_, index) =>
     getChapterApi({
       id: index + 10,
@@ -49,7 +49,7 @@ const getChapter = (overrides = {}) => ({
   ...overrides,
 })
 
-const getCurrentBranch = (count = 3) => ChapterDto.fromList(getCurrentBranchApi(count))
+const getMainBranch = (count = 3) => ChapterDto.fromList(getMainBranchApi(count))
 
 const getReadingApi = (overrides = {}) => ({
   novel: novelSeeder.getNovelApi(),
@@ -83,7 +83,7 @@ const getReadingApi = (overrides = {}) => ({
     }),
   ],
   branch_chapter_ids: [10, 11, 12],
-  is_current_branch: true,
+  is_main_branch: true,
   next_chapter_id: 12,
   ...overrides,
 })
@@ -94,8 +94,8 @@ const getReading = (overrides = {}) => ({
 })
 
 const getTreeApi = (overrides = {}) => ({
-  chapters: getCurrentBranchApi(3),
-  current_branch_ids: [10, 11, 12],
+  chapters: getMainBranchApi(3),
+  main_branch_ids: [10, 11, 12],
   ...overrides,
 })
 
@@ -134,7 +134,7 @@ const getForkedTreeApi = (overrides = {}) => ({
       title: 'Le registre des disparus',
     }),
   ],
-  current_branch_ids: [10, 11, 13],
+  main_branch_ids: [10, 11, 13],
   ...overrides,
 })
 
@@ -159,9 +159,9 @@ const getWriteForm = (overrides = {}) => ({
 
 export const chapterSeeder = {
   getChapterApi,
-  getCurrentBranchApi,
+  getMainBranchApi,
   getChapter,
-  getCurrentBranch,
+  getMainBranch,
   getReadingApi,
   getReading,
   getTreeApi,

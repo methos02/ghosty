@@ -1,0 +1,6 @@
+{
+  "chapter_continued_notification": {
+    "one": "{author} a écrit « {continuation} », une suite à « {title} »",
+    "many": "{count} nouvelles suites à « {title} »"
+  }
+}

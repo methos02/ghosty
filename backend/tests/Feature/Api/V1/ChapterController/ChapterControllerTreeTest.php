@@ -67,7 +67,7 @@ class ChapterControllerTreeTest extends TestCase
     }
 
     #[Test]
-    public function designates_the_chapters_of_the_current_branch(): void
+    public function designates_the_chapters_of_the_main_branch(): void
     {
         [$novel, $root] = $this->novelWithRoot();
         $supported = Chapter::factory()->continuing($root)->liked(9)->create();
@@ -76,11 +76,11 @@ class ChapterControllerTreeTest extends TestCase
         $response = $this->getJson("/api/v1/novels/{$novel->slug}/tree");
 
         $response->assertOk()
-            ->assertJsonPath('current_branch_ids', [$root->id, $supported->id]);
+            ->assertJsonPath('main_branch_ids', [$root->id, $supported->id]);
     }
 
     #[Test]
-    public function follows_the_current_branch_to_its_end(): void
+    public function follows_the_main_branch_to_its_end(): void
     {
         [$novel, $root] = $this->novelWithRoot();
         $supported = Chapter::factory()->continuing($root)->liked(9)->create();
@@ -123,7 +123,7 @@ class ChapterControllerTreeTest extends TestCase
     }
 
     #[Test]
-    public function keeps_designating_the_current_branch_from_another_branch(): void
+    public function keeps_designating_the_main_branch_from_another_branch(): void
     {
         [$novel, $root] = $this->novelWithRoot();
         $supported = Chapter::factory()->continuing($root)->liked(9)->create();
@@ -132,7 +132,7 @@ class ChapterControllerTreeTest extends TestCase
         $response = $this->getJson("/api/v1/novels/{$novel->slug}/tree?from={$discarded->id}");
 
         $response->assertOk()
-            ->assertJsonPath('current_branch_ids', [$root->id, $supported->id]);
+            ->assertJsonPath('main_branch_ids', [$root->id, $supported->id]);
     }
 
     #[Test]
@@ -163,6 +163,6 @@ class ChapterControllerTreeTest extends TestCase
 
         $response->assertOk()
             ->assertJsonCount(0, 'chapters')
-            ->assertJsonPath('current_branch_ids', []);
+            ->assertJsonPath('main_branch_ids', []);
     }
 }

@@ -108,7 +108,7 @@ backend/
 │       ├── BranchService.php         # branch_like_count propagé (ADR-08)
 │       ├── LikeGuard.php              # anti-abus des soutiens
 │       ├── ModerationService.php         # seul chemin vers archived/hidden
-│       ├── NotificationService.php       # agrégation par group_key
+│       ├── NotificationService.php       # seul écrivain des notifications, agrégation par group_key
 │       └── ImageUploadService.php
 ├── database/
 │   ├── migrations/
@@ -270,10 +270,23 @@ sanctions : user_id, moderator_id, type ENUM('warning','like_ban','write_ban',
 > ⛔ **Aucune bascule d'état sur un nombre de signalements.** Sans ce garde-fou, « signaler »
 > redevient le downvote supprimé, actionnable en brigade.
 
-#### notifications — à venir (lot 3b)
+#### notifications ✅ implémenté (lot 3b)
 
-Table **native Laravel** (`php artisan make:notifications-table`, canal `database`), plus une
-colonne `group_key` indexée qui porte l'agrégation. Pas de schéma maison.
+Table **native Laravel** (canal `database`, modèle `App\Models\Notification` qui étend
+`DatabaseNotification` avec `HasUuids`), plus `group_key` et une colonne générée
+`unread` (= `group_key` tant que `read_at` est nul) sous contrainte unique
+`(notifiable_type, notifiable_id, unread)` : une seule entrée non lue par groupe.
+MySQL n'ayant pas d'index partiel, c'est la colonne générée qui porte le « WHERE read_at IS NULL ».
+
+- `NotificationService` est le **seul** écrivain : il refuse de notifier l'acteur lui-même et
+  respecte `users.notifications_enabled`, puis `updateOrCreate` sur le groupe non lu.
+- `chapter_continued` (publication d'une suite), `like_received` (soutien effectif, compteur
+  relu dans `likes` depuis l'ouverture du groupe), `main_branch_gained` /
+  `main_branch_lost` (diff de la branche principale avant / après, émis par
+  `BranchService::recomputeBranchLikes()` via `mainBranchSwitch()` quand il élit une nouvelle fin ;
+  une publication ne change jamais la branche principale). Groupés par auteur **et par roman**
+  (`group_key` sur le `Novel`), avec la liste des chapitres concernés.
+- Marquer lu ne touche pas `updated_at` : la liste est triée par dernière activité du groupe.
 
 ### Ordre de Création des Migrations
 
@@ -852,12 +865,12 @@ commande planifiée `ghosty:recompute-branch-likes` interroge toutes les cinq mi
 roman est à recalculer dès qu'un de ses chapitres porte
 `updated_at >= novels.branch_recomputed_at`, ou que cette date est nulle.
 
-`recompute()` ne rejoue pas des deltas : il reconstruit le roman depuis la racine et n'écrit
+`recomputeBranchLikes()` ne rejoue pas des deltas : il reconstruit le roman depuis la racine et n'écrit
 que les lignes dont la valeur change, puis pose `branch_recomputed_at` à l'instant **capturé
 avant la lecture**. Une bascule aller-retour n'écrit donc rien, un soutien arrivé pendant la
 passe est repris par la suivante, et un recalcul manqué est rattrapé sans intervention.
 
-⛔ **Les écritures de `recompute()` passent par `toBase()`**, donc sans horodatage. Une seule
+⛔ **Les écritures de `recomputeBranchLikes()` passent par `toBase()`**, donc sans horodatage. Une seule
 de ces lignes qui toucherait `chapters.updated_at` rendrait le roman éternellement sale et le
 recalculerait toutes les cinq minutes à perpétuité.
 
@@ -872,16 +885,20 @@ et hydrate sa branche depuis `pathChapterIds()`. Sur une feuille, le même cumul
    ([ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md)).
 2. **Le cumul, jamais la comparaison entre frères.** Comparer les seules suites directes est
    glouton : un cul-de-sac très soutenu interromprait la lecture au deuxième chapitre.
-3. **Départage déterministe** — à cumul égal, le chapitre le plus profond l'emporte (sinon
-   la lecture s'arrête avant la fin), puis le plus anciennement publié.
-4. **On notifie le gain, jamais la perte.** Annoncer une rétrogradation transformerait un
-   classement en défaite, à rebours de §7.
+3. **Les soutiens seuls, et pas d'égalité qui détrône** — la fin de la branche principale est
+   élue dans `novels.main_branch_last_chapter_id` par `recomputeBranchLikes()`, qui ne bascule que sur un cumul
+   **strictement supérieur**. La profondeur ne compte pas ; la lecture prolonge la branche
+   élue à travers les suites sans soutien, sans les y faire entrer (ADR-08, amendement du
+   2026-10-02).
+4. **On notifie l'entrée et la sortie, une fois par auteur.** Le tronc commun est ignoré ;
+   chaque auteur reçoit une notification par roman qui regroupe ses chapitres, et une
+   annonce devenue fausse avant lecture est retirée (ADR-08, amendement du 2026-10-02).
 
 ⚠️ Le cumul accuse donc **jusqu'à cinq minutes de retard**. Il ne sert qu'au tri — parcours
 de lecture par défaut et classement des branches — jamais à une autorisation. C'est pourquoi
 `POST /chapters/{id}/like` **ne renvoie pas `branch_like_count`** : servir la valeur d'avant
 le clic serait pire que ne rien servir. Le champ reste exposé sur la lecture d'un chapitre.
-Le lot modération réutilisera `recompute()` après chaque retrait de contenu
+Le lot modération réutilisera `recomputeBranchLikes()` après chaque retrait de contenu
 ([ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md),
 amendement du 2026-08-24).
 

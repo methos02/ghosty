@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import HeaderSideMenu from '@/views/layout/HeaderSideMenu.vue'
+import NotificationBell from '@/views/layout/NotificationBell.vue'
 import LoginDialog from '@/services/auth/views/LoginDialog.vue'
 import RegisterDialog from '@/services/auth/views/RegisterDialog.vue'
 import ChapterSummaryDialog from '@/views/chapters/parts/ChapterSummaryDialog.vue'
@@ -46,6 +47,7 @@ const isMenuOpen = ref(false)
         v-if="authStore.isAuthenticated.value"
         class="header-menu | d-flex a-center g-15 color-neutral-100"
       >
+        <NotificationBell />
         <span class="header-username | fs-500">{{ authStore.user.value?.username }}</span>
         <HeaderSideMenu v-model:open="isMenuOpen" />
       </div>

@@ -1,0 +1,7 @@
+{
+  "main_branch_lost_detail": {
+    "chapters": "Vos chapitres qui ne font plus partie de la branche principale de {novel} :",
+    "promote": "Ils restent lisibles par tous : faites découvrir votre branche à vos lecteurs !",
+    "read_branch": "Lire votre branche"
+  }
+}

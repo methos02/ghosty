@@ -11,7 +11,8 @@ A layer that only delegates without transforming, validating, or orchestrating �
 
 1. **Composable/context wrapping a singleton store** — if `createXxxContext` + `provide/inject` only exposes a module-level store and wraps a controller call, sibling components must import the store and call the controller directly.
 2. **Service wrapping a single controller** — "orchestrates multiple controllers" is strict: below two, there is nothing to orchestrate. No service; call the controller from the component.
-3. **Duplicated validation** — a `service.hasActiveFilters()` or `computed canSearch` that re-checks fields already covered by the form request is duplication. The form request is the single source of truth.
+3. **Single-consumer composable** — a composable used by one component only is inlined: move each function into its sole consumer and delete the file.
+4. **Duplicated validation** — a `service.hasActiveFilters()` or `computed canSearch` that re-checks fields already covered by the form request is duplication. The form request is the single source of truth.
 
 ```js
 // BAD - single-controller service, duplicates form request validation

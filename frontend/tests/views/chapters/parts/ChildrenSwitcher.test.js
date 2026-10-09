@@ -8,14 +8,14 @@ import { createReadingStore, READING_STORE_KEY } from '@/apis/chapters/stores/re
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 
-const switcherProvide = (nextChapterId = undefined, isCurrentBranch = true) => {
+const switcherProvide = (nextChapterId = undefined, isMainBranch = true) => {
   const novelStore = createNovelStore()
   const readingStore = createReadingStore()
   novelStore.setSelectedNovel(novelSeeder.getNovel())
   readingStore.setReading({
     ...chapterSeeder.getReading(),
     nextChapterId,
-    isCurrentBranch,
+    isMainBranch,
   })
 
   return {
@@ -31,7 +31,7 @@ describe('ChildrenSwitcher.vue', () => {
   })
 
   it('announces how many suites the chapter already has', () => {
-    const children = chapterSeeder.getCurrentBranch(2)
+    const children = chapterSeeder.getMainBranch(2)
 
     const wrapper = mount(ChildrenSwitcher, {
       props: { children },
@@ -50,8 +50,8 @@ describe('ChildrenSwitcher.vue', () => {
     expect(wrapper.find('.children-switcher').exists()).toBe(false)
   })
 
-  it('designates the suite that carries the current continuity', () => {
-    const children = chapterSeeder.getCurrentBranch(2)
+  it('designates the suite that carries the main branch', () => {
+    const children = chapterSeeder.getMainBranch(2)
 
     const wrapper = mount(ChildrenSwitcher, {
       props: { children },
@@ -62,8 +62,8 @@ describe('ChildrenSwitcher.vue', () => {
     expect(wrapper.findAll('.children-switcher__item')[1].text()).toContain('Branche principale')
   })
 
-  it('scopes the continuity badge to the branch when it is not the novel continuity', () => {
-    const children = chapterSeeder.getCurrentBranch(2)
+  it('scopes the main branch badge to the subtree when it is not the novel main branch', () => {
+    const children = chapterSeeder.getMainBranch(2)
 
     const wrapper = mount(ChildrenSwitcher, {
       props: { children },
@@ -74,7 +74,7 @@ describe('ChildrenSwitcher.vue', () => {
   })
 
   it('takes the reader to the suite whose card is clicked', async () => {
-    const children = chapterSeeder.getCurrentBranch(2)
+    const children = chapterSeeder.getMainBranch(2)
     const push = vi.spyOn(router, 'push').mockResolvedValue()
 
     const wrapper = mount(ChildrenSwitcher, {
@@ -90,7 +90,7 @@ describe('ChildrenSwitcher.vue', () => {
   })
 
   it('hands the summary of a suite to the dialog instead of showing it in the flow', async () => {
-    const children = chapterSeeder.getCurrentBranch(1)
+    const children = chapterSeeder.getMainBranch(1)
 
     const wrapper = mount(ChildrenSwitcher, {
       props: { children },
@@ -105,7 +105,7 @@ describe('ChildrenSwitcher.vue', () => {
   })
 
   it('keeps a crowded fork readable and offers the rest on demand', async () => {
-    const children = chapterSeeder.getCurrentBranch(5)
+    const children = chapterSeeder.getMainBranch(5)
 
     const wrapper = mount(ChildrenSwitcher, {
       props: { children },
@@ -122,7 +122,7 @@ describe('ChildrenSwitcher.vue', () => {
   })
 
   it('names each suite by its chapter and its author, never by a branch name', () => {
-    const children = chapterSeeder.getCurrentBranch(1)
+    const children = chapterSeeder.getMainBranch(1)
 
     const wrapper = mount(ChildrenSwitcher, {
       props: { children },
@@ -136,7 +136,7 @@ describe('ChildrenSwitcher.vue', () => {
 
   it('keeps the reader in the same tab when a suite is opened from the reading page', () => {
     const wrapper = mount(ChildrenSwitcher, {
-      props: { children: chapterSeeder.getCurrentBranch(2) },
+      props: { children: chapterSeeder.getMainBranch(2) },
       global: { provide: switcherProvide() },
     })
 

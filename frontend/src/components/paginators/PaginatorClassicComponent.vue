@@ -32,8 +32,8 @@ const links = computed(() => {
     }
 
     if (
-      page_number === props.params.lastPage - 3 &&
-      props.params.page <= props.params.lastPage - 5
+      page_number === props.params.lastPage - 3
+      && props.params.page <= props.params.lastPage - 5
     ) {
       linksList.push('...')
     }

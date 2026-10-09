@@ -7,7 +7,7 @@ use App\Models\Novel;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class ChapterControllerCurrentBranchTest extends TestCase
+class ChapterControllerMainBranchTest extends TestCase
 {
     /**
      * @return array{0: Novel, 1: Chapter}
@@ -30,6 +30,20 @@ class ChapterControllerCurrentBranchTest extends TestCase
         $response->assertOk()
             ->assertJsonCount(1, 'chapters')
             ->assertJsonPath('chapters.0.id', $root->id);
+    }
+
+    #[Test]
+    public function the_reading_carries_on_through_continuations_not_yet_supported(): void
+    {
+        [$novel, $root] = $this->novelWithRoot();
+        $supported = Chapter::factory()->continuing($root)->liked(3)->create();
+        $firstContinuation = Chapter::factory()->continuing($supported)->create(['published_at' => now()->subDay()]);
+        Chapter::factory()->continuing($supported)->create();
+
+        $response = $this->getJson("/api/v1/novels/{$novel->slug}/chapters");
+
+        $response->assertOk()
+            ->assertJsonPath('chapters.*.id', [$root->id, $supported->id, $firstContinuation->id]);
     }
 
     #[Test]

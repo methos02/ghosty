@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             GenresSeeder::class,
             NovelSeeder::class,
             ChapterSeeder::class,
+            NotificationSeeder::class,
         ]);
     }
 }

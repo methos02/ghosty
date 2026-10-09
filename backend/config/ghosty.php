@@ -28,4 +28,9 @@ return [
         'description_max_length' => 1000,
     ],
 
+    /* @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md */
+    'notifications' => [
+        'per_page' => 20,
+    ],
+
 ];

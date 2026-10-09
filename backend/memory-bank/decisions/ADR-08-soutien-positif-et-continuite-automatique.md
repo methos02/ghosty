@@ -3,6 +3,7 @@
 **Date**: 2026-07-31
 **Status**: Accepted
 **Amendé le**: 2026-08-24 — propagation de `branch_like_count` passée en différé (voir « Amendement »)
+**Amendé le**: 2026-10-02 — la branche principale ne change que sur un dépassement de soutiens (voir « Amendement du 2026-10-02 »)
 
 ## Context
 
@@ -28,11 +29,11 @@ Sur le point 3, la sélection manuelle a un défaut structurel : le seul candida
 
 **Le cumul sur la branche, et non la comparaison entre frères.** Ne comparer que les suites directes d'un chapitre est un choix glouton : une suite très soutenue que personne n'a continuée bat une suite un peu moins soutenue qui porte une branche de douze chapitres, et le parcours par défaut s'arrête alors au deuxième chapitre. Le cumul fait remonter l'information d'aval jusqu'à la racine, seul endroit où existe l'information « cette branche est importante ».
 
-**À cumul égal, le chapitre le plus profond l'emporte, puis le plus anciennement publié.** La profondeur d'abord, sinon une suite encore sans soutien — qui ne change pas le cumul — ferait s'arrêter la lecture avant la fin. L'ancienneté ensuite, pour un départage déterministe.
+~~**À cumul égal, le chapitre le plus profond l'emporte, puis le plus anciennement publié.**~~ Remplacé par l'amendement du 2026-10-02 : seuls les soutiens désignent la branche principale, et une égalité ne la détrône pas.
 
 **Effet recherché au-delà de la lecture** : sur une feuille (`continuations_count = 0`), `branch_like_count` est l'évaluation d'une branche complète et `depth` sa longueur. Classer les meilleures branches d'un roman devient un `ORDER BY` indexé — pour l'impression, l'exploration ou une sélection éditoriale. Un calcul à la lecture ne le permettait pas sans reparcourir l'arbre à chaque requête.
 
-**4. Le soutien ne notifie pas la perte.** Devenir la continuité courante déclenche une notification, la perdre n'en déclenche aucune : annoncer une rétrogradation transformerait un classement en défaite, à rebours de §7.
+~~**4. Le soutien ne notifie pas la perte.**~~ Remplacé par l'amendement du 2026-10-02 : l'entrée **et** la sortie de la branche principale sont annoncées, une notification par auteur.
 
 ## Alternatives Considered
 
@@ -66,7 +67,7 @@ Sur le point 3, la sélection manuelle a un défaut structurel : le seul candida
 
 **Comparaison en `>=`, pas en `>`.** Les horodatages sont à la seconde : un soutien partageant la seconde d'une passe serait perdu avec un `>` strict. Le `>=` fait au pire une passe redondante, qui n'écrit rien.
 
-**Les écritures du recalcul ne portent pas d'horodatage** (`toBase()`). Sans cela, `recompute()` bousculerait `chapters.updated_at` et se redéclencherait indéfiniment.
+**Les écritures du recalcul ne portent pas d'horodatage** (`toBase()`). Sans cela, `recomputeBranchLikes()` bousculerait `chapters.updated_at` et se redéclencherait indéfiniment.
 
 Le recalcul n'applique pas des deltas : il **reconstruit** les cumuls du roman, chapitre par chapitre depuis la racine, et n'écrit que les lignes dont la valeur change. Trois conséquences directes :
 
@@ -79,6 +80,24 @@ Le recalcul n'applique pas des deltas : il **reconstruit** les cumuls du roman, 
 **Conséquence sur les garde-fous.** La limite `ghosty.likes.per_minute` protégeait d'abord ces écritures de propagation. Différées, elle redevient une simple question d'usage. Ce sont l'unicité, l'email vérifié et l'ancienneté de compte du `LikeGuard` qui portent seuls l'anti-abus — un débit par utilisateur n'a jamais rien pu contre une brigade de faux comptes.
 
 **Non traité ici.** La détection du passage en continuité courante, et donc la notification de gain (point 4), devra être branchée sur le recalcul plutôt que sur le soutien quand elle sera livrée.
+
+## Amendement du 2026-10-02 — les soutiens seuls désignent la branche principale
+
+**Contexte.** Le départage par profondeur (point 3) servait à prolonger la lecture à travers les suites encore sans soutien. Il avait un effet de bord : à cumul égal, **publier** un chapitre suffisait à faire passer une branche devant une autre, sans un seul soutien. Dans un roman jeune où tout est à zéro, la branche principale devenait simplement la plus longue, et ses auteurs étaient notifiés d'un gain qu'aucun lecteur n'avait exprimé.
+
+**Décision.**
+
+1. **Seul le cumul de soutiens compte.** La profondeur sort du classement (`Chapter::scopeOrderBranchByLike` : cumul décroissant, puis publication la plus ancienne). Une branche qui s'allonge peut recevoir des soutiens plus vite, mais ce sont ces soutiens, pas l'allongement, qui la font passer en tête.
+2. **La branche principale est élue et mémorisée.** `novels.main_branch_last_chapter_id` désigne son dernier chapitre. Seul `BranchService::recomputeBranchLikes()` l'écrit, après le recalcul des cumuls. Il bascule **uniquement si un chapitre a un cumul strictement supérieur** à celui de la fin élue. Une égalité ne détrône pas la branche en place.
+3. **La lecture prolonge la branche élue sans l'étendre.** Le parcours par défaut suit la branche élue jusqu'à sa fin, puis continue à travers les suites sans soutien (la plus soutenue, puis la plus ancienne). Ce prolongement est un confort de lecture : il ne compte ni pour l'élection, ni pour la notification de gain.
+4. **Publier ne change jamais la branche principale.** Une suite hérite du cumul de son parent et ne peut pas le dépasser. La détection de gain (point 4) ne se fait donc plus qu'au recalcul, ce que demandait la note « Non traité ici » de l'amendement du 2026-08-24.
+
+**Toujours une fin enregistrée, sans repli.** `novels.main_branch_last_chapter_id` est tenue à jour à chaque événement qui pourrait la rendre invalide : la publication du premier chapitre l'enregistre, la suppression d'un chapitre de la branche principale la fait reculer sur son parent (sans notification) et marque le roman à recalculer. Le lot modération devra faire de même après chaque retrait. Il n'existe donc pas de « branche principale provisoire » calculée à la volée.
+
+5. **L'entrée et la sortie sont annoncées, une fois par auteur.** Quand la branche principale change, le tronc commun aux deux branches est ignoré. Chaque auteur reçoit au plus une notification `main_branch_gained` et une `main_branch_lost` par roman, qui regroupent tous ses chapitres concernés : un auteur qui a écrit quinze chapitres de la branche ne reçoit pas quinze messages. Annoncer la sortie n'est pas annoncer une défaite : si l'on officialise l'entrée, on doit prévenir du retrait, et l'auteur garde la main pour faire découvrir sa branche. Le message l'y invite.
+6. **Une annonce devenue fausse avant lecture est retirée.** Un chapitre qui ressort de la branche principale est retiré de la notification d'entrée non lue de son auteur, et inversement ; une notification vidée est supprimée. Un auteur présent des deux côtés d'un même changement reçoit les deux annonces.
+
+**Ce que ça coûte.** Une suite sans soutien n'entre dans la branche principale qu'au premier soutien suivi d'un recalcul (jusqu'à cinq minutes). Elle reste lue entre-temps grâce au prolongement (point 3).
 
 ## Références
 

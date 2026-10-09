@@ -43,7 +43,7 @@ describe('NovelDetailDialog.vue', () => {
   })
 
   it('loads the main branch and displays its first chapter', async () => {
-    vi.spyOn(ChapterController, 'currentBranch').mockResolvedValue(
+    vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
       controllerSuccess({ chapters: [chapter(10, 'Le Réveil', 'Il était une fois...')] }),
     )
 
@@ -51,7 +51,7 @@ describe('NovelDetailDialog.vue', () => {
     const { wrapper } = await mountDialogFor(novel)
     await flushPromises()
 
-    expect(ChapterController.currentBranch).toHaveBeenCalledWith(novel.slug)
+    expect(ChapterController.mainBranch).toHaveBeenCalledWith(novel.slug)
     expect(wrapper.find('.dialog-header h2').text()).toBe(novel.title)
     expect(wrapper.text()).toContain('Résumé — Le Réveil')
     expect(wrapper.find('.novel-detail-dialog__summary').text()).toBe('Il était une fois...')
@@ -60,7 +60,7 @@ describe('NovelDetailDialog.vue', () => {
   it('fetches the novel by slug when it is not already in the store (direct access)', async () => {
     const novel = novelSeeder.getNovel()
     vi.spyOn(NovelController, 'getBySlug').mockResolvedValue(controllerSuccess({ novel }))
-    vi.spyOn(ChapterController, 'currentBranch').mockResolvedValue(
+    vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
       controllerSuccess({ chapters: [chapter(10, 'Ch', '...')] }),
     )
 
@@ -68,12 +68,12 @@ describe('NovelDetailDialog.vue', () => {
     await flushPromises()
 
     expect(NovelController.getBySlug).toHaveBeenCalledWith(novel.slug)
-    expect(ChapterController.currentBranch).toHaveBeenCalledWith(novel.slug)
+    expect(ChapterController.mainBranch).toHaveBeenCalledWith(novel.slug)
     expect(wrapper.find('.dialog-header h2').text()).toBe(novel.title)
   })
 
   it('opens on the first chapter of the novel, whatever the branch holds after it', async () => {
-    vi.spyOn(ChapterController, 'currentBranch').mockResolvedValue(
+    vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
       controllerSuccess({
         chapters: [chapter(10, 'Premier', 'Début'), chapter(11, 'Second', 'Suite')],
       }),
@@ -88,7 +88,7 @@ describe('NovelDetailDialog.vue', () => {
   })
 
   it('shows the error message when the branch fails to load', async () => {
-    vi.spyOn(ChapterController, 'currentBranch').mockResolvedValue(
+    vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
       controllerError(undefined, 'Chargement impossible'),
     )
 
@@ -100,7 +100,7 @@ describe('NovelDetailDialog.vue', () => {
   })
 
   it('opens the multiverse on the displayed chapter, not on the popular branch', async () => {
-    vi.spyOn(ChapterController, 'currentBranch').mockResolvedValue(
+    vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
       controllerSuccess({ chapters: [chapter(10, 'Le Réveil', 'Il était une fois...')] }),
     )
     const novel = novelSeeder.getNovel()

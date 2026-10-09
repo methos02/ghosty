@@ -10,7 +10,7 @@ const props = defineProps({
   chapter: { type: Object, required: true },
 })
 
-const { nextChapterId, isCurrentBranch } = useReadingStore()
+const { nextChapterId, isMainBranch } = useReadingStore()
 const { selectedNovel } = useNovelStore()
 
 const popularity = computed(() => {
@@ -18,7 +18,7 @@ const popularity = computed(() => {
     return POPULARITY.NONE
   }
 
-  if (isCurrentBranch.value) {
+  if (isMainBranch.value) {
     return POPULARITY.NOVEL
   }
 

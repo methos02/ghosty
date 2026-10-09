@@ -37,7 +37,7 @@ describe('chapter-controller', () => {
       })
     })
 
-    it('returns the mapped chapters and the current branch', async () => {
+    it('returns the mapped chapters and the main branch', async () => {
       vi.spyOn(ChapterRepository, 'tree').mockResolvedValue({
         status: STATUS.SUCCESS,
         data: chapterSeeder.getTreeApi(),

@@ -102,8 +102,8 @@ describe('correction-helper', () => {
         for (const allowance of [0, 1, 2, 3, 5, 8]) {
           const expected = naiveDistance(published, corrected) > allowance
           const actual =
-            correctionHelper.changedWords(published.join(' '), corrected.join(' '), allowance) >
-            allowance
+            correctionHelper.changedWords(published.join(' '), corrected.join(' '), allowance)
+            > allowance
 
           expect(actual).toBe(expected)
           checked++

@@ -1,0 +1,6 @@
+{
+  "main_branch_lost_notification": {
+    "one": "« {title} » ne fait plus partie de la branche principale de {novel} : faites découvrir votre branche !",
+    "many": "{count} de vos chapitres ne font plus partie de la branche principale de {novel} : faites découvrir votre branche !"
+  }
+}

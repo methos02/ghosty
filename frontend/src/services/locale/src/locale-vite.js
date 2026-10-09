@@ -118,9 +118,9 @@ export const localeVite = projectDirectory => {
     handleHotUpdate({ file, server }) {
       const normalizedPath = file.replaceAll('\\', '/')
       if (
-        !file.endsWith('.json') ||
-        !file.includes('locale') ||
-        normalizedPath.includes('/public/locales/')
+        !file.endsWith('.json')
+        || !file.includes('locale')
+        || normalizedPath.includes('/public/locales/')
       ) {
         return
       }

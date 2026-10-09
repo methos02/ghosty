@@ -59,6 +59,17 @@ Both forms are mandatory from the moment a seeder is created — never ship `get
 
 Tests reference seeded fields (`site.slug`, `site.name`) rather than duplicating literals in assertions.
 
+No exception for translated text: the expected value is `t(key, params)` with params read from the seeder. DTO test expectations read from the seeder `Api` data. Only route names and translation keys stay literal.
+
+```js
+// BAD
+expect(wrapper.text()).toContain('Alice a aimé votre chapitre')
+
+// GOOD
+const api = notificationSeeder.getNotificationApi()
+expect(wrapper.text()).toContain(t('like_received_notification.one', { author: api.data.last_actor_username }))
+```
+
 ## Response Helpers
 
 `&/utils/helpers/controller-response.js` — wraps seeder data in the standard controller response format.

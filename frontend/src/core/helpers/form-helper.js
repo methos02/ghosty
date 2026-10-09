@@ -26,10 +26,10 @@ const isEmptyArray = value => {
 
 const isEmptyObject = value => {
   return (
-    value !== null &&
-    typeof value === 'object' &&
-    !Array.isArray(value) &&
-    Object.keys(value).length === 0
+    value !== null
+    && typeof value === 'object'
+    && !Array.isArray(value)
+    && Object.keys(value).length === 0
   )
 }
 

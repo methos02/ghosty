@@ -31,9 +31,9 @@ class ChapterController extends Controller
         private readonly AuthSupport $auth
     ) {}
 
-    public function currentBranch(string $novelSlug): JsonResponse
+    public function mainBranch(string $novelSlug): JsonResponse
     {
-        $chapters = $this->chaptersR->currentBranch($novelSlug, $this->auth->id());
+        $chapters = $this->chaptersR->mainBranch($novelSlug, $this->auth->id());
 
         return response()->json([
             'chapters' => ChapterListResource::collection($chapters),
@@ -59,8 +59,8 @@ class ChapterController extends Controller
 
         $this->abortIfUnreadable($chapter);
 
-        $branch = $this->chaptersR->mostPopularBranchWithChapter($chapter, $userId);
-        $currentBranch = $this->chaptersR->currentBranch($novelSlug);
+        $branch = $this->chaptersR->branchToFollow($chapter, $userId);
+        $mainBranch = $this->chaptersR->mainBranch($novelSlug);
 
         return response()->json([
             'novel' => new NovelResource($this->novelsR->findBySlug($novelSlug)),
@@ -72,7 +72,7 @@ class ChapterController extends Controller
                 $this->chaptersR->children($chapter->id, $userId)
             ),
             'branch_chapter_ids' => $branch->pluck('id')->all(),
-            'is_current_branch' => $branch->last()?->id === $currentBranch->last()?->id,
+            'is_main_branch' => $branch->last()?->id === $mainBranch->last()?->id,
             'next_chapter_id' => $this->nextChapterIdInBranch($branch, $chapter),
         ]);
     }
@@ -81,9 +81,9 @@ class ChapterController extends Controller
     {
         $fromChapterId = TreeFilterDTO::fromRequest($request)->fromChapterId;
         $userId = $this->auth->id();
-        $currentBranch = $this->chaptersR->currentBranch($novelSlug, $userId);
+        $mainBranch = $this->chaptersR->mainBranch($novelSlug, $userId);
 
-        $branch = $currentBranch;
+        $branch = $mainBranch;
         if ($fromChapterId !== null) {
             $origin = $this->chaptersR->findInNovel($fromChapterId, $novelSlug);
             $branch = $this->chaptersR->branchEndingWith($origin, $userId);
@@ -93,7 +93,7 @@ class ChapterController extends Controller
             'chapters' => ChapterListResource::collection(
                 $this->chaptersR->withChildren($novelSlug, $branch, $userId)
             ),
-            'current_branch_ids' => $currentBranch->pluck('id')->all(),
+            'main_branch_ids' => $mainBranch->pluck('id')->all(),
         ]);
     }
 

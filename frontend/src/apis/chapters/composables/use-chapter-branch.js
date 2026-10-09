@@ -23,7 +23,7 @@ export const useChapterBranch = () => {
       return chosenIds.value
     }
 
-    const readBranch = chapterTreeHelper.pathTo(chapters.value, referenceId.value)
+    const readBranch = chapterTreeHelper.retraceBranch(chapters.value, referenceId.value)
     if (readBranch.length > 0) {
       return readBranch
     }
@@ -47,12 +47,12 @@ export const useChapterBranch = () => {
     return selectedIds.value.includes(chapter.id)
   }
 
-  const alternativesOf = chapter => {
+  const countAlternatives = chapter => {
     return chapterTreeHelper.sortedChildren(chapters.value, chapter.parentId).length
   }
 
-  const hasBranchOf = chapterId => {
-    return chapterTreeHelper.pathTo(chapters.value, chapterId).length > 0
+  const hasBranch = chapterId => {
+    return chapterTreeHelper.retraceBranch(chapters.value, chapterId).length > 0
   }
 
   const revealChildren = async chapterId => {
@@ -64,7 +64,7 @@ export const useChapterBranch = () => {
   }
 
   const selectId = async chapterId => {
-    setChosenIds(chapterTreeHelper.selectionUpTo(selectedIds.value, chapterId))
+    setChosenIds(chapterTreeHelper.moveBranchEnd(selectedIds.value, chapterId))
 
     return await revealChildren(chapterId)
   }
@@ -82,8 +82,8 @@ export const useChapterBranch = () => {
     children,
     lastSelected,
     referenceId,
-    alternativesOf,
-    hasBranchOf,
+    countAlternatives,
+    hasBranch,
     isInBranch,
     isOnMainBranch,
     revealChildren,

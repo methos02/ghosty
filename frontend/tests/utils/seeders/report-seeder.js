@@ -4,6 +4,12 @@ const getReportData = (overrides = {}) => ({
   ...overrides,
 })
 
+const getRefusalApi = (overrides = {}) => ({
+  message: 'Vous avez déjà signalé ce contenu',
+  ...overrides,
+})
+
 export const reportSeeder = {
   getReportData,
+  getRefusalApi,
 }

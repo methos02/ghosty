@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createHead } from '@unhead/vue/client'
 import MultiversePage from '@/views/novels/MultiversePage.vue'
-import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
-import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
+import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
+import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
+import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
 import { createTreeStore, TREE_STORE_KEY } from '@/apis/chapters/stores/tree-store.js'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
@@ -32,12 +34,11 @@ describe('MultiversePage.vue', () => {
   })
 
   it('opens on the most supported branch of the novel it had to load', async () => {
-    const novel = novelSeeder.getNovel()
-    vi.spyOn(NovelController, 'getBySlug').mockResolvedValue(controllerSuccess({ novel }))
-    vi.spyOn(ChapterController, 'tree').mockResolvedValue(
-      controllerSuccess(chapterSeeder.getForkedTree()),
-    )
-    await router.push({ name: 'multiverse', params: { slug: novel.slug } })
+    const novelApi = novelSeeder.getNovelApi()
+    const treeApi = chapterSeeder.getForkedTreeApi()
+    vi.spyOn(NovelRepository, 'getBySlug').mockResolvedValue(controllerSuccess({ data: novelApi }))
+    vi.spyOn(ChapterRepository, 'tree').mockResolvedValue(controllerSuccess({ data: treeApi }))
+    await router.push({ name: 'multiverse', params: { slug: novelApi.slug } })
 
     const wrapper = mount(MultiversePage, {
       global: {
@@ -50,19 +51,27 @@ describe('MultiversePage.vue', () => {
     })
     await flushPromises()
 
-    expect(ChapterController.tree).toHaveBeenCalledWith(novel.slug, undefined)
+    expect(ChapterRepository.tree).toHaveBeenCalledWith({
+      params: ChapterDto.toTreeParams(novelApi.slug, undefined),
+    })
     expect(
       wrapper.findAll('.multiverse-page__branch .chapter-card__name').map(card => card.text()),
-    ).toEqual(['Le virage', 'Ce que le ravin gardait', 'Le registre des disparus'])
+    ).toEqual(
+      treeApi.main_branch_ids.map(id => treeApi.chapters.find(chapter => chapter.id === id).title),
+    )
   })
 
   it('opens on the branch of the chapter the reader comes from, not on the popular one', async () => {
-    const novel = novelSeeder.getNovel()
-    vi.spyOn(NovelController, 'getBySlug').mockResolvedValue(controllerSuccess({ novel }))
-    vi.spyOn(ChapterController, 'tree').mockResolvedValue(
-      controllerSuccess(chapterSeeder.getForkedTree()),
-    )
-    await router.push({ name: 'multiverse', params: { slug: novel.slug }, query: { from: 12 } })
+    const novelApi = novelSeeder.getNovelApi()
+    const treeApi = chapterSeeder.getForkedTreeApi()
+    const [rootApi, , passengerApi] = treeApi.chapters
+    vi.spyOn(NovelRepository, 'getBySlug').mockResolvedValue(controllerSuccess({ data: novelApi }))
+    vi.spyOn(ChapterRepository, 'tree').mockResolvedValue(controllerSuccess({ data: treeApi }))
+    await router.push({
+      name: 'multiverse',
+      params: { slug: novelApi.slug },
+      query: { from: passengerApi.id },
+    })
 
     const wrapper = mount(MultiversePage, {
       global: {
@@ -75,10 +84,12 @@ describe('MultiversePage.vue', () => {
     })
     await flushPromises()
 
-    expect(ChapterController.tree).toHaveBeenCalledWith(novel.slug, 12)
+    expect(ChapterRepository.tree).toHaveBeenCalledWith({
+      params: ChapterDto.toTreeParams(novelApi.slug, passengerApi.id),
+    })
     expect(
       wrapper.findAll('.multiverse-page__branch .chapter-card__name').map(card => card.text()),
-    ).toEqual(['Le virage', 'Le passager'])
+    ).toEqual([rootApi.title, passengerApi.title])
   })
 
   it('asks for the branch again when the chapter to open on is not in the loaded tree', async () => {
@@ -86,8 +97,8 @@ describe('MultiversePage.vue', () => {
     const novelStore = createNovelStore()
     treeStore.setTree(chapterSeeder.getForkedTree())
     novelStore.setSelectedNovel(novelSeeder.getNovel())
-    vi.spyOn(ChapterController, 'tree').mockResolvedValue(
-      controllerSuccess(chapterSeeder.getForkedTree()),
+    vi.spyOn(ChapterRepository, 'tree').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getForkedTreeApi() }),
     )
     await router.push({
       name: 'multiverse',
@@ -106,7 +117,9 @@ describe('MultiversePage.vue', () => {
     })
     await flushPromises()
 
-    expect(ChapterController.tree).toHaveBeenCalledWith(novelStore.selectedNovel.value.slug, 99)
+    expect(ChapterRepository.tree).toHaveBeenCalledWith({
+      params: ChapterDto.toTreeParams(novelStore.selectedNovel.value.slug, 99),
+    })
   })
 
   it('renders the branch prefetched by the server without asking again', async () => {
@@ -114,7 +127,7 @@ describe('MultiversePage.vue', () => {
     const novelStore = createNovelStore()
     treeStore.setTree(chapterSeeder.getForkedTree())
     novelStore.setSelectedNovel(novelSeeder.getNovel())
-    const load = vi.spyOn(ChapterController, 'tree')
+    vi.spyOn(ChapterRepository, 'tree')
     await router.push({ name: 'multiverse', params: { slug: novelStore.selectedNovel.value.slug } })
 
     const wrapper = mount(MultiversePage, {
@@ -128,14 +141,16 @@ describe('MultiversePage.vue', () => {
     })
     await flushPromises()
 
-    expect(load).not.toHaveBeenCalled()
+    expect(ChapterRepository.tree).not.toHaveBeenCalled()
     expect(wrapper.findAll('.multiverse-page__branch .chapter-card')).toHaveLength(3)
   })
 
   it('offers the suites of the fork the reader comes back to', async () => {
     const treeStore = createTreeStore()
     const novelStore = createNovelStore()
-    treeStore.setTree(chapterSeeder.getForkedTree())
+    const tree = chapterSeeder.getForkedTree()
+    const [, ravine, passenger] = tree.chapters
+    treeStore.setTree(tree)
     novelStore.setSelectedNovel(novelSeeder.getNovel())
     await router.push({ name: 'multiverse', params: { slug: novelStore.selectedNovel.value.slug } })
 
@@ -153,14 +168,16 @@ describe('MultiversePage.vue', () => {
 
     expect(
       wrapper.findAll('.multiverse-page__choices .chapter-card__name').map(card => card.text()),
-    ).toEqual(['Ce que le ravin gardait', 'Le passager'])
+    ).toEqual([ravine.title, passenger.title])
     expect(wrapper.find('.multiverse-page__choices .chapter-card__popular').exists()).toBe(true)
   })
 
   it('opens the fork a chapter belongs to when its versions are asked for', async () => {
     const treeStore = createTreeStore()
     const novelStore = createNovelStore()
-    treeStore.setTree(chapterSeeder.getForkedTree())
+    const tree = chapterSeeder.getForkedTree()
+    const [root, ravine, passenger] = tree.chapters
+    treeStore.setTree(tree)
     novelStore.setSelectedNovel(novelSeeder.getNovel())
     await router.push({ name: 'multiverse', params: { slug: novelStore.selectedNovel.value.slug } })
 
@@ -179,16 +196,18 @@ describe('MultiversePage.vue', () => {
 
     expect(
       wrapper.findAll('.multiverse-page__branch .chapter-card__name').map(card => card.text()),
-    ).toEqual(['Le virage'])
+    ).toEqual([root.title])
     expect(
       wrapper.findAll('.multiverse-page__choices .chapter-card__name').map(card => card.text()),
-    ).toEqual(['Ce que le ravin gardait', 'Le passager'])
+    ).toEqual([ravine.title, passenger.title])
   })
 
   it('replaces the alternatives with the suites of the chapter just chosen', async () => {
     const treeStore = createTreeStore()
     const novelStore = createNovelStore()
-    treeStore.setTree(chapterSeeder.getForkedTree())
+    const tree = chapterSeeder.getForkedTree()
+    const [root, , passenger] = tree.chapters
+    treeStore.setTree(tree)
     novelStore.setSelectedNovel(novelSeeder.getNovel())
     await router.push({ name: 'multiverse', params: { slug: novelStore.selectedNovel.value.slug } })
 
@@ -208,20 +227,25 @@ describe('MultiversePage.vue', () => {
 
     expect(
       wrapper.findAll('.multiverse-page__branch .chapter-card__name').map(card => card.text()),
-    ).toEqual(['Le virage', 'Le passager'])
+    ).toEqual([root.title, passenger.title])
     expect(wrapper.findAll('.multiverse-page__choices .chapter-card')).toHaveLength(0)
   })
 
   it('loads the suites left out by the displayed depth before offering them', async () => {
     const treeStore = createTreeStore()
     const novelStore = createNovelStore()
+    const lastChapter = chapterSeeder.getChapter({ id: 10, childrenCount: 1 })
     treeStore.setTree({
-      chapters: [chapterSeeder.getChapter({ id: 10, childrenCount: 1 })],
-      mainBranchIds: [10],
+      chapters: [lastChapter],
+      mainBranchIds: [lastChapter.id],
     })
     novelStore.setSelectedNovel(novelSeeder.getNovel())
-    vi.spyOn(ChapterController, 'tree').mockResolvedValue(
-      controllerSuccess({ chapters: [chapterSeeder.getChapter({ id: 11, parentId: 10 })] }),
+    vi.spyOn(ChapterRepository, 'tree').mockResolvedValue(
+      controllerSuccess({
+        data: chapterSeeder.getTreeApi({
+          chapters: [chapterSeeder.getChapterApi({ id: 11, parent_id: lastChapter.id })],
+        }),
+      }),
     )
     await router.push({ name: 'multiverse', params: { slug: novelStore.selectedNovel.value.slug } })
 
@@ -236,14 +260,18 @@ describe('MultiversePage.vue', () => {
     })
     await flushPromises()
 
-    expect(ChapterController.tree).toHaveBeenCalledWith(novelStore.selectedNovel.value.slug, 10)
+    expect(ChapterRepository.tree).toHaveBeenCalledWith({
+      params: ChapterDto.toTreeParams(novelStore.selectedNovel.value.slug, lastChapter.id),
+    })
     expect(wrapper.findAll('.multiverse-page__choices .chapter-card')).toHaveLength(1)
   })
 
   it('keeps the summaries out of the branch until the reader asks for one', async () => {
     const treeStore = createTreeStore()
     const novelStore = createNovelStore()
-    treeStore.setTree(chapterSeeder.getForkedTree())
+    const tree = chapterSeeder.getForkedTree()
+    const [root] = tree.chapters
+    treeStore.setTree(tree)
     novelStore.setSelectedNovel(novelSeeder.getNovel())
     await router.push({ name: 'multiverse', params: { slug: novelStore.selectedNovel.value.slug } })
 
@@ -259,16 +287,12 @@ describe('MultiversePage.vue', () => {
     })
     await flushPromises()
 
-    expect(wrapper.find('.multiverse-page__branch').text()).not.toContain(
-      'Une route de montagne, un virage manqué.',
-    )
+    expect(wrapper.find('.multiverse-page__branch').text()).not.toContain(root.summary)
 
     await wrapper.find('.multiverse-page__branch .chapter-card__summary').trigger('click')
 
     expect(wrapper.find('.chapter-summary-dialog__text').element.closest('dialog').open).toBe(true)
-    expect(wrapper.find('.chapter-summary-dialog__text').text()).toBe(
-      'Une route de montagne, un virage manqué.',
-    )
+    expect(wrapper.find('.chapter-summary-dialog__text').text()).toBe(root.summary)
   })
 
   it('numbers each chapter by its rank in the branch', async () => {
@@ -338,7 +362,9 @@ describe('MultiversePage.vue', () => {
   it('names the chapter the suites continue, so the reader knows what is being written', async () => {
     const treeStore = createTreeStore()
     const novelStore = createNovelStore()
-    treeStore.setTree(chapterSeeder.getForkedTree())
+    const tree = chapterSeeder.getForkedTree()
+    const [root] = tree.chapters
+    treeStore.setTree(tree)
     novelStore.setSelectedNovel(novelSeeder.getNovel())
     await router.push({ name: 'multiverse', params: { slug: novelStore.selectedNovel.value.slug } })
 
@@ -356,16 +382,19 @@ describe('MultiversePage.vue', () => {
     await flushPromises()
 
     expect(wrapper.find('.multiverse-page__choices-title').text()).toBe(
-      'Les suites possibles du chapitre 1',
+      t('multiverse.choices', { number: root.depth + 1 }),
     )
-    expect(wrapper.find('.multiverse-page__write').text()).toBe('Écrire une suite au chapitre 1')
+    expect(wrapper.find('.multiverse-page__write').text()).toBe(
+      t('multiverse.write', { number: root.depth + 1 }),
+    )
   })
 
   it('shows why the branch is missing when the tree cannot be loaded', async () => {
-    const novel = novelSeeder.getNovel()
-    vi.spyOn(NovelController, 'getBySlug').mockResolvedValue(controllerSuccess({ novel }))
-    vi.spyOn(ChapterController, 'tree').mockResolvedValue(controllerError(500, 'boom'))
-    await router.push({ name: 'multiverse', params: { slug: novel.slug } })
+    const novelApi = novelSeeder.getNovelApi()
+    const failure = controllerError()
+    vi.spyOn(NovelRepository, 'getBySlug').mockResolvedValue(controllerSuccess({ data: novelApi }))
+    vi.spyOn(ChapterRepository, 'tree').mockResolvedValue(failure)
+    await router.push({ name: 'multiverse', params: { slug: novelApi.slug } })
 
     const wrapper = mount(MultiversePage, {
       global: {
@@ -378,7 +407,7 @@ describe('MultiversePage.vue', () => {
     })
     await flushPromises()
 
-    expect(wrapper.find('.multiverse-page__error').text()).toBe('boom')
+    expect(wrapper.find('.multiverse-page__error').text()).toBe(failure.error)
   })
 
   it('opens a chapter of the tree in a new tab, leaving the exploration in place', async () => {

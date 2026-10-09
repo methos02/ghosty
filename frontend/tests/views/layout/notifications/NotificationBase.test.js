@@ -3,7 +3,8 @@ import { defineComponent, h } from 'vue'
 import { mount, flushPromises } from '@vue/test-utils'
 import { t } from '@/services/shortcuts/services-shortcut.js'
 import NotificationBase from '@/views/layout/notifications/NotificationBase.vue'
-import { NotificationController } from '@/apis/notifications/controllers/notification-controller.js'
+import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
+import { NotificationDto } from '@/apis/notifications/dtos/notification-dto.js'
 import { useNotificationStore } from '@/apis/notifications/stores/notification-store.js'
 import { useInlineNotificationDetails } from '@/apis/notifications/composables/use-inline-notification-details.js'
 import { controllerSuccess } from '&/utils/helpers/controller-response.js'
@@ -48,8 +49,8 @@ describe('NotificationBase.vue', () => {
 
   it('marks the notification read when one of its links is followed', async () => {
     const notification = notificationSeeder.getNotification()
-    vi.spyOn(NotificationController, 'markAsRead').mockResolvedValue(
-      controllerSuccess({ unreadCount: 0 }),
+    vi.spyOn(NotificationRepository, 'markAsRead').mockResolvedValue(
+      controllerSuccess({ data: notificationSeeder.getUnreadCountApi() }),
     )
 
     wrapper = mount(NotificationBase, {
@@ -59,11 +60,13 @@ describe('NotificationBase.vue', () => {
     await wrapper.find('.notification-base__message a').trigger('click')
     await flushPromises()
 
-    expect(NotificationController.markAsRead).toHaveBeenCalledWith(notification.id)
+    expect(NotificationRepository.markAsRead).toHaveBeenCalledWith({
+      params: NotificationDto.toReadParams(notification.id),
+    })
   })
 
   it('leaves the notification unread when the reader clicks beside its links', async () => {
-    vi.spyOn(NotificationController, 'markAsRead')
+    vi.spyOn(NotificationRepository, 'markAsRead')
 
     wrapper = mount(NotificationBase, {
       props: { notification: notificationSeeder.getNotification() },
@@ -71,6 +74,6 @@ describe('NotificationBase.vue', () => {
     await wrapper.find('.notification-base__date').trigger('click')
     await flushPromises()
 
-    expect(NotificationController.markAsRead).not.toHaveBeenCalled()
+    expect(NotificationRepository.markAsRead).not.toHaveBeenCalled()
   })
 })

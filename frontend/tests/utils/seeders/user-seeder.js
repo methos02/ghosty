@@ -18,7 +18,12 @@ const getUserApi = (overrides = {}) => ({
   ...overrides,
 })
 
+const getUserWithAvatarApi = (overrides = {}) =>
+  getUserApi({ avatar: 'https://example.test/avatars/42.png', ...overrides })
+
 const getUser = (overrides = {}) => ({ ...AuthDto.fromUser(getUserApi()), ...overrides })
+
+const getUserWithAvatar = () => AuthDto.fromUser(getUserWithAvatarApi())
 
 const getRegisterForm = (overrides = {}) => ({
   username: 'GhostWriter',
@@ -37,6 +42,8 @@ const getLoginForm = (overrides = {}) => ({
 export const userSeeder = {
   getUserApi,
   getUser,
+  getUserWithAvatarApi,
+  getUserWithAvatar,
   getRegisterForm,
   getLoginForm,
 }

@@ -17,7 +17,7 @@ const { selectedNovel } = useNovelStore()
 const { novelDetail } = useNovelDetail()
 const { chapters } = useTreeStore()
 const { chapterTree } = useChapterTree()
-const { branch, children, lastSelected, referenceId, hasBranchOf, revealChildren } =
+const { branch, children, lastSelected, referenceId, hasBranch, revealChildren } =
   useChapterBranch()
 
 const currentRoute = route.current()
@@ -36,7 +36,7 @@ const isAlreadyLoaded = () => {
     return true
   }
 
-  return hasBranchOf(referenceId.value)
+  return hasBranch(referenceId.value)
 }
 
 const reveal = async chapterId => {

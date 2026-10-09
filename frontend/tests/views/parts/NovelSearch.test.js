@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import NovelSearch from '@/views/parts/NovelSearch.vue'
-import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
+import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
+import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
 import {
   createNovelFilterStore,
   NOVEL_FILTER_STORE_KEY,
 } from '@/apis/novels/stores/novel-filter-store.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
-import { paginationSeeder } from '&/utils/seeders/pagination-seeder.js'
+import { controllerSuccess } from '&/utils/helpers/controller-response.js'
 
 describe('NovelSearch.vue', () => {
   afterEach(() => {
@@ -17,11 +17,9 @@ describe('NovelSearch.vue', () => {
   })
 
   it('sends the typed term to the api', async () => {
-    const list = vi.spyOn(NovelController, 'list').mockResolvedValue({
-      status: STATUS.SUCCESS,
-      novels: novelSeeder.getNovels(1),
-      pagination: paginationSeeder.getPagination(),
-    })
+    vi.spyOn(NovelRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: novelSeeder.getListApi(1) }),
+    )
     const wrapper = mount(NovelSearch, {
       global: {
         provide: {
@@ -35,15 +33,15 @@ describe('NovelSearch.vue', () => {
     await wrapper.find('form').trigger('submit')
     await flushPromises()
 
-    expect(list).toHaveBeenCalledWith({ page: 1, search: 'virage' })
+    expect(NovelRepository.list).toHaveBeenCalledWith({
+      params: NovelDto.toListParams({ page: 1, search: 'virage' }),
+    })
   })
 
   it('replaces the grid instead of appending to it', async () => {
-    vi.spyOn(NovelController, 'list').mockResolvedValue({
-      status: STATUS.SUCCESS,
-      novels: novelSeeder.getNovels(1),
-      pagination: paginationSeeder.getPagination(),
-    })
+    vi.spyOn(NovelRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: novelSeeder.getListApi(1) }),
+    )
     const store = createNovelFilterStore()
     const novelStore = createNovelStore()
     const wrapper = mount(NovelSearch, {
@@ -67,11 +65,9 @@ describe('NovelSearch.vue', () => {
   })
 
   it('clears the search and reloads every novel', async () => {
-    const list = vi.spyOn(NovelController, 'list').mockResolvedValue({
-      status: STATUS.SUCCESS,
-      novels: novelSeeder.getNovels(1),
-      pagination: paginationSeeder.getPagination(),
-    })
+    vi.spyOn(NovelRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: novelSeeder.getListApi(1) }),
+    )
     const store = createNovelFilterStore()
     const wrapper = mount(NovelSearch, {
       global: {
@@ -88,7 +84,9 @@ describe('NovelSearch.vue', () => {
     await wrapper.find('.novel-search__clear').trigger('click')
     await flushPromises()
 
-    expect(list).toHaveBeenLastCalledWith({ page: 1, search: '' })
+    expect(NovelRepository.list).toHaveBeenLastCalledWith({
+      params: NovelDto.toListParams({ page: 1, search: '' }),
+    })
     expect(store.search.value).toBe('')
   })
 

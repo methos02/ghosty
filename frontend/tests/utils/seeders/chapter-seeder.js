@@ -44,6 +44,11 @@ const getMainBranchApi = (count = 3) => {
   )
 }
 
+const getListApi = (overrides = {}) => ({
+  chapters: getMainBranchApi(3),
+  ...overrides,
+})
+
 const getChapter = (overrides = {}) => ({
   ...ChapterDto.fromShow(getChapterApi()),
   ...overrides,
@@ -160,6 +165,7 @@ const getWriteForm = (overrides = {}) => ({
 export const chapterSeeder = {
   getChapterApi,
   getMainBranchApi,
+  getListApi,
   getChapter,
   getMainBranch,
   getReadingApi,

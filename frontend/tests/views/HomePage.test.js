@@ -2,11 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createHead } from '@unhead/vue/client'
 import HomePage from '@/views/HomePage.vue'
-import { GenreController } from '@/apis/genres/controllers/genre-controller.js'
-import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
-import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
+import { GenreRepository } from '@/apis/genres/repositories/genre-repository.js'
+import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
+import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
 import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
-import { STATUS } from '@/constants/ajax-constants.js'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
 import {
   createNovelFilterStore,
@@ -19,7 +18,7 @@ import { controllerSuccess } from '&/utils/helpers/controller-response.js'
 import { genreSeeder } from '&/utils/seeders/genre-seeder.js'
 import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
-import { paginationSeeder } from '&/utils/seeders/pagination-seeder.js'
+import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
 
 const router = routerPlugin.getRouter()
@@ -28,19 +27,15 @@ describe('HomePage.vue', () => {
   let wrapper
 
   beforeEach(() => {
-    vi.spyOn(GenreController, 'list').mockResolvedValue({
-      status: STATUS.SUCCESS,
-      genres: genreSeeder.getGenres(3),
-    })
-    vi.spyOn(NovelController, 'list').mockResolvedValue({
-      status: STATUS.SUCCESS,
-      novels: novelSeeder.getNovels(2),
-      pagination: paginationSeeder.getPagination(),
-    })
-    vi.spyOn(ChapterController, 'drafts').mockResolvedValue({
-      status: STATUS.SUCCESS,
-      chapters: [],
-    })
+    vi.spyOn(GenreRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: genreSeeder.getGenresApi(3) }),
+    )
+    vi.spyOn(NovelRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: novelSeeder.getListApi(2) }),
+    )
+    vi.spyOn(ChapterRepository, 'drafts').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi({ chapters: [] }) }),
+    )
     vi.spyOn(NotificationRepository, 'list').mockResolvedValue(
       controllerSuccess({ data: notificationSeeder.getListApi() }),
     )

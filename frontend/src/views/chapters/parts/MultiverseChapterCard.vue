@@ -8,7 +8,8 @@ const props = defineProps({
   chapter: { type: Object, required: true },
 })
 
-const { select, showAlternatives, isInBranch, isOnMainBranch, alternativesOf } = useChapterBranch()
+const { select, showAlternatives, isInBranch, isOnMainBranch, countAlternatives } =
+  useChapterBranch()
 
 const isSelected = computed(() => isInBranch(props.chapter))
 const popularity = computed(() => {
@@ -18,7 +19,7 @@ const popularity = computed(() => {
 
   return POPULARITY.NONE
 })
-const alternativesCount = computed(() => alternativesOf(props.chapter))
+const alternativesCount = computed(() => countAlternatives(props.chapter))
 </script>
 
 <template>

@@ -1,13 +1,13 @@
-const toRegister = datas => ({
-  username: datas.username,
-  email: datas.email,
-  password: datas.password,
-  password_confirmation: datas.passwordConfirmation,
+const toRegister = formData => ({
+  username: formData.username,
+  email: formData.email,
+  password: formData.password,
+  password_confirmation: formData.passwordConfirmation,
 })
 
-const toLogin = datas => ({
-  identifier: datas.identifier,
-  password: datas.password,
+const toLogin = formData => ({
+  identifier: formData.identifier,
+  password: formData.password,
 })
 
 const fromUser = data => ({

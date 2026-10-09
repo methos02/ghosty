@@ -7,6 +7,7 @@ import { auth } from '@/services/shortcuts/services-shortcut.js'
 import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
 import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
 import { controllerSuccess } from '&/utils/helpers/controller-response.js'
+import { userSeeder } from '&/utils/seeders/user-seeder.js'
 
 describe('HeaderComponent.vue', () => {
   beforeEach(() => {
@@ -58,17 +59,18 @@ describe('HeaderComponent.vue', () => {
 
   describe('when authenticated', () => {
     it('replaces the buttons with the username and a menu', () => {
-      useAuthStore().setUser({ username: 'GhostWriter' })
+      const user = userSeeder.getUser()
+      useAuthStore().setUser(user)
 
       const wrapper = mount(HeaderComponent)
 
-      expect(wrapper.find('.header-username').text()).toBe('GhostWriter')
+      expect(wrapper.find('.header-username').text()).toBe(user.username)
       expect(wrapper.find('.header-menu').exists()).toBe(true)
       expect(wrapper.findAll('.btn-auth')).toHaveLength(0)
     })
 
     it('gathers writing, drafts and favorites in the menu', () => {
-      useAuthStore().setUser({ username: 'GhostWriter' })
+      useAuthStore().setUser(userSeeder.getUser())
 
       const wrapper = mount(HeaderComponent)
 
@@ -78,7 +80,7 @@ describe('HeaderComponent.vue', () => {
     })
 
     it('tints the bar while the side menu is open', async () => {
-      useAuthStore().setUser({ username: 'GhostWriter' })
+      useAuthStore().setUser(userSeeder.getUser())
 
       const wrapper = mount(HeaderComponent)
       await wrapper.find('.header-burger').trigger('click')
@@ -87,7 +89,7 @@ describe('HeaderComponent.vue', () => {
     })
 
     it('calls auth.logout from the menu', async () => {
-      useAuthStore().setUser({ username: 'GhostWriter' })
+      useAuthStore().setUser(userSeeder.getUser())
       const logout = vi.spyOn(auth, 'logout').mockResolvedValue({ status: 200 })
 
       const wrapper = mount(HeaderComponent)

@@ -1,4 +1,5 @@
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
+import { paginationSeeder } from '&/utils/seeders/pagination-seeder.js'
 
 const getNovelApi = (overrides = {}) => ({
   id: 1,
@@ -21,6 +22,12 @@ const getNovelsApi = (count = 3) => {
     }),
   )
 }
+
+const getListApi = (count = 3, overrides = {}) => ({
+  novels: getNovelsApi(count),
+  meta: paginationSeeder.getMetaApi(),
+  ...overrides,
+})
 
 const getNovel = (overrides = {}) => ({
   ...NovelDto.fromShow(getNovelApi()),
@@ -46,6 +53,7 @@ const getCreateForm = (overrides = {}) => ({
 export const novelSeeder = {
   getNovelApi,
   getNovelsApi,
+  getListApi,
   getNovel,
   getNovels,
   getCreateForm,

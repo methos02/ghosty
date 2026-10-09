@@ -18,7 +18,7 @@ const selectedChapters = (chapters = [], selectedIds = []) => {
   return selectedIds.map(id => byId.get(id)).filter(Boolean)
 }
 
-const pathTo = (chapters = [], chapterId) => {
+const retraceBranch = (chapters = [], chapterId) => {
   const byId = new Map(chapters.map(chapter => [chapter.id, chapter]))
   const path = []
   let step = byId.get(chapterId)
@@ -44,7 +44,7 @@ const defaultSelection = (chapters = [], mainBranchIds = []) => {
   return [root.id]
 }
 
-const selectionUpTo = (selectedIds = [], chapterId) => {
+const moveBranchEnd = (selectedIds = [], chapterId) => {
   if (!selectedIds.includes(chapterId)) {
     return [...selectedIds, chapterId]
   }
@@ -68,8 +68,8 @@ export const chapterTreeHelper = {
   sortedChildren,
   selectedChapters,
   defaultSelection,
-  pathTo,
-  selectionUpTo,
+  retraceBranch,
+  moveBranchEnd,
   lastChapter,
   hasHiddenChildren,
 }

@@ -106,6 +106,11 @@ const getListApi = (overrides = {}) => ({
   ...overrides,
 })
 
+const getUnreadCountApi = (overrides = {}) => ({
+  unread_count: 0,
+  ...overrides,
+})
+
 const getInbox = (overrides = {}) => ({ ...NotificationDto.fromList(getListApi()), ...overrides })
 
 export const notificationSeeder = {
@@ -119,4 +124,5 @@ export const notificationSeeder = {
   getListApi,
   getNotification,
   getNotificationApi,
+  getUnreadCountApi,
 }

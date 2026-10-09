@@ -2,11 +2,14 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { createHead } from '@unhead/vue/client'
 import NovelDetailDialog from '@/views/novels/NovelDetailDialog.vue'
-import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
-import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
+import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
+import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
+import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
+import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
 import { createChapterStore, CHAPTER_STORE_KEY } from '@/apis/chapters/stores/chapter-store.js'
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
@@ -20,12 +23,9 @@ describe('NovelDetailDialog.vue', () => {
   })
 
   it('loads the main branch and displays its first chapter', async () => {
-    vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
-      controllerSuccess({
-        chapters: [
-          chapterSeeder.getChapter({ id: 10, title: 'Le Réveil', summary: 'Il était une fois...' }),
-        ],
-      }),
+    const chapterApi = chapterSeeder.getChapterApi()
+    vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi({ chapters: [chapterApi] }) }),
     )
 
     const novel = novelSeeder.getNovel()
@@ -44,23 +44,23 @@ describe('NovelDetailDialog.vue', () => {
     })
     await flushPromises()
 
-    expect(ChapterController.mainBranch).toHaveBeenCalledWith(novel.slug)
+    expect(ChapterRepository.mainBranch).toHaveBeenCalledWith({
+      params: ChapterDto.toMainBranchParams(novel.slug),
+    })
     expect(wrapper.find('.dialog-header h2').text()).toBe(novel.title)
-    expect(wrapper.text()).toContain('Résumé — Le Réveil')
-    expect(wrapper.find('.novel-detail-dialog__summary').text()).toBe('Il était une fois...')
+    expect(wrapper.text()).toContain(t('novel.chapter_summary', { chapter: chapterApi.title }))
+    expect(wrapper.find('.novel-detail-dialog__summary').text()).toBe(chapterApi.summary)
   })
 
   it('fetches the novel by slug when it is not already in the store (direct access)', async () => {
-    const novel = novelSeeder.getNovel()
-    vi.spyOn(NovelController, 'getBySlug').mockResolvedValue(controllerSuccess({ novel }))
-    vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
-      controllerSuccess({
-        chapters: [chapterSeeder.getChapter({ id: 10, title: 'Ch', summary: '...' })],
-      }),
+    const novelApi = novelSeeder.getNovelApi()
+    vi.spyOn(NovelRepository, 'getBySlug').mockResolvedValue(controllerSuccess({ data: novelApi }))
+    vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi() }),
     )
 
     const novelStore = createNovelStore()
-    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.push({ name: 'novel-detail', params: { slug: novelApi.slug } })
     await router.isReady()
     const wrapper = mount(NovelDetailDialog, {
       global: {
@@ -73,19 +73,20 @@ describe('NovelDetailDialog.vue', () => {
     })
     await flushPromises()
 
-    expect(NovelController.getBySlug).toHaveBeenCalledWith(novel.slug)
-    expect(ChapterController.mainBranch).toHaveBeenCalledWith(novel.slug)
-    expect(wrapper.find('.dialog-header h2').text()).toBe(novel.title)
+    expect(NovelRepository.getBySlug).toHaveBeenCalledWith({
+      params: NovelDto.toShowParams(novelApi.slug),
+    })
+    expect(ChapterRepository.mainBranch).toHaveBeenCalledWith({
+      params: ChapterDto.toMainBranchParams(novelApi.slug),
+    })
+    expect(wrapper.find('.dialog-header h2').text()).toBe(novelApi.title)
   })
 
   it('opens on the first chapter of the novel, whatever the branch holds after it', async () => {
-    vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
-      controllerSuccess({
-        chapters: [
-          chapterSeeder.getChapter({ id: 10, title: 'Premier', summary: 'Début' }),
-          chapterSeeder.getChapter({ id: 11, title: 'Second', summary: 'Suite' }),
-        ],
-      }),
+    const listApi = chapterSeeder.getListApi({ chapters: chapterSeeder.getMainBranchApi(2) })
+    const [firstChapterApi] = listApi.chapters
+    vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue(
+      controllerSuccess({ data: listApi }),
     )
 
     const novel = novelSeeder.getNovel()
@@ -104,14 +105,13 @@ describe('NovelDetailDialog.vue', () => {
     })
     await flushPromises()
 
-    expect(wrapper.text()).toContain('Résumé — Premier')
-    expect(wrapper.find('.novel-detail-dialog__summary').text()).toBe('Début')
+    expect(wrapper.text()).toContain(t('novel.chapter_summary', { chapter: firstChapterApi.title }))
+    expect(wrapper.find('.novel-detail-dialog__summary').text()).toBe(firstChapterApi.summary)
   })
 
   it('shows the error message when the branch fails to load', async () => {
-    vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
-      controllerError(undefined, 'Chargement impossible'),
-    )
+    const failure = controllerError()
+    vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue(failure)
 
     const novel = novelSeeder.getNovel()
     const novelStore = createNovelStore()
@@ -129,16 +129,13 @@ describe('NovelDetailDialog.vue', () => {
     })
     await flushPromises()
 
-    expect(wrapper.text()).toContain('Chargement impossible')
+    expect(wrapper.text()).toContain(failure.error)
   })
 
   it('opens the multiverse on the displayed chapter, not on the popular branch', async () => {
-    vi.spyOn(ChapterController, 'mainBranch').mockResolvedValue(
-      controllerSuccess({
-        chapters: [
-          chapterSeeder.getChapter({ id: 10, title: 'Le Réveil', summary: 'Il était une fois...' }),
-        ],
-      }),
+    const chapterApi = chapterSeeder.getChapterApi()
+    vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi({ chapters: [chapterApi] }) }),
     )
     const novel = novelSeeder.getNovel()
     const novelStore = createNovelStore()
@@ -162,6 +159,6 @@ describe('NovelDetailDialog.vue', () => {
       expect(router.currentRoute.value.name).toBe('multiverse')
     })
     expect(router.currentRoute.value.params).toEqual({ slug: novel.slug })
-    expect(router.currentRoute.value.query).toEqual({ from: '10' })
+    expect(router.currentRoute.value.query).toEqual({ from: String(chapterApi.id) })
   })
 })

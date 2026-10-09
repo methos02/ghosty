@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import ChapterManagePage from '@/views/chapters/ChapterManagePage.vue'
-import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
+import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
+import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
 import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
-import { STATUS } from '@/constants/ajax-constants.js'
-import { form, router } from '@/services/shortcuts/services-shortcut.js'
+import { form, router, t } from '@/services/shortcuts/services-shortcut.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { controllerSuccess } from '&/utils/helpers/controller-response.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
@@ -15,10 +15,9 @@ describe('ChapterManagePage.vue', () => {
   let wrapper
 
   beforeEach(() => {
-    vi.spyOn(ChapterController, 'drafts').mockResolvedValue({
-      status: STATUS.SUCCESS,
-      chapters: [],
-    })
+    vi.spyOn(ChapterRepository, 'drafts').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi({ chapters: [] }) }),
+    )
     vi.spyOn(NotificationRepository, 'list').mockResolvedValue(
       controllerSuccess({ data: notificationSeeder.getListApi() }),
     )
@@ -35,50 +34,67 @@ describe('ChapterManagePage.vue', () => {
 
   describe('writing a child', () => {
     it('names the chapter being continued, without crediting its author', async () => {
-      vi.spyOn(ChapterController, 'getById').mockResolvedValue({
-        status: STATUS.SUCCESS,
-        chapter: chapterSeeder.getChapter({ id: 10, title: 'Le virage' }),
-      })
+      const parentApi = chapterSeeder.getChapterApi()
+      vi.spyOn(ChapterRepository, 'getById').mockResolvedValue(
+        controllerSuccess({ data: parentApi }),
+      )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-write', params: { slug: 'nuit-virage', parentId: 10 } })
+      await router.push({
+        name: 'chapter-write',
+        params: { slug: parentApi.novel.slug, parentId: parentApi.id },
+      })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
-      expect(ChapterController.getById).toHaveBeenCalledWith(10)
+      expect(ChapterRepository.getById).toHaveBeenCalledWith({
+        params: ChapterDto.toChapterParams(parentApi.id),
+      })
       const notice = wrapper.find('.chapter-manage-page__continuing')
-      expect(notice.text()).toContain('Le virage')
-      expect(notice.text()).not.toContain('GhostWriter')
+      expect(notice.text()).toContain(parentApi.title)
+      expect(notice.text()).not.toContain(parentApi.author.username)
     })
 
     it('reopens the draft already started on this parent instead of a blank form', async () => {
-      ChapterController.drafts.mockResolvedValueOnce({
-        status: STATUS.SUCCESS,
-        chapters: [chapterSeeder.getChapter({ id: 44, parentId: 10, isDraft: true })],
+      const parentApi = chapterSeeder.getChapterApi()
+      const draftApi = chapterSeeder.getChapterApi({
+        id: 44,
+        parent_id: parentApi.id,
+        is_draft: true,
       })
+      ChapterRepository.drafts.mockResolvedValueOnce(
+        controllerSuccess({ data: chapterSeeder.getListApi({ chapters: [draftApi] }) }),
+      )
       const replace = vi.spyOn(router, 'replace').mockResolvedValueOnce()
-      vi.spyOn(ChapterController, 'getById').mockResolvedValue({
-        status: STATUS.SUCCESS,
-        chapter: chapterSeeder.getChapter({ id: 10, title: 'Le virage' }),
-      })
+      vi.spyOn(ChapterRepository, 'getById').mockResolvedValue(
+        controllerSuccess({ data: parentApi }),
+      )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-write', params: { slug: 'nuit-virage', parentId: 10 } })
+      await router.push({
+        name: 'chapter-write',
+        params: { slug: parentApi.novel.slug, parentId: parentApi.id },
+      })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
-      expect(ChapterController.drafts).toHaveBeenCalledWith({ parentId: 10 })
-      expect(replace).toHaveBeenCalledWith({ name: 'chapter-edit', params: { id: 44 } })
-      expect(ChapterController.getById).not.toHaveBeenCalled()
+      expect(ChapterRepository.drafts).toHaveBeenCalledWith({
+        params: ChapterDto.toDraftFilters({ parentId: parentApi.id }),
+      })
+      expect(replace).toHaveBeenCalledWith({ name: 'chapter-edit', params: { id: draftApi.id } })
+      expect(ChapterRepository.getById).not.toHaveBeenCalled()
     })
 
     it('does not publish a child with an empty text', async () => {
-      const create = vi.spyOn(ChapterController, 'create')
+      const parentApi = chapterSeeder.getChapterApi()
       const formData = chapterSeeder.getWriteForm({ content: '' })
-      vi.spyOn(ChapterController, 'getById').mockResolvedValue({
-        status: STATUS.SUCCESS,
-        chapter: chapterSeeder.getChapter({ id: 10, title: 'Le virage' }),
-      })
+      vi.spyOn(ChapterRepository, 'create')
+      vi.spyOn(ChapterRepository, 'getById').mockResolvedValue(
+        controllerSuccess({ data: parentApi }),
+      )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-write', params: { slug: 'nuit-virage', parentId: 10 } })
+      await router.push({
+        name: 'chapter-write',
+        params: { slug: parentApi.novel.slug, parentId: parentApi.id },
+      })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
@@ -90,25 +106,25 @@ describe('ChapterManagePage.vue', () => {
       await wrapper.find('.chapter-manage-page__form').trigger('submit')
       await flushPromises()
 
-      expect(create).not.toHaveBeenCalled()
+      expect(ChapterRepository.create).not.toHaveBeenCalled()
       expect(form.getError('chapter.content')).toBe('chapter_manage.error_content_required')
     })
 
     it('sends the child with its parent and opens it for reading on success', async () => {
-      const published = chapterSeeder.getChapter({ id: 55 })
-      const create = vi.spyOn(ChapterController, 'create').mockResolvedValue({
-        status: STATUS.SUCCESS,
-        chapter: published,
-      })
-      const formData = chapterSeeder.getWriteForm({
-        content: 'La voiture repartit en sens inverse, phares éteints. '.repeat(5),
-      })
-      vi.spyOn(ChapterController, 'getById').mockResolvedValue({
-        status: STATUS.SUCCESS,
-        chapter: chapterSeeder.getChapter({ id: 10, title: 'Le virage' }),
-      })
+      const parentApi = chapterSeeder.getChapterApi()
+      const publishedApi = chapterSeeder.getChapterApi({ id: 55, parent_id: parentApi.id })
+      const formData = chapterSeeder.getWriteForm({ parentId: parentApi.id })
+      vi.spyOn(ChapterRepository, 'create').mockResolvedValue(
+        controllerSuccess({ data: publishedApi }),
+      )
+      vi.spyOn(ChapterRepository, 'getById').mockResolvedValue(
+        controllerSuccess({ data: parentApi }),
+      )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-write', params: { slug: 'nuit-virage', parentId: 10 } })
+      await router.push({
+        name: 'chapter-write',
+        params: { slug: parentApi.novel.slug, parentId: parentApi.id },
+      })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
       const push = vi.spyOn(router, 'push').mockResolvedValueOnce()
@@ -121,77 +137,88 @@ describe('ChapterManagePage.vue', () => {
       await wrapper.find('.chapter-manage-page__form').trigger('submit')
       await flushPromises()
 
-      expect(create).toHaveBeenCalledWith('nuit-virage', formData)
+      expect(ChapterRepository.create).toHaveBeenCalledWith({
+        params: ChapterDto.toCreateParams(parentApi.novel.slug),
+        body: ChapterDto.toCreate(formData),
+      })
       expect(push).toHaveBeenCalledWith({
         name: 'chapter-read',
-        params: { slug: 'nuit-virage', id: published.id },
+        params: { slug: parentApi.novel.slug, id: publishedApi.id },
       })
     })
   })
 
   describe('resuming a draft', () => {
     it('fills the form with the chapter it resumes', async () => {
-      const edited = chapterSeeder.getChapter({
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({
         id: 44,
-        isDraft: true,
+        is_draft: true,
         title: 'Nuit blanche',
-        parentId: 10,
+        parent_id: parentApi.id,
       })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
-      expect(wrapper.find('input[name="chapter.title"]').element.value).toBe('Nuit blanche')
+      expect(wrapper.find('input[name="chapter.title"]').element.value).toBe(editedApi.title)
     })
 
     it('keeps the thread visible, the draft says what it continues', async () => {
-      const edited = chapterSeeder.getChapter({ id: 44, isDraft: true, parentId: 10 })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({
+        id: 44,
+        is_draft: true,
+        parent_id: parentApi.id,
+      })
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
-      expect(wrapper.find('.chapter-manage-page__continuing').text()).toContain('Le virage')
+      expect(wrapper.find('.chapter-manage-page__continuing').text()).toContain(parentApi.title)
     })
 
     it('stays silent about a parent when the chapter opens the novel', async () => {
-      const edited = chapterSeeder.getChapter({ id: 44, isDraft: true, parentId: undefined })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({ id: 44, is_draft: true, parent_id: null })
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
       expect(wrapper.find('.chapter-manage-page__continuing').exists()).toBe(false)
-      expect(ChapterController.getById).toHaveBeenCalledTimes(1)
+      expect(ChapterRepository.getById).toHaveBeenCalledTimes(1)
     })
 
     it('updates then publishes, and opens the chapter for reading', async () => {
-      const update = vi
-        .spyOn(ChapterController, 'update')
-        .mockResolvedValue({ status: STATUS.SUCCESS })
-      const publish = vi
-        .spyOn(ChapterController, 'publish')
-        .mockResolvedValue({ status: STATUS.SUCCESS })
-      const edited = chapterSeeder.getChapter({ id: 44, isDraft: true, parentId: 10 })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({
+        id: 44,
+        is_draft: true,
+        parent_id: parentApi.id,
+      })
+      vi.spyOn(ChapterRepository, 'update').mockResolvedValue(
+        controllerSuccess({ data: editedApi }),
+      )
+      vi.spyOn(ChapterRepository, 'publish').mockResolvedValue(
+        controllerSuccess({ data: editedApi }),
+      )
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
       const push = vi.spyOn(router, 'push').mockResolvedValueOnce()
@@ -199,27 +226,32 @@ describe('ChapterManagePage.vue', () => {
       await wrapper.find('.chapter-manage-page__form').trigger('submit')
       await flushPromises()
 
-      expect(update).toHaveBeenCalledWith(44, expect.objectContaining({ title: 'Le virage' }))
-      expect(publish).toHaveBeenCalledWith(44)
+      expect(ChapterRepository.update).toHaveBeenCalledWith({
+        params: ChapterDto.toChapterParams(editedApi.id),
+        body: ChapterDto.toUpdate(ChapterDto.fromShow(editedApi)),
+      })
+      expect(ChapterRepository.publish).toHaveBeenCalledWith({
+        params: ChapterDto.toChapterParams(editedApi.id),
+      })
       expect(push).toHaveBeenCalledWith({
         name: 'chapter-read',
-        params: { slug: 'nuit-virage', id: 44 },
+        params: { slug: editedApi.novel.slug, id: editedApi.id },
       })
     })
 
     it('states that the correction can only be spent once', async () => {
-      const edited = chapterSeeder.getChapter({
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({
         id: 44,
-        isDraft: false,
-        isCorrectable: true,
-        parentId: 10,
+        is_draft: false,
+        is_correctable: true,
+        parent_id: parentApi.id,
       })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
@@ -228,18 +260,18 @@ describe('ChapterManagePage.vue', () => {
     })
 
     it('says the correction is gone once it has been spent', async () => {
-      const edited = chapterSeeder.getChapter({
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({
         id: 44,
-        isDraft: false,
-        isCorrectable: false,
-        parentId: 10,
+        is_draft: false,
+        is_correctable: false,
+        parent_id: parentApi.id,
       })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
@@ -248,19 +280,19 @@ describe('ChapterManagePage.vue', () => {
     })
 
     it('counts the words still modifiable while the author types', async () => {
-      const edited = chapterSeeder.getChapter({
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({
         id: 44,
-        isDraft: false,
-        isCorrectable: true,
+        is_draft: false,
+        is_correctable: true,
         content: 'la voiture avait quitte la route au troisieme virage',
-        parentId: 10,
+        parent_id: parentApi.id,
       })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
@@ -275,19 +307,19 @@ describe('ChapterManagePage.vue', () => {
     })
 
     it('warns as soon as the rewrite passes the allowance', async () => {
-      const edited = chapterSeeder.getChapter({
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({
         id: 44,
-        isDraft: false,
-        isCorrectable: true,
+        is_draft: false,
+        is_correctable: true,
         content: 'la voiture avait quitte la route au troisieme virage',
-        parentId: 10,
+        parent_id: parentApi.id,
       })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
@@ -300,19 +332,19 @@ describe('ChapterManagePage.vue', () => {
     })
 
     it('blocks the save as soon as the rewrite passes the allowance', async () => {
-      const edited = chapterSeeder.getChapter({
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({
         id: 44,
-        isDraft: false,
-        isCorrectable: true,
+        is_draft: false,
+        is_correctable: true,
         content: 'la voiture avait quitte la route au troisieme virage',
-        parentId: 10,
+        parent_id: parentApi.id,
       })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
@@ -326,18 +358,18 @@ describe('ChapterManagePage.vue', () => {
     })
 
     it('blocks the save on a chapter whose correction is already spent', async () => {
-      const edited = chapterSeeder.getChapter({
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({
         id: 44,
-        isDraft: false,
-        isCorrectable: false,
-        parentId: 10,
+        is_draft: false,
+        is_correctable: false,
+        parent_id: parentApi.id,
       })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
@@ -345,13 +377,17 @@ describe('ChapterManagePage.vue', () => {
     })
 
     it('warns on a published chapter and drops the publish button', async () => {
-      const edited = chapterSeeder.getChapter({ id: 44, isDraft: false, parentId: 10 })
-      const parent = chapterSeeder.getChapter({ id: 10, title: 'Le virage' })
-      vi.spyOn(ChapterController, 'getById').mockImplementation(async id =>
-        controllerSuccess({ chapter: id === 44 ? edited : parent }),
+      const parentApi = chapterSeeder.getChapterApi()
+      const editedApi = chapterSeeder.getChapterApi({
+        id: 44,
+        is_draft: false,
+        parent_id: parentApi.id,
+      })
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === editedApi.id ? editedApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
-      await router.push({ name: 'chapter-edit', params: { id: 44 } })
+      await router.push({ name: 'chapter-edit', params: { id: editedApi.id } })
       wrapper = mount(ChapterManagePage)
       await flushPromises()
 
@@ -363,17 +399,21 @@ describe('ChapterManagePage.vue', () => {
   })
 
   it('offers the same story and summary panels as the novel form', async () => {
-    vi.spyOn(ChapterController, 'getById').mockResolvedValue({
-      status: STATUS.SUCCESS,
-      chapter: chapterSeeder.getChapter({ id: 10, title: 'Le virage' }),
-    })
+    const parentApi = chapterSeeder.getChapterApi()
+    vi.spyOn(ChapterRepository, 'getById').mockResolvedValue(controllerSuccess({ data: parentApi }))
     useAuthStore().setUser(userSeeder.getUser())
-    await router.push({ name: 'chapter-write', params: { slug: 'nuit-virage', parentId: 10 } })
+    await router.push({
+      name: 'chapter-write',
+      params: { slug: parentApi.novel.slug, parentId: parentApi.id },
+    })
     wrapper = mount(ChapterManagePage)
     await flushPromises()
 
     const sections = wrapper.findAll('.chapter-body__section')
-    expect(sections.map(section => section.text())).toEqual(['Récit', 'Résumé'])
+    expect(sections.map(section => section.text())).toEqual([
+      t('chapter_body.content'),
+      t('chapter_body.summary'),
+    ])
     expect(wrapper.find('textarea[name="chapter.summary"]').exists()).toBe(false)
 
     await sections[1].trigger('click')

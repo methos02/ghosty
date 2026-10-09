@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 import { mount, flushPromises } from '@vue/test-utils'
 import ChapterFooter from '@/views/chapters/parts/ChapterFooter.vue'
-import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
-import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
+import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
+import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
+import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
+import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { controllerSuccess } from '&/utils/helpers/controller-response.js'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
@@ -44,13 +47,14 @@ describe('ChapterFooter.vue', () => {
       global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
     })
 
-    expect(wrapper.find('.chapter-footer__fork').text()).toBe('Branche alternative')
+    expect(wrapper.find('.chapter-footer__fork').text()).toBe(t('chapter_read.alternative_branch'))
   })
 
   it('shows the suites of that fork in place, without leaving the chapter', async () => {
-    const forkSuites = chapterSeeder.getMainBranch(2)
-    vi.spyOn(ChapterController, 'children').mockResolvedValue(
-      controllerSuccess({ chapters: forkSuites }),
+    const chapter = chapterSeeder.getChapter()
+    const childrenApi = chapterSeeder.getListApi({ chapters: chapterSeeder.getMainBranchApi(2) })
+    vi.spyOn(ChapterRepository, 'children').mockResolvedValue(
+      controllerSuccess({ data: childrenApi }),
     )
 
     const novelStore = createNovelStore()
@@ -58,14 +62,16 @@ describe('ChapterFooter.vue', () => {
     novelStore.setSelectedNovel(novelSeeder.getNovel())
     readingStore.setReading(chapterSeeder.getReading())
     const wrapper = mount(ChapterFooter, {
-      props: { novelSlug: novelSeeder.getNovel().slug, chapter: chapterSeeder.getChapter() },
+      props: { novelSlug: novelSeeder.getNovel().slug, chapter },
       global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
     })
     await wrapper.find('.chapter-footer__fork').trigger('click')
     await flushPromises()
 
-    expect(ChapterController.children).toHaveBeenCalledWith(10)
-    expect(wrapper.findAll('.children-switcher__item').length).toBe(forkSuites.length)
+    expect(ChapterRepository.children).toHaveBeenCalledWith({
+      params: ChapterDto.toChapterParams(chapter.id),
+    })
+    expect(wrapper.findAll('.children-switcher__item').length).toBe(childrenApi.chapters.length)
     expect(wrapper.find('.chapter-footer__fork').classes()).toContain('active')
   })
 
@@ -88,8 +94,8 @@ describe('ChapterFooter.vue', () => {
   })
 
   it('suggests three other novels in place, without leaving the chapter', async () => {
-    vi.spyOn(NovelController, 'list').mockResolvedValue(
-      controllerSuccess({ novels: novelSeeder.getNovels(5) }),
+    vi.spyOn(NovelRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: novelSeeder.getListApi(5) }),
     )
 
     const novelStore = createNovelStore()
@@ -108,8 +114,9 @@ describe('ChapterFooter.vue', () => {
   })
 
   it('never suggests the novel the reader is already reading', async () => {
-    const novels = novelSeeder.getNovels(4)
-    vi.spyOn(NovelController, 'list').mockResolvedValue(controllerSuccess({ novels }))
+    const listApi = novelSeeder.getListApi(4)
+    const readNovel = novelSeeder.getNovel()
+    vi.spyOn(NovelRepository, 'list').mockResolvedValue(controllerSuccess({ data: listApi }))
 
     const novelStore = createNovelStore()
     const readingStore = createReadingStore()
@@ -123,15 +130,19 @@ describe('ChapterFooter.vue', () => {
     await flushPromises()
 
     const titles = wrapper.findAll('.novel-card__title').map(card => card.text())
-    expect(titles).toEqual(['Roman 2', 'Roman 3', 'Roman 4'])
+    expect(titles).toEqual(
+      NovelDto.fromList(listApi.novels)
+        .filter(novel => novel.id !== readNovel.id)
+        .map(novel => novel.title),
+    )
   })
 
   it('shows one panel at a time, the other choices staying within reach', async () => {
-    vi.spyOn(ChapterController, 'children').mockResolvedValue(
-      controllerSuccess({ chapters: chapterSeeder.getMainBranch(2) }),
+    vi.spyOn(ChapterRepository, 'children').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi() }),
     )
-    vi.spyOn(NovelController, 'list').mockResolvedValue(
-      controllerSuccess({ novels: novelSeeder.getNovels(5) }),
+    vi.spyOn(NovelRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: novelSeeder.getListApi(5) }),
     )
 
     const novelStore = createNovelStore()
@@ -153,8 +164,8 @@ describe('ChapterFooter.vue', () => {
   })
 
   it('closes the panel of the choice the reader clicks again', async () => {
-    vi.spyOn(NovelController, 'list').mockResolvedValue(
-      controllerSuccess({ novels: novelSeeder.getNovels(5) }),
+    vi.spyOn(NovelRepository, 'list').mockResolvedValue(
+      controllerSuccess({ data: novelSeeder.getListApi(5) }),
     )
 
     const novelStore = createNovelStore()
@@ -171,6 +182,6 @@ describe('ChapterFooter.vue', () => {
     await flushPromises()
 
     expect(wrapper.findAll('.novel-card').length).toBe(0)
-    expect(NovelController.list).toHaveBeenCalledTimes(1)
+    expect(NovelRepository.list).toHaveBeenCalledTimes(1)
   })
 })

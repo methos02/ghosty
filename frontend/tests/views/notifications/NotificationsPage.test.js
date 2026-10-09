@@ -1,9 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import NotificationsPage from '@/views/notifications/NotificationsPage.vue'
-import { NotificationController } from '@/apis/notifications/controllers/notification-controller.js'
-import { NotificationDto } from '@/apis/notifications/dtos/notification-dto.js'
-import { PaginationDto } from '@/apis/shared/dtos/pagination-dto.js'
+import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
 import { useNotificationStore } from '@/apis/notifications/stores/notification-store.js'
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
@@ -36,12 +34,7 @@ describe('NotificationsPage.vue', () => {
         notificationSeeder.getChapterContinuedApi(2, { id: 'continuation' }),
       ],
     })
-    vi.spyOn(NotificationController, 'list').mockResolvedValue(
-      controllerSuccess({
-        inbox: NotificationDto.fromList(listApi),
-        pagination: PaginationDto.fromMeta(listApi.meta),
-      }),
-    )
+    vi.spyOn(NotificationRepository, 'list').mockResolvedValue(controllerSuccess({ data: listApi }))
     await router.push({ name: 'notifications' })
 
     wrapper = mount(NotificationsPage)
@@ -58,12 +51,7 @@ describe('NotificationsPage.vue', () => {
     const listApi = notificationSeeder.getListApi({
       notifications: [notificationSeeder.getLikeReceivedApi(1, { id: 'closed' }), opened],
     })
-    vi.spyOn(NotificationController, 'list').mockResolvedValue(
-      controllerSuccess({
-        inbox: NotificationDto.fromList(listApi),
-        pagination: PaginationDto.fromMeta(listApi.meta),
-      }),
-    )
+    vi.spyOn(NotificationRepository, 'list').mockResolvedValue(controllerSuccess({ data: listApi }))
     await router.push({ name: 'notifications', query: { open: opened.id } })
 
     wrapper = mount(NotificationsPage)
@@ -78,14 +66,9 @@ describe('NotificationsPage.vue', () => {
     const listApi = notificationSeeder.getListApi({
       notifications: [notificationSeeder.getLikeReceivedApi(1, { id: 'like' })],
     })
-    vi.spyOn(NotificationController, 'list').mockResolvedValue(
-      controllerSuccess({
-        inbox: NotificationDto.fromList(listApi),
-        pagination: PaginationDto.fromMeta(listApi.meta),
-      }),
-    )
-    vi.spyOn(NotificationController, 'markAsRead').mockResolvedValue(
-      controllerSuccess({ unreadCount: 0 }),
+    vi.spyOn(NotificationRepository, 'list').mockResolvedValue(controllerSuccess({ data: listApi }))
+    vi.spyOn(NotificationRepository, 'markAsRead').mockResolvedValue(
+      controllerSuccess({ data: notificationSeeder.getUnreadCountApi() }),
     )
     await router.push({ name: 'notifications' })
     wrapper = mount(NotificationsPage)
@@ -100,12 +83,7 @@ describe('NotificationsPage.vue', () => {
 
   it('tells the reader where notifications will show up when there is none', async () => {
     const listApi = notificationSeeder.getListApi({ notifications: [] })
-    vi.spyOn(NotificationController, 'list').mockResolvedValue(
-      controllerSuccess({
-        inbox: NotificationDto.fromList(listApi),
-        pagination: PaginationDto.fromMeta(listApi.meta),
-      }),
-    )
+    vi.spyOn(NotificationRepository, 'list').mockResolvedValue(controllerSuccess({ data: listApi }))
     await router.push({ name: 'notifications' })
 
     wrapper = mount(NotificationsPage)

@@ -6,9 +6,15 @@ const getLikeApi = (overrides = {}) => ({
   ...overrides,
 })
 
+const getRefusalApi = (overrides = {}) => ({
+  message: 'Votre compte est trop récent pour soutenir un chapitre',
+  ...overrides,
+})
+
 const getLike = (overrides = {}) => ({ ...LikeDto.fromLike(getLikeApi()), ...overrides })
 
 export const likeSeeder = {
   getLikeApi,
   getLike,
+  getRefusalApi,
 }

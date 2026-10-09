@@ -121,7 +121,7 @@ class NotificationService
             return;
         }
 
-        $this->notificationsR->updateNotificationContent($pending, $this->branchMoveData($novel, $remainingChapters));
+        $this->notificationsR->update($pending, $this->branchMoveData($novel, $remainingChapters));
     }
 
     /**

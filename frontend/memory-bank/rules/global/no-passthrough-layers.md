@@ -19,7 +19,7 @@ A layer that only delegates without transforming, validating, or orchestrating â
 const searchByFilters = async (filters) => {
     if (!hasActiveFilters(filters)) { return { success: false } }
     const response = await NovelController.search(filters)
-    return { success: response.status === STATUS.SUCCESS, data: response.data }
+    return { success: ajaxHelper.isSuccess(response.status), data: response.data }
 }
 export const NovelService = { searchByFilters }
 
@@ -28,7 +28,7 @@ const handleSearch = async () => {
     const validation = searchFormRequest.validate(formData.value)
     if (!validation.valid) { return }
     const response = await NovelController.search(formData.value)
-    novelStore.setAll(response.status === STATUS.SUCCESS ? response.data : [])
+    novelStore.setAll(ajaxHelper.isSuccess(response.status) ? response.data : [])
 }
 ```
 

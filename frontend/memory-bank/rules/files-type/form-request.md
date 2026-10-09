@@ -39,3 +39,21 @@ const search = async (formData) => {
 
 - **Async or network side-effects in `validate()`** — synchronous only, except local `formData` enrichment.
 - **Duplicate validation rules** in a service (`hasActiveFilters`) or computed (`canSearch`). See [no-passthrough-layers.md](../global/no-passthrough-layers.md).
+
+## Naming
+
+`{entity}-form-request.js` exporting `validate{Entity}Form` when one rule set covers every write of the entity. Qualify only when several really distinct actions coexist (`password-update`, `password-reset`, `login`, `register`). The form name passed to components and error keys follows (`form="novel"`, `novel.genreId`).
+
+**BAD**
+
+```js
+chapter-write-form-request.js
+validateChapterWriteForm
+```
+
+**GOOD**
+
+```js
+chapter-form-request.js
+validateChapterForm
+```

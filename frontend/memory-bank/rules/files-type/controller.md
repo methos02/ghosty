@@ -6,16 +6,18 @@ paths:
 
 On error, return response as-is. Never rebuild error objects. Always pass data through DTOs. Never call controller from controller (use Service).
 
+Judge success with `ajaxHelper.isSuccess(status)` (accepts `200`, `201`, `204`), never by comparing to `STATUS.SUCCESS` alone: a creation answers `201` and the screen would not move. A controller that writes has at least one test simulating the status the API really returns (`201` for a creation).
+
 ```js
 // Error handling
 const get = async (slug) => {
   const response = await Repository.get({ params: { slug } })
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (!ajaxHelper.isSuccess(response.status)) { return response }
   return { status: STATUS.SUCCESS, data: Dto.fromShow(response.data) }
 }
 
 // BAD - rebuilding error object
-if (response.status !== STATUS.SUCCESS) {
+if (!ajaxHelper.isSuccess(response.status)) {
   return { status: STATUS.ERROR, error: response.error || 'Erreur' }
 }
 
@@ -73,7 +75,7 @@ const cancel = async (novel) => {
 // GOOD - read the persisted value back from the response via the DTO
 const cancel = async (novel) => {
   const response = await Repository.updateStatus(Dto.toStatus(novel.id, 'draft'))
-  if (response.status !== STATUS.SUCCESS) { return response }
+  if (!ajaxHelper.isSuccess(response.status)) { return response }
   return { status: STATUS.SUCCESS, publicationStatus: Dto.fromStatus(response.data) }
 }
 ```

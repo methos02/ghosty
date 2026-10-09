@@ -44,7 +44,7 @@ class NotificationRepository
     /**
      * @return LengthAwarePaginator<int, Notification>
      */
-    public function paginateRecipientNotifications(User $recipient, int $perPage): LengthAwarePaginator
+    public function paginate(User $recipient, int $perPage): LengthAwarePaginator
     {
         return $this->notificationsByRecipient($recipient)
             ->latest('updated_at')
@@ -56,7 +56,7 @@ class NotificationRepository
         return $this->notificationsByRecipient($recipient)->whereNull('read_at')->count();
     }
 
-    public function findRecipientNotification(User $recipient, string $notificationId): Notification
+    public function find(User $recipient, string $notificationId): Notification
     {
         return $this->notificationsByRecipient($recipient)->whereKey($notificationId)->firstOrFail();
     }
@@ -64,7 +64,7 @@ class NotificationRepository
     /**
      * @param  array<string, mixed>  $data
      */
-    public function updateNotificationContent(Notification $notification, array $data): void
+    public function update(Notification $notification, array $data): void
     {
         Notification::query()
             ->whereKey($notification->id)

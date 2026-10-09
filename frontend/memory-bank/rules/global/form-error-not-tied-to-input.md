@@ -13,7 +13,7 @@ Never build a parallel "global error" mechanism in the `utils` service for this.
 // BAD - business submission failure routed through the app-level global error mechanism
 const login = async (credentials) => {
   const response = await AuthController.login(credentials)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     utils.addGlobalError('login.unauthorize') // wrong layer: this is app-level, route /error
     return
   }
@@ -24,7 +24,7 @@ const login = async (credentials) => {
 // GOOD - modeled as a form error, displayed locally in the dialog
 const login = async (credentials) => {
   const response = await AuthController.login(credentials)
-  if (response.status !== STATUS.SUCCESS) {
+  if (!ajaxHelper.isSuccess(response.status)) {
     form.addError('login.unauthorize', 'auth.login_error_unauthorize')
     return
   }

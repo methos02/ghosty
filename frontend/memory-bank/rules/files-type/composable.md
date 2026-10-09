@@ -4,7 +4,9 @@ paths:
 ---
 # Composable Rules
 
-Use a composable (not a helper) when a view-oriented function depends on a store. Helpers are pure JS (`pure-js-no-vue-imports`) and cannot import stores. Keep state in the store; derived UI bindings in a composable.
+A composable is justified by exactly two situations: the same logic is consumed by two or more components, or the component is too large to keep whole and its template must be split (the logic would otherwise be duplicated across the pieces). Otherwise the logic stays in the `.vue` next to its template, even when it reads stores, calls a controller and raises flashes: depending on a store is not a reason to extract.
+
+When a composable is justified: use it (not a helper) for a view-oriented function that depends on a store. Helpers are pure JS (`pure-js-no-vue-imports`) and cannot import stores. Keep state in the store; derived UI bindings and orchestration of several stores plus a controller in the composable (`apis/{domain}/composables/use-*.js`).
 
 ```js
 // BAD - helper importing a store (violates pure-js-no-vue-imports)
@@ -35,7 +37,7 @@ export const useColorStyles = () => ({ getStyles })
 
 ## Shape API data in the DTO; initialize client state in the composable
 
-A composable must NOT map raw API/service data into a view-model — API-field shaping belongs in a DTO called by the controller/service. But the composable DOES own **client lifecycle state** (loading status, counters, locally-edited lists): the DTO cannot provide it because it only maps fields the API actually returns (`dto.md`). So the composable consumes the DTO-mapped result and layers its own state on top.
+A composable must NOT map raw API/service data into a view-model — API-field shaping belongs in a DTO called by the controller/service. But the composable DOES own **client lifecycle state** of the data it loads (loading status, counters, locally-edited lists); the state of an interaction a component triggers stays in that component (`store-data-only.md`): the DTO cannot provide it because it only maps fields the API actually returns (`dto.md`). So the composable consumes the DTO-mapped result and layers its own state on top.
 
 ```js
 // BAD - composable maps raw API fields into a view-model (the DTO's job)

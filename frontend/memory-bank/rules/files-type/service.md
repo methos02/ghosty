@@ -15,7 +15,7 @@ Component -> Service -> Controller A
 // GOOD - service orchestrates controllers
 const destroyWithNovels = async (chapterId, novelIds) => {
   const novelResult = await NovelController.destroys(novelIds)
-  if (novelResult.status !== STATUS.SUCCESS) { return novelResult }
+  if (!ajaxHelper.isSuccess(novelResult.status)) { return novelResult }
   return await ChapterController.destroy(chapterId)
 }
 

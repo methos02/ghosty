@@ -941,7 +941,7 @@ export const apis = {
 - Props typées dans composants Vue
 - Logique métier en fichiers `.js` natifs
 - `req()` UNIQUEMENT dans repositories
-- Composables pour état partagé uniquement
+- Composables uniquement pour une logique consommée par 2+ composants ou un template à découper (voir `memory-bank/rules/files-type/composable.md`)
 - Tests avec mock minimal (repositories seulement)
 - **Convention classes CSS** : Classes BEM spécifiques avant `|`, puis classes utilitaires après
 

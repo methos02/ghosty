@@ -23,7 +23,7 @@ class NotificationController extends Controller
     {
         /** @var User $recipient */
         $recipient = $request->user();
-        $notifications = $this->notificationsR->paginateRecipientNotifications($recipient, Config::integer('ghosty.notifications.per_page'));
+        $notifications = $this->notificationsR->paginate($recipient, Config::integer('ghosty.notifications.per_page'));
 
         return response()->json([
             'notifications' => NotificationResource::collection($notifications->items()),
@@ -41,7 +41,7 @@ class NotificationController extends Controller
     {
         /** @var User $recipient */
         $recipient = $request->user();
-        $notification = $this->notificationsR->findRecipientNotification($recipient, $notificationId);
+        $notification = $this->notificationsR->find($recipient, $notificationId);
 
         $this->notificationsR->markAsRead($notification);
 

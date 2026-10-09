@@ -18,6 +18,22 @@ class Notification extends DatabaseNotification
 class Notification extends DatabaseNotification
 ```
 
+## Relation guaranteed by the database is non-nullable
+
+When a foreign key is non-nullable, declare `@property-read X $relation` in the docblock of the model class (it overrides the `IdeHelper*` mixin, which types every `BelongsTo` as nullable) and read it without a nullsafe guard. Read the id from the column (`$this->author_id`), and guard label access with `whenLoaded()` so serialization never triggers a silent N+1.
+
+**BAD**
+
+```php
+'author' => $this->author?->username,
+```
+
+**GOOD**
+
+```php
+'author' => $this->whenLoaded('author', fn () => $this->author->username),
+```
+
 ## Reusable behavior → trait in `Concerns/`
 
 Cross-model behavior (slug generation, etc.) lives in a trait under `app/Models/Concerns/`, not inline in the model body. Expose an overridable config hook (e.g. `slugSource()`); the model just does `use TheTrait`. Prefer a native trait over an external package for a simple, single-model need (@see decisions/ADR-02-slug-natif-sans-package.md).

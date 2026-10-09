@@ -74,6 +74,8 @@ Contraintes PHPUnit : le fichier doit finir par `Test.php` (discovery) et le nom
 
 **Toujours** utiliser les factories pour créer des modèles (`User::factory()`, `Genre::factory()`, `Novel::factory()`). Vérifier les states custom (ex. `banned()`) avant tout setup manuel.
 
+Unit tests without a database build models with `forceFill([...])`: `new Chapter(['id' => 10])` leaves `id` null because the column is guarded.
+
 ## Test Data
 
 ```php

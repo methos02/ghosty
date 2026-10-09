@@ -22,7 +22,7 @@ export const useSiteStore = () => ({ sites: readonly(sites), removeSite })
 const { removeSite } = useSiteStore()
 const handleDelete = async (id) => {
     const result = await SiteController.delete(id)
-    if (result.status !== STATUS.SUCCESS) { flash.errorT('error.key'); return }
+    if (!ajaxHelper.isSuccess(result.status)) { flash.errorT('error.key'); return }
     flash.successT('success.key')
     removeSite(id)
     close()

@@ -2,6 +2,7 @@
 import ChapterContinuedNotification from '@/views/layout/notifications/ChapterContinuedNotification.vue'
 import MainBranchGainedNotification from '@/views/layout/notifications/MainBranchGainedNotification.vue'
 import MainBranchLostNotification from '@/views/layout/notifications/MainBranchLostNotification.vue'
+import FollowedBranchExtendedNotification from '@/views/layout/notifications/FollowedBranchExtendedNotification.vue'
 import LikeReceivedNotification from '@/views/layout/notifications/LikeReceivedNotification.vue'
 import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 
@@ -22,6 +23,10 @@ defineProps({
     />
     <MainBranchLostNotification
       v-if="notification.type === NOTIFICATION_TYPES.MAIN_BRANCH_LOST"
+      :notification="notification"
+    />
+    <FollowedBranchExtendedNotification
+      v-if="notification.type === NOTIFICATION_TYPES.FOLLOWED_BRANCH_EXTENDED"
       :notification="notification"
     />
     <LikeReceivedNotification

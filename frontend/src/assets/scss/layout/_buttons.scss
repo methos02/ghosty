@@ -21,7 +21,9 @@
   }
 
   &[disabled] {
-    background-color: var(--neutral-500);
+    background-color: var(--neutral-300);
+    border-color: var(--neutral-400);
+    color: var(--neutral-500);
     cursor: not-allowed;
   }
 }

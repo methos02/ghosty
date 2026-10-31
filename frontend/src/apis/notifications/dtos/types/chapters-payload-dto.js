@@ -6,6 +6,6 @@ const fromNotification = data => ({
   count: data.data.count,
 })
 
-export const MainBranchMoveDto = {
+export const ChaptersPayloadDto = {
   fromNotification,
 }

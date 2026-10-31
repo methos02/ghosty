@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import express from 'express'
 import { transformHtmlTemplate } from '@unhead/vue/server'
 import { log } from './src/services/shortcuts/log-shortcut.js'
+import { STATUS } from './src/constants/ajax-constants.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -29,6 +30,11 @@ const buildHtml = (template, rendered) => {
 }
 
 const sendRendered = async (response, rendered) => {
+  if (rendered.redirect) {
+    response.redirect(STATUS.FOUND, rendered.redirect)
+    return
+  }
+
   const html = await transformHtmlTemplate(rendered.head, rendered.template)
   response
     .status(rendered.statusCode ?? 200)

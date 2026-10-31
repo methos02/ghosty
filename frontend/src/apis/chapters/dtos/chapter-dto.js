@@ -1,4 +1,5 @@
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
+import { dateHelper } from '@/core/helpers/date-helper.js'
 
 const fromList = (datas = []) => {
   return datas.map(data => fromShow(data))
@@ -20,7 +21,7 @@ const fromShow = data => {
     novelId: data.novel_id,
     parentId: data.parent_id,
     title: data.title,
-    summary: data.summary,
+    summary: data.summary ?? '',
     content: data.content,
     paragraphs: ChapterDtoInternal.convertToParagraphs(data.content),
     depth: data.depth,
@@ -30,6 +31,7 @@ const fromShow = data => {
     branchLikeCount: data.branch_like_count,
     isLiked: data.is_liked,
     isReported: data.is_reported === true,
+    isFollowed: data.is_followed === true,
     commentCount: data.comment_count,
     isDraft: data.is_draft,
     isCorrectable: data.is_correctable,
@@ -45,7 +47,17 @@ const fromShow = data => {
       username: data.author?.username,
     },
     publishedAt: data.published_at,
+    publishedAtFormat: data.published_at
+      ? dateHelper.formatDateLocal(data.published_at, 'DD/MM/YYYY')
+      : '-',
   }
+}
+
+const fromPublished = datas => {
+  return datas.map(data => ({
+    novel: NovelDto.fromShow(data),
+    chapters: fromList(data.chapters),
+  }))
 }
 
 const fromTree = data => ({
@@ -94,6 +106,7 @@ const toUpdate = formData => ({
 
 export const ChapterDto = {
   fromList,
+  fromPublished,
   fromReading,
   fromShow,
   fromTree,

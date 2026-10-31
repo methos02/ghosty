@@ -5,8 +5,9 @@ import { STATUS } from '@/constants/ajax-constants.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const list = async (page = 1) => {
-  const params = NotificationDto.toListParams(page)
-  const response = await NotificationRepository.list({ params })
+  const response = await NotificationRepository.list({
+    params: NotificationDto.toListParams(page),
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -31,8 +32,9 @@ const markAllAsRead = async () => {
 }
 
 const markAsRead = async notificationId => {
-  const params = NotificationDto.toReadParams(notificationId)
-  const response = await NotificationRepository.markAsRead({ params })
+  const response = await NotificationRepository.markAsRead({
+    params: NotificationDto.toReadParams(notificationId),
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }

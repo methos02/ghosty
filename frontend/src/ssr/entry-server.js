@@ -64,6 +64,9 @@ export const render = async (url, { cookie } = {}) => {
   await router.isReady()
 
   const route = router.currentRoute.value
+  if (route.redirectedFrom) {
+    return { redirect: route.fullPath }
+  }
 
   const statusCode = await runAsyncData({
     stores,

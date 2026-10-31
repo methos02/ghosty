@@ -25,6 +25,7 @@ Les décisions structurantes sont dans les ADR :
 | [ADR-09](memory-bank/decisions/ADR-09-pas-d-archivage-automatique.md) | **Aucun archivage automatique** : `archived` / `hidden` sont des issues de modération humaine |
 | [ADR-10](memory-bank/decisions/ADR-10-notifications-in-app-agregees.md) | Notifications in-app **agrégées**, canal `database` natif |
 | [ADR-11](memory-bank/decisions/ADR-11-chapitre-publie-non-reecrivable.md) | Un chapitre publié est **immuable** : corrigeable une seule fois, sous 48 h, et dans une part limitée du texte |
+| [ADR-12](memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md) | Suivre une branche = suivre son **chapitre-tête** ; lecture unique par session/compte ; historique et reprise réservés aux comptes, aucune progression invitée |
 
 Plan de livraison par lots : [ghosty-mvp-plan.md](../ghosty-mvp-plan.md).
 
@@ -287,6 +288,25 @@ MySQL n'ayant pas d'index partiel, c'est la colonne générée qui porte le « W
   (`group_key` sur le `Novel`), avec la liste des chapitres concernés.
 - Marquer lu ne touche pas `updated_at` : la liste est triée par dernière activité du groupe.
 
+#### follows / reading_progress / chapter_reads ✅ implémenté (lot 4)
+
+```sql
+follows          : user_id, chapter_id, created_at
+                   UNIQUE (user_id, chapter_id)            -- suivre une branche = suivre son chapitre-tête
+reading_progress : user_id, novel_id, chapter_id, read_at
+                   UNIQUE (user_id, novel_id)              -- dernier chapitre lu par roman
+chapter_reads    : chapter_id, user_id NULLABLE, session_key (uuid navigateur), created_at
+                   UNIQUE (chapter_id, session_key), UNIQUE (chapter_id, user_id)
+```
+
+- `ReadingService` est le seul écrivain des lectures : une lecture nouvelle incrémente
+  `chapters.read_count` **par `toBase()`**, sans toucher `updated_at` (sinon chaque lecture
+  relancerait le recalcul planifié des cumuls, ADR-08).
+- `followed_branch_extended` notifie les abonnés de tout ancêtre de la suite publiée, sauf son
+  auteur et l'auteur du parent (déjà prévenu par `chapter_continued`). Agrégée par roman.
+- La table s'appelle `reading_progress` (« progress » est indénombrable pour Laravel), pas
+  `reading_progresses`.
+
 ### Ordre de Création des Migrations
 
 1. `users`, `genres`
@@ -294,8 +314,9 @@ MySQL n'ayant pas d'index partiel, c'est la colonne générée qui porte le « W
 3. `chapters`
 4. `likes`, `reports`
 5. `notifications`
-6. `comments`
-7. `sanctions`, `novel_covers`
+6. `follows`, `reading_progress`, `chapter_reads`
+7. `comments`
+8. `sanctions`, `novel_covers`
 
 ## Seeders et Données de Test
 

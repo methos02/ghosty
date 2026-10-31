@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import ChapterBodyFields from '@/views/chapters/ChapterBodyFields.vue'
-import { form } from '@/services/shortcuts/services-shortcut.js'
+import { form, t } from '@/services/shortcuts/services-shortcut.js'
 
 describe('ChapterBodyFields.vue', () => {
   let wrapper
@@ -48,10 +48,34 @@ describe('ChapterBodyFields.vue', () => {
 
     expect(wrapper.findAll('.chapter-body__section')[1].classes()).toContain('btn-primary-alt')
 
+    form.addError('chapter.content', 'chapter_manage.error_content_required')
     form.addError('chapter.summary', 'chapter_manage.error_summary_required')
     await wrapper.vm.$nextTick()
 
     expect(wrapper.findAll('.chapter-body__section')[1].classes()).toContain('btn-danger-alt')
-    expect(wrapper.findAll('.chapter-body__section')[0].classes()).toContain('btn-primary')
+    expect(wrapper.findAll('.chapter-body__section')[0].classes()).toContain('btn-danger')
+  })
+
+  it('opens the summary on its own when it is the only part left unfinished', async () => {
+    wrapper = mount(ChapterBodyFields)
+
+    form.addError('chapter.summary', 'chapter_manage.error_summary_required')
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.find('textarea[name="chapter.summary"]').exists()).toBe(true)
+    expect(wrapper.find('[id="error-chapter.summary"]').text()).toBe(
+      t('chapter_manage.error_summary_required'),
+    )
+  })
+
+  it('brings the story back first when both parts fail, the text matters more', async () => {
+    wrapper = mount(ChapterBodyFields)
+    await wrapper.findAll('.chapter-body__section')[1].trigger('click')
+
+    form.addError('chapter.summary', 'chapter_manage.error_summary_required')
+    form.addError('chapter.content', 'chapter_manage.error_content_required')
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.find('textarea[name="chapter.content"]').exists()).toBe(true)
   })
 })

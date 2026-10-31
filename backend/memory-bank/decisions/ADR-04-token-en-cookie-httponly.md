@@ -17,6 +17,7 @@ Le token n'est **jamais** exposé au JavaScript.
 
 - L'API le pose dans un cookie **HttpOnly + Secure + SameSite=Lax** (`ghosty_token`), et ne le met plus dans le corps de la réponse.
 - `Sanctum::getAccessTokenFromRequestUsing()` (dans `AppServiceProvider`) lit le token **uniquement** depuis ce cookie. L'en-tête `Authorization: Bearer` n'est plus une voie d'authentification : un token valide envoyé ainsi reçoit un 401. Un seul transport, pas de chemin parallèle à maintenir ni à auditer.
+- La garde par défaut (`config/auth.php`) est `sanctum` : sur une route publique, `Gate` et `$request->user()` reconnaissent ainsi le porteur du cookie. Avec `web`, un auteur était vu comme anonyme et son propre brouillon répondait 404.
 - Le front n'envoie plus d'`Authorization` : `requestInterceptor` pose `credentials: 'include'` et le navigateur joint le cookie tout seul.
 - Un second cookie **`ghosty_session`, lisible et sans secret**, indique au front qu'une session existe : sans lui, aucun appel à `/auth/me` n'est tenté au démarrage.
 - `authStore` ne contient plus que `user` ; plus rien n'est écrit dans `localStorage`. La session est restaurée après le mount via `auth.fetchCurrentUser()`.

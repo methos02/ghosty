@@ -4,6 +4,7 @@ import DropdownComponent from '@/components/DropdownComponent.vue'
 import PaginatorChapter from '@/components/paginators/PaginatorChapterComponent.vue'
 import ReadingSettingsPanel from '@/views/chapters/parts/ReadingSettingsPanel.vue'
 import LikeButton from '@/views/chapters/parts/LikeButton.vue'
+import FollowButton from '@/views/chapters/parts/FollowButton.vue'
 import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
 import { useReadingSettingsStore } from '@/apis/chapters/stores/reading-settings-store.js'
 import { useChapterReport } from '@/apis/reports/composables/use-chapter-report.js'
@@ -42,6 +43,8 @@ const print = () => {
   <div class="reading-toolbar | d-flex f-wrap a-center j-between g-15">
     <div class="reading-toolbar__support | d-flex a-center g-10">
       <LikeButton v-if="chapter" />
+
+      <FollowButton v-if="chapter && !chapter.isDraft" />
 
       <button
         v-if="chapter && canReport(chapter)"

@@ -1,0 +1,6 @@
+{
+  "followed_branch_extended_notification": {
+    "one": "Une branche que vous suivez dans {novel} continue avec « {title} »",
+    "many": "{count} nouveaux chapitres prolongent les branches que vous suivez dans {novel}"
+  }
+}

@@ -5,6 +5,7 @@ import LoaderComponent from '@/components/LoaderComponent.vue'
 import InputComponent from '@/services/form/views/inputs/InputComponent.vue'
 import ChapterBodyFields from '@/views/chapters/ChapterBodyFields.vue'
 import ConfirmButton from '@/components/ConfirmButtonComponent.vue'
+import PublishButton from '@/views/chapters/parts/PublishButton.vue'
 import { route, router, t } from '@/services/shortcuts/services-shortcut.js'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { validateChapterForm } from '@/apis/chapters/formRequest/chapter-form-request.js'
@@ -12,10 +13,10 @@ import { correctionHelper } from '@/core/helpers/correction-helper.js'
 import { useChapterManageHead } from '@/head/use-chapter-manage-head.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
-const chapterId = Number(route.get('id')) || undefined
+const chapterId = ref(Number(route.get('id')) || undefined)
 const parentId = Number(route.get('parentId')) || undefined
 
-const isEditing = computed(() => chapterId !== undefined)
+const isEditing = computed(() => chapterId.value !== undefined)
 
 useChapterManageHead(isEditing)
 
@@ -52,7 +53,7 @@ const loadParentChapter = async id => {
 }
 
 const loadChapter = async () => {
-  const response = await ChapterController.getById(chapterId)
+  const response = await ChapterController.getById(chapterId.value)
   if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
@@ -79,7 +80,9 @@ const resumeExistingDraft = async () => {
     return false
   }
 
+  chapterId.value = started.id
   await router.replace({ name: 'chapter-edit', params: { id: started.id } })
+  await loadChapter()
   return true
 }
 
@@ -104,22 +107,22 @@ const update = async () => {
     return
   }
 
-  const saved = await ChapterController.update(chapterId, datas.value)
+  const saved = await ChapterController.update(chapterId.value, datas.value)
   if (!ajaxHelper.isSuccess(saved.status)) {
     return
   }
 
   if (datas.value.isDraft || isPublished.value) {
-    await leaveForm(chapterId)
+    await leaveForm(chapterId.value)
     return
   }
 
-  const published = await ChapterController.publish(chapterId)
+  const published = await ChapterController.publish(chapterId.value)
   if (!ajaxHelper.isSuccess(published.status)) {
     return
   }
 
-  await leaveForm(chapterId)
+  await leaveForm(chapterId.value)
 }
 
 const leaveForm = async id => {
@@ -221,7 +224,7 @@ onMounted(async () => {
       </div>
 
       <form
-        @submit.prevent="publishButton?.runCallback()"
+        @submit.prevent="publishButton?.ask()"
         class="chapter-manage-page__form | d-flex f-column"
       >
         <div class="form-row">
@@ -259,15 +262,15 @@ onMounted(async () => {
           >
             {{ t('chapter_manage.save_draft') }}
           </LoaderComponent>
-          <LoaderComponent
+          <PublishButton
             v-if="!isPublished"
             ref="publishButton"
             :cb="publish"
-            buttonType="submit"
+            :content="datas.content"
             buttonClasses="chapter-manage-page__publish | btn btn-primary"
           >
             {{ t('chapter_manage.submit') }}
-          </LoaderComponent>
+          </PublishButton>
         </div>
       </form>
     </div>

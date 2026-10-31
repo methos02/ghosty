@@ -28,4 +28,5 @@ export const readingConfig = {
     default: false,
   },
   storageKey: 'reading-settings',
+  sessionKeyStorageKey: 'reading-session-key',
 }

@@ -45,7 +45,7 @@ describe('NotificationsPage.vue', () => {
   })
 
   it('opens the detail of the notification named in the address', async () => {
-    const opened = notificationSeeder.getMainBranchMoveApi('main_branch_gained', 3, {
+    const opened = notificationSeeder.getChaptersPayloadApi('main_branch_gained', 3, {
       id: 'opened',
     })
     const listApi = notificationSeeder.getListApi({

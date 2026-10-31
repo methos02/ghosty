@@ -15,6 +15,7 @@ const getChapterApi = (overrides = {}) => ({
   branch_like_count: 41,
   is_liked: false,
   is_reported: false,
+  is_followed: false,
   comment_count: 0,
   author: { id: 7, username: 'GhostWriter' },
   novel: {
@@ -48,6 +49,18 @@ const getListApi = (overrides = {}) => ({
   chapters: getMainBranchApi(3),
   ...overrides,
 })
+
+const getPublishedApi = (overrides = {}) => ({
+  novels: [
+    {
+      ...novelSeeder.getNovelApi(),
+      chapters: getMainBranchApi(2),
+    },
+  ],
+  ...overrides,
+})
+
+const getPublished = () => ChapterDto.fromPublished(getPublishedApi().novels)
 
 const getChapter = (overrides = {}) => ({
   ...ChapterDto.fromShow(getChapterApi()),
@@ -166,6 +179,8 @@ export const chapterSeeder = {
   getChapterApi,
   getMainBranchApi,
   getListApi,
+  getPublishedApi,
+  getPublished,
   getChapter,
   getMainBranch,
   getReadingApi,

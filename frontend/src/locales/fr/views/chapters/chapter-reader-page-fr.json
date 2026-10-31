@@ -3,6 +3,8 @@
     "loading": "Chargement du chapitre...",
     "chapter_number": "Chapitre {number}",
     "draft": "Brouillon",
+    "edit_draft": "Modifier le brouillon",
+    "my_drafts": "Mes brouillons",
     "end_of_chapter": "— fin du chapitre —",
     "continue": "Écrire la suite",
     "correct": "Corriger ce chapitre",

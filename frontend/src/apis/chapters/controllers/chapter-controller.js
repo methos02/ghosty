@@ -5,8 +5,9 @@ import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 import { form } from '@/services/shortcuts/services-shortcut.js'
 
 const children = async id => {
-  const params = ChapterDto.toChapterParams(id)
-  const response = await ChapterRepository.children({ params })
+  const response = await ChapterRepository.children({
+    params: ChapterDto.toChapterParams(id),
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -18,9 +19,10 @@ const children = async id => {
 }
 
 const create = async (novelSlug, formData) => {
-  const params = ChapterDto.toCreateParams(novelSlug)
-  const body = ChapterDto.toCreate(formData)
-  const response = await ChapterRepository.create({ params, body })
+  const response = await ChapterRepository.create({
+    params: ChapterDto.toCreateParams(novelSlug),
+    body: ChapterDto.toCreate(formData),
+  })
 
   if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
     form.addValidationErrors(response.data.errors, 'chapter')
@@ -37,8 +39,9 @@ const create = async (novelSlug, formData) => {
 }
 
 const mainBranch = async novelSlug => {
-  const params = ChapterDto.toMainBranchParams(novelSlug)
-  const response = await ChapterRepository.mainBranch({ params })
+  const response = await ChapterRepository.mainBranch({
+    params: ChapterDto.toMainBranchParams(novelSlug),
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -50,8 +53,9 @@ const mainBranch = async novelSlug => {
 }
 
 const destroy = async id => {
-  const params = ChapterDto.toChapterParams(id)
-  const response = await ChapterRepository.destroy({ params })
+  const response = await ChapterRepository.destroy({
+    params: ChapterDto.toChapterParams(id),
+  })
 
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
@@ -61,8 +65,9 @@ const destroy = async id => {
 }
 
 const drafts = async (filters = {}) => {
-  const params = ChapterDto.toDraftFilters(filters)
-  const response = await ChapterRepository.drafts({ params })
+  const response = await ChapterRepository.drafts({
+    params: ChapterDto.toDraftFilters(filters),
+  })
 
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
@@ -75,8 +80,9 @@ const drafts = async (filters = {}) => {
 }
 
 const getById = async id => {
-  const params = ChapterDto.toChapterParams(id)
-  const response = await ChapterRepository.getById({ params })
+  const response = await ChapterRepository.getById({
+    params: ChapterDto.toChapterParams(id),
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -88,8 +94,9 @@ const getById = async id => {
 }
 
 const publish = async id => {
-  const params = ChapterDto.toChapterParams(id)
-  const response = await ChapterRepository.publish({ params })
+  const response = await ChapterRepository.publish({
+    params: ChapterDto.toChapterParams(id),
+  })
 
   if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
     form.addValidationErrors(response.data.errors, 'chapter')
@@ -105,9 +112,23 @@ const publish = async id => {
   }
 }
 
+const published = async () => {
+  const response = await ChapterRepository.published()
+  if (!ajaxHelper.isSuccess(response.status)) {
+    return response
+  }
+
+  return {
+    status: STATUS.SUCCESS,
+    novels: ChapterDto.fromPublished(response.data.novels),
+  }
+}
+
 const reading = async (novelSlug, chapterId, options = {}) => {
-  const params = ChapterDto.toReadingParams(novelSlug, chapterId)
-  const response = await ChapterRepository.reading({ params, ...options })
+  const response = await ChapterRepository.reading({
+    params: ChapterDto.toReadingParams(novelSlug, chapterId),
+    ...options,
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -119,8 +140,10 @@ const reading = async (novelSlug, chapterId, options = {}) => {
 }
 
 const tree = async (novelSlug, fromChapterId, options = {}) => {
-  const params = ChapterDto.toTreeParams(novelSlug, fromChapterId)
-  const response = await ChapterRepository.tree({ params, ...options })
+  const response = await ChapterRepository.tree({
+    params: ChapterDto.toTreeParams(novelSlug, fromChapterId),
+    ...options,
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -132,9 +155,10 @@ const tree = async (novelSlug, fromChapterId, options = {}) => {
 }
 
 const update = async (id, formData) => {
-  const params = ChapterDto.toChapterParams(id)
-  const body = ChapterDto.toUpdate(formData)
-  const response = await ChapterRepository.update({ params, body })
+  const response = await ChapterRepository.update({
+    params: ChapterDto.toChapterParams(id),
+    body: ChapterDto.toUpdate(formData),
+  })
 
   if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
     form.addValidationErrors(response.data.errors, 'chapter')
@@ -158,6 +182,7 @@ export const ChapterController = {
   drafts,
   getById,
   publish,
+  published,
   reading,
   tree,
   update,

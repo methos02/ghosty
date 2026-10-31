@@ -1,6 +1,8 @@
 <script setup>
+import { computed } from 'vue'
 import ErrorForm from '@/services/form/views/ErrorFormComponent.vue'
 import { FormHelper } from '@/core/helpers/form-helper.js'
+import { formStore } from '@/services/form/src/form-store.js'
 const props = defineProps({
   name: { type: String, required: true },
   label: { type: String, default: '' },
@@ -13,6 +15,10 @@ const props = defineProps({
 })
 
 const select = defineModel({ type: [Number, String, Object], default: undefined })
+
+const isInvalid = computed(() =>
+  formStore.hasError(FormHelper.getInputName(props.name, props.form)),
+)
 </script>
 
 <template>
@@ -27,6 +33,7 @@ const select = defineModel({ type: [Number, String, Object], default: undefined 
       :class="{
         valid: select !== undefined || props.fixedLabel,
         'no-label': noLabel || label === '',
+        invalide: isInvalid,
       }"
       v-model="select"
     >

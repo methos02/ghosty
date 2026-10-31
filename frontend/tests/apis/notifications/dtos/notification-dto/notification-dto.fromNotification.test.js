@@ -7,7 +7,7 @@ import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
 describe('notification-dto', () => {
   describe('fromNotification', () => {
     it('maps the chapter and the novel every notification is about', () => {
-      const data = notificationSeeder.getMainBranchMoveApi('main_branch_gained', 1)
+      const data = notificationSeeder.getChaptersPayloadApi('main_branch_gained', 1)
 
       const notification = NotificationDto.fromNotification(data)
 

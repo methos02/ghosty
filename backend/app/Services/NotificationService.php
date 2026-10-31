@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Repositories\ChapterRepository;
 use App\Repositories\LikeRepository;
 use App\Repositories\NotificationRepository;
+use App\Repositories\UserRepository;
 use Closure;
 use Illuminate\Support\Collection;
 
@@ -21,7 +22,8 @@ class NotificationService
     public function __construct(
         private readonly NotificationRepository $notificationsR,
         private readonly ChapterRepository $chaptersR,
-        private readonly LikeRepository $likesR
+        private readonly LikeRepository $likesR,
+        private readonly UserRepository $usersR
     ) {}
 
     public function chapterContinued(Chapter $continuation, Chapter $parent): void
@@ -59,6 +61,32 @@ class NotificationService
     }
 
     /**
+     * @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
+     */
+    public function followedBranchExtended(Chapter $continuation, Chapter $parent): void
+    {
+        $novel = $continuation->novel;
+        $continuationSummaries = $this->chapterSummaries(new Collection([$continuation]));
+
+        foreach ($this->usersR->followersOfChapters($parent->pathChapterIds()) as $follower) {
+            if ($follower->id === $parent->author_id) {
+                continue;
+            }
+
+            $this->push(
+                $follower,
+                $continuation->author_id,
+                NotificationType::FollowedBranchExtended,
+                $novel,
+                fn (?Notification $pending): array => $this->novelChaptersData($novel, $this->mergeChapterSummaries(
+                    $this->pendingChapterSummaries($pending),
+                    $continuationSummaries
+                ))
+            );
+        }
+    }
+
+    /**
      * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
      */
     public function mainBranchSwitch(?Chapter $previousLastChapter, Chapter $newLastChapter): void
@@ -91,7 +119,7 @@ class NotificationService
             null,
             $type,
             $novel,
-            fn (?Notification $pending): array => $this->branchMoveData($novel, $this->mergeChapterSummaries(
+            fn (?Notification $pending): array => $this->novelChaptersData($novel, $this->mergeChapterSummaries(
                 $this->pendingChapterSummaries($pending),
                 $this->chapterSummaries($authorChapters)
             ))
@@ -121,14 +149,14 @@ class NotificationService
             return;
         }
 
-        $this->notificationsR->update($pending, $this->branchMoveData($novel, $remainingChapters));
+        $this->notificationsR->update($pending, $this->novelChaptersData($novel, $remainingChapters));
     }
 
     /**
      * @param  list<array{id: int, title: string}>  $chapters
      * @return array<string, mixed>
      */
-    private function branchMoveData(Novel $novel, array $chapters): array
+    private function novelChaptersData(Novel $novel, array $chapters): array
     {
         return [
             'chapter' => $chapters[0] ?? null,

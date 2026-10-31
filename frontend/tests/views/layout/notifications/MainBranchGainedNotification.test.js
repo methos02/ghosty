@@ -13,7 +13,7 @@ describe('MainBranchGainedNotification.vue', () => {
   })
 
   it('names the lone chapter joining the main branch, linking the chapter and the novel', () => {
-    const notification = notificationSeeder.getMainBranchMove('main_branch_gained', 1)
+    const notification = notificationSeeder.getChaptersPayload('main_branch_gained', 1)
 
     wrapper = mount(MainBranchGainedNotification, { props: { notification } })
 
@@ -36,7 +36,7 @@ describe('MainBranchGainedNotification.vue', () => {
   })
 
   it('counts the chapters joining together, linking only the novel', () => {
-    const notification = notificationSeeder.getMainBranchMove('main_branch_gained', 3)
+    const notification = notificationSeeder.getChaptersPayload('main_branch_gained', 3)
 
     wrapper = mount(MainBranchGainedNotification, { props: { notification } })
 

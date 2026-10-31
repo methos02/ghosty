@@ -1,4 +1,6 @@
 const MIN_PROPERTIES = 3
+const MIN_REPOSITORY_PAYLOAD_PROPERTIES = 1
+const REPOSITORY_SUFFIX = 'Repository'
 const LAST_INDEX = -1
 
 const isOnSameLine = (before, after) => before.loc.end.line === after.loc.start.line
@@ -34,12 +36,27 @@ const inlineGaps = (node, sourceCode) => {
   return gaps
 }
 
+const isRepositoryPayload = node => {
+  const call = node.parent
+  if (call.type !== 'CallExpression' || !call.arguments.includes(node)) {
+    return false
+  }
+
+  return (
+    call.callee.type === 'MemberExpression'
+    && call.callee.object.name?.endsWith(REPOSITORY_SUFFIX) === true
+  )
+}
+
+const minimumProperties = node =>
+  isRepositoryPayload(node) ? MIN_REPOSITORY_PAYLOAD_PROPERTIES : MIN_PROPERTIES
+
 const create = context => {
   const sourceCode = context.sourceCode
 
   return {
     ObjectExpression(node) {
-      if (node.properties.length < MIN_PROPERTIES) {
+      if (node.properties.length < minimumProperties(node)) {
         return
       }
 
@@ -66,7 +83,7 @@ export default {
     type: 'layout',
     docs: {
       description:
-        'Require an object literal of 3 or more properties to break one property per line, so every item stays visible on a narrow screen.',
+        'Require an object literal of 3 or more properties, or any payload passed to a repository, to break one property per line.',
       url: 'memory-bank/rules/global/multiline-object-literal.md',
     },
     fixable: 'whitespace',

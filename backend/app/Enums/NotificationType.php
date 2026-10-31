@@ -14,6 +14,7 @@ enum NotificationType: string
     case LikeReceived = 'like_received';
     case MainBranchGained = 'main_branch_gained';
     case MainBranchLost = 'main_branch_lost';
+    case FollowedBranchExtended = 'followed_branch_extended';
 
     public function groupKey(Chapter|Novel $subject): string
     {

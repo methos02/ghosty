@@ -45,6 +45,11 @@ const resumeRoute = draft => {
   return { name: 'chapter-edit', params: { id: draft.id } }
 }
 
+const readRoute = draft => ({
+  name: 'chapter-read',
+  params: { slug: draft.novel.slug, id: draft.id },
+})
+
 const discard = async draft => {
   const response = await ChapterController.destroy(draft.id)
   if (!ajaxHelper.isSuccess(response.status)) {
@@ -110,6 +115,12 @@ onMounted(load)
           </div>
 
           <div class="d-flex g-10">
+            <router-link
+              :to="readRoute(draft)"
+              class="drafts-page__read | btn btn-sm btn-primary-alt"
+            >
+              {{ t('drafts.read') }}
+            </router-link>
             <router-link
               :to="resumeRoute(draft)"
               class="drafts-page__resume | btn btn-sm btn-primary-alt"

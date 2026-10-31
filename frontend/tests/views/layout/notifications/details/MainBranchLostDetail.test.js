@@ -13,7 +13,7 @@ describe('MainBranchLostDetail.vue', () => {
   })
 
   it('lists the chapters that left the main branch and invites to promote the branch', () => {
-    const notification = notificationSeeder.getMainBranchMove('main_branch_lost', 2)
+    const notification = notificationSeeder.getChaptersPayload('main_branch_lost', 2)
 
     wrapper = mount(MainBranchLostDetail, { props: { notification } })
 

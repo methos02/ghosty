@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import TextareaComponent from '@/services/form/views/inputs/TextareaComponent.vue'
 import { form as formService, t } from '@/services/shortcuts/services-shortcut.js'
 import { ConfigLoader } from '@/config/config-loader.js'
@@ -9,15 +9,29 @@ const summary = defineModel('summary', { type: String, default: undefined })
 
 const FORM_SCOPE = 'chapter'
 
+const SECTIONS = ['content', 'summary']
+
 const openSection = ref('content')
 
 const showSection = section => {
   openSection.value = section
 }
 
+const hasError = section => formService.getError(`${FORM_SCOPE}.${section}`) !== undefined
+
+const revealFirstFailingSection = () => {
+  const failingSection = SECTIONS.find(hasError)
+  if (failingSection === undefined) {
+    return
+  }
+
+  showSection(failingSection)
+}
+
+watch(() => formService.getErrors(), revealFirstFailingSection, { deep: true })
+
 const sectionClass = section => {
-  const color =
-    formService.getError(`${FORM_SCOPE}.${section}`) === undefined ? 'primary' : 'danger'
+  const color = hasError(section) ? 'danger' : 'primary'
   const variant = openSection.value === section ? '' : '-alt'
 
   return `btn-${color}${variant}`

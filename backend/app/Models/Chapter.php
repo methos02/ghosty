@@ -92,6 +92,30 @@ class Chapter extends Model
     }
 
     /**
+     * @return HasMany<Follow, $this>
+     */
+    public function follows(): HasMany
+    {
+        return $this->hasMany(Follow::class);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
+     *
+     * @param  Builder<Chapter>  $query
+     */
+    public function scopeWithUserFollow(Builder $query, ?int $userId): void
+    {
+        $query->addSelect([
+            'is_followed' => Follow::query()
+                ->selectRaw('1')
+                ->whereColumn('chapter_id', $query->getModel()->getQualifiedKeyName())
+                ->where('user_id', $userId ?? 0)
+                ->limit(1),
+        ]);
+    }
+
+    /**
      * @param  Builder<Chapter>  $query
      */
     public function scopePublished(Builder $query): void
@@ -105,6 +129,14 @@ class Chapter extends Model
     public function scopeDrafts(Builder $query): void
     {
         $query->where('status', self::STATUS_DRAFT);
+    }
+
+    /**
+     * @param  Builder<Chapter>  $query
+     */
+    public function scopeByAuthor(Builder $query, int $authorId): void
+    {
+        $query->where('author_id', $authorId);
     }
 
     /**

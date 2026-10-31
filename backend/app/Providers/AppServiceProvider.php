@@ -29,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->resolveAccessTokenFromCookie();
         $this->defineAuthRateLimiters();
         $this->defineContentRateLimiters();
+        $this->defineReadingRateLimiter();
     }
 
     private function enforceMorphMap(): void
@@ -77,6 +78,18 @@ class AppServiceProvider extends ServiceProvider
             $perMinute = Config::integer('ghosty.likes.per_minute');
 
             return Limit::perMinute($perMinute)->by((string) $request->user()?->id);
+        });
+    }
+
+    /**
+     * @see backend/memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
+     */
+    private function defineReadingRateLimiter(): void
+    {
+        RateLimiter::for('chapter-read', function (Request $request): Limit {
+            $perMinute = Config::integer('ghosty.reading.reads_per_minute');
+
+            return Limit::perMinute($perMinute)->by($request->ip() ?? '');
         });
     }
 }

@@ -56,6 +56,8 @@ describe('NovelManageForm.vue', () => {
 
     await wrapper.find('.novel-manage__form').trigger('submit')
     await flushPromises()
+    await wrapper.find('.confirm-button__valid').trigger('click')
+    await flushPromises()
 
     expect(NovelRepository.create).not.toHaveBeenCalled()
     expect(form.getError('novel.genreId')).toBe('novel_manage.error_genre_required')
@@ -65,7 +67,7 @@ describe('NovelManageForm.vue', () => {
     expect(form.getError('chapter.summary')).toBe('novel_manage.error_chapter_summary_required')
   })
 
-  it('reddens the section holding the error without leaving the open one', async () => {
+  it('brings the story back first when both sections fail', async () => {
     useAuthStore().setUser(userSeeder.getUser())
     wrapper = mount(NovelManageForm)
     await flushPromises()
@@ -73,14 +75,16 @@ describe('NovelManageForm.vue', () => {
     await wrapper.findAll('.chapter-body__section')[1].trigger('click')
     await wrapper.find('.novel-manage__form').trigger('submit')
     await flushPromises()
+    await wrapper.find('.confirm-button__valid').trigger('click')
+    await flushPromises()
 
     const [content, summary] = wrapper.findAll('.chapter-body__section')
-    expect(content.classes()).toContain('btn-danger-alt')
-    expect(summary.classes()).toContain('btn-danger')
-    expect(wrapper.find('textarea[name="chapter.summary"]').exists()).toBe(true)
+    expect(content.classes()).toContain('btn-danger')
+    expect(summary.classes()).toContain('btn-danger-alt')
+    expect(wrapper.find('textarea[name="chapter.content"]').exists()).toBe(true)
   })
 
-  it('keeps a section green while its own field is filled', async () => {
+  it('opens the summary on its own when only it fails, the story staying green', async () => {
     useAuthStore().setUser(userSeeder.getUser())
     wrapper = mount(NovelManageForm)
     await flushPromises()
@@ -88,10 +92,13 @@ describe('NovelManageForm.vue', () => {
     await wrapper.find('textarea[name="chapter.content"]').setValue('Il pleut.')
     await wrapper.find('.novel-manage__form').trigger('submit')
     await flushPromises()
+    await wrapper.find('.confirm-button__valid').trigger('click')
+    await flushPromises()
 
     const [content, summary] = wrapper.findAll('.chapter-body__section')
-    expect(content.classes()).toContain('btn-primary')
-    expect(summary.classes()).toContain('btn-danger-alt')
+    expect(content.classes()).toContain('btn-primary-alt')
+    expect(summary.classes()).toContain('btn-danger')
+    expect(wrapper.find('textarea[name="chapter.summary"]').exists()).toBe(true)
   })
 
   it('publishes the novel however short its chapter and opens it', async () => {
@@ -110,6 +117,8 @@ describe('NovelManageForm.vue', () => {
     await wrapper.find('textarea[name="chapter.summary"]').setValue(formData.chapter.summary)
     await wrapper.findAll('.chapter-body__section')[0].trigger('click')
     await wrapper.find('.novel-manage__form').trigger('submit')
+    await flushPromises()
+    await wrapper.find('.confirm-button__valid').trigger('click')
     await flushPromises()
 
     expect(NovelRepository.create).toHaveBeenCalledWith({
@@ -218,6 +227,8 @@ describe('NovelManageForm.vue', () => {
     await flushPromises()
 
     await wrapper.find('.novel-manage__form').trigger('submit')
+    await flushPromises()
+    await wrapper.find('.confirm-button__valid').trigger('click')
     await flushPromises()
 
     expect(ChapterRepository.publish).toHaveBeenCalledWith({

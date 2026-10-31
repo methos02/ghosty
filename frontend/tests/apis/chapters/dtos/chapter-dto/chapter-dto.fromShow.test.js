@@ -22,6 +22,7 @@ describe('chapter-dto', () => {
         branchLikeCount: 41,
         isLiked: false,
         isReported: false,
+        isFollowed: false,
         commentCount: 0,
         isDraft: false,
         isCorrectable: true,
@@ -29,7 +30,14 @@ describe('chapter-dto', () => {
         novel: { id: 1, slug: 'nuit-virage', title: 'Nuit virage', genreId: 3 },
         author: { id: 7, username: 'GhostWriter' },
         publishedAt: '2026-07-31T10:00:00+00:00',
+        publishedAtFormat: '31/07/2026',
       })
+    })
+
+    it('turns a missing summary into an empty text the summary field can count', () => {
+      const result = ChapterDto.fromShow(chapterSeeder.getChapterApi({ summary: null }))
+
+      expect(result.summary).toBe('')
     })
 
     it('cuts the content into paragraphs, whatever the line endings', () => {

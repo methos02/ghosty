@@ -61,7 +61,7 @@ const getChapterContinuedApi = (count, overrides = {}) =>
     ...overrides,
   })
 
-const getMainBranchMoveApi = (type, count, overrides = {}) =>
+const getChaptersPayloadApi = (type, count, overrides = {}) =>
   getNotificationApi({
     type,
     data: {
@@ -91,8 +91,8 @@ const getLikeReceived = count => NotificationDto.fromNotification(getLikeReceive
 
 const getChapterContinued = count => NotificationDto.fromNotification(getChapterContinuedApi(count))
 
-const getMainBranchMove = (type, count) =>
-  NotificationDto.fromNotification(getMainBranchMoveApi(type, count))
+const getChaptersPayload = (type, count) =>
+  NotificationDto.fromNotification(getChaptersPayloadApi(type, count))
 
 const getListApi = (overrides = {}) => ({
   notifications: [getNotificationApi()],
@@ -116,8 +116,8 @@ const getInbox = (overrides = {}) => ({ ...NotificationDto.fromList(getListApi()
 export const notificationSeeder = {
   getChapterContinued,
   getChapterContinuedApi,
-  getMainBranchMove,
-  getMainBranchMoveApi,
+  getChaptersPayload,
+  getChaptersPayloadApi,
   getInbox,
   getLikeReceived,
   getLikeReceivedApi,

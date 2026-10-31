@@ -29,9 +29,21 @@ export const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/me/chapters',
+    name: 'written-chapters',
+    component: () => import('@/views/chapters/WrittenChaptersPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/me/notifications',
     name: 'notifications',
     component: () => import('@/views/notifications/NotificationsPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/me/readings',
+    name: 'readings',
+    component: () => import('@/views/readings/ReadingsPage.vue'),
     meta: { requiresAuth: true },
   },
   {

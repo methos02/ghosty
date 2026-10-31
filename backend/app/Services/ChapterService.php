@@ -136,6 +136,7 @@ class ChapterService
         $this->chaptersR->incrementChildrenCount($parent);
         $this->chaptersR->updateBranchLikeCount($chapter, $parent);
         $this->notificationService->chapterContinued($chapter, $parent);
+        $this->notificationService->followedBranchExtended($chapter, $parent);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Models;
 
 use App\Models\Chapter;
+use App\Models\User;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -94,8 +95,24 @@ class ChapterModelTest extends TestCase
         Chapter::factory()->continuing($continued)->create();
         Chapter::factory()->create();
 
-        $branches = Chapter::query()->hasChildren()->get();
+        $branches = Chapter::query()
+            ->hasChildren()
+            ->get();
 
         $this->assertSame([$continued->id], $branches->pluck('id')->all());
+    }
+
+    #[Test]
+    public function the_author_scope_keeps_only_the_chapters_of_that_author(): void
+    {
+        $author = User::factory()->create();
+        $written = Chapter::factory()->create(['author_id' => $author->id]);
+        Chapter::factory()->create();
+
+        $chapters = Chapter::query()
+            ->byAuthor($author->id)
+            ->get();
+
+        $this->assertSame([$written->id], $chapters->pluck('id')->all());
     }
 }

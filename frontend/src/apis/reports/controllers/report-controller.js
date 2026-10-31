@@ -5,9 +5,10 @@ import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 import { form } from '@/services/shortcuts/services-shortcut.js'
 
 const reportChapter = async (chapterId, formData) => {
-  const params = ReportDto.toChapterParams(chapterId)
-  const body = ReportDto.toCreate(formData)
-  const response = await ReportRepository.reportChapter({ params, body })
+  const response = await ReportRepository.reportChapter({
+    params: ReportDto.toChapterParams(chapterId),
+    body: ReportDto.toCreate(formData),
+  })
 
   if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
     form.addValidationErrors(response.data.errors, 'report')

@@ -53,12 +53,16 @@ class NotificationRepository
 
     public function unreadCount(User $recipient): int
     {
-        return $this->notificationsByRecipient($recipient)->whereNull('read_at')->count();
+        return $this->notificationsByRecipient($recipient)
+            ->whereNull('read_at')
+            ->count();
     }
 
     public function find(User $recipient, string $notificationId): Notification
     {
-        return $this->notificationsByRecipient($recipient)->whereKey($notificationId)->firstOrFail();
+        return $this->notificationsByRecipient($recipient)
+            ->whereKey($notificationId)
+            ->firstOrFail();
     }
 
     /**
@@ -74,7 +78,9 @@ class NotificationRepository
 
     public function delete(Notification $notification): void
     {
-        Notification::query()->whereKey($notification->id)->delete();
+        Notification::query()
+            ->whereKey($notification->id)
+            ->delete();
     }
 
     public function markAsRead(Notification $notification): void

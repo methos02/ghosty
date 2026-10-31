@@ -1,0 +1,8 @@
+{
+  "written_chapters": {
+    "title": "Mes chapitres",
+    "empty": "Aucun chapitre publié pour l'instant.",
+    "create_novel": "Créer un roman",
+    "published_at": "publié le {date}"
+  }
+}

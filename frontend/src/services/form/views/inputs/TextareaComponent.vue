@@ -2,6 +2,7 @@
 import { ref, computed, nextTick, onMounted, watch } from 'vue'
 import ErrorForm from '@/services/form/views/ErrorFormComponent.vue'
 import { FormHelper } from '@/core/helpers/form-helper.js'
+import { formStore } from '@/services/form/src/form-store.js'
 const props = defineProps({
   name: { type: String, required: true },
   placeholder: { type: String, default: undefined },
@@ -15,6 +16,10 @@ const props = defineProps({
 })
 
 const value = defineModel({ type: String, default: '' })
+
+const isInvalid = computed(() =>
+  formStore.hasError(FormHelper.getInputName(props.name, props.form)),
+)
 
 const characterCount = computed(() => {
   return value.value.length || 0
@@ -53,6 +58,7 @@ onMounted(autoGrow)
         :class="{
           autogrow: props.autogrow,
           'no-label': noLabel || label === undefined,
+          invalide: isInvalid,
         }"
         ref="textarea"
         v-model="value"

@@ -85,6 +85,15 @@ const openNovelsPanel = async () => {
 
     <div class="chapter-footer__actions | d-flex f-wrap j-center g-10">
       <router-link
+        v-if="chapter.isDraft"
+        :to="{ name: 'drafts' }"
+        class="chapter-footer__drafts | btn btn-primary"
+      >
+        {{ t('chapter_read.my_drafts') }}
+      </router-link>
+
+      <router-link
+        v-if="!chapter.isDraft"
         :to="{ name: 'chapter-write', params: { slug: novelSlug, parentId: chapter.id } }"
         class="chapter-footer__continue | btn btn-primary"
       >

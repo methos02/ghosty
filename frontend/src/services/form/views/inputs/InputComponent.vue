@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import ErrorForm from '@/services/form/views/ErrorFormComponent.vue'
 import { FormHelper } from '@/core/helpers/form-helper.js'
+import { formStore } from '@/services/form/src/form-store.js'
 const props = defineProps({
   name: { type: String, required: true },
   type: { type: String, default: 'text' },
@@ -17,6 +18,10 @@ const props = defineProps({
 })
 
 const input = defineModel({ type: [String, Number], default: '' })
+
+const isInvalid = computed(() =>
+  formStore.hasError(FormHelper.getInputName(props.name, props.form)),
+)
 
 const isPassword = props.type === 'password'
 const type = ref(props.type)
@@ -38,7 +43,7 @@ const togglePassword = () => {
         :type="type"
         :autocomplete="autocomplete"
         class="form-input input"
-        :class="{ 'no-label': noLabel }"
+        :class="{ 'no-label': noLabel, invalide: isInvalid }"
         v-model="input"
         placeholder=" "
         :readonly="readonly"

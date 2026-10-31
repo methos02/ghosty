@@ -1,0 +1,7 @@
+{
+  "resume_reading_list": {
+    "empty": "Vous n'avez encore commencé aucun roman.",
+    "stopped_at": "Arrêté à « {title} », le {date}",
+    "resume": "Reprendre"
+  }
+}

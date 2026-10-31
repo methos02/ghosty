@@ -109,6 +109,20 @@ class ChapterControllerStoreTest extends TestCase
     }
 
     #[Test]
+    public function refuses_to_continue_a_draft_even_for_its_author(): void
+    {
+        $author = User::factory()->create();
+        $draft = Chapter::factory()->draft()->create([
+            'novel_id' => $this->novel->id,
+            'author_id' => $author->id,
+        ]);
+
+        $this->actingAs($author)
+            ->postJson($this->route(), $this->getDatas(['parent_id' => $draft->id]))
+            ->assertForbidden();
+    }
+
+    #[Test]
     public function refuses_a_banned_author(): void
     {
         $this->actingAs(User::factory()->banned()->create())

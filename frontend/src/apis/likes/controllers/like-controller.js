@@ -4,8 +4,9 @@ import { STATUS } from '@/constants/ajax-constants.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const like = async chapterId => {
-  const params = LikeDto.toChapterParams(chapterId)
-  const response = await LikeRepository.like({ params })
+  const response = await LikeRepository.like({
+    params: LikeDto.toChapterParams(chapterId),
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -17,8 +18,9 @@ const like = async chapterId => {
 }
 
 const unlike = async chapterId => {
-  const params = LikeDto.toChapterParams(chapterId)
-  const response = await LikeRepository.unlike({ params })
+  const response = await LikeRepository.unlike({
+    params: LikeDto.toChapterParams(chapterId),
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
 import ChapterFooter from '@/views/chapters/parts/ChapterFooter.vue'
 import ReadingToolbar from '@/views/chapters/parts/ReadingToolbar.vue'
@@ -14,11 +14,14 @@ import { correctionHelper } from '@/core/helpers/correction-helper.js'
 import { readingSettingsHelper } from '@/core/helpers/reading-settings-helper.js'
 import { useChapterHead } from '@/head/use-chapter-head.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
+import { readingSessionHelper } from '@/core/helpers/reading-session-helper.js'
+import { ChapterReadController } from '@/apis/chapter-reads/controllers/chapter-read-controller.js'
 
 useChapterHead()
 
 const authStore = useAuthStore()
-const { chapter, children } = useReadingStore()
+const readingStore = useReadingStore()
+const { chapter, children } = readingStore
 const { settings, restore } = useReadingSettingsStore()
 const { chapterReading } = useChapterReading()
 const { position } = useReadingPosition()
@@ -38,6 +41,16 @@ const canCorrect = computed(() =>
   correctionHelper.isCorrectableBy(chapter.value, authStore.user.value?.id),
 )
 
+const canEditDraft = computed(
+  () => chapter.value?.isDraft === true && chapter.value?.author?.id === authStore.user.value?.id,
+)
+
+const editDraftRoute = computed(() => {
+  const name = chapter.value.isRoot ? 'novel-edit' : 'chapter-edit'
+
+  return { name, params: { id: chapter.value.id } }
+})
+
 const load = async () => {
   if (chapter.value?.id === chapterId.value) {
     return
@@ -54,13 +67,28 @@ const load = async () => {
   isLoading.value = false
 }
 
+const recordRead = async () => {
+  if (chapter.value?.id !== chapterId.value) {
+    return
+  }
+
+  await ChapterReadController.create(chapter.value, readingSessionHelper.sessionKey())
+}
+
+const loadAndRecordRead = async () => {
+  await load()
+  await recordRead()
+}
+
 onMounted(() => {
   restore()
 
-  return load()
+  return loadAndRecordRead()
 })
 
-watch(chapterId, load)
+watch(chapterId, loadAndRecordRead)
+
+onUnmounted(readingStore.clear)
 </script>
 
 <template>
@@ -102,11 +130,13 @@ watch(chapterId, load)
           :class="fontClass"
           :style="textStyle"
         >
-          <header class="d-flex f-column g-5 text-center">
+          <header class="d-flex f-column a-center g-5 text-center">
             <span class="chapter-reader-page__number | fs-300 color-neutral-700">
               {{ t('chapter_read.chapter_number', { number: position }) }}
             </span>
-            <h1 class="fs-700 fw-700">{{ chapter.title }}</h1>
+            <h1 class="fs-700 fw-700">
+              {{ chapter.title }}
+            </h1>
             <span class="chapter-reader-page__author | fs-400 color-neutral-700">
               {{ t('common.by_author', { author: chapter.author.username }) }}
             </span>
@@ -116,6 +146,13 @@ watch(chapterId, load)
             >
               {{ t('chapter_read.draft') }}
             </span>
+            <router-link
+              v-if="canEditDraft"
+              :to="editDraftRoute"
+              class="chapter-reader-page__edit-draft | btn btn-sm btn-primary-alt"
+            >
+              {{ t('chapter_read.edit_draft') }}
+            </router-link>
           </header>
 
           <p

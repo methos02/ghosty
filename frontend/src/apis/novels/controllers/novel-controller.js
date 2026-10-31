@@ -6,8 +6,9 @@ import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 import { form } from '@/services/shortcuts/services-shortcut.js'
 
 const list = async (filters = {}) => {
-  const params = NovelDto.toListParams({ page: 1, ...filters })
-  const response = await NovelRepository.list({ params })
+  const response = await NovelRepository.list({
+    params: NovelDto.toListParams({ page: 1, ...filters }),
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -21,8 +22,9 @@ const list = async (filters = {}) => {
 }
 
 const getBySlug = async slug => {
-  const params = NovelDto.toShowParams(slug)
-  const response = await NovelRepository.getBySlug({ params })
+  const response = await NovelRepository.getBySlug({
+    params: NovelDto.toShowParams(slug),
+  })
   if (!ajaxHelper.isSuccess(response.status)) {
     return response
   }
@@ -34,8 +36,9 @@ const getBySlug = async slug => {
 }
 
 const create = async formData => {
-  const body = NovelDto.toCreate(formData)
-  const response = await NovelRepository.create({ body })
+  const response = await NovelRepository.create({
+    body: NovelDto.toCreate(formData),
+  })
 
   if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
     form.addValidationErrors(response.data.errors, 'novel')
@@ -52,9 +55,10 @@ const create = async formData => {
 }
 
 const update = async (slug, formData) => {
-  const params = NovelDto.toShowParams(slug)
-  const body = NovelDto.toUpdate(formData)
-  const response = await NovelRepository.update({ params, body })
+  const response = await NovelRepository.update({
+    params: NovelDto.toShowParams(slug),
+    body: NovelDto.toUpdate(formData),
+  })
 
   if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
     form.addValidationErrors(response.data.errors, 'novel')

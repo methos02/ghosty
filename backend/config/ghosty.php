@@ -33,4 +33,10 @@ return [
         'per_page' => 20,
     ],
 
+    /* @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md */
+    'reading' => [
+        'per_page' => 20,
+        'reads_per_minute' => 30,
+    ],
+
 ];

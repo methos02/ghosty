@@ -13,8 +13,6 @@
 
 namespace App\Models{
 /**
- * @property-read User $author
- * @property-read Novel $novel
  * @property int $id
  * @property int $novel_id
  * @property int|null $parent_id
@@ -34,10 +32,14 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $corrected_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Chapter> $children
  * @property-read int|null $children_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Follow> $follows
+ * @property-read int|null $follows_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Like> $likes
  * @property-read int|null $likes_count
+ * @property-read \App\Models\Novel $novel
  * @property-read Chapter|null $parent
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Report> $reports
  * @property-read int|null $reports_count
@@ -69,12 +71,61 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereSummary($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter withUserFollow(?int $userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter withUserLike(?int $userId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter withUserReport(?int $userId)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperChapter {}
+}
+
+namespace App\Models{
+/**
+ * @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
+ * @property int $id
+ * @property int $chapter_id
+ * @property int|null $user_id
+ * @property string $session_key
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property-read \App\Models\Chapter $chapter
+ * @property-read \App\Models\User|null $user
+ * @method static \Database\Factories\ChapterReadFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterRead newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterRead newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterRead query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterRead whereChapterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterRead whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterRead whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterRead whereSessionKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterRead whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChapterRead {}
+}
+
+namespace App\Models{
+/**
+ * @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
+ * @property int $id
+ * @property int $user_id
+ * @property int $chapter_id
+ * @property \Illuminate\Support\Carbon $created_at
+ * @property-read \App\Models\Chapter $chapter
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\FollowFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereChapterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperFollow {}
 }
 
 namespace App\Models{
@@ -102,7 +153,6 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
- * @property-read User $user
  * @property int $id
  * @property int $user_id
  * @property string $likeable_type
@@ -110,6 +160,7 @@ namespace App\Models{
  * @property string|null $created_ip
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property-read \Illuminate\Database\Eloquent\Model $likeable
+ * @property-read \App\Models\User $user
  * @method static \Database\Factories\LikeFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Like newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Like newQuery()
@@ -166,8 +217,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property-read User $author
- * @property-read Genre $genre
  * @property int $id
  * @property string $title
  * @property string $slug
@@ -180,8 +229,10 @@ namespace App\Models{
  * @property int|null $main_branch_last_chapter_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
  * @property-read int|null $chapters_count
+ * @property-read \App\Models\Genre $genre
  * @property-read \App\Models\Chapter|null $rootChapter
  * @method static \Database\Factories\NovelFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel newModelQuery()
@@ -207,8 +258,33 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
+ * @property int $id
+ * @property int $user_id
+ * @property int $novel_id
+ * @property int $chapter_id
+ * @property \Illuminate\Support\Carbon $read_at
+ * @property-read \App\Models\Chapter $chapter
+ * @property-read \App\Models\Novel $novel
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\ReadingProgressFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReadingProgress newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReadingProgress newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReadingProgress query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReadingProgress whereChapterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReadingProgress whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReadingProgress whereNovelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReadingProgress whereReadAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ReadingProgress whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperReadingProgress {}
+}
+
+namespace App\Models{
+/**
  * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
- * @property-read User $reporter
  * @property int $id
  * @property int $reporter_id
  * @property string $reportable_type
@@ -222,6 +298,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model $reportable
+ * @property-read \App\Models\User $reporter
  * @method static \Database\Factories\ReportFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Report newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Report newQuery()

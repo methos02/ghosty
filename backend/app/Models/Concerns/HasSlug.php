@@ -45,11 +45,18 @@ trait HasSlug
         $slug = $base;
         $suffix = 2;
 
-        while (static::query()->where('slug', $slug)->exists()) {
+        while ($this->isSlugTaken($slug)) {
             $slug = "{$base}-{$suffix}";
             $suffix++;
         }
 
         return $slug;
+    }
+
+    private function isSlugTaken(string $slug): bool
+    {
+        return static::query()
+            ->where('slug', $slug)
+            ->exists();
     }
 }

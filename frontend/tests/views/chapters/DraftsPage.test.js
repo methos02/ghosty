@@ -103,6 +103,20 @@ describe('DraftsPage.vue', () => {
     })
   })
 
+  it('lets the author read a draft as a reader would, without saving it first', async () => {
+    const novelDraftApi = chapterSeeder.getChapterApi({ id: 12, is_draft: true, is_root: true })
+    vi.spyOn(ChapterRepository, 'drafts').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi({ chapters: [novelDraftApi] }) }),
+    )
+    wrapper = mount(DraftsPage)
+    await flushPromises()
+
+    expect(wrapper.findComponent('.drafts-page__read').props('to')).toEqual({
+      name: 'chapter-read',
+      params: { slug: novelDraftApi.novel.slug, id: novelDraftApi.id },
+    })
+  })
+
   it('invites the author to start a novel when nothing is in progress', async () => {
     vi.spyOn(ChapterRepository, 'drafts').mockResolvedValue(
       controllerSuccess({ data: chapterSeeder.getListApi({ chapters: [] }) }),

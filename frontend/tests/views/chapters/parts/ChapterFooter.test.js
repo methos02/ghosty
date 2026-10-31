@@ -37,6 +37,41 @@ describe('ChapterFooter.vue', () => {
     expect(wrapper.find('.like-button__count').text()).toBe('41')
   })
 
+  it('leads a draft back to the drafts, a story cannot go on from an unpublished chapter', () => {
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading(chapterSeeder.getReading())
+    const wrapper = mount(ChapterFooter, {
+      props: {
+        novelSlug: novelSeeder.getNovel().slug,
+        chapter: chapterSeeder.getChapter({ isDraft: true }),
+      },
+      global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
+    })
+
+    expect(wrapper.find('.chapter-footer__continue').exists()).toBe(false)
+    expect(wrapper.findComponent('.chapter-footer__drafts').props('to')).toEqual({ name: 'drafts' })
+  })
+
+  it('invites to continue a published chapter, with no detour through the drafts', () => {
+    const chapter = chapterSeeder.getChapter()
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading(chapterSeeder.getReading())
+    const wrapper = mount(ChapterFooter, {
+      props: { novelSlug: novelSeeder.getNovel().slug, chapter },
+      global: { provide: { [NOVEL_STORE_KEY]: novelStore, [READING_STORE_KEY]: readingStore } },
+    })
+
+    expect(wrapper.find('.chapter-footer__drafts').exists()).toBe(false)
+    expect(wrapper.findComponent('.chapter-footer__continue').props('to')).toEqual({
+      name: 'chapter-write',
+      params: { slug: novelSeeder.getNovel().slug, parentId: chapter.id },
+    })
+  })
+
   it('offers an alternative branch when nothing continues the chapter', () => {
     const novelStore = createNovelStore()
     const readingStore = createReadingStore()

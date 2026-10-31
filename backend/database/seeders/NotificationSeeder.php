@@ -47,7 +47,7 @@ class NotificationSeeder extends Seeder
     private function groupSubject(NotificationType $type, Chapter $chapter): Chapter|Novel
     {
         return match ($type) {
-            NotificationType::MainBranchGained, NotificationType::MainBranchLost => $chapter->novel,
+            NotificationType::MainBranchGained, NotificationType::MainBranchLost, NotificationType::FollowedBranchExtended => $chapter->novel,
             NotificationType::LikeReceived, NotificationType::ChapterContinued => $chapter,
         };
     }
@@ -61,7 +61,7 @@ class NotificationSeeder extends Seeder
         return match ($type) {
             NotificationType::LikeReceived => $this->likeDetails($chapter, $notification['actors'] ?? []),
             NotificationType::ChapterContinued => $this->continuationDetails($notification['continuations'] ?? []),
-            NotificationType::MainBranchGained, NotificationType::MainBranchLost => $this->branchMoveDetails(
+            NotificationType::MainBranchGained, NotificationType::MainBranchLost, NotificationType::FollowedBranchExtended => $this->branchMoveDetails(
                 $notification['chapters'] ?? [$chapter->title]
             ),
         };

@@ -7,7 +7,8 @@ import { t } from '@/services/shortcuts/services-shortcut.js'
 const props = defineProps({
   cb: { type: Function, required: true },
   params: { type: Array, default: () => [] },
-  question: { type: String, required: true },
+  question: { type: String, default: '' },
+  title: { type: String, default: '' },
   buttonClasses: { type: String, default: 'btn btn-danger-alt' },
   disabled: { type: Boolean, default: false },
 })
@@ -26,6 +27,8 @@ const confirm = async () => {
   await props.cb(...props.params)
   dialog.value?.close()
 }
+
+defineExpose({ ask })
 </script>
 
 <template>
@@ -40,11 +43,18 @@ const confirm = async () => {
 
   <DialogComponent
     ref="dialog"
+    :title="title"
     :closeBg="false"
     :closeCross="false"
   >
     <div class="confirm-button__body | d-flex f-column g-25">
-      <p class="confirm-button__question">{{ question }}</p>
+      <p
+        v-if="question !== ''"
+        class="confirm-button__question"
+      >
+        {{ question }}
+      </p>
+      <slot name="details"></slot>
 
       <div class="d-flex j-center g-20">
         <LoaderComponent

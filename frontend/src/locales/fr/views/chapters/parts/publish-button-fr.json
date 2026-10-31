@@ -1,0 +1,9 @@
+{
+  "publish_button": {
+    "title": "Publier ce chapitre ?",
+    "after": "Après publication :",
+    "corrections": "Correction disponible : 1",
+    "delay": "Délai : 48 h",
+    "max_words": "Nombre de mots maximum : {allowance}"
+  }
+}

@@ -34,6 +34,31 @@ const response = await NovelRepository.list({ params: { novel_slug: slug, order:
 const response = await NovelRepository.list({ params: NovelDto.toFilters(slug, 1) })
 ```
 
+## Build the payload inline
+
+PREFER writing the DTO call directly in the repository call over an intermediate `params` / `body` variable used only there. The payload object always breaks one property per line, even with a single property ([multiline-object-literal](../global/multiline-object-literal.md)).
+
+```js
+// BAD
+const params = ChapterDto.toChapterParams(id)
+const body = ChapterDto.toUpdate(formData)
+const response = await ChapterRepository.update({ params, body })
+
+// GOOD
+const response = await ChapterRepository.update({
+  params: ChapterDto.toChapterParams(id),
+  body: ChapterDto.toUpdate(formData),
+})
+
+// BAD
+const response = await FollowRepository.list({ params: FollowDto.toListParams(page) })
+
+// GOOD
+const response = await FollowRepository.list({
+  params: FollowDto.toListParams(page),
+})
+```
+
 ## Hydrate entity references
 
 When a result carries reference ids, MUST use `utils.hydrate` (from `@/services/shortcuts/services-shortcut.js`). MUST NOT write a manual fetch loop with a cache.

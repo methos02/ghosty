@@ -75,4 +75,10 @@ return [
             'integer' => 'Le chapitre de départ doit être un identifiant numérique',
         ],
     ],
+    'chapter_read' => [
+        'session_key' => [
+            'required' => 'La clé de session de lecture est obligatoire',
+            'uuid' => 'La clé de session de lecture est invalide',
+        ],
+    ],
 ];

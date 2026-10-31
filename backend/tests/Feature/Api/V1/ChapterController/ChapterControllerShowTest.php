@@ -84,7 +84,10 @@ class ChapterControllerShowTest extends TestCase
         $author = User::factory()->create();
         $draft = Chapter::factory()->draft()->create(['author_id' => $author->id]);
 
-        $this->actingAs($author)
+        $token = $author->createToken('auth-token')->plainTextToken;
+
+        $this->withCredentials()
+            ->withUnencryptedCookie('ghosty_token', $token)
             ->getJson("/api/v1/chapters/{$draft->id}")
             ->assertOk()
             ->assertJsonPath('id', $draft->id);

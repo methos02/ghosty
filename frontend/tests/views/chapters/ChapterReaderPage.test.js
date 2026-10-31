@@ -22,6 +22,10 @@ import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
 import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
 import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
+import { ChapterReadRepository } from '@/apis/chapter-reads/repositories/chapter-read-repository.js'
+import { ChapterReadDto } from '@/apis/chapter-reads/dtos/chapter-read-dto.js'
+import { readingSessionHelper } from '@/core/helpers/reading-session-helper.js'
+import { STATUS } from '@/constants/ajax-constants.js'
 import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
 
 const router = routerPlugin.getRouter()
@@ -39,6 +43,7 @@ describe('ChapterReaderPage.vue', () => {
     vi.spyOn(NotificationRepository, 'list').mockResolvedValue(
       controllerSuccess({ data: notificationSeeder.getListApi() }),
     )
+    vi.spyOn(ChapterReadRepository, 'create').mockResolvedValue({ status: STATUS.NO_CONTENT })
   })
 
   afterEach(async () => {
@@ -333,6 +338,91 @@ describe('ChapterReaderPage.vue', () => {
     expect(wrapper.find('.chapter-footer__correct').exists()).toBe(false)
   })
 
+  it('takes the author of a draft chapter straight back to its form', async () => {
+    const reading = chapterSeeder.getReading()
+    reading.chapter = chapterSeeder.getChapter({ id: 30, isDraft: true, isRoot: false })
+    const provide = readerProvide()
+    provide[READING_STORE_KEY].setReading(reading)
+    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
+    useAuthStore().setUser(userSeeder.getUser({ id: reading.chapter.author.id }))
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: reading.novel.slug, id: reading.chapter.id },
+    })
+
+    wrapper = mount(ChapterReaderPage, {
+      global: { plugins: [router, createHead()], provide },
+    })
+    await flushPromises()
+
+    expect(wrapper.findComponent('.chapter-reader-page__edit-draft').props('to')).toEqual({
+      name: 'chapter-edit',
+      params: { id: reading.chapter.id },
+    })
+  })
+
+  it('takes the author of a novel draft back to the novel form', async () => {
+    const reading = chapterSeeder.getReading()
+    reading.chapter = chapterSeeder.getChapter({ isDraft: true, isRoot: true })
+    const provide = readerProvide()
+    provide[READING_STORE_KEY].setReading(reading)
+    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
+    useAuthStore().setUser(userSeeder.getUser({ id: reading.chapter.author.id }))
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: reading.novel.slug, id: reading.chapter.id },
+    })
+
+    wrapper = mount(ChapterReaderPage, {
+      global: { plugins: [router, createHead()], provide },
+    })
+    await flushPromises()
+
+    expect(wrapper.findComponent('.chapter-reader-page__edit-draft').props('to')).toEqual({
+      name: 'novel-edit',
+      params: { id: reading.chapter.id },
+    })
+  })
+
+  it('offers no draft editing on a published chapter', async () => {
+    const reading = chapterSeeder.getReading()
+    const provide = readerProvide()
+    provide[READING_STORE_KEY].setReading(reading)
+    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
+    useAuthStore().setUser(userSeeder.getUser({ id: reading.chapter.author.id }))
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: reading.novel.slug, id: reading.chapter.id },
+    })
+
+    wrapper = mount(ChapterReaderPage, {
+      global: { plugins: [router, createHead()], provide },
+    })
+    await flushPromises()
+
+    expect(wrapper.find('.chapter-reader-page__edit-draft').exists()).toBe(false)
+  })
+
+  it('forgets the chapter once the reader leaves, so a later visit shows the saved version', async () => {
+    const reading = chapterSeeder.getReading()
+    const provide = readerProvide()
+    provide[READING_STORE_KEY].setReading(reading)
+    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: reading.novel.slug, id: reading.chapter.id },
+    })
+    wrapper = mount(ChapterReaderPage, {
+      global: { plugins: [router, createHead()], provide },
+    })
+    await flushPromises()
+
+    wrapper.unmount()
+    wrapper = undefined
+
+    expect(provide[READING_STORE_KEY].chapter.value).toBeUndefined()
+  })
+
   it('switches the reading surface to night mode and remembers it', async () => {
     const reading = chapterSeeder.getReading()
     const provide = readerProvide()
@@ -430,5 +520,74 @@ describe('ChapterReaderPage.vue', () => {
     expect(article.classes()).toContain('reading-font-lato')
     expect(article.attributes('style')).toContain('font-size: 24px')
     expect(article.attributes('style')).toContain('max-width: max(60vw, 320px)')
+  })
+
+  it('records the read of the opened chapter under the reading session of the browser', async () => {
+    const reading = chapterSeeder.getReading()
+    const provide = readerProvide()
+    provide[READING_STORE_KEY].setReading(reading)
+    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: reading.novel.slug, id: reading.chapter.id },
+    })
+
+    wrapper = mount(ChapterReaderPage, {
+      global: { plugins: [router, createHead()], provide },
+    })
+    await flushPromises()
+
+    expect(ChapterReadRepository.create).toHaveBeenCalledWith({
+      params: ChapterReadDto.toChapterParams(reading.chapter.id),
+      body: ChapterReadDto.toCreate(readingSessionHelper.sessionKey()),
+    })
+  })
+
+  it('records the read of each chapter the reader turns to without reloading', async () => {
+    const reading = chapterSeeder.getReading()
+    const provide = readerProvide()
+    provide[READING_STORE_KEY].setReading(reading)
+    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
+    vi.spyOn(ChapterRepository, 'reading').mockResolvedValue(
+      controllerSuccess({
+        data: chapterSeeder.getReadingApi({
+          chapter: chapterSeeder.getChapterApi({ id: reading.nextChapterId }),
+        }),
+      }),
+    )
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: reading.novel.slug, id: reading.chapter.id },
+    })
+
+    wrapper = mount(ChapterReaderPage, { global: { plugins: [router, createHead()], provide } })
+    await flushPromises()
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: reading.novel.slug, id: reading.nextChapterId },
+    })
+    await flushPromises()
+
+    expect(ChapterReadRepository.create).toHaveBeenNthCalledWith(1, {
+      params: ChapterReadDto.toChapterParams(reading.chapter.id),
+      body: ChapterReadDto.toCreate(readingSessionHelper.sessionKey()),
+    })
+    expect(ChapterReadRepository.create).toHaveBeenNthCalledWith(2, {
+      params: ChapterReadDto.toChapterParams(reading.nextChapterId),
+      body: ChapterReadDto.toCreate(readingSessionHelper.sessionKey()),
+    })
+  })
+
+  it('records nothing when the chapter could not be loaded', async () => {
+    const novel = novelSeeder.getNovel()
+    vi.spyOn(ChapterRepository, 'reading').mockResolvedValue(controllerError())
+    await router.push({ name: 'chapter-read', params: { slug: novel.slug, id: 999 } })
+
+    wrapper = mount(ChapterReaderPage, {
+      global: { plugins: [router, createHead()], provide: readerProvide() },
+    })
+    await flushPromises()
+
+    expect(ChapterReadRepository.create).not.toHaveBeenCalled()
   })
 })

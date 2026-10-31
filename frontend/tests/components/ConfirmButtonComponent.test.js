@@ -34,6 +34,19 @@ describe('ConfirmButtonComponent.vue', () => {
     expect(wrapper.find('.confirm-button__question').text()).toBe('Supprimer ce brouillon ?')
   })
 
+  it('carries the question in the dialog title with its details below', async () => {
+    wrapper = mount(ConfirmButton, {
+      props: { cb: vi.fn(), title: 'Publier ce chapitre ?' },
+      slots: { default: 'Publier', details: '<p class="terms">Délai : 48 h</p>' },
+    })
+
+    await wrapper.find('button').trigger('click')
+
+    expect(wrapper.find('.dialog-header').text()).toBe('Publier ce chapitre ?')
+    expect(wrapper.find('.terms').exists()).toBe(true)
+    expect(wrapper.find('.confirm-button__question').exists()).toBe(false)
+  })
+
   it('runs the callback with its params once confirmed', async () => {
     const cb = vi.fn()
     const draft = { id: 12 }

@@ -7,10 +7,6 @@
   color: var(--neutral-800);
   border-radius: 5px;
 
-  &.invalide {
-    border: 1px solid var(--danger);
-  }
-
   &[disabled],
   &[readonly] {
     background-color: var(--neutral-300);
@@ -26,6 +22,16 @@
   &:focus {
     border: 1px solid var(--primary);
     box-shadow: 0 0 0 3px rgba(0, 188, 125, 0.15);
+  }
+
+  &.invalide,
+  &.invalide:hover,
+  &.invalide:focus {
+    border: 1px solid var(--danger);
+  }
+
+  &.invalide:focus {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 15%, transparent);
   }
 
   &[disabled]:hover,

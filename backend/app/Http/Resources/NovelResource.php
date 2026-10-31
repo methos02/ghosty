@@ -31,6 +31,7 @@ class NovelResource extends JsonResource
                 'id' => $this->genre_id,
                 'name' => $this->whenLoaded('genre', fn () => $this->genre->name),
             ],
+            'chapters' => ChapterListResource::collection($this->whenLoaded('chapters')),
         ];
     }
 }

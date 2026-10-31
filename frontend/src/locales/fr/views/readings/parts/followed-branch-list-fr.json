@@ -1,0 +1,9 @@
+{
+  "followed_branch_list": {
+    "empty": "Vous ne suivez aucune branche. Suivez-en une depuis la barre de lecture d'un chapitre.",
+    "branch": "« {title} » — par {author}",
+    "novel": "{novel} · suivie depuis le {date}",
+    "unfollow": "Ne plus suivre",
+    "unfollowed": "Vous ne suivez plus cette branche"
+  }
+}

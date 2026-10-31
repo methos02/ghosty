@@ -46,6 +46,18 @@ class ChapterPolicy
         return $this->isOwnWork($user, $chapter) && $chapter->isDraft();
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
+     */
+    public function follow(User $user, Chapter $chapter): bool
+    {
+        if ($user->isBanned()) {
+            return false;
+        }
+
+        return $chapter->isPublished();
+    }
+
     public function delete(User $user, Chapter $chapter): bool
     {
         return $this->isOwnWork($user, $chapter) && $chapter->isDraft();

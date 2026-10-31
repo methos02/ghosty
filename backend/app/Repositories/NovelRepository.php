@@ -6,6 +6,8 @@ use App\Models\Chapter;
 use App\Models\Novel;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class NovelRepository
 {
@@ -15,7 +17,13 @@ class NovelRepository
     public function paginate(string $search = '', ?int $genreId = null, int $perPage = 15): LengthAwarePaginator
     {
         return Novel::with(['genre', 'author'])
-            ->whereNotIn('id', $this->draftNovelIds())
+            ->whereNotIn(
+                'id',
+                Chapter::query()
+                    ->drafts()
+                    ->roots()
+                    ->select('novel_id')
+            )
             ->when($search !== '', fn (Builder $query) => $query->whereLike('title', "%{$search}%"))
             ->when($genreId !== null, fn (Builder $query) => $query->where('genre_id', $genreId))
             ->paginate($perPage);
@@ -29,11 +37,31 @@ class NovelRepository
     }
 
     /**
-     * @return Builder<Chapter>
+     * @return Collection<int, Novel>
      */
-    private function draftNovelIds(): Builder
+    public function containingChaptersPublishedByAuthor(int $authorId): Collection
     {
-        return Chapter::query()->drafts()->roots()->select('novel_id');
+        return Novel::query()
+            ->whereIn(
+                'id',
+                Chapter::query()
+                    ->published()
+                    ->byAuthor($authorId)
+                    ->select('novel_id')
+            )
+            ->with(['chapters' => function (Relation $chapters) use ($authorId): void {
+                $chapters->whereIn(
+                    'id',
+                    Chapter::query()
+                        ->published()
+                        ->byAuthor($authorId)
+                        ->select('id')
+                );
+                $chapters->orderBy('published_at');
+                $chapters->orderBy('id');
+            }])
+            ->orderBy('title')
+            ->get();
     }
 
     /**
@@ -67,7 +95,9 @@ class NovelRepository
      */
     public function setLastChapterOfMainBranch(int $novelId, int $chapterId): void
     {
-        Novel::whereKey($novelId)->toBase()->update(['main_branch_last_chapter_id' => $chapterId]);
+        Novel::whereKey($novelId)
+            ->toBase()
+            ->update(['main_branch_last_chapter_id' => $chapterId]);
     }
 
     /**
@@ -75,10 +105,12 @@ class NovelRepository
      */
     public function trimMainBranchTo(int $novelId, int $chapterId): void
     {
-        Novel::whereKey($novelId)->toBase()->update([
-            'main_branch_last_chapter_id' => $chapterId,
-            'branch_recomputed_at' => null,
-        ]);
+        Novel::whereKey($novelId)
+            ->toBase()
+            ->update([
+                'main_branch_last_chapter_id' => $chapterId,
+                'branch_recomputed_at' => null,
+            ]);
     }
 
     public function deleteById(int $novelId): void

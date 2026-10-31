@@ -88,7 +88,9 @@ class BranchService
         }
 
         foreach ($idsByTotal as $total => $ids) {
-            Chapter::whereIn('id', $ids)->toBase()->update(['branch_like_count' => $total]);
+            Chapter::whereIn('id', $ids)
+                ->toBase()
+                ->update(['branch_like_count' => $total]);
         }
 
         Novel::whereKey($novel->id)->update(['branch_recomputed_at' => $startedAt]);

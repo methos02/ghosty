@@ -87,4 +87,43 @@ describe('ReadingToolbar.vue', () => {
     expect(useChapterReport().reportedChapter.value).toBeUndefined()
     expect(useAuth().showLoginDialog.value).toBe(true)
   })
+
+  it('offers to follow the branch of a published chapter', () => {
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading({ ...chapterSeeder.getReading(), chapter: chapterSeeder.getChapter() })
+    const wrapper = mount(ReadingToolbar, {
+      global: {
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [READING_STORE_KEY]: readingStore,
+          [READING_SETTINGS_STORE_KEY]: createReadingSettingsStore(),
+        },
+      },
+    })
+
+    expect(wrapper.find('.follow-button').exists()).toBe(true)
+  })
+
+  it('does not offer to follow a draft, which has no branch yet', () => {
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading({
+      ...chapterSeeder.getReading(),
+      chapter: chapterSeeder.getChapter({ isDraft: true }),
+    })
+    const wrapper = mount(ReadingToolbar, {
+      global: {
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [READING_STORE_KEY]: readingStore,
+          [READING_SETTINGS_STORE_KEY]: createReadingSettingsStore(),
+        },
+      },
+    })
+
+    expect(wrapper.find('.follow-button').exists()).toBe(false)
+  })
 })

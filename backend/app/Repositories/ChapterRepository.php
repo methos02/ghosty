@@ -16,7 +16,10 @@ class ChapterRepository
      */
     public function mainBranch(string $novelSlug, ?int $userId = null): Collection
     {
-        $novelId = Novel::query()->where('slug', $novelSlug)->first(['id'])?->id;
+        $novelId = Novel::query()
+            ->where('slug', $novelSlug)
+            ->first(['id'])
+            ?->id;
 
         if ($novelId === null) {
             return new Collection;
@@ -39,7 +42,12 @@ class ChapterRepository
         return Chapter::query()
             ->published()
             ->where('novel_id', $novelId)
-            ->whereIn('id', Novel::query()->whereKey($novelId)->select('main_branch_last_chapter_id'))
+            ->whereIn(
+                'id',
+                Novel::query()
+                    ->whereKey($novelId)
+                    ->select('main_branch_last_chapter_id')
+            )
             ->first();
     }
 
@@ -94,6 +102,7 @@ class ChapterRepository
         return Chapter::with(['author', 'novel'])
             ->withUserLike($userId)
             ->withUserReport($userId)
+            ->withUserFollow($userId)
             ->findOrFail($id);
     }
 
@@ -102,6 +111,7 @@ class ChapterRepository
         return Chapter::with('author')
             ->withUserLike($userId)
             ->withUserReport($userId)
+            ->withUserFollow($userId)
             ->whereKey($chapterId)
             ->whereRelation('novel', 'slug', $novelSlug)
             ->firstOrFail();
@@ -152,7 +162,7 @@ class ChapterRepository
         return Chapter::query()
             ->with('novel')
             ->drafts()
-            ->where('author_id', $ownerId)
+            ->byAuthor($ownerId)
             ->when(
                 $filters->parentId !== null,
                 fn (Builder $query) => $query->where('parent_id', $filters->parentId)
@@ -166,6 +176,17 @@ class ChapterRepository
     public function incrementChildrenCount(Chapter $parent): void
     {
         $parent->increment('continuations_count');
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
+     */
+    public function incrementReadCount(Chapter $chapter): void
+    {
+        Chapter::query()
+            ->whereKey($chapter->id)
+            ->toBase()
+            ->increment('read_count');
     }
 
     public function updateBranchLikeCount(Chapter $chapter, Chapter $parent): void

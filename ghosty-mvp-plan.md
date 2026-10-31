@@ -103,12 +103,13 @@ status (visible | hidden | deleted), timestamps
 index (commentable_type, commentable_id, parent_id)
 ```
 
-**`follows`**, **`reading_progresses`**, **`chapter_reads`** (MVP §8, §16)
+**`follows`**, **`reading_progress`**, **`chapter_reads`** (MVP §8, §16) — voir ADR-12
 
 ```
-follows            : user_id, followable_type (Novel|Chapter), followable_id — unique
-reading_progresses : user_id, novel_id, chapter_id, path — unique (user_id, novel_id)
-chapter_reads      : user_id (nullable), chapter_id, session_key, created_at — unique lecture
+follows          : user_id, chapter_id (chapitre-tête de la branche), created_at — unique
+reading_progress : user_id, novel_id, chapter_id, read_at — unique (user_id, novel_id)
+chapter_reads    : chapter_id, user_id (nullable), session_key, created_at
+                   unique (chapter_id, session_key) et (chapter_id, user_id)
 ```
 
 **`reports`** + **`sanctions`** (MVP §12)
@@ -195,8 +196,9 @@ POST   /reports                             GET /moderation/reports, POST /moder
 GET    /me/notifications                    liste paginée + compteur non lues (D6)
 POST   /me/notifications/{id}/read          PATCH /me/notifications/read-all
 
-POST   /follows                             DELETE /follows
-GET    /me/reading-progress                 PUT /me/reading-progress
+POST   /chapters/{chapter}/follow           DELETE /chapters/{chapter}/follow ; GET /me/follows
+POST   /chapters/{chapter}/read             lecture unique (session navigateur ou compte)
+GET    /me/reading-progress                 reprise de lecture (compte uniquement)
 GET    /me/reading-history
 
 GET    /users/{pseudo}                      profil public + contributions + stats (§13)
@@ -280,11 +282,12 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 2. **Jamais se notifier soi-même** — §6 autorise explicitement un auteur à poursuivre son propre chapitre : ce cas ne doit déclencher aucune notification.
 3. **Pas de notification de perte** — avec la continuité automatique (D3), une suite peut être détrônée à tout moment. On notifie le gain, jamais la perte : annoncer « vous n'êtes plus la continuité courante » transformerait un classement en défaite, à rebours de §7 (« une proposition moins soutenue peut toujours devenir une branche »).
 
-### Lot 4 — Suivi et parcours de lecture · M
+### Lot 4 — Suivi et parcours de lecture · M ✅
 
-- `follows`, `reading_progresses`, `chapter_reads`.
+- `follows`, `reading_progress`, `chapter_reads`.
 - Reprise de lecture (« continuer où j'en étais »), historique du parcours (§8), suivi d'une branche (§8).
-- Invité non connecté : progression en `ssr-storage`, fusionnée à la connexion.
+- Écarts au plan ([ADR-12](backend/memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md)) : `follows` ne vise que le **chapitre-tête** (suivre un roman = suivre son chapitre d'origine), pas un polymorphe `Novel|Chapter` ; routes `POST|DELETE /chapters/{id}/follow` et `POST /chapters/{id}/read` au lieu de `/follows` ; table `reading_progress` (convention Laravel) ; **aucune progression invitée** : l'historique et la reprise sont réservés aux comptes, sans fusion à la connexion.
+- Front : `FollowButton` dans la barre de lecture, page « Mes lectures » (`/me/readings` : reprendre, branches suivies, historique), notification `followed_branch_extended`.
 
 ### Lot 5 — Commentaires · M
 

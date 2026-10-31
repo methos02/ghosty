@@ -76,6 +76,11 @@ export const routesApi = {
     method: 'get',
     api: 'ghosty',
   },
+  'chapter.published': {
+    url: 'v1/me/chapters',
+    method: 'get',
+    api: 'ghosty',
+  },
   'chapter.like': {
     url: 'v1/chapters/{chapter}/like',
     method: 'post',
@@ -89,6 +94,39 @@ export const routesApi = {
   'chapter.report': {
     url: 'v1/chapters/{chapter}/report',
     method: 'post',
+    api: 'ghosty',
+  },
+  'chapter.follow': {
+    url: 'v1/chapters/{chapter}/follow',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'chapter.unfollow': {
+    url: 'v1/chapters/{chapter}/follow',
+    method: 'delete',
+    api: 'ghosty',
+  },
+  'chapter.read': {
+    url: 'v1/chapters/{chapter}/read',
+    method: 'post',
+    api: 'ghosty',
+  },
+
+  'follow.list': {
+    url: 'v1/me/follows',
+    method: 'get',
+    api: 'ghosty',
+  },
+
+  'readingProgress.list': {
+    url: 'v1/me/reading-progress',
+    method: 'get',
+    api: 'ghosty',
+  },
+
+  'chapterRead.list': {
+    url: 'v1/me/reading-history',
+    method: 'get',
     api: 'ghosty',
   },
 

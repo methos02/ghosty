@@ -7,6 +7,8 @@ paths:
 
 An object literal of 3+ properties MUST break one property per line, braces on their own lines, so every item is visible without scrolling. 1-2 properties stay inline.
 
+Exception: the payload passed to a repository (`ChapterRepository.update({ … })`) MUST break from 1 property, so the request sent stays readable at a glance ([controller](../files-type/controller.md)). An empty payload (`({})`) stays inline.
+
 Count-driven, unlike [no-compact-patterns](no-compact-patterns.md), which is complexity-driven: a 3-property literal of trivial values (`{ id, label, value }`) breaks here even though that rule leaves it alone.
 
 ```js
@@ -28,7 +30,7 @@ This is line-wrapping, not extraction: the literal stays at the call site. MUST 
 
 Machine-enforced:
 
-- `local/multiline-object-literal` (ESLint, `eslint-rules/multiline-object-literal.js`) reports the 3+ threshold and auto-fixes it by inserting the line breaks.
+- `local/multiline-object-literal` (ESLint, `eslint-rules/multiline-object-literal.js`) reports the 3+ threshold, and the 1+ threshold on a callee object named `*Repository`, and auto-fixes it by inserting the line breaks.
 - Prettier reindents. It cannot enforce the threshold itself — `objectWrap: "preserve"` keeps a hand-broken object broken, but never breaks an inline one.
 
 Run `npm run lint -- --fix && npm run format` to apply both.

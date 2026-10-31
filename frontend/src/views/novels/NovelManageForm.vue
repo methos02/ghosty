@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import LoaderComponent from '@/components/LoaderComponent.vue'
+import PublishButton from '@/views/chapters/parts/PublishButton.vue'
 import InputComponent from '@/services/form/views/inputs/InputComponent.vue'
 import SelectComponent from '@/services/form/views/inputs/SelectComponent.vue'
 import ChapterBodyFields from '@/views/chapters/ChapterBodyFields.vue'
@@ -159,7 +160,7 @@ onMounted(async () => {
 <template>
   <div class="novel-manage | w-xl py-30 px-20">
     <form
-      @submit.prevent="publishButton?.runCallback()"
+      @submit.prevent="publishButton?.ask()"
       class="novel-manage__form | d-flex f-column"
     >
       <div class="form-row | d-flex g-20">
@@ -232,14 +233,14 @@ onMounted(async () => {
         >
           {{ t('novel_manage.save_draft') }}
         </LoaderComponent>
-        <LoaderComponent
+        <PublishButton
           ref="publishButton"
           :cb="publish"
-          buttonType="submit"
-          buttonClasses="btn btn-primary"
+          :content="datas.chapter.content"
+          buttonClasses="novel-manage__publish | btn btn-primary"
         >
           {{ t('novel_manage.submit') }}
-        </LoaderComponent>
+        </PublishButton>
       </div>
     </form>
   </div>

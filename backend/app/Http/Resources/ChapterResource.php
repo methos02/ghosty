@@ -58,6 +58,7 @@ class ChapterResource extends JsonResource
         return [
             'content' => $this->content,
             'is_reported' => (bool) $this->getAttribute('is_reported'),
+            'is_followed' => (bool) $this->getAttribute('is_followed'),
         ];
     }
 }

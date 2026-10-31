@@ -1,8 +1,11 @@
 {
   "common": {
     "by_author": "par {author}",
+    "chapter_children": "Aucune suite | 1 suite | {count} suites",
+    "chapter_likes": "Aucun soutien | 1 soutien | {count} soutiens",
     "explore_novel": "Explorer le roman",
     "main_branch": "Branche principale",
-    "main_branch_from_here": "Branche principale depuis ici"
+    "main_branch_from_here": "Branche principale depuis ici",
+    "see_more": "Voir plus"
   }
 }

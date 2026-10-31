@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api\V1\ChapterController;
 
 use App\Models\Chapter;
+use App\Models\Follow;
 use App\Models\Like;
 use App\Models\Novel;
 use App\Models\Report;
@@ -310,5 +311,30 @@ class ChapterControllerReadingTest extends TestCase
             ->getJson("/api/v1/novels/{$novel->slug}/chapters/{$root->id}")
             ->assertOk()
             ->assertJsonPath('chapter.is_reported', false);
+    }
+
+    #[Test]
+    public function the_reader_sees_that_they_follow_the_branch_of_the_chapter(): void
+    {
+        [$novel, $root] = $this->novelWithRoot();
+        $follower = User::factory()->create();
+        Follow::factory()->by($follower)->on($root)->create();
+
+        $this->actingAs($follower)
+            ->getJson("/api/v1/novels/{$novel->slug}/chapters/{$root->id}")
+            ->assertOk()
+            ->assertJsonPath('chapter.is_followed', true);
+    }
+
+    #[Test]
+    public function a_reader_does_not_see_somebody_elses_follow_as_their_own(): void
+    {
+        [$novel, $root] = $this->novelWithRoot();
+        Follow::factory()->on($root)->create();
+
+        $this->actingAs(User::factory()->create())
+            ->getJson("/api/v1/novels/{$novel->slug}/chapters/{$root->id}")
+            ->assertOk()
+            ->assertJsonPath('chapter.is_followed', false);
     }
 }

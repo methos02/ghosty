@@ -69,13 +69,16 @@ describe('HeaderComponent.vue', () => {
       expect(wrapper.findAll('.btn-auth')).toHaveLength(0)
     })
 
-    it('gathers writing, drafts and favorites in the menu', () => {
+    it('gathers writing, drafts, written chapters and favorites in the menu', () => {
       useAuthStore().setUser(userSeeder.getUser())
 
       const wrapper = mount(HeaderComponent)
 
       expect(wrapper.findComponent('.header-create').props('to')).toEqual({ name: 'novel-create' })
       expect(wrapper.findComponent('.header-drafts').props('to')).toEqual({ name: 'drafts' })
+      expect(wrapper.findComponent('.header-written-chapters').props('to')).toEqual({
+        name: 'written-chapters',
+      })
       expect(wrapper.findComponent('.header-favorites').props('to')).toEqual({ name: 'favorites' })
     })
 

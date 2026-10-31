@@ -1,7 +1,7 @@
 import { dateHelper } from '@/core/helpers/date-helper.js'
 import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 import { ChapterContinuedDto } from '@/apis/notifications/dtos/types/chapter-continued-dto.js'
-import { MainBranchMoveDto } from '@/apis/notifications/dtos/types/main-branch-move-dto.js'
+import { ChaptersPayloadDto } from '@/apis/notifications/dtos/types/chapters-payload-dto.js'
 import { LikeReceivedDto } from '@/apis/notifications/dtos/types/like-received-dto.js'
 
 const fromList = data => ({
@@ -42,6 +42,12 @@ export const NotificationDto = {
   toReadParams,
 }
 
+const CHAPTERS_PAYLOAD_TYPES = new Set([
+  NOTIFICATION_TYPES.MAIN_BRANCH_GAINED,
+  NOTIFICATION_TYPES.MAIN_BRANCH_LOST,
+  NOTIFICATION_TYPES.FOLLOWED_BRANCH_EXTENDED,
+])
+
 const isKnownType = data => Object.values(NOTIFICATION_TYPES).includes(data.type)
 
 const mapPayload = data => {
@@ -57,11 +63,8 @@ const mapPayload = data => {
     return LikeReceivedDto.fromNotification(data)
   }
 
-  if (
-    data.type === NOTIFICATION_TYPES.MAIN_BRANCH_GAINED
-    || data.type === NOTIFICATION_TYPES.MAIN_BRANCH_LOST
-  ) {
-    return MainBranchMoveDto.fromNotification(data)
+  if (CHAPTERS_PAYLOAD_TYPES.has(data.type)) {
+    return ChaptersPayloadDto.fromNotification(data)
   }
 
   return {}

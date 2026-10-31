@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import ChapterManagePage from '@/views/chapters/ChapterManagePage.vue'
+import PublishButton from '@/views/chapters/parts/PublishButton.vue'
 import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
 import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
 import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
@@ -65,8 +66,8 @@ describe('ChapterManagePage.vue', () => {
         controllerSuccess({ data: chapterSeeder.getListApi({ chapters: [draftApi] }) }),
       )
       const replace = vi.spyOn(router, 'replace').mockResolvedValueOnce()
-      vi.spyOn(ChapterRepository, 'getById').mockResolvedValue(
-        controllerSuccess({ data: parentApi }),
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === draftApi.id ? draftApi : parentApi }),
       )
       useAuthStore().setUser(userSeeder.getUser())
       await router.push({
@@ -80,7 +81,33 @@ describe('ChapterManagePage.vue', () => {
         params: ChapterDto.toDraftFilters({ parentId: parentApi.id }),
       })
       expect(replace).toHaveBeenCalledWith({ name: 'chapter-edit', params: { id: draftApi.id } })
-      expect(ChapterRepository.getById).not.toHaveBeenCalled()
+    })
+
+    it('fills the resumed draft in place, the router keeping the same page alive', async () => {
+      const parentApi = chapterSeeder.getChapterApi()
+      const draftApi = chapterSeeder.getChapterApi({
+        id: 44,
+        title: 'Nuit blanche',
+        parent_id: parentApi.id,
+        is_draft: true,
+      })
+      ChapterRepository.drafts.mockResolvedValueOnce(
+        controllerSuccess({ data: chapterSeeder.getListApi({ chapters: [draftApi] }) }),
+      )
+      vi.spyOn(router, 'replace').mockResolvedValueOnce()
+      vi.spyOn(ChapterRepository, 'getById').mockImplementation(async ({ params }) =>
+        controllerSuccess({ data: params.chapter === draftApi.id ? draftApi : parentApi }),
+      )
+      useAuthStore().setUser(userSeeder.getUser())
+      await router.push({
+        name: 'chapter-write',
+        params: { slug: parentApi.novel.slug, parentId: parentApi.id },
+      })
+      wrapper = mount(ChapterManagePage)
+      await flushPromises()
+
+      expect(wrapper.find('input[name="chapter.title"]').element.value).toBe(draftApi.title)
+      expect(wrapper.find('h1').text()).toBe(t('chapter_manage.title_edit'))
     })
 
     it('does not publish a child with an empty text', async () => {
@@ -105,9 +132,37 @@ describe('ChapterManagePage.vue', () => {
       await wrapper.find('textarea[name="chapter.content"]').setValue(formData.content)
       await wrapper.find('.chapter-manage-page__form').trigger('submit')
       await flushPromises()
+      await wrapper.find('.confirm-button__valid').trigger('click')
+      await flushPromises()
 
       expect(ChapterRepository.create).not.toHaveBeenCalled()
       expect(form.getError('chapter.content')).toBe('chapter_manage.error_content_required')
+    })
+
+    it('asks before publishing, stating how many words the single correction may change', async () => {
+      const parentApi = chapterSeeder.getChapterApi()
+      vi.spyOn(ChapterRepository, 'create')
+      vi.spyOn(ChapterRepository, 'getById').mockResolvedValue(
+        controllerSuccess({ data: parentApi }),
+      )
+      useAuthStore().setUser(userSeeder.getUser())
+      await router.push({
+        name: 'chapter-write',
+        params: { slug: parentApi.novel.slug, parentId: parentApi.id },
+      })
+      wrapper = mount(ChapterManagePage)
+      await flushPromises()
+
+      await wrapper.find('textarea[name="chapter.content"]').setValue('Il pleut.')
+      await wrapper.find('.chapter-manage-page__publish').trigger('click')
+      await flushPromises()
+
+      expect(ChapterRepository.create).not.toHaveBeenCalled()
+      const publishButton = wrapper.findComponent(PublishButton)
+      expect(publishButton.find('.dialog-header').text()).toBe(t('publish_button.title'))
+      expect(publishButton.find('.publish-button__max-words').text()).toBe(
+        t('publish_button.max_words', { allowance: 5 }),
+      )
     })
 
     it('sends the child with its parent and opens it for reading on success', async () => {
@@ -135,6 +190,8 @@ describe('ChapterManagePage.vue', () => {
       await wrapper.findAll('.chapter-body__section')[0].trigger('click')
       await wrapper.find('textarea[name="chapter.content"]').setValue(formData.content)
       await wrapper.find('.chapter-manage-page__form').trigger('submit')
+      await flushPromises()
+      await wrapper.find('.confirm-button__valid').trigger('click')
       await flushPromises()
 
       expect(ChapterRepository.create).toHaveBeenCalledWith({
@@ -224,6 +281,8 @@ describe('ChapterManagePage.vue', () => {
       const push = vi.spyOn(router, 'push').mockResolvedValueOnce()
 
       await wrapper.find('.chapter-manage-page__form').trigger('submit')
+      await flushPromises()
+      await wrapper.find('.confirm-button__valid').trigger('click')
       await flushPromises()
 
       expect(ChapterRepository.update).toHaveBeenCalledWith({

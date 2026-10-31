@@ -13,7 +13,7 @@ describe('MainBranchLostNotification.vue', () => {
   })
 
   it('names the lone chapter that left the main branch, linking the chapter and the novel', () => {
-    const notification = notificationSeeder.getMainBranchMove('main_branch_lost', 1)
+    const notification = notificationSeeder.getChaptersPayload('main_branch_lost', 1)
 
     wrapper = mount(MainBranchLostNotification, { props: { notification } })
 
@@ -36,7 +36,7 @@ describe('MainBranchLostNotification.vue', () => {
   })
 
   it('counts the chapters that left together, linking only the novel', () => {
-    const notification = notificationSeeder.getMainBranchMove('main_branch_lost', 2)
+    const notification = notificationSeeder.getChaptersPayload('main_branch_lost', 2)
 
     wrapper = mount(MainBranchLostNotification, { props: { notification } })
 

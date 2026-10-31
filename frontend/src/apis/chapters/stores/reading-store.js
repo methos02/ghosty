@@ -31,6 +31,17 @@ const readingStore = () => {
     }
   }
 
+  const setChapterFollow = (chapterId, isFollowed) => {
+    if (chapter.value?.id !== chapterId) {
+      return
+    }
+
+    chapter.value = {
+      ...chapter.value,
+      isFollowed,
+    }
+  }
+
   const clear = () => {
     chapter.value = undefined
     ancestors.value = []
@@ -70,6 +81,7 @@ const readingStore = () => {
     nextChapterId: readonly(nextChapterId),
     setReading,
     setChapterLike,
+    setChapterFollow,
     clear,
     serialize,
     hydrate,

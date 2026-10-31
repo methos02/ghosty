@@ -81,6 +81,28 @@ const handleLogout = async () => {
 
         <li>
           <router-link
+            :to="{ name: 'written-chapters' }"
+            @click="close"
+            class="header-written-chapters | header-side__link | d-flex a-center g-25"
+          >
+            <span class="header-side__label | flex-1">{{ t('header.written_chapters') }}</span>
+            <i class="header-side__icon | fa-solid fa-feather"></i>
+          </router-link>
+        </li>
+
+        <li>
+          <router-link
+            :to="{ name: 'readings' }"
+            @click="close"
+            class="header-readings | header-side__link | d-flex a-center g-25"
+          >
+            <span class="header-side__label | flex-1">{{ t('header.readings') }}</span>
+            <i class="header-side__icon | fa-solid fa-book-open"></i>
+          </router-link>
+        </li>
+
+        <li>
+          <router-link
             :to="{ name: 'favorites' }"
             @click="close"
             class="header-favorites | header-side__link | d-flex a-center g-25"

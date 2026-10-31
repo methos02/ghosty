@@ -2,7 +2,9 @@
 
 namespace App\Repositories;
 
+use App\Models\Follow;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 class UserRepository
 {
@@ -16,7 +18,34 @@ class UserRepository
 
     public function findByEmailOrUsername(string $identifier): ?User
     {
-        return User::query()->where('email', $identifier)->first()
-            ?? User::query()->where('username', $identifier)->first();
+        $userByEmail = User::query()
+            ->where('email', $identifier)
+            ->first();
+
+        return $userByEmail ?? User::query()
+            ->where('username', $identifier)
+            ->first();
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
+     *
+     * @param  list<int>  $chapterIds
+     * @return Collection<int, User>
+     */
+    public function followersOfChapters(array $chapterIds): Collection
+    {
+        if ($chapterIds === []) {
+            return new Collection;
+        }
+
+        return User::query()
+            ->whereIn(
+                'id',
+                Follow::query()
+                    ->select('user_id')
+                    ->whereIn('chapter_id', $chapterIds)
+            )
+            ->get();
     }
 }

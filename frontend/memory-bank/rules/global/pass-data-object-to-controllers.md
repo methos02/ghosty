@@ -20,7 +20,6 @@ const chapterSearch = async (search, genreId, onlyActive) => {
 AuthorController.chapterSearch(formData)
 
 const chapterSearch = async (filters) => {
-    const params = Dto.toFilters(filters)
-    return Repository.search({ params })
+    return Repository.search({ params: Dto.toFilters(filters) })
 }
 ```

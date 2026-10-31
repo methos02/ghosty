@@ -1,0 +1,8 @@
+{
+  "follow_button": {
+    "follow": "Suivre la branche qui part de ce chapitre",
+    "unfollow": "Ne plus suivre cette branche",
+    "followed": "Vous recevrez une notification à chaque nouvelle suite de cette branche",
+    "unfollowed": "Vous ne suivez plus cette branche"
+  }
+}

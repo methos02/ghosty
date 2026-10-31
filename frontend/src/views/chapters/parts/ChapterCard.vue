@@ -67,15 +67,15 @@ const correct = async () => {
       <div class="chapter-card__badges | d-flex f-wrap a-center g-10">
         <span
           class="chapter-card__likes | badge d-flex a-center g-5"
-          :title="t('chapter_card.likes', chapter.likeCount)"
-          :aria-label="t('chapter_card.likes', chapter.likeCount)"
+          :title="t('common.chapter_likes', chapter.likeCount)"
+          :aria-label="t('common.chapter_likes', chapter.likeCount)"
         >
           <i class="fa-solid fa-heart color-primary"></i>
           {{ chapter.likeCount }}
         </span>
 
         <span class="chapter-card__children | badge badge-info">
-          {{ t('chapter_card.children', chapter.childrenCount) }}
+          {{ t('common.chapter_children', chapter.childrenCount) }}
         </span>
 
         <span

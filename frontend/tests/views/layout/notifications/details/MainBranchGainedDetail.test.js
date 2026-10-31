@@ -13,7 +13,7 @@ describe('MainBranchGainedDetail.vue', () => {
   })
 
   it('lists every chapter joining the main branch, each leading to its chapter', () => {
-    const notification = notificationSeeder.getMainBranchMove('main_branch_gained', 3)
+    const notification = notificationSeeder.getChaptersPayload('main_branch_gained', 3)
 
     wrapper = mount(MainBranchGainedDetail, { props: { notification } })
 

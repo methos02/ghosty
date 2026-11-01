@@ -81,4 +81,14 @@ return [
             'uuid' => 'La clé de session de lecture est invalide',
         ],
     ],
+    'comment' => [
+        'content' => [
+            'required' => 'Le commentaire ne peut pas être vide',
+            'string' => 'Le commentaire doit être un texte',
+            'max' => 'Le commentaire ne peut pas dépasser :max caractères',
+        ],
+        'is_spoiler' => [
+            'boolean' => 'L\'indication de divulgâcheur doit valoir vrai ou faux',
+        ],
+    ],
 ];

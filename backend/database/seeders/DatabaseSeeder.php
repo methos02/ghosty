@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             NovelSeeder::class,
             ChapterSeeder::class,
             NotificationSeeder::class,
+            CommentSeeder::class,
         ]);
     }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ChapterController;
 use App\Http\Controllers\Api\V1\ChapterReadController;
+use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Controllers\Api\V1\FollowController;
 use App\Http\Controllers\Api\V1\GenreController;
 use App\Http\Controllers\Api\V1\LikeController;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::pattern('chapter', '[0-9]+');
+Route::pattern('comment', '[0-9]+');
 Route::pattern('notification', '[0-9a-fA-F-]{36}');
 
 Route::prefix('v1')->group(function () {
@@ -29,6 +31,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/chapters/{chapter}', [ChapterController::class, 'show'])->name('chapters.show');
     Route::get('/chapters/{chapter}/children', [ChapterController::class, 'children'])->name('chapters.children');
     Route::post('/chapters/{chapter}/read', [ChapterReadController::class, 'store'])->middleware('throttle:chapter-read')->name('chapters.read');
+    Route::get('/chapters/{chapter}/comments', [CommentController::class, 'indexForChapter'])->name('chapters.comments.index');
+    Route::get('/novels/{slug}/comments', [CommentController::class, 'indexForNovel'])->name('novels.comments.index');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
@@ -58,6 +62,11 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/me/reading-progress', [ReadingProgressController::class, 'index'])->name('reading-progress.index');
         Route::get('/me/reading-history', [ChapterReadController::class, 'index'])->name('reading-history.index');
+
+        Route::post('/chapters/{chapter}/comments', [CommentController::class, 'storeForChapter'])->middleware('throttle:comment')->name('chapters.comments.store');
+        Route::post('/novels/{slug}/comments', [CommentController::class, 'storeForNovel'])->middleware('throttle:comment')->name('novels.comments.store');
+        Route::post('/comments/{comment}/replies', [CommentController::class, 'storeReply'])->middleware('throttle:comment')->name('comments.replies.store');
+        Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
     });
 });
 

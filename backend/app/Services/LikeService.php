@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Chapter;
 use App\Models\User;
 use App\Repositories\LikeRepository;
+use App\Services\Notifications\LikeReceivedNotificationService;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -14,7 +15,7 @@ class LikeService
 {
     public function __construct(
         private readonly LikeRepository $likesR,
-        private readonly NotificationService $notificationService
+        private readonly LikeReceivedNotificationService $likeReceivedNotificationService
     ) {}
 
     public function like(User $user, Chapter $chapter, ?string $ip): bool
@@ -30,7 +31,7 @@ class LikeService
         });
 
         if ($isNewLike) {
-            $this->notificationService->likeReceived($chapter, $user);
+            $this->likeReceivedNotificationService->create($chapter, $user);
         }
 
         return $isNewLike;

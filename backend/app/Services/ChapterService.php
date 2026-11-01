@@ -8,6 +8,8 @@ use App\Models\Novel;
 use App\Models\User;
 use App\Repositories\ChapterRepository;
 use App\Repositories\NovelRepository;
+use App\Services\Notifications\ChapterContinuedNotificationService;
+use App\Services\Notifications\FollowedBranchExtendedNotificationService;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -19,7 +21,8 @@ class ChapterService
     public function __construct(
         private readonly ChapterRepository $chaptersR,
         private readonly NovelRepository $novelsR,
-        private readonly NotificationService $notificationService
+        private readonly ChapterContinuedNotificationService $chapterContinuedNotificationService,
+        private readonly FollowedBranchExtendedNotificationService $followedBranchExtendedNotificationService
     ) {}
 
     public function create(Novel $novel, User $author, ChapterDTO $chapterDTO): Chapter
@@ -135,8 +138,8 @@ class ChapterService
 
         $this->chaptersR->incrementChildrenCount($parent);
         $this->chaptersR->updateBranchLikeCount($chapter, $parent);
-        $this->notificationService->chapterContinued($chapter, $parent);
-        $this->notificationService->followedBranchExtended($chapter, $parent);
+        $this->chapterContinuedNotificationService->create($chapter, $parent);
+        $this->followedBranchExtendedNotificationService->create($chapter, $parent);
     }
 
     /**

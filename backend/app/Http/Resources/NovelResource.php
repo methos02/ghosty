@@ -23,6 +23,7 @@ class NovelResource extends JsonResource
             'cover_url' => $this->coverUrl(),
             'is_favorite' => $this->is_favorite,
             'chapters_count' => $this->chapter_count,
+            'comment_count' => $this->comment_count,
             'author' => [
                 'id' => $this->author_id,
                 'username' => $this->whenLoaded('author', fn () => $this->author->username),

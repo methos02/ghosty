@@ -1,0 +1,45 @@
+[
+  {
+    "chapter": "Le virage",
+    "author": "lecteur1",
+    "content": "L'ouverture est glaçante. Ce virage, je le connais, et je ne le prendrai plus jamais de nuit.",
+    "replies": [
+      {
+        "author": "auteur2",
+        "content": "Pareil ! Le détail des phares qui s'éteignent d'un coup m'a fait frissonner."
+      },
+      {
+        "author": "auteur3",
+        "content": "Attention à ceux qui n'ont pas lu la suite : le conducteur ne s'en sort pas.",
+        "is_spoiler": true
+      }
+    ]
+  },
+  {
+    "chapter": "Le virage",
+    "author": "auteur3",
+    "content": "Petite incohérence : il est 23 h dans le premier paragraphe, puis minuit passé deux lignes plus bas."
+  },
+  {
+    "chapter": "Ce que le ravin gardait",
+    "author": "lecteur1",
+    "content": "Je ne m'attendais pas du tout à ce qu'il y ait quelqu'un dans le ravin. Bravo pour la tension.",
+    "replies": [
+      {
+        "author": "moderateur1",
+        "content": "C'est l'une des meilleures suites du roman, à mon avis."
+      }
+    ]
+  },
+  {
+    "chapter": "Le registre des disparus",
+    "author": "auteur2",
+    "content": "Le nom en bas du registre, c'est celui du narrateur. Tout le roman prend un autre sens.",
+    "is_spoiler": true
+  },
+  {
+    "novel": "Nuit virage",
+    "author": "lecteur1",
+    "content": "Quel plaisir de voir autant de versions différentes de la même nuit. Continuez !"
+  }
+]

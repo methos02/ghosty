@@ -6,6 +6,7 @@ use App\Models\Chapter;
 use App\Models\Novel;
 use App\Repositories\ChapterRepository;
 use App\Repositories\NovelRepository;
+use App\Services\Notifications\MainBranchSwitchNotificationService;
 
 /**
  * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
@@ -13,7 +14,7 @@ use App\Repositories\NovelRepository;
 class BranchService
 {
     public function __construct(
-        private readonly NotificationService $notificationService,
+        private readonly MainBranchSwitchNotificationService $mainBranchSwitchNotificationService,
         private readonly ChapterRepository $chaptersR,
         private readonly NovelRepository $novelsR
     ) {}
@@ -27,7 +28,7 @@ class BranchService
         $newLastChapterOfMainBranch = $this->updateLastChapterOfMainBranch($novel);
 
         if ($newLastChapterOfMainBranch !== null) {
-            $this->notificationService->mainBranchSwitch($previousLastChapter, $newLastChapterOfMainBranch);
+            $this->mainBranchSwitchNotificationService->create($previousLastChapter, $newLastChapterOfMainBranch);
         }
 
         return $updatedChapters;
@@ -93,7 +94,8 @@ class BranchService
                 ->update(['branch_like_count' => $total]);
         }
 
-        Novel::whereKey($novel->id)->update(['branch_recomputed_at' => $startedAt]);
+        Novel::whereKey($novel->id)
+            ->update(['branch_recomputed_at' => $startedAt]);
 
         return array_sum(array_map('count', $idsByTotal));
     }

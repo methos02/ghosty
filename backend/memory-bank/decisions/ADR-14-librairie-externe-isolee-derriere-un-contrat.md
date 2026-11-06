@@ -32,7 +32,7 @@ Un framework qui prend la main sur l'application (point d'entrée, routage, char
 - `devalue` : retenu. Sérialisation sûre contre le XSS, dates conservées ; seul `ssr/engine/state-script.js` l'importe.
 - Pinia : écarté. Un store natif tient en quelques lignes ; son seul apport, l'état SSR isolé et sérialisé, est couvert par le registre de stores du contrat.
 - Nuxt : écarté. Il possède l'application et ne peut pas être isolé.
-- Vike : candidat comme moteur SSR, à évaluer branché sur le contrat.
+- Vike : écarté. Avec vue-router (déconseillé par Vike, intégration réduite à une page attrape-tout), il n'apporte rien de plus que Vite et le moteur actuel. Son apport réel (`+data`, `+guard`, pré-rendu) suppose son routeur, qui possède l'arborescence `pages/` : routage par dossiers refusé, et impossible à isoler derrière le contrat. Ses deux apports utiles sont repris dans le contrat : préchargement serveur et navigateur par les mêmes composables, gardes avec le store de la requête (lot 6).
 
 ## Alternatives Considered
 
@@ -42,6 +42,7 @@ Un framework qui prend la main sur l'application (point d'entrée, routage, char
 | Tout en natif | Aucune dépendance ; tout est maîtrisé | Infrastructure sensible portée seule ; bugs que d'autres ont déjà corrigés |
 | Librairie utilisée directement partout | Rien à concevoir | Le code dépend de la librairie ; la remplacer touche tout le projet |
 | Framework complet (Nuxt) | Conventions toutes prêtes, SSR maintenu par d'autres | Prend la main sur l'architecture ; incompatible avec Vuemann et Controllers → Repositories → DTO ; impossible à isoler |
+| Vike avec son routeur | `+data` unifié serveur/navigateur, `+guard` serveur, pré-rendu | Routage par dossiers ; vue-router et le service router de Vuemann à remplacer (42 fichiers) ; impossible à isoler |
 
 ## Consequences
 

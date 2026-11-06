@@ -1,13 +1,8 @@
 export const novelDetailAsyncData = async ({ stores, route }) => {
-  const [{ NovelController }, { ajaxHelper }] = await Promise.all([
-    import('@/apis/novels/controllers/novel-controller.js'),
-    import('@/core/helpers/ajax-helper.js'),
-  ])
+  const { useNovelDetail } = await import('@/apis/novels/composables/use-novel-detail.js')
+  const { novelDetail } = useNovelDetail({ novelStore: stores.novel })
 
-  const novelResponse = await NovelController.getBySlug(route.params.slug)
-  if (ajaxHelper.isSuccess(novelResponse.status)) {
-    stores.novel.setSelectedNovel(novelResponse.novel)
-  }
+  const response = await novelDetail.selectBySlug(route.params.slug)
 
-  return { statusCode: novelResponse.status }
+  return { statusCode: response.status }
 }

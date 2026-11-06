@@ -3,9 +3,7 @@ import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
-export const useNovelDetail = () => {
-  const novelStore = useNovelStore()
-
+export const useNovelDetail = ({ novelStore = useNovelStore() } = {}) => {
   const selectBySlug = async novelSlug => {
     if (novelStore.selectedNovel.value?.slug === novelSlug) {
       return { status: STATUS.SUCCESS }

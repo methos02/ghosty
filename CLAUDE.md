@@ -185,6 +185,7 @@ php artisan test
 - Logique métier en **fichiers `.js` natifs** (pas dans `.vue`)
 - Facilite migration future vers autre framework
 - Séparation claire logique/présentation
+- Natif quand c'est utile, pas par principe : une librairie externe est acceptée si elle apporte une **vraie valeur ajoutée** et reste **isolée derrière un contrat** (un seul module l'importe, remplaçable sans toucher au reste). Voir [ADR-14](backend/memory-bank/decisions/ADR-14-librairie-externe-isolee-derriere-un-contrat.md)
 
 ### 2. Stores Vue Natifs (Pas Pinia)
 - Utilisation de **factories Vue natives** pour l'état partagé

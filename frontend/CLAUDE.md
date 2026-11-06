@@ -47,7 +47,7 @@ npm run preview
 > `localhost`). L'API reste sur `api.ghosty.local`. Voir
 > [ADR-04](../backend/memory-bank/decisions/ADR-04-token-en-cookie-httponly.md).
 
-> ⚠️ Le point d'entrée client est **`src/ssr/entry-client.js`** (plus `main.js`, conservé inerte). Le build ne sort plus vers `backend/public/build` : le **serveur Node SSR** (`server.js`) sert le HTML rendu + les assets, et Laravel reste une **API pure**.
+> ⚠️ Le point d'entrée client est **`src/ssr/engine/entry-client.js`** (plus `main.js`, conservé inerte). Le build ne sort plus vers `backend/public/build` : le **serveur Node SSR** (`server.js`) sert le HTML rendu + les assets, et Laravel reste une **API pure**.
 
 ## Architecture Frontend
 
@@ -142,19 +142,30 @@ frontend/src/
 
 L'app est rendue côté serveur (contenu + meta/OG dans le HTML pour le SEO), puis hydratée côté client.
 
-### Trio d'entrée + factory
+### Contrat applicatif + moteur isolé
 
-L'infra SSR isomorphe est regroupée dans **`src/ssr/`** (hors `server.js`, process Node à la racine de `frontend/`).
+Le SSR est découpé selon [ADR-14](../backend/memory-bank/decisions/ADR-14-librairie-externe-isolee-derriere-un-contrat.md) : l'application expose un **contrat**, le **moteur** de rendu le consomme et peut être remplacé sans toucher au reste.
 
-- **`src/ssr/app.js`** — factory `createApp({ ssr })` : `createSSRApp`, router neuf par requête, `provide()` des stores request-scoped, retourne `{ app, router, stores }`. Expose aussi `serializeStores` / `hydrateStores`.
-- **`src/ssr/entry-client.js`** — hydrate : `createApp()`, `hydrateStores(stores, window.__INITIAL_STATE__)`, `router.isReady()`, `mount('#app')`.
-- **`src/ssr/entry-server.js`** — `render(url, { cookie })` : restaure la session depuis le cookie, push l'URL, exécute le prefetch, `renderToString`, renvoie `{ html, head, state, statusCode }`.
-- **`server.js`** (racine `frontend/`) — serveur Express (dev = Vite middleware + `ssrLoadModule` ; prod = `dist/client` statique + `dist/server`). Transmet `req.headers.cookie` à `render()`, injecte `<!--app-html-->`, `<!--ssr-state-->` et le head (`@unhead/vue`).
-- **`src/ssr/services-boot.js`** — boot **global unique** (mémoïsé) : enregistre les services/stores + crée l'i18n. À distinguer du wiring **par requête** fait dans `ssr/app.js`.
+**Contrat (`src/ssr/`)** — logique Ghosty, indépendante du moteur :
+
+- **`app.js`** — `createApp({ ssr, initialState })` : `createSSRApp`, router neuf par requête, stores du registre créés, hydratés et fournis ; retourne `{ app, router, stores }`.
+- **`store-registry.js`** — **registre unique** des stores request-scoped (`name`, clé d'injection, factory) : `createStores`, `provideStores`, `serializeStores`, `hydrateStores`. Un nouveau store rendu au SSR = **une entrée** ici.
+- **`server-app.js`** — `serverApp.prepare(url, { cookie })` : restaure la session, navigue, exécute les `meta.asyncData` ; retourne `{ app, stores, statusCode }` ou `{ redirect }`.
+- **`client-app.js`** — `clientApp.prepare(initialState)` (app hydratée, router prêt) et `clientApp.restoreSession(stores)` (`/auth/me` seulement si le serveur n'a pas restauré le lecteur).
+- **`services-boot.js`** — boot **global unique** (mémoïsé) des services Vuemann. À distinguer du wiring **par requête** fait dans `app.js`.
+
+**Moteur (`src/ssr/engine/` + `server.js`)** — seul endroit qui connaît les librairies de rendu :
+
+- **`engine/entry-server.js`** — `render(url, { cookie })` : `serverApp.prepare()`, head serveur (`@unhead/vue`), `renderToString`, renvoie `{ html, head, state, statusCode }` ou `{ redirect }`.
+- **`engine/entry-client.js`** — `clientApp.prepare(window.__INITIAL_STATE__)`, head client, `mount('#app')`, `clientApp.restoreSession()`.
+- **`engine/state-script.js`** — `stateScript.build(state)` : balise `__INITIAL_STATE__` sérialisée par `devalue` (échappement XSS, dates conservées). Seul import de `devalue`.
+- **`server.js`** (racine `frontend/`) — serveur Express (dev = Vite middleware + `ssrLoadModule` ; prod = `dist/client` statique + `dist/server`). Transmet `req.headers.cookie` à `render()`, injecte `<!--app-html-->`, `<!--ssr-state-->` et le head.
+
+Changer de moteur (Vike, autre) = réécrire `engine/` et `server.js`, jamais `apis/`, les vues ou les stores.
 
 ### Règles SSR (à respecter pour tout nouveau code)
 
-1. **Stores request-scoped** : un store consommé au SSR est une **factory** (`createXStore()`) fournie via `provide()` dans `app.js` ; `useXStore()` fait `inject(KEY, false) ?? fallback`. **JAMAIS** de `ref()` au niveau module partagé pour de la donnée rendue au serveur (fuite entre requêtes). Chaque store expose `serialize()` / `hydrate()`. Voir `apis/novels/stores/novel-store.js`.
+1. **Stores request-scoped** : un store consommé au SSR est une **factory** (`createXStore()`) déclarée dans `ssr/store-registry.js` ; `useXStore()` fait `inject(KEY, false) ?? fallback`. **JAMAIS** de `ref()` au niveau module partagé pour de la donnée rendue au serveur (fuite entre requêtes). Chaque store expose `serialize()` / `hydrate()`. Voir `apis/novels/stores/novel-store.js`.
 
    **Forme imposée** : `memory-bank/rules/files-type/request-scoped-store.md` — deux fonctions, `xStore()` pour le comportement et `createXStore()` pour énoncer le type de retour. Le wrapper d'une ligne n'est pas une indirection morte.
 2. **Aucun accès navigateur au module-load ou en `setup()`** : `window`, `document`, `localStorage` uniquement derrière un guard. Utiliser **`core/helpers/ssr-storage.js`** pour le storage. OK dans `onMounted`/handlers (non exécutés au serveur).

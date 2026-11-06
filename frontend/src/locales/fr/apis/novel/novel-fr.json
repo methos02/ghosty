@@ -7,6 +7,8 @@
     "load_more": "Charger plus",
     "no_more": "Vous avez vu tous les romans disponibles",
     "read_chapter": "Lire ce chapitre",
+    "comments": "Commentaires",
+    "back_to_novel": "Retour au roman",
     "chapter_summary": "Résumé — {chapter}"
   }
 }

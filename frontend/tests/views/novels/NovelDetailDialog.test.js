@@ -13,12 +13,18 @@ import { t } from '@/services/shortcuts/services-shortcut.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
+import { CommentRepository } from '@/apis/comments/repositories/comment-repository.js'
+import { CommentDto } from '@/apis/comments/dtos/comment-dto.js'
+import { useCommentStore } from '@/apis/comments/stores/comment-store.js'
+import { COMMENT_TARGETS } from '@/constants/comment-constants.js'
+import { commentSeeder } from '&/utils/seeders/comment-seeder.js'
 
 const router = routerPlugin.getRouter()
 
 describe('NovelDetailDialog.vue', () => {
   afterEach(async () => {
     await router.push('/')
+    useCommentStore().commentStore.clear()
     vi.clearAllMocks()
   })
 
@@ -160,5 +166,126 @@ describe('NovelDetailDialog.vue', () => {
     })
     expect(router.currentRoute.value.params).toEqual({ slug: novel.slug })
     expect(router.currentRoute.value.query).toEqual({ from: String(chapterApi.id) })
+  })
+
+  it('shows the total of comments without loading them', async () => {
+    vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi() }),
+    )
+    vi.spyOn(CommentRepository, 'listForNovel').mockResolvedValue(
+      controllerSuccess({ data: commentSeeder.getThreadApi() }),
+    )
+    const novel = novelSeeder.getNovel()
+    const novelStore = createNovelStore()
+    novelStore.setSelectedNovel(novel)
+    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.isReady()
+    const wrapper = mount(NovelDetailDialog, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [CHAPTER_STORE_KEY]: createChapterStore(),
+        },
+      },
+    })
+    await flushPromises()
+
+    expect(wrapper.find('.novel-detail-dialog__comment-count').text()).toBe(
+      String(novel.commentCount),
+    )
+    expect(CommentRepository.listForNovel).not.toHaveBeenCalled()
+  })
+
+  it('swaps the novel for its comments once the reader asks for them', async () => {
+    const threadApi = commentSeeder.getThreadApi()
+    vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi() }),
+    )
+    vi.spyOn(CommentRepository, 'listForNovel').mockResolvedValue(
+      controllerSuccess({ data: threadApi }),
+    )
+    const novel = novelSeeder.getNovel()
+    const novelStore = createNovelStore()
+    novelStore.setSelectedNovel(novel)
+    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.isReady()
+    const wrapper = mount(NovelDetailDialog, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [CHAPTER_STORE_KEY]: createChapterStore(),
+        },
+      },
+    })
+    await flushPromises()
+
+    await wrapper.find('.novel-detail-dialog__comments').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('.novel-detail-dialog__content').exists()).toBe(false)
+    expect(CommentRepository.listForNovel).toHaveBeenCalledWith({
+      params: CommentDto.toThreadParams({ type: COMMENT_TARGETS.NOVEL, novelSlug: novel.slug }, 1),
+    })
+    expect(wrapper.findAll('.comment-card')).toHaveLength(threadApi.comments.length)
+  })
+
+  it('brings the novel back from its comments', async () => {
+    vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi() }),
+    )
+    vi.spyOn(CommentRepository, 'listForNovel').mockResolvedValue(
+      controllerSuccess({ data: commentSeeder.getThreadApi() }),
+    )
+    const novel = novelSeeder.getNovel()
+    const novelStore = createNovelStore()
+    novelStore.setSelectedNovel(novel)
+    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.isReady()
+    const wrapper = mount(NovelDetailDialog, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [CHAPTER_STORE_KEY]: createChapterStore(),
+        },
+      },
+    })
+    await flushPromises()
+    await wrapper.find('.novel-detail-dialog__comments').trigger('click')
+    await flushPromises()
+
+    await wrapper.find('.novel-detail-dialog__back').trigger('click')
+
+    expect(wrapper.find('.novel-detail-dialog__content').exists()).toBe(true)
+    expect(wrapper.find('.comment-thread').exists()).toBe(false)
+  })
+
+  it('hands the new total of comments to the opened novel', async () => {
+    vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi() }),
+    )
+    const novel = novelSeeder.getNovel()
+    const novelStore = createNovelStore()
+    novelStore.setSelectedNovel(novel)
+    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.isReady()
+    const wrapper = mount(NovelDetailDialog, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [CHAPTER_STORE_KEY]: createChapterStore(),
+        },
+      },
+    })
+    await flushPromises()
+
+    const newTotal = CommentDto.fromCommentCount(commentSeeder.getCreatedApi())
+    useCommentStore().commentStore.setCommentCount(newTotal)
+    await flushPromises()
+
+    expect(wrapper.find('.novel-detail-dialog__comment-count').text()).toBe(String(newTotal))
   })
 })

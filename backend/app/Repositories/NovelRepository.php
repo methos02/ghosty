@@ -87,7 +87,40 @@ class NovelRepository
      */
     public function incrementChapterCount(int $novelId): void
     {
-        Novel::whereKey($novelId)->increment('chapter_count');
+        Novel::whereKey($novelId)
+            ->increment('chapter_count');
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-13-commentaires.md
+     */
+    public function incrementCommentCount(Novel $novel): void
+    {
+        Novel::whereKey($novel->id)
+            ->toBase()
+            ->increment('comment_count');
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-13-commentaires.md
+     */
+    public function decrementCommentCount(Novel $novel): void
+    {
+        Novel::whereKey($novel->id)
+            ->where('comment_count', '>', 0)
+            ->toBase()
+            ->decrement('comment_count');
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-13-commentaires.md
+     */
+    public function findCommentCount(Novel $novel): int
+    {
+        return Novel::query()
+            ->select(['id', 'comment_count'])
+            ->findOrFail($novel->id)
+            ->comment_count;
     }
 
     /**
@@ -115,6 +148,7 @@ class NovelRepository
 
     public function deleteById(int $novelId): void
     {
-        Novel::whereKey($novelId)->delete();
+        Novel::whereKey($novelId)
+            ->delete();
     }
 }

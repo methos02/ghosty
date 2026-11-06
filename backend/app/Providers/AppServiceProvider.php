@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Chapter;
+use App\Models\Comment;
 use App\Models\Novel;
 use App\Models\User;
 use App\Support\TokenCookieSettingsSupport;
@@ -36,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Relation::enforceMorphMap([
             'chapter' => Chapter::class,
+            'comment' => Comment::class,
             'novel' => Novel::class,
             'user' => User::class,
         ]);
@@ -76,6 +78,12 @@ class AppServiceProvider extends ServiceProvider
     {
         RateLimiter::for('like', function (Request $request): Limit {
             $perMinute = Config::integer('ghosty.likes.per_minute');
+
+            return Limit::perMinute($perMinute)->by((string) $request->user()?->id);
+        });
+
+        RateLimiter::for('comment', function (Request $request): Limit {
+            $perMinute = Config::integer('ghosty.comments.per_minute');
 
             return Limit::perMinute($perMinute)->by((string) $request->user()?->id);
         });

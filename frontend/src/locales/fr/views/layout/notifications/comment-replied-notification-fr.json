@@ -1,0 +1,6 @@
+{
+  "comment_replied_notification": {
+    "one": "{author} a répondu à votre commentaire sur « {title} »",
+    "many": "{count} réponses à vos commentaires sur « {title} »"
+  }
+}

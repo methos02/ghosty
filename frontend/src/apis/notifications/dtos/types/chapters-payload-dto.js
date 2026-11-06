@@ -1,9 +1,9 @@
-const fromNotification = data => ({
-  chapters: data.data.chapters.map(chapter => ({
+const fromNotification = notification => ({
+  chapters: notification.chapters.map(chapter => ({
     id: chapter.id,
     title: chapter.title,
   })),
-  count: data.data.count,
+  count: notification.count,
 })
 
 export const ChaptersPayloadDto = {

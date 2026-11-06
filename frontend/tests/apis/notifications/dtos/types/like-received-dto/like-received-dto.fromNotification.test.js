@@ -5,13 +5,13 @@ import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
 describe('like-received-dto', () => {
   describe('fromNotification', () => {
     it('maps the last reader and the gathered supports', () => {
-      const data = notificationSeeder.getLikeReceivedApi(12)
+      const notificationApi = notificationSeeder.getLikeReceivedApi(12)
 
-      const notification = LikeReceivedDto.fromNotification(data)
+      const notification = LikeReceivedDto.fromNotification(notificationApi)
 
       expect(notification).toEqual({
-        lastActorUsername: data.data.last_actor_username,
-        count: data.data.count,
+        lastActorUsername: notificationApi.last_actor_username,
+        count: notificationApi.count,
       })
     })
   })

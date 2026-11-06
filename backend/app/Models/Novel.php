@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasComments;
 use App\Models\Concerns\HasSlug;
 use App\Support\CoverUrlSupport;
 use Database\Factories\NovelFactory;
@@ -16,10 +17,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Novel extends Model
 {
+    use HasComments, HasSlug;
+
     /** @use HasFactory<NovelFactory> */
     use HasFactory;
-
-    use HasSlug;
 
     protected $fillable = [
         'title',
@@ -35,8 +36,14 @@ class Novel extends Model
     {
         return [
             'is_favorite' => 'boolean',
+            'comment_count' => 'integer',
             'branch_recomputed_at' => 'datetime',
         ];
+    }
+
+    public function isOpenToComments(): bool
+    {
+        return $this->rootChapter?->isPublished() ?? false;
     }
 
     public function getRouteKeyName(): string

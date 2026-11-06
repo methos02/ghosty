@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import ReadingToolbar from '@/views/chapters/parts/ReadingToolbar.vue'
 import { useChapterReport } from '@/apis/reports/composables/use-chapter-report.js'
+import { useChapterComments } from '@/apis/comments/composables/use-chapter-comments.js'
 import { useAuth } from '@/services/auth/src/use-auth.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
@@ -22,6 +23,7 @@ describe('ReadingToolbar.vue', () => {
 
   afterEach(() => {
     useChapterReport().closeChapterReport()
+    useChapterComments().closeChapterComments()
   })
 
   it('hands the chapter being read to the report dialog', async () => {
@@ -125,5 +127,68 @@ describe('ReadingToolbar.vue', () => {
     })
 
     expect(wrapper.find('.follow-button').exists()).toBe(false)
+  })
+
+  it('opens the comments of the chapter being read', async () => {
+    const chapter = chapterSeeder.getChapter()
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading({ ...chapterSeeder.getReading(), chapter })
+    const wrapper = mount(ReadingToolbar, {
+      global: {
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [READING_STORE_KEY]: readingStore,
+          [READING_SETTINGS_STORE_KEY]: createReadingSettingsStore(),
+        },
+      },
+    })
+
+    await wrapper.find('.reading-toolbar__comments').trigger('click')
+
+    expect(useChapterComments().commentedChapter.value).toEqual(chapter)
+  })
+
+  it('shows how many comments the chapter has received', () => {
+    const chapter = chapterSeeder.getChapter({ commentCount: 4 })
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading({ ...chapterSeeder.getReading(), chapter })
+    const wrapper = mount(ReadingToolbar, {
+      global: {
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [READING_STORE_KEY]: readingStore,
+          [READING_SETTINGS_STORE_KEY]: createReadingSettingsStore(),
+        },
+      },
+    })
+
+    expect(wrapper.find('.reading-toolbar__comment-count').text()).toBe(
+      String(chapter.commentCount),
+    )
+  })
+
+  it('offers no comments on a draft', () => {
+    const novelStore = createNovelStore()
+    const readingStore = createReadingStore()
+    novelStore.setSelectedNovel(novelSeeder.getNovel())
+    readingStore.setReading({
+      ...chapterSeeder.getReading(),
+      chapter: chapterSeeder.getChapter({ isDraft: true }),
+    })
+    const wrapper = mount(ReadingToolbar, {
+      global: {
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [READING_STORE_KEY]: readingStore,
+          [READING_SETTINGS_STORE_KEY]: createReadingSettingsStore(),
+        },
+      },
+    })
+
+    expect(wrapper.find('.reading-toolbar__comments').exists()).toBe(false)
   })
 })

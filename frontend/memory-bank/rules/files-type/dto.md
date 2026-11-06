@@ -2,6 +2,7 @@
 paths:
   - "src/**/dtos/**/*.js"
   - "**/*-dto.js"
+  - "tests/apis/**/dtos/**/*.test.js"
 ---
 # DTO
 
@@ -11,17 +12,17 @@ The DTO is the only place that knows API field names and the only boundary betwe
 
 Suffix with the **API action**, never `fromApi` / `toApi`, and never an `Api` suffix (`to{Action}` is already an API payload).
 
-- `from{Action}(data)`: API response to domain. Plural `from{Action}s(datas)`. The first parameter is `data` / `datas`, never the entity name.
-- `to{Action}(formData)`: form to API body. `to{Action}Params` builds the query params of a read route (`toListParams`, `toShowParams`; 10 occurrences in the code).
+- `from{Action}(notification)`: API response to domain. Plural `from{Action}s(notifications)`. MUST name the first parameter after the API object it receives (`notification`, `comment`, `chapter`), never `data` / `datas`. In DTO tests, the API-shaped fixture is `xApi` (`notificationApi`), never `data`.
+- `to{Action}(formData)`: form to API body. `to{Action}Params` builds the query params of a read route (`toListParams`, `toShowParams`).
 - `toForm{Action}(entity)`: stored entity to form shape (no API boundary).
-- Encode in the name an entity that shapes the output: `fromSearchByAuthor(data, author)`.
+- Encode in the name an entity that shapes the output: `fromSearchByAuthor(novel, author)`.
 
 ```js
 // BAD
 const fromApi = user => ({ id: user.id })
 
 // GOOD
-const fromShow = data => ({ id: data.id })
+const fromShow = novel => ({ id: novel.id })
 ```
 
 ## API names stay in the DTO
@@ -47,24 +48,24 @@ Exception: a repository simulating an absent endpoint writes the raw API shape (
 
 One rule: **default only the fields the API documents as nullable or optional; read every required field directly.** A required key that is missing means the API contract changed: let it crash.
 
-- `from{Action}`: `??` / `utilsH.voidToEmpty(data, exclude)` on optional fields only. `voidToEmpty` processes the keys present and never invents missing ones.
+- `from{Action}`: `??` / `utilsH.voidToEmpty(novel, exclude)` on optional fields only. `voidToEmpty` processes the keys present and never invents missing ones.
 - `to{Action}`: no defaults. The form request already guarantees the required fields. `toForm{Action}` needs defaults: its input is not validated.
 - Trust documented types: no `Array.isArray()` polymorphism on a documented array. Fix the API or document the polymorphism.
 - `utilsH.voidToNull(value)` only for a clearable field where the API needs an explicit `null`.
 
 ```js
 // BAD
-const fromShow = data => ({
-  title: data.title ?? '-',
-  authorIds: Array.isArray(data.author_ids) ? data.author_ids : [data.author_ids],
+const fromShow = novel => ({
+  title: novel.title ?? '-',
+  authorIds: Array.isArray(novel.author_ids) ? novel.author_ids : [novel.author_ids],
 })
 
 // GOOD
-const fromShow = data => ({
-  title: data.title,
-  authorIds: data.author_ids,
-  summary: data.summary ?? '',
-  tags: data.tags ?? [],
+const fromShow = novel => ({
+  title: novel.title,
+  authorIds: novel.author_ids,
+  summary: novel.summary ?? '',
+  tags: novel.tags ?? [],
 })
 ```
 
@@ -88,12 +89,12 @@ const toSearch = filters => ({ ...buildBase(filters), genre_id: filters.genreId 
 
 ```js
 // BAD
-const fromShow = data => ({ publishedAt: data.published_at ? format(data.published_at) : '-' })
+const fromShow = chapter => ({ publishedAt: chapter.published_at ? format(chapter.published_at) : '-' })
 
 // GOOD
-const fromShow = data => ({
-  publishedAt: data.published_at,
-  publishedAtFormat: data.published_at ? dateHelper.formatDate(data.published_at) : '-',
+const fromShow = chapter => ({
+  publishedAt: chapter.published_at,
+  publishedAtFormat: chapter.published_at ? dateHelper.formatDate(chapter.published_at) : '-',
 })
 ```
 
@@ -101,17 +102,17 @@ const fromShow = data => ({
 
 - MUST expose a plural method that maps through the singular; the caller passes the whole array, never loops on the singular.
 - The default order of a list belongs in the plural mapper (via a helper). A consumer with its own ordering overrides locally.
-- When extending a base DTO with `...fromShow(data)`, MUST NOT replace one of its arrays or objects: add a sidecar key (`searchedAuthor`).
+- When extending a base DTO with `...fromShow(novel)`, MUST NOT replace one of its arrays or objects: add a sidecar key (`searchedAuthor`).
 
 ```js
 // BAD
-const fromSearchByAuthor = (data, author) => ({ ...fromShow(data), authors: [author] })
+const fromSearchByAuthor = (novel, author) => ({ ...fromShow(novel), authors: [author] })
 
 // GOOD
-const fromSearchByAuthor = (data, author) => ({
-  ...fromShow(data),
+const fromSearchByAuthor = (novel, author) => ({
+  ...fromShow(novel),
   searchedAuthor: { id: author.id, username: author.username },
 })
 
-const fromList = datas => datas.map(data => fromShow(data))
+const fromList = novels => novels.map(novel => fromShow(novel))
 ```

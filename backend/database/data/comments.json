@@ -1,0 +1,330 @@
+[
+  {
+    "chapter": "Le virage",
+    "author": "lecteur1",
+    "content": "L'ouverture est glaçante. Ce virage, je le connais, et je ne le prendrai plus jamais de nuit.",
+    "replies": [
+      {
+        "author": "auteur2",
+        "content": "Pareil ! Le détail des phares qui s'éteignent d'un coup m'a fait frissonner."
+      },
+      {
+        "author": "auteur3",
+        "content": "Attention à ceux qui n'ont pas lu la suite : le conducteur ne s'en sort pas.",
+        "is_spoiler": true
+      }
+    ]
+  },
+  {
+    "chapter": "Le virage",
+    "author": "auteur3",
+    "content": "Petite incohérence : il est 23 h dans le premier paragraphe, puis minuit passé deux lignes plus bas."
+  },
+  {
+    "chapter": "Ce que le ravin gardait",
+    "author": "lecteur1",
+    "content": "Je ne m'attendais pas du tout à ce qu'il y ait quelqu'un dans le ravin. Bravo pour la tension.",
+    "replies": [
+      {
+        "author": "moderateur1",
+        "content": "C'est l'une des meilleures suites du roman, à mon avis."
+      }
+    ]
+  },
+  {
+    "chapter": "Le registre des disparus",
+    "author": "auteur2",
+    "content": "Le nom en bas du registre, c'est celui du narrateur. Tout le roman prend un autre sens.",
+    "is_spoiler": true
+  },
+  {
+    "novel": "Nuit virage",
+    "author": "lecteur1",
+    "content": "Quel plaisir de voir autant de versions différentes de la même nuit. Continuez !"
+  },
+  {
+    "chapter": "Le passager",
+    "author": "moderateur1",
+    "content": "Le dialogue avec l'autostoppeur est d'une sobriété parfaite. On ne sait jamais s'il ment."
+  },
+  {
+    "chapter": "Le camion de 4 h 10",
+    "author": "lecteur1",
+    "content": "Cinq paragraphes et je suis déjà accroché. Ce camion qui passe tous les matins à la même heure, c'est une excellente idée.",
+    "replies": [
+      {
+        "author": "auteur2",
+        "content": "Merci ! Attends de voir ce qu'il transporte vraiment."
+      },
+      {
+        "author": "admin",
+        "content": "Le chauffeur n'est pas celui qu'on croit, toute la suite repose là-dessus.",
+        "is_spoiler": true
+      }
+    ]
+  },
+  {
+    "chapter": "Le camion de 4 h 10",
+    "author": "auteur3",
+    "content": "J'ai proposé une suite, mais je trouve que La benne exploite mieux le décor de la décharge."
+  },
+  {
+    "chapter": "Le camion de 4 h 10",
+    "author": "moderateur1",
+    "content": "Rappel amical : merci de signaler vos spoilers, beaucoup de lecteurs découvrent ce roman en ce moment."
+  },
+  {
+    "chapter": "Quatre-vingt-dix secondes",
+    "author": "auteur3",
+    "content": "Le décompte en tête de chaque paragraphe donne un rythme incroyable. J'ai lu en apnée.",
+    "replies": [
+      {
+        "author": "lecteur1",
+        "content": "Pareil, j'ai vérifié l'heure en refermant le chapitre."
+      }
+    ]
+  },
+  {
+    "novel": "Décharge",
+    "author": "auteur1",
+    "content": "Plus de vingt chapitres et l'enquête tient toujours debout. Merci à tous ceux qui ont proposé une suite."
+  },
+  {
+    "chapter": "La nationale 7",
+    "author": "lecteur1",
+    "content": "La vitre baissée en guise de première conversation, c'est très juste. J'ai une sœur, je connais.",
+    "replies": [
+      {
+        "author": "auteur2",
+        "content": "C'est exactement la scène dont je suis partie pour écrire tout le reste."
+      }
+    ]
+  },
+  {
+    "chapter": "L'aire de Saint-Rambert",
+    "author": "auteur1",
+    "content": "Margaux est venue à l'hôpital, mais elle n'a jamais poussé la porte. Ça change tout.",
+    "is_spoiler": true
+  },
+  {
+    "novel": "Mal Barrées",
+    "author": "moderateur1",
+    "content": "Un road trip familial plein de non-dits, j'espère que d'autres auteurs vont s'en emparer."
+  },
+  {
+    "chapter": "Le libraire de la rue Mouffetard",
+    "author": "auteur3",
+    "content": "Le libraire qui choisit le livre à sa place, c'est charmant sans être mièvre. Bravo."
+  },
+  {
+    "chapter": "Le libraire de la rue Mouffetard",
+    "author": "lecteur1",
+    "content": "Je veux savoir quel est ce livre bleu !",
+    "replies": [
+      {
+        "author": "auteur1",
+        "content": "Je laisse volontairement la question ouverte pour les suites."
+      },
+      {
+        "author": "auteur2",
+        "content": "J'ai une idée de suite où on l'apprend, je m'y mets ce week-end."
+      }
+    ]
+  },
+  {
+    "chapter": "Le quatorzième étage",
+    "author": "admin",
+    "content": "Le décompte des étages dans l'ascenseur est une très belle trouvaille."
+  },
+  {
+    "chapter": "Ce qu'on dit aux enfants",
+    "author": "lecteur1",
+    "content": "Le badge dans la poche du manteau, j'en ai eu la gorge serrée.",
+    "replies": [
+      {
+        "author": "auteur3",
+        "content": "Merci, je n'aurais pas imaginé une meilleure suite à mon chapitre."
+      }
+    ]
+  },
+  {
+    "novel": "Chute",
+    "author": "auteur2",
+    "content": "Un drame très actuel, sans caricature. J'aimerais lire la version où Antoine rebondit."
+  },
+  {
+    "chapter": "La lettre de 1987",
+    "author": "auteur2",
+    "content": "La portière qui claque à la fin, c'est le cliffhanger parfait.",
+    "replies": [
+      {
+        "author": "lecteur1",
+        "content": "C'est forcément le maire qui arrive, non ?"
+      },
+      {
+        "author": "auteur1",
+        "content": "C'est sa fille, et elle sait déjà tout pour la lettre.",
+        "is_spoiler": true
+      }
+    ]
+  },
+  {
+    "chapter": "Les lettres du grenier",
+    "author": "lecteur1",
+    "content": "Trois cent douze lettres en cinquante ans. Ce chiffre m'a bouleversé."
+  },
+  {
+    "novel": "Amour Éternel",
+    "author": "auteur3",
+    "content": "Une romance épistolaire, ça manquait sur Ghosty. Très hâte de lire les propositions de suite."
+  },
+  {
+    "chapter": "Le sentier qui n'existait pas",
+    "author": "auteur2",
+    "content": "La branche cassée retrouvée à la même hauteur, j'en ai eu des frissons.",
+    "replies": [
+      {
+        "author": "moderateur1",
+        "content": "Le soleil qui ne bouge plus, c'est encore plus inquiétant."
+      }
+    ]
+  },
+  {
+    "chapter": "La comptine",
+    "author": "lecteur1",
+    "content": "La grand-mère n'est pas vraiment sa grand-mère, j'en suis sûr. Ne montez pas ces marches !",
+    "is_spoiler": true
+  },
+  {
+    "chapter": "La comptine",
+    "author": "auteur3",
+    "content": "Superbe suite, la soupe qui va refroidir m'a glacé plus que le reste."
+  },
+  {
+    "novel": "Le Mystère de la Forêt",
+    "author": "admin",
+    "content": "Ce roman est mis en avant cette semaine, n'hésitez pas à proposer vos suites."
+  },
+  {
+    "chapter": "Le carnet de Compostelle",
+    "author": "auteur3",
+    "content": "La révélation du livre d'or est d'une grande délicatesse. On comprend tout sans que rien ne soit appuyé."
+  },
+  {
+    "chapter": "Six heures pour Bordeaux",
+    "author": "lecteur1",
+    "content": "La glacière avec sa ceinture bouclée, quelle image ! J'ai tout de suite été embarqué.",
+    "replies": [
+      {
+        "author": "auteur2",
+        "content": "Merci, je me suis inspirée d'un reportage sur les coursiers médicaux."
+      }
+    ]
+  },
+  {
+    "chapter": "Le péage de Saint-Arnoult",
+    "author": "moderateur1",
+    "content": "Les motards qui ouvrent la voie, c'est un peu facile, mais ça fait du bien."
+  },
+  {
+    "novel": "La Course Contre le Temps",
+    "author": "lecteur1",
+    "content": "Je veux une suite où il arrive à l'heure. Et une autre où il a un problème de plus en route."
+  },
+  {
+    "chapter": "La boulangerie fermée",
+    "author": "auteur1",
+    "content": "L'odeur du pain qui revient avec la chaleur du four, c'est magnifique.",
+    "replies": [
+      {
+        "author": "lecteur1",
+        "content": "J'ai eu envie d'aller chercher une baguette en pleine nuit."
+      }
+    ]
+  },
+  {
+    "chapter": "La lettre de l'hôpital",
+    "author": "auteur2",
+    "content": "La voiture rouge à la fin. Je n'ai rien d'autre à dire, c'est parfait."
+  },
+  {
+    "novel": "Le Dernier Espoir",
+    "author": "moderateur1",
+    "content": "Un sujet difficile traité avec beaucoup de pudeur. Merci à l'autrice."
+  },
+  {
+    "chapter": "Le carnet de bal",
+    "author": "lecteur1",
+    "content": "Il ne retire pas sa main. J'ai pleuré, je l'avoue.",
+    "replies": [
+      {
+        "author": "auteur3",
+        "content": "Moi aussi. Et la valse de Saint-Malo, c'est un très joli détail."
+      },
+      {
+        "author": "auteur1",
+        "content": "Dans ma suite, il se souvient du prénom de Jeanne juste avant le dîner.",
+        "is_spoiler": true
+      }
+    ]
+  },
+  {
+    "chapter": "Trois heures douze",
+    "author": "auteur3",
+    "content": "Les traces humides vers le placard, je ne vais pas dormir ce soir."
+  },
+  {
+    "chapter": "Le placard du couloir",
+    "author": "lecteur1",
+    "content": "Un escalier qui descend plus bas que les caves depuis le quatrième étage, j'adore cette géométrie impossible.",
+    "replies": [
+      {
+        "author": "auteur1",
+        "content": "C'est exactement ce que j'espérais qu'une suite fasse de ma porte."
+      }
+    ]
+  },
+  {
+    "novel": "Terreur Nocturne",
+    "author": "auteur2",
+    "content": "Le meilleur roman d'horreur du site en ce moment, à mon avis."
+  },
+  {
+    "chapter": "Le ferry de Roscoff",
+    "author": "admin",
+    "content": "La femme en ciré jaune et sa phrase finale, c'est tout l'esprit du roman."
+  },
+  {
+    "chapter": "Le dossier 114",
+    "author": "lecteur1",
+    "content": "La lumière du fond allumée alors qu'on ne l'allume jamais. Brrr.",
+    "replies": [
+      {
+        "author": "auteur3",
+        "content": "C'est l'ancien commissaire qui a modifié le dossier, il est encore dans le sous-sol.",
+        "is_spoiler": true
+      }
+    ]
+  },
+  {
+    "chapter": "Le quai numéro neuf",
+    "author": "auteur1",
+    "content": "Le croquis d'Elsa avant l'échange des valises, quelle belle chute de chapitre."
+  },
+  {
+    "chapter": "Les croquis de Raphaël",
+    "author": "lecteur1",
+    "content": "Ils se croisent depuis deux ans sans le savoir, c'est le genre de romance que j'aime.",
+    "replies": [
+      {
+        "author": "auteur2",
+        "content": "Merci d'avoir poursuivi mon chapitre aussi joliment."
+      }
+    ]
+  },
+  {
+    "novel": "Destin Croisé",
+    "author": "moderateur1",
+    "content": "Très belle collaboration entre les deux premiers chapitres, on dirait la même plume."
+  }
+]

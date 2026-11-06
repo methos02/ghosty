@@ -16,6 +16,7 @@ describe('novel-dto', () => {
         coverUrl: api.cover_url,
         isFavorite: api.is_favorite,
         chaptersCount: api.chapters_count,
+        commentCount: api.comment_count,
         author: { id: api.author.id, username: api.author.username },
         genre: { id: api.genre.id, label: api.genre.name },
       })

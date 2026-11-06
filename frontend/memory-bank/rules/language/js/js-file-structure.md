@@ -17,14 +17,14 @@ Call a same-module function **directly** by default. MUST expose it through an `
 
 ```js
 // GOOD
-const fromNotification = data => ({
-  id: data.id,
-  payload: NotificationDtoInternal.mapPayload(data),
+const fromNotification = notification => ({
+  id: notification.id,
+  payload: NotificationDtoInternal.mapPayload(notification),
 })
 
 export const NotificationDto = { fromNotification }
 
-const mapPayload = data => LikeReceivedDto.fromNotification(data)
+const mapPayload = notification => LikeReceivedDto.fromNotification(notification)
 
 export const NotificationDtoInternal = { mapPayload }
 

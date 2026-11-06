@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasComments;
 use App\Models\Concerns\HasLikes;
 use App\Models\Concerns\Reportable;
 use Database\Factories\ChapterFactory;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\Config;
 class Chapter extends Model
 {
     /** @use HasFactory<ChapterFactory> */
-    use HasFactory, HasLikes, Reportable;
+    use HasComments, HasFactory, HasLikes, Reportable;
 
     const STATUS_DRAFT = 0;
 
@@ -185,6 +186,11 @@ class Chapter extends Model
     public function isDraft(): bool
     {
         return $this->status === self::STATUS_DRAFT;
+    }
+
+    public function isOpenToComments(): bool
+    {
+        return $this->isPublished();
     }
 
     public function isCorrectable(): bool

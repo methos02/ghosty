@@ -8,6 +8,7 @@ const fromShow = data => ({
   coverUrl: data.cover_url,
   isFavorite: data.is_favorite,
   chaptersCount: data.chapters_count,
+  commentCount: data.comment_count,
   author: AuthorDto.fromShow(data.author),
   genre: GenreDto.fromShow(data.genre),
 })

@@ -37,11 +37,15 @@ class NotificationControllerIndexTest extends TestCase
     }
 
     #[Test]
-    public function serves_the_type_and_the_data_of_each_notification(): void
+    public function serves_the_novel_the_chapter_and_the_data_of_each_notification(): void
     {
         $notification = Notification::factory()->to($this->recipient)->create([
             'type' => 'chapter_continued',
-            'data' => ['chapter' => ['id' => 7, 'title' => 'Le phare'], 'count' => 2],
+            'data' => [
+                'chapter' => ['id' => 7, 'title' => 'Le phare'],
+                'novel' => ['slug' => 'la-maree-noire', 'title' => 'La marée noire'],
+                'count' => 2,
+            ],
         ]);
 
         $this->actingAs($this->recipient)
@@ -49,8 +53,9 @@ class NotificationControllerIndexTest extends TestCase
             ->assertOk()
             ->assertJsonPath('notifications.0.id', $notification->id)
             ->assertJsonPath('notifications.0.type', 'chapter_continued')
-            ->assertJsonPath('notifications.0.data.chapter.title', 'Le phare')
-            ->assertJsonPath('notifications.0.data.count', 2)
+            ->assertJsonPath('notifications.0.chapter.title', 'Le phare')
+            ->assertJsonPath('notifications.0.novel.slug', 'la-maree-noire')
+            ->assertJsonPath('notifications.0.count', 2)
             ->assertJsonPath('notifications.0.is_read', false);
     }
 

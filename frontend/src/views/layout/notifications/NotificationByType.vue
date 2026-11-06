@@ -4,6 +4,8 @@ import MainBranchGainedNotification from '@/views/layout/notifications/MainBranc
 import MainBranchLostNotification from '@/views/layout/notifications/MainBranchLostNotification.vue'
 import FollowedBranchExtendedNotification from '@/views/layout/notifications/FollowedBranchExtendedNotification.vue'
 import LikeReceivedNotification from '@/views/layout/notifications/LikeReceivedNotification.vue'
+import CommentReceivedNotification from '@/views/layout/notifications/CommentReceivedNotification.vue'
+import CommentRepliedNotification from '@/views/layout/notifications/CommentRepliedNotification.vue'
 import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 
 defineProps({
@@ -31,6 +33,14 @@ defineProps({
     />
     <LikeReceivedNotification
       v-if="notification.type === NOTIFICATION_TYPES.LIKE_RECEIVED"
+      :notification="notification"
+    />
+    <CommentReceivedNotification
+      v-if="notification.type === NOTIFICATION_TYPES.COMMENT_RECEIVED"
+      :notification="notification"
+    />
+    <CommentRepliedNotification
+      v-if="notification.type === NOTIFICATION_TYPES.COMMENT_REPLIED"
       :notification="notification"
     />
   </div>

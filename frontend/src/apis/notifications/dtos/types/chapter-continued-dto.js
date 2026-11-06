@@ -1,10 +1,10 @@
-const fromNotification = data => ({
+const fromNotification = notification => ({
   continuation: {
-    id: data.data.continuation.id,
-    title: data.data.continuation.title,
-    authorUsername: data.data.continuation.author_username,
+    id: notification.continuation.id,
+    title: notification.continuation.title,
+    authorUsername: notification.continuation.author_username,
   },
-  count: data.data.count,
+  count: notification.count,
 })
 
 export const ChapterContinuedDto = {

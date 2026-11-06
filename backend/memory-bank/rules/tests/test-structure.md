@@ -15,6 +15,7 @@ Tests mirror the source, one folder per source unit. The file name MUST identify
 | `Http/Controllers/Api/V1/{Controller}.php` | `tests/Feature/Api/V1/{Controller}/` | `{Controller}{Method}Test.php` |
 | `Models/{Model}.php` | `tests/Feature/Models/` | `{Model}ModelTest.php` |
 | `Services/{Service}.php` | `tests/Feature/Services/` | `{Service}Test.php` |
+| `Services/Notifications/{Service}.php` | `tests/Feature/Services/Notifications/` | `{Service}Test.php` |
 | `Support/{Support}.php` | `tests/Feature/Support/` (database-free: `tests/Unit/Support/`) | `{Support}Test.php` |
 | `Rules/`, `Console/Commands/` | `tests/Feature/Rules/`, `tests/Feature/Console/` | `{Class}Test.php` |
 

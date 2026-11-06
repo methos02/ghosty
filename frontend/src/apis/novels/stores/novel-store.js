@@ -33,6 +33,17 @@ const novelStore = () => {
     selectedNovel.value = novel
   }
 
+  const setSelectedNovelCommentCount = commentCount => {
+    if (!selectedNovel.value) {
+      return
+    }
+
+    selectedNovel.value = {
+      ...selectedNovel.value,
+      commentCount,
+    }
+  }
+
   const clearSelectedNovel = () => {
     selectedNovel.value = undefined
   }
@@ -61,6 +72,7 @@ const novelStore = () => {
     reset,
     hasMore,
     setSelectedNovel,
+    setSelectedNovelCommentCount,
     clearSelectedNovel,
     serialize,
     hydrate,

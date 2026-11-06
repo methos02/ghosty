@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
+import ChapterCommentsDialog from '@/views/chapters/parts/ChapterCommentsDialog.vue'
 import ChapterFooter from '@/views/chapters/parts/ChapterFooter.vue'
 import ReadingToolbar from '@/views/chapters/parts/ReadingToolbar.vue'
 import { route, t } from '@/services/shortcuts/services-shortcut.js'
@@ -98,6 +99,7 @@ onUnmounted(readingStore.clear)
   >
     <div class="no-print">
       <Header />
+      <ChapterCommentsDialog />
     </div>
 
     <div

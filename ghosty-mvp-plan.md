@@ -189,8 +189,8 @@ POST   /chapters/{chapter}/report           signalement (D2 : seul signal négat
 POST   /novels/{slug}/covers                proposer une illustration
 POST   /covers/{cover}/official             sélectionner l'identité visuelle officielle
 
-GET    /comments?on=chapter&id=…            POST /comments, POST /comments/{c}/replies,
-                                            DELETE /comments/{c}
+GET|POST /chapters/{chapter}/comments      GET|POST /novels/{slug}/comments (ADR-13)
+POST   /comments/{c}/replies                DELETE /comments/{c}
 POST   /reports                             GET /moderation/reports, POST /moderation/reports/{r}/resolve
 
 GET    /me/notifications                    liste paginée + compteur non lues (D6)
@@ -293,6 +293,7 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 
 - `comments` polymorphe (roman / branche / chapitre / cover), réponses à un niveau, masquage divulgâcheur, suppression par l'auteur.
 - Front : `CommentThread`, `CommentForm`, masque spoiler cliquable, compteurs.
+- Arbitrages ([ADR-13](backend/memory-bank/decisions/ADR-13-commentaires.md)) : cibles roman et chapitre (branche = chapitre-tête, cover au lot 7) ; pas d'édition ; suppression = texte effacé, trace « Commentaire supprimé » seulement si des réponses restent ; récents en haut, réponses chronologiques ; routes imbriquées sous `/chapters/{id}` et `/novels/{slug}` au lieu de `/comments?on=…`.
 
 ### Lot 6 — Traitement de la modération · M
 

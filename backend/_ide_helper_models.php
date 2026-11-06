@@ -35,6 +35,8 @@ namespace App\Models{
  * @property-read \App\Models\User $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Chapter> $children
  * @property-read int|null $children_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
+ * @property-read int|null $comments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Follow> $follows
  * @property-read int|null $follows_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Like> $likes
@@ -43,6 +45,7 @@ namespace App\Models{
  * @property-read Chapter|null $parent
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Report> $reports
  * @property-read int|null $reports_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter byAuthor(int $authorId)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter drafts()
  * @method static \Database\Factories\ChapterFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter hasChildren()
@@ -103,6 +106,50 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperChapterRead {}
+}
+
+namespace App\Models{
+/**
+ * @see memory-bank/decisions/ADR-13-commentaires.md
+ * @property int $id
+ * @property int $author_id
+ * @property string $commentable_type
+ * @property int $commentable_id
+ * @property int|null $parent_id
+ * @property int $reply_count
+ * @property string|null $content
+ * @property bool $is_spoiler
+ * @property int $status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $author
+ * @property-read \Illuminate\Database\Eloquent\Model $commentable
+ * @property-read Comment|null $parent
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Comment> $replies
+ * @property-read int|null $replies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Comment> $visibleReplies
+ * @property-read int|null $visible_replies_count
+ * @method static \Database\Factories\CommentFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment shownInThread()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment topLevel()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereCommentableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereCommentableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereIsSpoiler($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereParentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereReplyCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperComment {}
 }
 
 namespace App\Models{
@@ -225,6 +272,7 @@ namespace App\Models{
  * @property string|null $cover_url
  * @property bool $is_favorite
  * @property int $chapter_count
+ * @property int $comment_count
  * @property \Illuminate\Support\Carbon|null $branch_recomputed_at
  * @property int|null $main_branch_last_chapter_id
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -232,6 +280,8 @@ namespace App\Models{
  * @property-read \App\Models\User $author
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chapter> $chapters
  * @property-read int|null $chapters_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
+ * @property-read int|null $comments_count
  * @property-read \App\Models\Genre $genre
  * @property-read \App\Models\Chapter|null $rootChapter
  * @method static \Database\Factories\NovelFactory factory($count = null, $state = [])
@@ -241,6 +291,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereBranchRecomputedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereChapterCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereCommentCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereCoverUrl($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereGenreId($value)

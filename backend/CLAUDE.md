@@ -26,6 +26,7 @@ Les décisions structurantes sont dans les ADR :
 | [ADR-10](memory-bank/decisions/ADR-10-notifications-in-app-agregees.md) | Notifications in-app **agrégées**, canal `database` natif |
 | [ADR-11](memory-bank/decisions/ADR-11-chapitre-publie-non-reecrivable.md) | Un chapitre publié est **immuable** : corrigeable une seule fois, sous 48 h, et dans une part limitée du texte |
 | [ADR-12](memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md) | Suivre une branche = suivre son **chapitre-tête** ; lecture unique par session/compte ; historique et reprise réservés aux comptes, aucune progression invitée |
+| [ADR-13](memory-bank/decisions/ADR-13-commentaires.md) | Commentaires sur roman et chapitre (branche = chapitre-tête) ; réponses à un niveau ; pas d'édition ; suppression = texte effacé, trace seulement s'il y a des réponses |
 
 Plan de livraison par lots : [ghosty-mvp-plan.md](../ghosty-mvp-plan.md).
 
@@ -109,6 +110,7 @@ backend/
 │       ├── LikeAuthorizationService.php # anti-abus des soutiens
 │       ├── ModerationService.php         # seul chemin vers archived/hidden
 │       ├── NotificationService.php       # seul écrivain des notifications, agrégation par group_key
+│       ├── Notifications/                # un service par notification ({Type}NotificationService::create)
 │       └── ImageUploadService.php
 ├── database/
 │   ├── migrations/
@@ -244,14 +246,22 @@ UNIQUE (user_id, likeable_type, likeable_id)
 > ⛔ **Pas de colonne `vote`.** Le soutien est positif ou absent : il n'existe pas de `-1`
 > ([ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md)).
 
-#### comments — à venir (lot 5)
+#### comments ✅ implémenté (lot 5)
 ```sql
-id, author_id → users.id, commentable_type (Novel|Chapter|NovelCover), commentable_id,
-parent_id NULLABLE, reply_count, content, is_spoiler BOOLEAN,
-status ENUM('visible', 'hidden', 'deleted'), timestamps
+id, author_id → users.id, commentable_type (novel|chapter, cover au lot 7), commentable_id,
+parent_id NULLABLE → comments.id, reply_count, content NULLABLE, is_spoiler BOOLEAN,
+status TINYINT DEFAULT 1                  -- 1 visible, 2 deleted (par l'auteur), 3 hidden (modération, lot 6)
+timestamps
 
-INDEX (commentable_type, commentable_id, parent_id)
+INDEX (commentable_type, commentable_id, parent_id, status)
 ```
+
+- `CommentService` est le seul écrivain : il tient `comment_count` (chapitre et roman, réponses
+  comprises) et `reply_count` par `toBase()`, sans toucher `chapters.updated_at` (ADR-08).
+- Supprimer efface `content` et passe en `deleted` ; le fil garde une trace anonyme seulement
+  si le commentaire a des réponses visibles (scope `shownInThread`).
+- `comment_received` (commentaire principal → auteur du contenu) et `comment_replied`
+  (réponse → auteur du commentaire), agrégées par contenu commenté.
 
 #### reports / sanctions — à venir (lots 3 et 6)
 ```sql
@@ -280,10 +290,15 @@ MySQL n'ayant pas d'index partiel, c'est la colonne générée qui porte le « W
 
 - `NotificationService` est le **seul** écrivain : il refuse de notifier l'acteur lui-même et
   respecte `users.notifications_enabled`, puis `updateOrCreate` sur le groupe non lu.
+- **Une notification = un fichier** : `Services/Notifications/{Type}NotificationService` construit
+  le `data` de son type et passe par `NotificationService::push()`. Les morceaux de `data`
+  partagés (sujet chapitre / roman, listes de chapitres, compteur) sont dans
+  `Support/NotificationDataSupport`. Une nouvelle notification ajoute un fichier, sans toucher
+  aux autres.
 - `chapter_continued` (publication d'une suite), `like_received` (soutien effectif, compteur
   relu dans `likes` depuis l'ouverture du groupe), `main_branch_gained` /
   `main_branch_lost` (diff de la branche principale avant / après, émis par
-  `BranchService::recomputeBranchLikes()` via `mainBranchSwitch()` quand il élit une nouvelle fin ;
+  `BranchService::recomputeBranchLikes()` via `MainBranchSwitchNotificationService` quand il élit une nouvelle fin ;
   une publication ne change jamais la branche principale). Groupés par auteur **et par roman**
   (`group_key` sur le `Novel`), avec la liste des chapitres concernés.
 - Marquer lu ne touche pas `updated_at` : la liste est triée par dernière activité du groupe.

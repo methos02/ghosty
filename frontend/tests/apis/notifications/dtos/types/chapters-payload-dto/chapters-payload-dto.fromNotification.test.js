@@ -5,13 +5,13 @@ import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
 describe('chapters-payload-dto', () => {
   describe('fromNotification', () => {
     it('maps every chapter of the author that moved and their count', () => {
-      const data = notificationSeeder.getChaptersPayloadApi('main_branch_lost', 2)
+      const notificationApi = notificationSeeder.getChaptersPayloadApi('main_branch_lost', 2)
 
-      const notification = ChaptersPayloadDto.fromNotification(data)
+      const notification = ChaptersPayloadDto.fromNotification(notificationApi)
 
       expect(notification).toEqual({
-        chapters: data.data.chapters,
-        count: data.data.count,
+        chapters: notificationApi.chapters,
+        count: notificationApi.count,
       })
     })
   })

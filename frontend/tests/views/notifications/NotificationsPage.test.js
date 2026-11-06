@@ -59,7 +59,7 @@ describe('NotificationsPage.vue', () => {
 
     const details = wrapper.findAll('.notification-base__detail-panel')
     expect(details).toHaveLength(1)
-    expect(details[0].findAll('.notification-chapter-list li')).toHaveLength(opened.data.count)
+    expect(details[0].findAll('.notification-chapter-list li')).toHaveLength(opened.count)
   })
 
   it('opens then closes the detail of a notification in place with the same button', async () => {

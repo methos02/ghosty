@@ -48,7 +48,7 @@ class NotificationSeeder extends Seeder
     {
         return match ($type) {
             NotificationType::MainBranchGained, NotificationType::MainBranchLost, NotificationType::FollowedBranchExtended => $chapter->novel,
-            NotificationType::LikeReceived, NotificationType::ChapterContinued => $chapter,
+            NotificationType::LikeReceived, NotificationType::ChapterContinued, NotificationType::CommentReceived, NotificationType::CommentReplied => $chapter,
         };
     }
 
@@ -64,6 +64,7 @@ class NotificationSeeder extends Seeder
             NotificationType::MainBranchGained, NotificationType::MainBranchLost, NotificationType::FollowedBranchExtended => $this->branchMoveDetails(
                 $notification['chapters'] ?? [$chapter->title]
             ),
+            NotificationType::CommentReceived, NotificationType::CommentReplied => $this->commentDetails($notification['actors'] ?? []),
         };
     }
 
@@ -100,6 +101,18 @@ class NotificationSeeder extends Seeder
             'last_actor_username' => Arr::last($actors),
             'first_like_id' => Arr::first($likeIds),
             'count' => count($likeIds),
+        ];
+    }
+
+    /**
+     * @param  list<string>  $actors
+     * @return array{last_actor_username: string|null, count: int}
+     */
+    private function commentDetails(array $actors): array
+    {
+        return [
+            'last_actor_username' => Arr::last($actors),
+            'count' => count($actors),
         ];
     }
 

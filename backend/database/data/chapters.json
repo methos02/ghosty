@@ -626,5 +626,341 @@
                 }
             ]
         }
+    },
+    {
+        "novel": "Mal Barrées",
+        "data": {
+            "title": "La nationale 7",
+            "author": "auteur2",
+            "summary": "Deux sœurs que tout oppose se retrouvent coincées dans la même voiture pour vider la maison de leur mère.",
+            "like_count": 14,
+            "content": [
+                "Margaux avait loué la voiture la moins chère de l'agence, et Lucie le lui fit remarquer avant même d'avoir bouclé sa ceinture.",
+                "« Elle sent le chien mouillé. » Margaux ne répondit pas. Elle avait appris, depuis l'enfance, que répondre à sa sœur revenait à ouvrir un dossier qu'on ne refermait jamais. Elle démarra, régla le rétroviseur, et laissa Paris derrière elles sans un mot.",
+                "Il y avait sept cents kilomètres jusqu'à Montélimar. Sept cents kilomètres pour vider une maison où ni l'une ni l'autre n'avait remis les pieds depuis l'enterrement. Le notaire avait été clair : tant que la maison n'était pas vide, rien ne serait signé, et la vente attendrait. Lucie avait proposé d'y aller seule. Margaux avait refusé, par principe, puis s'était demandé pendant trois nuits pourquoi.",
+                "À la hauteur d'Auxerre, Lucie sortit un paquet de cigarettes. Margaux baissa la vitre sans rien dire, et ce fut, d'une certaine manière, leur première conversation depuis quatre ans."
+            ],
+            "children": [
+                {
+                    "title": "L'aire de Saint-Rambert",
+                    "author": "auteur3",
+                    "summary": "Une panne sur une aire d'autoroute oblige les deux sœurs à passer la nuit ensemble, et les vieilles rancunes remontent.",
+                    "like_count": 9,
+                    "content": [
+                        "Le voyant rouge s'alluma juste après Lyon, et la voiture rendit l'âme sur le parking de l'aire de Saint-Rambert, entre un camion frigorifique et une poubelle renversée.",
+                        "« Évidemment », dit Lucie. Margaux appela l'assistance, attendit vingt minutes en musique, puis apprit qu'aucune dépanneuse ne viendrait avant le lendemain matin. Elle raccrocha et regarda sa sœur, qui fumait assise sur le capot comme si rien de tout cela ne la concernait.",
+                        "Elles dînèrent d'un sandwich triangle sous les néons de la station. C'est là, entre deux gorgées de café trop sucré, que Lucie lâcha la phrase qu'elle gardait depuis l'enterrement : « Tu n'es pas venue la voir, à l'hôpital. Pas une seule fois. »",
+                        "Margaux posa son gobelet. Elle aurait pu dire qu'elle était venue, un soir, qu'elle était restée une heure dans le couloir sans oser pousser la porte. Elle ne dit rien. Dehors, le camion frigorifique ronronnait dans la nuit."
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "novel": "Celui qu'il me faut",
+        "data": {
+            "title": "Le libraire de la rue Mouffetard",
+            "author": "auteur1",
+            "summary": "Clémence entre dans une librairie pour un cadeau et en ressort avec un livre qu'elle n'a pas choisi.",
+            "like_count": 17,
+            "content": [
+                "Clémence cherchait un cadeau pour sa mère, et elle avait une idée très précise de ce qu'elle ne voulait pas : ni roman policier, ni livre de cuisine, ni rien qui ressemble de près ou de loin à un manuel de développement personnel.",
+                "Le libraire l'écouta énumérer ses refus avec un sérieux qui la désarma. Il avait des lunettes rondes, un pull trop grand et cette manière de pencher la tête qu'ont les gens qui écoutent vraiment. Quand elle eut fini, il disparut entre deux rayonnages et revint avec un petit volume à la couverture bleue.",
+                "« Ce n'est pas pour votre mère, dit-il. C'est pour vous. Pour votre mère, je vais réfléchir. Revenez jeudi. »",
+                "Elle paya le livre, sans savoir pourquoi, et rentra chez elle en se répétant qu'elle ne reviendrait pas jeudi. Le soir même, elle avait lu la moitié du volume bleu. Le jeudi, à dix-huit heures, elle poussait la porte de la librairie."
+            ]
+        }
+    },
+    {
+        "novel": "Chute",
+        "data": {
+            "title": "Le quatorzième étage",
+            "author": "auteur3",
+            "summary": "Un trader brillant voit sa vie basculer le jour où il est escorté hors de sa tour de la Défense.",
+            "like_count": 22,
+            "content": [
+                "On ne l'avait pas licencié. On l'avait raccompagné. La nuance, Antoine la comprit dans l'ascenseur, entre deux agents de sécurité qui regardaient fixement les chiffres décroître au-dessus de la porte.",
+                "Quatorze. Treize. Douze. Il pensa à son bureau, à la photo de ses enfants qu'il n'avait pas eu le temps de prendre, au mug que sa fille lui avait offert pour la fête des pères. Onze. Dix. Il pensa à la ligne de code qu'il avait validée trois semaines plus tôt, sans la relire, parce qu'il était dix-neuf heures et que le marché asiatique ouvrait bientôt.",
+                "Dans le hall, un des agents lui rendit son badge désactivé, comme on rend un objet sans valeur. Antoine le prit, le regarda, et le glissa dans sa poche. Il ne savait pas encore qu'il le garderait des années.",
+                "Dehors, il pleuvait sur le parvis. Il appela sa femme, tomba sur la messagerie, et ne laissa pas de message. Pour la première fois depuis quinze ans, il était quatorze heures un mardi et personne n'avait besoin de lui."
+            ],
+            "children": [
+                {
+                    "title": "Ce qu'on dit aux enfants",
+                    "author": "auteur1",
+                    "summary": "Antoine continue de partir chaque matin en costume, sans dire à personne qu'il n'a plus de bureau où aller.",
+                    "like_count": 15,
+                    "content": [
+                        "Le lendemain, Antoine se leva à six heures, mit son costume gris et embrassa ses enfants comme tous les matins. Il ne savait pas encore où il allait. Il savait seulement qu'il ne pouvait pas rester.",
+                        "Il passa la journée dans un café de la gare Saint-Lazare, devant un ordinateur ouvert sur des offres d'emploi qu'il ne lisait pas. À dix-huit heures, il rentra, raconta une réunion qui n'avait pas eu lieu, et sa femme hocha la tête sans lever les yeux de son téléphone.",
+                        "Cela dura onze jours. Le douzième, sa fille lui demanda pourquoi son badge était dans la poche de son manteau et non autour de son cou. Il ouvrit la bouche, chercha un mensonge, et découvrit qu'il n'en avait plus aucun en réserve."
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "novel": "No comment",
+        "data": {
+            "title": "Deux mots devant le tribunal",
+            "author": "auteur2",
+            "summary": "Une avocate assiégée par les caméras refuse de parler, et ce silence devient l'affaire elle-même.",
+            "like_count": 11,
+            "content": [
+                "Ils étaient une trentaine sur les marches du palais de justice, micros tendus, caméras sur l'épaule. Hélène Varenne les traversa sans ralentir et ne prononça que deux mots, ceux qu'elle avait répétés toute la nuit devant son miroir.",
+                "« Pas de commentaire. »",
+                "Le soir même, la phrase tournait en boucle sur toutes les chaînes d'information. On la décortiquait, on l'analysait, on y lisait un aveu, une menace, un mépris. Un éditorialiste y consacra une chronique entière. Personne ne semblait se souvenir que son client, lui, n'avait encore été condamné à rien.",
+                "Hélène éteignit la télévision et se servit un verre. Sur son bureau, le dossier était ouvert à la page qu'elle relisait depuis trois jours. Elle savait des choses que personne ne savait, et c'était précisément pour cela qu'elle ne pouvait rien dire."
+            ],
+            "children": [
+                {
+                    "title": "Le silence a un prix",
+                    "author": "auteur3",
+                    "summary": "Un journaliste propose un marché à l'avocate : il se taira si elle lui donne un nom.",
+                    "like_count": 6,
+                    "content": [
+                        "Il l'attendait au pied de son immeuble, sous la pluie, sans micro ni caméra. Hélène le reconnut aussitôt : Marc Lessage, celui qui avait écrit la chronique.",
+                        "« Je ne suis pas là pour l'interview, dit-il. Je suis là parce que je sais ce qu'il y a page quarante-deux. » Elle s'arrêta, la clé à la main, et le regarda pour la première fois avec autre chose que de la lassitude.",
+                        "Il lui proposa un marché simple. Il garderait pour lui ce qu'il savait, à une condition : qu'elle lui donne le nom de celui qui avait fait fuiter le dossier. Hélène tourna la clé dans la serrure, poussa la porte, et répondit sans se retourner les deux seuls mots qu'elle connaissait encore."
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "novel": "Les Ombres du Passé",
+        "data": {
+            "title": "La lettre de 1987",
+            "author": "auteur1",
+            "summary": "En rénovant la maison de son grand-père, Julien découvre une lettre qui accuse un homme toujours vivant.",
+            "like_count": 19,
+            "content": [
+                "La lettre était coincée derrière la plinthe de la chambre du fond, pliée en quatre, jaunie, avec une date écrite au crayon dans le coin : 14 novembre 1987.",
+                "Julien la lut assis sur le plancher, au milieu des gravats. L'écriture était celle de son grand-père, appliquée, penchée vers la droite. Elle commençait par « Je sais ce que tu as fait au moulin » et se terminait par un prénom qu'il connaissait bien : celui du maire actuel du village.",
+                "Entre les deux, il y avait une page entière de faits précis. Une heure, un lieu, une voiture, un nom de jeune fille disparue que tout le monde, au village, avait fini par oublier. La lettre n'avait jamais été envoyée.",
+                "Julien replia la feuille, la glissa dans la poche intérieure de sa veste, et resta longtemps à regarder le trou dans le mur. Dehors, quelqu'un venait de se garer devant la maison. Il entendit une portière claquer, puis des pas sur le gravier."
+            ]
+        }
+    },
+    {
+        "novel": "Amour Éternel",
+        "data": {
+            "title": "Les lettres du grenier",
+            "author": "auteur2",
+            "summary": "Une jeune femme découvre la correspondance de deux amants qui se sont écrit pendant cinquante ans sans jamais se revoir.",
+            "like_count": 21,
+            "content": [
+                "Il y avait trois cent douze lettres, rangées par ordre chronologique dans une malle en osier, et toutes commençaient par les mêmes mots : « Ma chère Rose ».",
+                "Inès les trouva le jour où elle vida le grenier de sa grand-tante. Elle crut d'abord à une correspondance de guerre, puis remarqua les dates. La première était de 1952. La dernière, de 2003, un mois avant la mort de Rose.",
+                "Celui qui signait s'appelait Lucien. Il écrivait d'Argentine, puis du Chili, puis d'un petit village du Portugal. Il parlait du temps, des oiseaux, des livres qu'il lisait. Jamais il ne demandait à revenir. Jamais Rose, semblait-il, ne lui avait demandé de le faire.",
+                "Inès passa la nuit à les lire, assise sur le plancher du grenier, une lampe de poche entre les genoux. Au matin, elle savait deux choses : que ces deux-là s'étaient aimés toute leur vie, et qu'elle ferait tout pour comprendre pourquoi ils ne s'étaient jamais revus."
+            ]
+        }
+    },
+    {
+        "novel": "Le Mystère de la Forêt",
+        "data": {
+            "title": "Le sentier qui n'existait pas",
+            "author": "auteur3",
+            "summary": "Trois randonneurs empruntent un sentier absent de toutes les cartes et découvrent qu'il les ramène toujours au même endroit.",
+            "like_count": 24,
+            "content": [
+                "Le sentier commençait derrière un chêne mort, à gauche du chemin balisé. Il n'était sur aucune carte, et c'est précisément pour cela que Bastien voulut le prendre.",
+                "Chloé protesta pour la forme. Yanis haussa les épaules. Il était quinze heures, il restait quatre heures de jour, et la forêt des Vosges ne leur avait jamais fait peur. Ils s'engagèrent entre les fougères en riant.",
+                "Au bout d'une heure, ils retrouvèrent le chêne mort. Ils crurent s'être trompés, repartirent en sens inverse, et retrouvèrent le chêne mort une deuxième fois. La troisième fois, Chloé remarqua qu'une branche avait été cassée exactement à la hauteur où Yanis l'avait cassée, la première fois, pour s'amuser.",
+                "Le soleil ne bougeait plus dans le ciel. Les oiseaux s'étaient tus. Et quelque part, derrière les arbres, quelqu'un fredonnait une comptine que Bastien n'avait pas entendue depuis l'enfance."
+            ],
+            "children": [
+                {
+                    "title": "La comptine",
+                    "author": "auteur1",
+                    "summary": "Bastien suit la voix qui chante et retrouve dans une clairière la maison de sa grand-mère, démolie depuis vingt ans.",
+                    "like_count": 13,
+                    "content": [
+                        "Bastien reconnut la comptine dès la deuxième phrase. C'était celle que sa grand-mère lui chantait le soir, dans la maison des Hautes-Rivières, avant qu'on ne la rase pour construire un lotissement.",
+                        "Il quitta le sentier sans prévenir les autres. Les fougères s'écartaient devant lui comme si on lui ouvrait le passage. Derrière, la voix de Chloé l'appelait, de plus en plus faible, puis plus du tout.",
+                        "La maison était là, au milieu d'une clairière, intacte. Les volets verts, la glycine sur la façade, la lumière jaune à la fenêtre de la cuisine. Sur le perron, une silhouette l'attendait, un tablier noué autour de la taille.",
+                        "« Tu es en retard, dit sa grand-mère. La soupe va refroidir. » Bastien voulut répondre qu'elle était morte depuis vingt-deux ans. Il s'entendit dire : « Pardon, mamie. » Et il monta les marches."
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "novel": "Voyage Intérieur",
+        "data": {
+            "title": "Le carnet de Compostelle",
+            "author": "auteur1",
+            "summary": "Après un deuil, Mathilde part seule sur le chemin de Compostelle avec le carnet de son père pour seul guide.",
+            "like_count": 12,
+            "content": [
+                "Son père avait fait le chemin en 1994, et il en avait rempli un carnet entier : les étapes, les gîtes, les gens rencontrés, le prix d'un café à Estella. Mathilde le trouva dans le tiroir de sa table de nuit, trois semaines après l'enterrement.",
+                "Elle partit du Puy-en-Velay un lundi matin, avec un sac trop lourd et des chaussures trop neuves. Elle avait décidé de suivre exactement les étapes du carnet, de dormir dans les mêmes villages, de chercher les mêmes chapelles. Elle n'avait pas décidé pourquoi.",
+                "Le troisième jour, à Saugues, elle trouva le gîte que son père décrivait. Il existait encore. La propriétaire était la fille de celle qui l'avait accueilli trente ans plus tôt, et elle sortit d'un placard un vieux livre d'or où l'écriture de son père remplissait une page entière.",
+                "Mathilde lut la page debout dans l'entrée, son sac encore sur le dos. Son père y parlait d'une enfant de quatre ans restée à Lyon, qu'il avait peur de ne pas savoir aimer. Elle avait quatre ans en 1994."
+            ]
+        }
+    },
+    {
+        "novel": "La Course Contre le Temps",
+        "data": {
+            "title": "Six heures pour Bordeaux",
+            "author": "auteur2",
+            "summary": "Un coursier médical doit livrer un greffon à Bordeaux avant six heures, alors que tous les vols sont annulés.",
+            "like_count": 20,
+            "content": [
+                "La glacière bleue tenait sur le siège passager, ceinture bouclée, comme une passagère qu'on n'aurait pas le droit de réveiller. Dedans, il y avait un cœur. Dans six heures, il ne servirait plus à rien.",
+                "Karim faisait ce métier depuis neuf ans. Il avait déjà roulé sous la neige, sous l'orage, avec un pneu à plat sur la rocade de Lyon. Mais il n'avait jamais vu l'aéroport de Lille fermé pour brouillard, et le pilote qui devait l'attendre lui répéter au téléphone qu'aucun avion ne décollerait avant midi.",
+                "Il raccrocha, regarda l'horloge du tableau de bord, et fit le calcul à voix haute. Huit cents kilomètres. Six heures. À Bordeaux, une fillette de onze ans était déjà préparée pour l'opération, et un chirurgien attendait de savoir s'il devait se laver les mains.",
+                "Karim démarra. Il appela l'hôpital pour leur dire qu'il arrivait par la route, et entendit, au silence de l'interne au bout du fil, que personne n'y croyait."
+            ],
+            "children": [
+                {
+                    "title": "Le péage de Saint-Arnoult",
+                    "author": "auteur3",
+                    "summary": "Bloqué dans un bouchon monstre, Karim reçoit une aide inattendue de motards de la gendarmerie.",
+                    "like_count": 12,
+                    "content": [
+                        "Le bouchon commençait deux kilomètres avant le péage de Saint-Arnoult. Trois files immobiles, des feux de détresse à perte de vue, et une radio qui annonçait un accident sans gravité.",
+                        "Karim avait encore quatre heures et douze minutes. Il en perdit vingt sans avancer d'un mètre. Il ouvrit sa vitre, alluma ses feux, et se mit à klaxonner par séries de trois, comme on le lui avait appris en formation, sans y croire une seconde.",
+                        "Le premier motard apparut dans le rétroviseur au bout de cinq minutes. Le second le rejoignit au péage. Ils ne demandèrent rien d'autre que le nom de l'hôpital, puis ouvrirent la voie, gyrophares allumés, jusqu'à la sortie d'Orléans.",
+                        "Quand ils le laissèrent repartir seul, Karim leva la main pour les remercier. L'un d'eux lui répondit d'un signe du pouce. Sur la glacière bleue, la ceinture était toujours bouclée."
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "novel": "Renaissance",
+        "data": {
+            "title": "La boulangerie fermée",
+            "author": "auteur3",
+            "summary": "Un ancien boulanger brisé par la faillite rallume son four pour la première fois depuis deux ans.",
+            "like_count": 16,
+            "content": [
+                "La clé tournait mal dans la serrure. Gérard dut s'y reprendre à trois fois avant que la porte de la boulangerie ne cède, dans un grincement qui fit sursauter un chat sur le trottoir d'en face.",
+                "À l'intérieur, rien n'avait bougé depuis deux ans. Les panières vides, la caisse enregistreuse débranchée, le calendrier des postes arrêté sur un mois de mars. Une fine couche de farine grise recouvrait tout, comme une neige qu'on aurait oublié de balayer.",
+                "Il n'avait pas prévu de revenir. C'est sa petite-fille qui avait insisté, un dimanche, en lui demandant pourquoi le pain du supermarché n'avait pas le même goût que dans ses souvenirs. Il n'avait pas su répondre. Il avait passé la nuit à y penser.",
+                "Il alluma le four à trois heures du matin, comme avant. La chaleur monta lentement, et avec elle une odeur qu'il croyait avoir perdue. À six heures, quand le premier voisin frappa à la vitre pour demander si c'était ouvert, Gérard s'aperçut qu'il pleurait sans savoir depuis quand."
+            ]
+        }
+    },
+    {
+        "novel": "Le Dernier Espoir",
+        "data": {
+            "title": "La lettre de l'hôpital",
+            "author": "auteur1",
+            "summary": "Une mère apprend qu'un traitement expérimental pourrait sauver son fils, mais qu'il ne reste qu'une place.",
+            "like_count": 18,
+            "content": [
+                "La lettre arriva un samedi, dans une enveloppe blanche à en-tête du centre hospitalier de Nantes. Sophie l'ouvrit dans l'entrée, debout, son manteau encore sur le dos.",
+                "Il existait un essai clinique. Un traitement nouveau, testé sur une poignée d'enfants atteints de la même maladie que Théo. Les premiers résultats étaient encourageants. Il restait une place, et trois familles avaient été contactées.",
+                "Sophie relut la lettre quatre fois. Elle chercha la phrase qui lui dirait quoi faire, quel formulaire remplir, quelle porte frapper pour que ce soit eux. Il n'y en avait pas. Il y avait seulement une date de rendez-vous, le jeudi suivant, et un numéro de téléphone.",
+                "Dans sa chambre, Théo jouait aux petites voitures en faisant les bruits de moteur. Sophie plia la lettre, la rangea dans son sac, et alla s'asseoir par terre à côté de lui. « On va faire une course ? » demanda-t-il. Elle prit la voiture rouge."
+            ]
+        }
+    },
+    {
+        "novel": "Souvenirs Perdus",
+        "data": {
+            "title": "Le carnet de bal",
+            "author": "auteur2",
+            "summary": "Atteint de troubles de la mémoire, Paul ne se souvient plus de sa femme, mais il se souvient de leur premier bal.",
+            "like_count": 23,
+            "content": [
+                "Paul ne savait plus qui était cette femme qui venait le voir tous les après-midi à la résidence. Elle avait des cheveux blancs, un sourire fatigué, et elle l'appelait « mon chéri » d'une voix qui lui serrait le cœur sans qu'il comprenne pourquoi.",
+                "Elle s'appelait Jeanne. Elle le lui répétait chaque jour, patiemment, comme on répète une leçon à un enfant. Chaque jour, il hochait la tête, poliment, et chaque jour il l'oubliait avant le dîner.",
+                "Un mardi, Jeanne apporta un vieux carnet de bal, à la couverture de velours rouge. Elle l'ouvrit à la première page et le posa sur ses genoux. Il y avait un nom écrit à l'encre bleue, en face d'une valse : Paul.",
+                "Il regarda longtemps son propre prénom. Puis, sans prévenir, il se mit à fredonner. C'était la valse de ce soir-là, à Saint-Malo, en juillet 1961. Jeanne posa la main sur la sienne, et pour la première fois depuis des mois, il ne la retira pas."
+            ]
+        }
+    },
+    {
+        "novel": "Terreur Nocturne",
+        "data": {
+            "title": "Trois heures douze",
+            "author": "auteur1",
+            "summary": "Chaque nuit à la même heure, Léa se réveille et entend quelqu'un marcher dans le couloir de son appartement vide.",
+            "like_count": 25,
+            "content": [
+                "Le radio-réveil affichait 3 h 12, et Léa savait, avant même d'ouvrir complètement les yeux, ce qu'elle allait entendre.",
+                "Des pas. Lents, réguliers, pieds nus sur le parquet du couloir. Ils partaient de la porte d'entrée, longeaient la salle de bains, et s'arrêtaient devant sa chambre. Toujours au même endroit. Toujours à la même heure. Depuis onze nuits.",
+                "Elle vivait seule. Elle avait fait changer la serrure, installé une caméra dans l'entrée, demandé à sa voisine de dormir chez elle une nuit. La caméra n'avait rien filmé. La voisine n'avait rien entendu. Léa, elle, avait entendu les pas s'arrêter devant la porte, et quelqu'un respirer de l'autre côté.",
+                "Cette nuit-là, elle ne resta pas sous la couette. Elle se leva, posa la main sur la poignée, et compta jusqu'à trois. Quand elle ouvrit, le couloir était vide. Mais sur le parquet, devant ses pieds, il y avait des traces humides, qui allaient vers le placard."
+            ],
+            "children": [
+                {
+                    "title": "Le placard du couloir",
+                    "author": "auteur2",
+                    "summary": "Léa ouvre le placard et y découvre une porte qu'elle n'a jamais vue, donnant sur un escalier qui descend.",
+                    "like_count": 14,
+                    "content": [
+                        "Le placard du couloir contenait un aspirateur, deux cartons de déménagement jamais ouverts et un manteau d'hiver. C'est ce que Léa se répéta en tendant la main vers la poignée.",
+                        "L'aspirateur était là. Les cartons aussi. Le manteau avait glissé de son cintre. Et derrière, à la place du mur, il y avait une petite porte en bois peint, si basse qu'il aurait fallu se pencher pour la franchir.",
+                        "Elle était entrouverte. Un air froid en montait, qui sentait la cave et la terre mouillée. Léa alluma la lampe de son téléphone. Le faisceau éclaira les premières marches d'un escalier de pierre qui s'enfonçait sous l'immeuble, bien plus bas que les caves.",
+                        "Elle habitait au quatrième étage. Elle le savait. Elle le savait parfaitement. Et pourtant, tout en bas de l'escalier, une lumière venait de s'allumer."
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "novel": "Nouveau Départ",
+        "data": {
+            "title": "Le ferry de Roscoff",
+            "author": "auteur3",
+            "summary": "Après un divorce, Nathalie quitte tout pour reprendre un petit café sur une île bretonne.",
+            "like_count": 13,
+            "content": [
+                "Le ferry quitta Roscoff à huit heures quinze, et Nathalie resta sur le pont malgré le vent, à regarder la côte s'éloigner jusqu'à ne plus être qu'un trait gris.",
+                "Dans sa valise, il y avait trois pulls, un acte de vente et le trousseau de clés d'un café qu'elle n'avait vu qu'en photo. « Le Goéland », sur l'île de Batz. Douze tables, une terrasse face au port, et un ancien propriétaire qui lui avait écrit, en guise de conseil, de ne jamais servir de café avant que les pêcheurs soient rentrés.",
+                "Elle avait quarante-sept ans. Elle avait été comptable pendant vingt-deux ans, mariée pendant dix-neuf. Elle n'avait jamais tenu un commerce, jamais vécu sur une île, jamais rien décidé sans en parler d'abord à quelqu'un.",
+                "Quand le ferry accosta, une femme en ciré jaune l'attendait sur le quai. « C'est vous, la nouvelle du Goéland ? » Nathalie hocha la tête. La femme sourit. « Alors bienvenue. Ici, tout le monde est nouveau, un jour. »"
+            ]
+        }
+    },
+    {
+        "novel": "La Vérité Cachée",
+        "data": {
+            "title": "Le dossier 114",
+            "author": "auteur1",
+            "summary": "Une archiviste découvre qu'un dossier d'enquête clos depuis trente ans a été modifié la semaine dernière.",
+            "like_count": 19,
+            "content": [
+                "Le dossier 114 n'aurait jamais dû sortir des archives. Il portait le tampon « classé sans suite » depuis 1993, et personne ne l'avait consulté depuis. C'est du moins ce que disait le registre.",
+                "Agnès le remarqua parce qu'il n'était pas à sa place. Rangé deux étagères trop haut, entre des procès-verbaux de 1978. En le remettant en ordre, elle vit que la ficelle était neuve, et que la dernière page était imprimée sur un papier blanc, sans trace de jaunissement.",
+                "Elle compara avec l'inventaire numérisé dix ans plus tôt. La page avait changé. Le nom du témoin principal n'était plus le même. Et la date de l'audition avait reculé de trois jours, juste assez pour qu'un homme ait un alibi.",
+                "Agnès referma le dossier et regarda autour d'elle. Le sous-sol des archives était désert, comme toujours à cette heure-là. Pourtant, la lumière du fond, celle qu'on n'allumait jamais, était allumée."
+            ]
+        }
+    },
+    {
+        "novel": "Destin Croisé",
+        "data": {
+            "title": "Le quai numéro neuf",
+            "author": "auteur2",
+            "summary": "Deux inconnus se trompent de valise sur un quai de gare et doivent se retrouver pour l'échanger.",
+            "like_count": 18,
+            "content": [
+                "La valise était rouge, cabossée, avec un autocollant de Lisbonne sur le côté. Exactement comme la sienne. Sauf qu'en l'ouvrant dans sa chambre d'hôtel, Elsa trouva des chemises d'homme, un appareil photo argentique et un carnet couvert de croquis.",
+                "Il y avait un nom sur l'étiquette : Raphaël Morin, avec un numéro de téléphone. Elsa hésita longtemps avant d'appeler. Quand il décrocha, elle entendit d'abord un rire, puis une voix qui disait : « Vous avez une très mauvaise taille de chaussures pour moi. »",
+                "Ils convinrent de se retrouver le lendemain, au quai numéro neuf de la gare Saint-Charles, là où l'échange avait eu lieu. Elsa arriva en avance. Elle s'assit sur un banc, la valise rouge à ses pieds, et s'aperçut qu'elle avait passé la soirée à regarder les croquis du carnet.",
+                "Il y en avait un qui la représentait. Elle, assise sur ce même banc, la veille, quelques minutes avant que les valises ne soient confondues."
+            ],
+            "children": [
+                {
+                    "title": "Les croquis de Raphaël",
+                    "author": "auteur3",
+                    "summary": "Raphaël avoue qu'il dessine les inconnus des gares depuis des années, et qu'Elsa apparaît dans plusieurs de ses carnets.",
+                    "like_count": 11,
+                    "content": [
+                        "Raphaël arriva en retard, essoufflé, la valise d'Elsa à la main. Il la posa devant elle et s'assit sans attendre d'y être invité.",
+                        "« Je sais ce que vous allez me demander, dit-il. Oui, je vous ai dessinée. Je dessine tout le monde, dans les gares. C'est le seul endroit où les gens attendent sans faire semblant de ne pas attendre. »",
+                        "Elsa ouvrit le carnet à la page du croquis. Il le regarda à peine. Puis il sortit de son sac un autre carnet, plus ancien, à la couverture usée, et l'ouvrit à une page cornée. C'était encore elle, sur un quai de Lyon, deux ans plus tôt. Elle ne s'en souvenait pas.",
+                        "« Je crois qu'on se croise depuis longtemps, dit-il doucement. Je voulais juste savoir, cette fois, comment vous vous appeliez. »"
+                    ]
+                }
+            ]
+        }
     }
 ]

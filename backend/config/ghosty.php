@@ -39,4 +39,11 @@ return [
         'reads_per_minute' => 30,
     ],
 
+    /* @see memory-bank/decisions/ADR-13-commentaires.md */
+    'comments' => [
+        'per_page' => 20,
+        'content_max_length' => 2000,
+        'per_minute' => 5,
+    ],
+
 ];

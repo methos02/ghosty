@@ -1,0 +1,9 @@
+{
+  "comment_fields": {
+    "content": "Votre commentaire",
+    "placeholder": "Votre réaction, une remarque, une incohérence relevée…",
+    "spoiler": "Contient un divulgâcheur",
+    "error_content_required": "Le commentaire ne peut pas être vide",
+    "error_content_size_max": "Le commentaire est trop long"
+  }
+}

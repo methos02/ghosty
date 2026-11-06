@@ -31,6 +31,17 @@ const readingStore = () => {
     }
   }
 
+  const setChapterCommentCount = (chapterId, commentCount) => {
+    if (chapter.value?.id !== chapterId) {
+      return
+    }
+
+    chapter.value = {
+      ...chapter.value,
+      commentCount,
+    }
+  }
+
   const setChapterFollow = (chapterId, isFollowed) => {
     if (chapter.value?.id !== chapterId) {
       return
@@ -81,6 +92,7 @@ const readingStore = () => {
     nextChapterId: readonly(nextChapterId),
     setReading,
     setChapterLike,
+    setChapterCommentCount,
     setChapterFollow,
     clear,
     serialize,

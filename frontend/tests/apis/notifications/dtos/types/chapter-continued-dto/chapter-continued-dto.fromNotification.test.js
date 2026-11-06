@@ -5,17 +5,17 @@ import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
 describe('chapter-continued-dto', () => {
   describe('fromNotification', () => {
     it('maps the latest continuation and the gathered count', () => {
-      const data = notificationSeeder.getChapterContinuedApi(3)
+      const notificationApi = notificationSeeder.getChapterContinuedApi(3)
 
-      const notification = ChapterContinuedDto.fromNotification(data)
+      const notification = ChapterContinuedDto.fromNotification(notificationApi)
 
       expect(notification).toEqual({
         continuation: {
-          id: data.data.continuation.id,
-          title: data.data.continuation.title,
-          authorUsername: data.data.continuation.author_username,
+          id: notificationApi.continuation.id,
+          title: notificationApi.continuation.title,
+          authorUsername: notificationApi.continuation.author_username,
         },
-        count: data.data.count,
+        count: notificationApi.count,
       })
     })
   })

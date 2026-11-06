@@ -68,7 +68,9 @@ class CommentService
             return $reply;
         });
 
-        $this->commentRepliedNotificationService->create($reply, $parent, $commentable);
+        $mentionedUserToNotify = $this->findMentionedUser($parent, $reply, $commentDTO->mentionedUserId);
+
+        $this->commentRepliedNotificationService->create($reply, $parent, $commentable, $mentionedUserToNotify);
 
         return $reply;
     }
@@ -89,6 +91,27 @@ class CommentService
                 $this->commentsR->decrementReplyCount($comment->parent);
             }
         });
+    }
+
+    public function findCommentCount(Chapter|Novel $commentable): int
+    {
+        if ($commentable instanceof Chapter) {
+            return $this->chaptersR->findCommentCount($commentable);
+        }
+
+        return $this->novelsR->findCommentCount($commentable);
+    }
+
+    private function findMentionedUser(Comment $parent, Comment $reply, ?int $mentionedUserId): ?User
+    {
+        if ($mentionedUserId === null) {
+            return null;
+        }
+
+        return $this->commentsR->listVisibleReplies($parent)
+            ->reject(fn (Comment $sibling): bool => $sibling->is($reply))
+            ->map(fn (Comment $sibling): User => $sibling->author)
+            ->first(fn (User $participant): bool => $participant->id === $mentionedUserId && $reply->startsWithMentionOf($participant));
     }
 
     private function incrementCommentCount(Chapter|Novel $commentable): void

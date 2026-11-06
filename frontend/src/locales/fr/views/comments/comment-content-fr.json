@@ -1,0 +1,10 @@
+{
+  "comment_content": {
+    "deleted_comment": "Commentaire supprimé",
+    "reveal_spoiler": "Ce commentaire contient un divulgâcheur : l'afficher",
+    "reply": "Répondre",
+    "delete": "Supprimer",
+    "delete_confirm": "Supprimer ce commentaire ? Son texte sera effacé définitivement.",
+    "deleted": "Commentaire supprimé"
+  }
+}

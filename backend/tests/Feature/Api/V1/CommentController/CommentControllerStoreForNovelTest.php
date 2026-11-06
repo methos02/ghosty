@@ -50,7 +50,8 @@ class CommentControllerStoreForNovelTest extends TestCase
         $this->actingAs($reader)
             ->postJson("/api/v1/novels/{$novel->slug}/comments", $this->getDatas())
             ->assertCreated()
-            ->assertJsonPath('content', $this->datas['content']);
+            ->assertJsonPath('comment.content', $this->datas['content'])
+            ->assertJsonPath('comment_count', 1);
 
         $this->assertDatabaseHas('comments', [
             'commentable_type' => 'novel',

@@ -1,9 +1,11 @@
 <script setup>
-import ChapterContinuedDetail from '@/views/layout/notifications/details/ChapterContinuedDetail.vue'
-import MainBranchGainedDetail from '@/views/layout/notifications/details/MainBranchGainedDetail.vue'
-import MainBranchLostDetail from '@/views/layout/notifications/details/MainBranchLostDetail.vue'
-import FollowedBranchExtendedDetail from '@/views/layout/notifications/details/FollowedBranchExtendedDetail.vue'
-import LikeReceivedDetail from '@/views/layout/notifications/details/LikeReceivedDetail.vue'
+import ChapterContinuedNotificationDetail from '@/views/layout/notifications/details/ChapterContinuedNotificationDetail.vue'
+import MainBranchGainedNotificationDetail from '@/views/layout/notifications/details/MainBranchGainedNotificationDetail.vue'
+import MainBranchLostNotificationDetail from '@/views/layout/notifications/details/MainBranchLostNotificationDetail.vue'
+import FollowedBranchExtendedNotificationDetail from '@/views/layout/notifications/details/FollowedBranchExtendedNotificationDetail.vue'
+import LikeReceivedNotificationDetail from '@/views/layout/notifications/details/LikeReceivedNotificationDetail.vue'
+import CommentReceivedNotificationDetail from '@/views/layout/notifications/details/CommentReceivedNotificationDetail.vue'
+import CommentRepliedNotificationDetail from '@/views/layout/notifications/details/CommentRepliedNotificationDetail.vue'
 import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 
 defineProps({
@@ -13,24 +15,32 @@ defineProps({
 
 <template>
   <div class="notification-detail-by-type">
-    <ChapterContinuedDetail
+    <ChapterContinuedNotificationDetail
       v-if="notification.type === NOTIFICATION_TYPES.CHAPTER_CONTINUED"
       :notification="notification"
     />
-    <MainBranchGainedDetail
+    <MainBranchGainedNotificationDetail
       v-if="notification.type === NOTIFICATION_TYPES.MAIN_BRANCH_GAINED"
       :notification="notification"
     />
-    <MainBranchLostDetail
+    <MainBranchLostNotificationDetail
       v-if="notification.type === NOTIFICATION_TYPES.MAIN_BRANCH_LOST"
       :notification="notification"
     />
-    <FollowedBranchExtendedDetail
+    <FollowedBranchExtendedNotificationDetail
       v-if="notification.type === NOTIFICATION_TYPES.FOLLOWED_BRANCH_EXTENDED"
       :notification="notification"
     />
-    <LikeReceivedDetail
+    <LikeReceivedNotificationDetail
       v-if="notification.type === NOTIFICATION_TYPES.LIKE_RECEIVED"
+      :notification="notification"
+    />
+    <CommentReceivedNotificationDetail
+      v-if="notification.type === NOTIFICATION_TYPES.COMMENT_RECEIVED"
+      :notification="notification"
+    />
+    <CommentRepliedNotificationDetail
+      v-if="notification.type === NOTIFICATION_TYPES.COMMENT_REPLIED"
       :notification="notification"
     />
   </div>

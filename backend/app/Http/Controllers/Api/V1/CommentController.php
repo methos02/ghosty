@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\DTO\CommentDTO;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreCommentReplyRequest;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Resources\CommentResource;
 use App\Models\Chapter;
@@ -16,7 +17,6 @@ use App\Repositories\NovelRepository;
 use App\Services\CommentService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 
@@ -77,7 +77,7 @@ class CommentController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function storeReply(StoreCommentRequest $request, int $commentId): JsonResponse
+    public function storeReply(StoreCommentReplyRequest $request, int $commentId): JsonResponse
     {
         /** @var User $author */
         $author = $request->user();
@@ -86,24 +86,29 @@ class CommentController extends Controller
         $this->authorize('reply', $parent);
 
         $reply = $this->commentService->createReply($author, $parent, CommentDTO::fromRequest($request));
+        $commentCount = $this->commentService->findCommentCount($parent->target());
 
-        return (new CommentResource($reply))
-            ->response()
-            ->setStatusCode(201);
+        return response()->json([
+            'comment' => new CommentResource($reply),
+            'comment_count' => $commentCount,
+        ], 201);
     }
 
     /**
      * @throws AuthorizationException
      */
-    public function destroy(int $commentId): Response
+    public function destroy(int $commentId): JsonResponse
     {
         $comment = $this->commentsR->find($commentId);
 
         $this->authorize('delete', $comment);
 
         $this->commentService->delete($comment);
+        $commentCount = $this->commentService->findCommentCount($comment->target());
 
-        return response()->noContent();
+        return response()->json([
+            'comment_count' => $commentCount,
+        ]);
     }
 
     private function thread(Chapter|Novel $commentable): JsonResponse
@@ -132,9 +137,11 @@ class CommentController extends Controller
         $this->authorize('create', [Comment::class, $commentable]);
 
         $comment = $this->commentService->create($author, $commentable, CommentDTO::fromRequest($request));
+        $commentCount = $this->commentService->findCommentCount($commentable);
 
-        return (new CommentResource($comment))
-            ->response()
-            ->setStatusCode(201);
+        return response()->json([
+            'comment' => new CommentResource($comment),
+            'comment_count' => $commentCount,
+        ], 201);
     }
 }

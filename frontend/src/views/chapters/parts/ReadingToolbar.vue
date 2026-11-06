@@ -8,6 +8,7 @@ import FollowButton from '@/views/chapters/parts/FollowButton.vue'
 import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
 import { useReadingSettingsStore } from '@/apis/chapters/stores/reading-settings-store.js'
 import { useChapterReport } from '@/apis/reports/composables/use-chapter-report.js'
+import { useChapterComments } from '@/apis/comments/composables/use-chapter-comments.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import { useReadingPosition } from '@/apis/chapters/composables/use-reading-position.js'
 
@@ -16,6 +17,7 @@ const { position, branchLength, isMainBranch, chapterIdAt } = useReadingPosition
 const { settings, setSetting, persist } = useReadingSettingsStore()
 const { chapter } = useReadingStore()
 const { canReport, openChapterReport } = useChapterReport()
+const { openChapterComments } = useChapterComments()
 
 const goToPosition = async requestedPosition => {
   const targetId = chapterIdAt(requestedPosition)
@@ -45,6 +47,20 @@ const print = () => {
       <LikeButton v-if="chapter" />
 
       <FollowButton v-if="chapter && !chapter.isDraft" />
+
+      <button
+        v-if="chapter && !chapter.isDraft"
+        type="button"
+        class="reading-toolbar__comments | btn btn-sm btn-primary-alt d-flex a-center g-5"
+        :title="t('reading_toolbar.comments')"
+        :aria-label="t('reading_toolbar.comments')"
+        @click="openChapterComments(chapter)"
+      >
+        <i class="fa-solid fa-comments"></i>
+        <span class="reading-toolbar__comment-count">
+          {{ chapter.commentCount }}
+        </span>
+      </button>
 
       <button
         v-if="chapter && canReport(chapter)"

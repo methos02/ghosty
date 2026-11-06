@@ -110,6 +110,13 @@ class Comment extends Model
         return $this->status === self::STATUS_DELETED;
     }
 
+    public function startsWithMentionOf(User $user): bool
+    {
+        $mention = preg_quote('@'.$user->username, '/');
+
+        return preg_match('/^'.$mention.'(\s|$)/u', $this->content ?? '') === 1;
+    }
+
     public function isReply(): bool
     {
         return $this->parent_id !== null;

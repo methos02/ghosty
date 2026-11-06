@@ -19,7 +19,9 @@ class NotificationResource extends JsonResource
         return [
             'id' => $this->id,
             'type' => $this->type,
-            'data' => $this->data,
+            'novel' => $this->data['novel'],
+            'chapter' => $this->data['chapter'] ?? null,
+            ...array_diff_key($this->data, array_flip(['novel', 'chapter'])),
             'is_read' => $this->read_at !== null,
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),

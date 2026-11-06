@@ -213,6 +213,17 @@ class ChapterRepository
             ->decrement('comment_count');
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-13-commentaires.md
+     */
+    public function findCommentCount(Chapter $chapter): int
+    {
+        return Chapter::query()
+            ->select(['id', 'comment_count'])
+            ->findOrFail($chapter->id)
+            ->comment_count;
+    }
+
     public function updateBranchLikeCount(Chapter $chapter, Chapter $parent): void
     {
         $chapter->forceFill([

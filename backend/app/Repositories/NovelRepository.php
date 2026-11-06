@@ -113,6 +113,17 @@ class NovelRepository
     }
 
     /**
+     * @see memory-bank/decisions/ADR-13-commentaires.md
+     */
+    public function findCommentCount(Novel $novel): int
+    {
+        return Novel::query()
+            ->select(['id', 'comment_count'])
+            ->findOrFail($novel->id)
+            ->comment_count;
+    }
+
+    /**
      * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
      */
     public function setLastChapterOfMainBranch(int $novelId, int $chapterId): void

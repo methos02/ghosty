@@ -4,7 +4,7 @@ namespace Tests\Feature\Api\V1\CommentController;
 
 use App\Enums\NotificationType;
 use App\Http\Controllers\Api\V1\CommentController;
-use App\Http\Requests\StoreCommentRequest;
+use App\Http\Requests\StoreCommentReplyRequest;
 use App\Models\Chapter;
 use App\Models\Comment;
 use App\Models\User;
@@ -22,7 +22,7 @@ class CommentControllerStoreReplyTest extends TestCase
     #[Test]
     public function uses_the_form_request(): void
     {
-        $this->assertTrue($this->hasFormRequest(CommentController::class, 'storeReply', StoreCommentRequest::class));
+        $this->assertTrue($this->hasFormRequest(CommentController::class, 'storeReply', StoreCommentReplyRequest::class));
     }
 
     #[Test]
@@ -51,8 +51,9 @@ class CommentControllerStoreReplyTest extends TestCase
         $this->actingAs($reader)
             ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas())
             ->assertCreated()
-            ->assertJsonPath('parent_id', $comment->id)
-            ->assertJsonPath('author.username', $reader->username);
+            ->assertJsonPath('comment.parent_id', $comment->id)
+            ->assertJsonPath('comment.author.username', $reader->username)
+            ->assertJsonPath('comment_count', $comment->target()->refresh()->comment_count);
 
         $this->assertDatabaseHas('comments', [
             'parent_id' => $comment->id,
@@ -90,6 +91,136 @@ class CommentControllerStoreReplyTest extends TestCase
             'type' => NotificationType::CommentReplied->value,
         ]);
         $this->assertDatabaseCount('notifications', 1);
+    }
+
+    #[Test]
+    public function notifies_the_mentioned_reader_of_the_thread_too(): void
+    {
+        $comment = Comment::factory()->on(Chapter::factory()->create())->create();
+        $mentionedReply = Comment::factory()->replyingTo($comment)->create();
+
+        $this->actingAs(User::factory()->create())
+            ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas([
+                'content' => "@{$mentionedReply->author->username} Tout à fait.",
+                'mentioned_user_id' => $mentionedReply->author_id,
+            ]))
+            ->assertCreated();
+
+        $this->assertDatabaseHas('notifications', [
+            'notifiable_id' => $mentionedReply->author_id,
+            'type' => NotificationType::CommentReplied->value,
+        ]);
+        $this->assertDatabaseCount('notifications', 2);
+    }
+
+    #[Test]
+    public function notifies_the_mentioned_reader_whose_username_holds_a_space(): void
+    {
+        $comment = Comment::factory()->on(Chapter::factory()->create())->create();
+        $mentioned = User::factory()->create(['username' => 'Jean Dupont']);
+        Comment::factory()->replyingTo($comment)->create(['author_id' => $mentioned->id]);
+
+        $this->actingAs(User::factory()->create())
+            ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas([
+                'content' => '@Jean Dupont Tout à fait.',
+                'mentioned_user_id' => $mentioned->id,
+            ]))
+            ->assertCreated();
+
+        $this->assertDatabaseHas('notifications', ['notifiable_id' => $mentioned->id]);
+    }
+
+    #[Test]
+    public function notifies_once_the_author_of_the_comment_mentioned_in_the_reply(): void
+    {
+        $comment = Comment::factory()->on(Chapter::factory()->create())->create();
+        Comment::factory()->replyingTo($comment)->create(['author_id' => $comment->author_id]);
+
+        $this->actingAs(User::factory()->create())
+            ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas([
+                'content' => "@{$comment->author->username} Tout à fait.",
+                'mentioned_user_id' => $comment->author_id,
+            ]))
+            ->assertCreated();
+
+        $this->assertDatabaseCount('notifications', 1);
+    }
+
+    #[Test]
+    public function ignores_a_mentioned_reader_whose_username_does_not_open_the_reply(): void
+    {
+        $comment = Comment::factory()->on(Chapter::factory()->create())->create();
+        $reply = Comment::factory()->replyingTo($comment)->create();
+
+        $this->actingAs(User::factory()->create())
+            ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas([
+                'content' => 'Tout à fait.',
+                'mentioned_user_id' => $reply->author_id,
+            ]))
+            ->assertCreated();
+
+        $this->assertDatabaseMissing('notifications', ['notifiable_id' => $reply->author_id]);
+    }
+
+    #[Test]
+    public function ignores_a_mention_without_the_id_of_the_mentioned_reader(): void
+    {
+        $comment = Comment::factory()->on(Chapter::factory()->create())->create();
+        $reply = Comment::factory()->replyingTo($comment)->create();
+
+        $this->actingAs(User::factory()->create())
+            ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas([
+                'content' => "@{$reply->author->username} Tout à fait.",
+            ]))
+            ->assertCreated();
+
+        $this->assertDatabaseMissing('notifications', ['notifiable_id' => $reply->author_id]);
+    }
+
+    #[Test]
+    public function ignores_a_mentioned_reader_absent_from_the_thread(): void
+    {
+        $comment = Comment::factory()->on(Chapter::factory()->create())->create();
+        $stranger = User::factory()->create();
+
+        $this->actingAs(User::factory()->create())
+            ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas([
+                'content' => "@{$stranger->username} Tu as vu ça ?",
+                'mentioned_user_id' => $stranger->id,
+            ]))
+            ->assertCreated();
+
+        $this->assertDatabaseMissing('notifications', ['notifiable_id' => $stranger->id]);
+        $this->assertDatabaseCount('notifications', 1);
+    }
+
+    #[Test]
+    public function ignores_a_mentioned_reader_whose_reply_was_deleted(): void
+    {
+        $comment = Comment::factory()->on(Chapter::factory()->create())->create();
+        $deletedReply = Comment::factory()->replyingTo($comment)->deleted()->create();
+
+        $this->actingAs(User::factory()->create())
+            ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas([
+                'content' => "@{$deletedReply->author->username} Dommage.",
+                'mentioned_user_id' => $deletedReply->author_id,
+            ]))
+            ->assertCreated();
+
+        $this->assertDatabaseMissing('notifications', ['notifiable_id' => $deletedReply->author_id]);
+    }
+
+    #[Test]
+    public function refuses_a_mentioned_reader_that_is_not_an_id(): void
+    {
+        $comment = Comment::factory()->create();
+
+        $this->actingAs(User::factory()->create())
+            ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas([
+                'mentioned_user_id' => 'abc',
+            ]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['mentioned_user_id' => __('validation.comment.mentioned_user_id.integer')]);
     }
 
     #[Test]

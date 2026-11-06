@@ -49,7 +49,7 @@ buildReadResult(notificationId, [...bellErrors, ...pageErrors])
 ```js
 // BAD
 NotificationEntry.vue
-const detailsOf = data => { ... }
+const detailsOf = notification => { ... }
 const getChaptersAfter = (novelId, cutoffDate) => { ... }
 const isNotificationMatchingFilter = (notification, filter) => { ... }
 const readingTimeOfChapter = wordCount => { ... }
@@ -57,7 +57,7 @@ const toUnreadParams = page => ({ page })
 
 // GOOD
 NotificationByType.vue
-const mapPayload = data => { ... }
+const mapPayload = notification => { ... }
 const getChaptersAfterDate = (novelId, date) => { ... }
 const matches = (notification, filter) => { ... }
 const estimateReadingTime = chapter => { ... }

@@ -8,6 +8,7 @@ const getNovelApi = (overrides = {}) => ({
   cover_url: 'https://example.test/covers/1.jpg',
   is_favorite: false,
   chapters_count: 12,
+  comment_count: 3,
   author: { id: 7, username: 'GhostWriter' },
   genre: { id: 3, name: 'Fantastique' },
   ...overrides,

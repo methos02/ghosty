@@ -1,0 +1,6 @@
+{
+  "comment_received_notification": {
+    "one": "{author} a commenté « {title} »",
+    "many": "{count} nouveaux commentaires sur « {title} »"
+  }
+}

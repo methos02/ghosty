@@ -11,7 +11,8 @@ final readonly class CommentDTO
 {
     public function __construct(
         public string $content,
-        public bool $isSpoiler = false
+        public bool $isSpoiler = false,
+        public ?int $mentionedUserId = null
     ) {}
 
     public static function fromRequest(FormRequest $request): self
@@ -19,6 +20,7 @@ final readonly class CommentDTO
         return new self(
             content: $request->string('content')->trim()->toString(),
             isSpoiler: $request->boolean('is_spoiler'),
+            mentionedUserId: $request->filled('mentioned_user_id') ? $request->integer('mentioned_user_id') : null,
         );
     }
 

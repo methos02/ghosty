@@ -2,6 +2,7 @@ import { dateHelper } from '@/core/helpers/date-helper.js'
 import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 import { ChapterContinuedDto } from '@/apis/notifications/dtos/types/chapter-continued-dto.js'
 import { ChaptersPayloadDto } from '@/apis/notifications/dtos/types/chapters-payload-dto.js'
+import { CommentPayloadDto } from '@/apis/notifications/dtos/types/comment-payload-dto.js'
 import { LikeReceivedDto } from '@/apis/notifications/dtos/types/like-received-dto.js'
 
 const fromList = data => ({
@@ -9,23 +10,21 @@ const fromList = data => ({
   unreadCount: data.unread_count,
 })
 
-const fromNotification = data => ({
-  id: data.id,
-  type: data.type,
-  isRead: data.is_read,
-  chapter: {
-    id: data.data.chapter.id,
-    title: data.data.chapter.title,
-  },
+const fromNotification = notification => ({
+  id: notification.id,
+  type: notification.type,
+  isRead: notification.is_read,
+  chapter: NotificationDtoInternal.mapChapter(notification),
   novel: {
-    slug: data.data.novel.slug,
-    title: data.data.novel.title,
+    slug: notification.novel.slug,
+    title: notification.novel.title,
   },
-  payload: NotificationDtoInternal.mapPayload(data),
-  updatedAtFormat: dateHelper.formatDateLocal(data.updated_at, 'DD/MM/YYYY HH:mm'),
+  payload: NotificationDtoInternal.mapPayload(notification),
+  updatedAtFormat: dateHelper.formatDateLocal(notification.updated_at, 'DD/MM/YYYY HH:mm'),
 })
 
-const fromNotifications = datas => datas.map(data => NotificationDto.fromNotification(data))
+const fromNotifications = notifications =>
+  notifications.map(notification => NotificationDto.fromNotification(notification))
 
 const fromUnreadCount = data => data.unread_count
 
@@ -48,23 +47,40 @@ const CHAPTERS_PAYLOAD_TYPES = new Set([
   NOTIFICATION_TYPES.FOLLOWED_BRANCH_EXTENDED,
 ])
 
-const isKnownType = data => Object.values(NOTIFICATION_TYPES).includes(data.type)
+const COMMENT_PAYLOAD_TYPES = new Set([
+  NOTIFICATION_TYPES.COMMENT_RECEIVED,
+  NOTIFICATION_TYPES.COMMENT_REPLIED,
+])
 
-const mapPayload = data => {
-  if (!NotificationDtoInternal.isKnownType(data)) {
-    throw new Error(`[NotificationDto] Unknown notification type "${data.type}"`)
+const isKnownType = notification => Object.values(NOTIFICATION_TYPES).includes(notification.type)
+
+const mapChapter = notification =>
+  notification.chapter === null
+    ? undefined
+    : {
+        id: notification.chapter.id,
+        title: notification.chapter.title,
+      }
+
+const mapPayload = notification => {
+  if (!NotificationDtoInternal.isKnownType(notification)) {
+    throw new Error(`[NotificationDto] Unknown notification type "${notification.type}"`)
   }
 
-  if (data.type === NOTIFICATION_TYPES.CHAPTER_CONTINUED) {
-    return ChapterContinuedDto.fromNotification(data)
+  if (notification.type === NOTIFICATION_TYPES.CHAPTER_CONTINUED) {
+    return ChapterContinuedDto.fromNotification(notification)
   }
 
-  if (data.type === NOTIFICATION_TYPES.LIKE_RECEIVED) {
-    return LikeReceivedDto.fromNotification(data)
+  if (notification.type === NOTIFICATION_TYPES.LIKE_RECEIVED) {
+    return LikeReceivedDto.fromNotification(notification)
   }
 
-  if (CHAPTERS_PAYLOAD_TYPES.has(data.type)) {
-    return ChaptersPayloadDto.fromNotification(data)
+  if (CHAPTERS_PAYLOAD_TYPES.has(notification.type)) {
+    return ChaptersPayloadDto.fromNotification(notification)
+  }
+
+  if (COMMENT_PAYLOAD_TYPES.has(notification.type)) {
+    return CommentPayloadDto.fromNotification(notification)
   }
 
   return {}
@@ -72,5 +88,6 @@ const mapPayload = data => {
 
 export const NotificationDtoInternal = {
   isKnownType,
+  mapChapter,
   mapPayload,
 }

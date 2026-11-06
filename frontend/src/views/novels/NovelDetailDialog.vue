@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { t, route, router } from '@/services/shortcuts/services-shortcut.js'
 import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
@@ -7,17 +7,44 @@ import { useNovelDetail } from '@/apis/novels/composables/use-novel-detail.js'
 import { useChapterStore } from '@/apis/chapters/stores/chapter-store.js'
 import { useNovelDetailHead } from '@/head/use-novel-detail-head.js'
 import DialogComponent from '@/components/DialogComponent.vue'
+import CommentThread from '@/views/comments/CommentThread.vue'
+import { useCommentStore } from '@/apis/comments/stores/comment-store.js'
+import { COMMENT_TARGETS } from '@/constants/comment-constants.js'
+import { NOVEL_DETAIL_VIEWS } from '@/constants/novel-constants.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 useNovelDetailHead()
 
-const { selectedNovel, clearSelectedNovel } = useNovelStore()
+const { selectedNovel, clearSelectedNovel, setSelectedNovelCommentCount } = useNovelStore()
+const { commentCount } = useCommentStore()
 const { novelDetail } = useNovelDetail()
 const { mainBranch, currentChapter, setMainBranch, setCurrentChapter, clear } = useChapterStore()
 
 const dialog = ref()
 const isLoading = ref(false)
 const errorMessage = ref('')
+const currentView = ref(NOVEL_DETAIL_VIEWS.NOVEL)
+
+const commentTarget = computed(() => ({
+  type: COMMENT_TARGETS.NOVEL,
+  novelSlug: selectedNovel.value.slug,
+}))
+
+watch(commentCount, count => {
+  if (count === undefined || !selectedNovel.value) {
+    return
+  }
+
+  setSelectedNovelCommentCount(count)
+})
+
+const showComments = () => {
+  currentView.value = NOVEL_DETAIL_VIEWS.COMMENTS
+}
+
+const showNovel = () => {
+  currentView.value = NOVEL_DETAIL_VIEWS.NOVEL
+}
 
 const selectNovel = async slug => {
   const response = await novelDetail.selectBySlug(slug)
@@ -67,6 +94,7 @@ const openForSlug = async slug => {
   }
 
   errorMessage.value = ''
+  showNovel()
 
   if (dialog.value) {
     dialog.value.show()
@@ -99,6 +127,7 @@ const handleDialogClose = () => {
   clearSelectedNovel()
   clear()
   errorMessage.value = ''
+  showNovel()
 
   if (route.get('slug')) {
     router.push('/')
@@ -125,7 +154,7 @@ watch(() => route.get('slug'), openForSlug)
       </div>
 
       <div
-        v-if="selectedNovel"
+        v-if="selectedNovel && currentView === NOVEL_DETAIL_VIEWS.NOVEL"
         class="novel-detail-dialog__content | d-flex g-20"
       >
         <div class="novel-detail-dialog__left">
@@ -143,6 +172,21 @@ watch(() => route.get('slug'), openForSlug)
             >
               <i class="fa-solid fa-book fs-700 color-neutral-500"></i>
             </div>
+          </div>
+
+          <div class="novel-detail-dialog__toolbar | d-flex a-center g-10">
+            <button
+              type="button"
+              class="novel-detail-dialog__comments | btn btn-sm btn-primary-alt d-flex a-center g-5"
+              :title="t('novel.comments')"
+              :aria-label="t('novel.comments')"
+              @click="showComments"
+            >
+              <i class="fa-solid fa-comments"></i>
+              <span class="novel-detail-dialog__comment-count">
+                {{ selectedNovel.commentCount }}
+              </span>
+            </button>
           </div>
 
           <button
@@ -193,6 +237,25 @@ watch(() => route.get('slug'), openForSlug)
             {{ errorMessage }}
           </div>
         </div>
+      </div>
+
+      <div
+        v-if="selectedNovel && currentView === NOVEL_DETAIL_VIEWS.COMMENTS"
+        class="novel-detail-dialog__comments-view | d-flex f-column g-15"
+      >
+        <button
+          type="button"
+          class="novel-detail-dialog__back | novel-detail-dialog__link | d-flex a-center g-5 fs-300 color-primary"
+          @click="showNovel"
+        >
+          <i class="fa-solid fa-arrow-left"></i>
+          {{ t('novel.back_to_novel') }}
+        </button>
+
+        <CommentThread
+          :key="selectedNovel.slug"
+          :target="commentTarget"
+        />
       </div>
     </div>
   </DialogComponent>
@@ -271,6 +334,12 @@ watch(() => route.get('slug'), openForSlug)
 
   &__error {
     margin-bottom: 15px;
+  }
+
+  &__comments-view {
+    max-height: calc(100dvh - 150px);
+    overflow-y: auto;
+    padding-right: 10px;
   }
 }
 </style>

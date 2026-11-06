@@ -52,9 +52,10 @@ class CommentControllerStoreForChapterTest extends TestCase
         $this->actingAs($reader)
             ->postJson("/api/v1/chapters/{$chapter->id}/comments", $this->getDatas(['is_spoiler' => true]))
             ->assertCreated()
-            ->assertJsonPath('content', $this->datas['content'])
-            ->assertJsonPath('is_spoiler', true)
-            ->assertJsonPath('author.username', $reader->username);
+            ->assertJsonPath('comment.content', $this->datas['content'])
+            ->assertJsonPath('comment.is_spoiler', true)
+            ->assertJsonPath('comment.author.username', $reader->username)
+            ->assertJsonPath('comment_count', 1);
 
         $this->assertDatabaseHas('comments', [
             'author_id' => $reader->id,

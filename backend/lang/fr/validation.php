@@ -90,5 +90,8 @@ return [
         'is_spoiler' => [
             'boolean' => 'L\'indication de divulgâcheur doit valoir vrai ou faux',
         ],
+        'mentioned_user_id' => [
+            'integer' => 'Le lecteur mentionné est invalide',
+        ],
     ],
 ];

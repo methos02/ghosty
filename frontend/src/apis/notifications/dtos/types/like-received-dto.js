@@ -1,6 +1,6 @@
-const fromNotification = data => ({
-  lastActorUsername: data.data.last_actor_username,
-  count: data.data.count,
+const fromNotification = notification => ({
+  lastActorUsername: notification.last_actor_username,
+  count: notification.count,
 })
 
 export const LikeReceivedDto = {

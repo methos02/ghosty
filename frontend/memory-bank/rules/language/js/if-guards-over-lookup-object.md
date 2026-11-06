@@ -9,15 +9,15 @@ To dispatch on a value (type, status), MUST write guard clauses `if (value === X
 ```js
 // BAD
 const TYPE_DTOS = { [TYPES.LIKE_RECEIVED]: LikeReceivedDto, [TYPES.CHAPTER_CONTINUED]: ChapterContinuedDto }
-return TYPE_DTOS[data.type]?.fromNotification(data)
+return TYPE_DTOS[notification.type]?.fromNotification(notification)
 
 // GOOD
-if (data.type === TYPES.LIKE_RECEIVED) {
-  return LikeReceivedDto.fromNotification(data)
+if (notification.type === TYPES.LIKE_RECEIVED) {
+  return LikeReceivedDto.fromNotification(notification)
 }
 
-if (data.type === TYPES.CHAPTER_CONTINUED) {
-  return ChapterContinuedDto.fromNotification(data)
+if (notification.type === TYPES.CHAPTER_CONTINUED) {
+  return ChapterContinuedDto.fromNotification(notification)
 }
 
 return {}

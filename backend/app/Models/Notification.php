@@ -10,6 +10,8 @@ use Illuminate\Notifications\DatabaseNotification;
 /**
  * @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md
  *
+ * @property array<string, mixed> $data
+ *
  * @mixin IdeHelperNotification
  */
 class Notification extends DatabaseNotification

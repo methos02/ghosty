@@ -6,6 +6,7 @@ use App\Models\Chapter;
 use App\Models\Comment;
 use App\Models\Novel;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @see memory-bank/decisions/ADR-13-commentaires.md
@@ -32,6 +33,16 @@ class CommentRepository
     {
         return Comment::query()
             ->findOrFail($commentId);
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function listVisibleReplies(Comment $parent): Collection
+    {
+        return $parent->visibleReplies()
+            ->with('author')
+            ->get();
     }
 
     /**

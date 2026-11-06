@@ -21,7 +21,11 @@ class NotificationFactory extends Factory
             'type' => NotificationType::LikeReceived->value,
             'notifiable_type' => (new User)->getMorphClass(),
             'notifiable_id' => UserFactory::new(),
-            'data' => ['count' => 1],
+            'data' => [
+                'chapter' => ['id' => 1, 'title' => 'Le phare'],
+                'novel' => ['slug' => 'la-maree-noire', 'title' => 'La marée noire'],
+                'count' => 1,
+            ],
             'group_key' => NotificationType::LikeReceived->value.':chapter:'.Str::random(8),
         ];
     }

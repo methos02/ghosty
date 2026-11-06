@@ -5,6 +5,7 @@ import { app } from '@/config/app-config.js'
 import { readingConfig } from '@/config/reading-config.js'
 import { chapterConfig } from '@/config/chapter-config.js'
 import { reportConfig } from '@/config/report-config.js'
+import { commentConfig } from '@/config/comment-config.js'
 
 const configUser = {
   locales,
@@ -14,6 +15,7 @@ const configUser = {
   reading: readingConfig,
   chapter: chapterConfig,
   report: reportConfig,
+  comment: commentConfig,
 }
 
 const init = configs => {

@@ -36,7 +36,7 @@ class CommentControllerDestroyTest extends TestCase
 
         $this->actingAs($comment->author)
             ->deleteJson("/api/v1/comments/{$comment->id}")
-            ->assertNoContent();
+            ->assertOk();
 
         $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
@@ -46,14 +46,15 @@ class CommentControllerDestroyTest extends TestCase
     }
 
     #[Test]
-    public function uncounts_the_comment_on_the_content(): void
+    public function uncounts_the_comment_on_the_content_and_serves_the_new_total(): void
     {
         $chapter = Chapter::factory()->create();
         $comment = Comment::factory()->on($chapter)->create();
 
         $this->actingAs($comment->author)
             ->deleteJson("/api/v1/comments/{$comment->id}")
-            ->assertNoContent();
+            ->assertOk()
+            ->assertJsonPath('comment_count', 0);
 
         $this->assertSame(0, $chapter->refresh()->comment_count);
     }
@@ -66,7 +67,7 @@ class CommentControllerDestroyTest extends TestCase
 
         $this->actingAs($reply->author)
             ->deleteJson("/api/v1/comments/{$reply->id}")
-            ->assertNoContent();
+            ->assertOk();
 
         $this->assertSame(0, $comment->refresh()->reply_count);
     }

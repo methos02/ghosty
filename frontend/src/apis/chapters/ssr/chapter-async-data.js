@@ -1,44 +1,38 @@
 export const chapterReadingAsyncData = async ({ stores, route, cookie }) => {
-  const [{ ChapterController }, { ajaxHelper }] = await Promise.all([
-    import('@/apis/chapters/controllers/chapter-controller.js'),
-    import('@/core/helpers/ajax-helper.js'),
-  ])
+  const { useChapterReading } = await import('@/apis/chapters/composables/use-chapter-reading.js')
+  const { chapterReading } = useChapterReading({
+    readingStore: stores.reading,
+    novelStore: stores.novel,
+  })
 
-  const response = await ChapterController.reading(
+  const response = await chapterReading.load(
     route.params.slug,
     route.params.id,
     viewerOptions(cookie),
   )
-  if (ajaxHelper.isSuccess(response.status)) {
-    stores.novel.setSelectedNovel(response.novel)
-    stores.reading.setReading(response)
-  }
 
   return { statusCode: response.status }
 }
 
 export const multiverseAsyncData = async ({ stores, route, cookie }) => {
-  const [{ ChapterController }, { NovelController }, { ajaxHelper }] = await Promise.all([
-    import('@/apis/chapters/controllers/chapter-controller.js'),
-    import('@/apis/novels/controllers/novel-controller.js'),
+  const [{ useNovelDetail }, { useChapterTree }, { ajaxHelper }] = await Promise.all([
+    import('@/apis/novels/composables/use-novel-detail.js'),
+    import('@/apis/chapters/composables/use-chapter-tree.js'),
     import('@/core/helpers/ajax-helper.js'),
   ])
+  const { novelDetail } = useNovelDetail({ novelStore: stores.novel })
+  const { chapterTree } = useChapterTree({ treeStore: stores.tree })
 
-  const novelResponse = await NovelController.getBySlug(route.params.slug)
+  const novelResponse = await novelDetail.selectBySlug(route.params.slug)
   if (!ajaxHelper.isSuccess(novelResponse.status)) {
     return { statusCode: novelResponse.status }
   }
 
-  stores.novel.setSelectedNovel(novelResponse.novel)
-
-  const treeResponse = await ChapterController.tree(
+  const treeResponse = await chapterTree.load(
     route.params.slug,
     route.query.from,
     viewerOptions(cookie),
   )
-  if (ajaxHelper.isSuccess(treeResponse.status)) {
-    stores.tree.setTree(treeResponse)
-  }
 
   return { statusCode: treeResponse.status }
 }

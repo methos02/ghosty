@@ -5,6 +5,7 @@ import express from 'express'
 import { transformHtmlTemplate } from '@unhead/vue/server'
 import { log } from './src/services/shortcuts/log-shortcut.js'
 import { STATUS } from './src/constants/ajax-constants.js'
+import { stateScript } from './src/ssr/engine/state-script.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -17,16 +18,10 @@ globalThis.__SSR_ORIGIN__ = process.env.SSR_ORIGIN || `http://localhost:${port}`
 // @see ../backend/memory-bank/decisions/ADR-04-token-en-cookie-httponly.md
 const browserUrl = process.env.SSR_PUBLIC_URL || `http://localhost:${port}`
 
-const BACKSLASH = String.fromCodePoint(92)
-const escapeState = state =>
-  JSON.stringify(state ?? {}).replaceAll(String.fromCodePoint(60), () => BACKSLASH + 'u003c')
-
 const buildHtml = (template, rendered) => {
-  const stateScript = `<script>window.__INITIAL_STATE__ = ${escapeState(rendered.state)}</script>`
-
   return template
     .replace('<!--app-html-->', () => rendered.html ?? '')
-    .replace('<!--ssr-state-->', () => stateScript)
+    .replace('<!--ssr-state-->', () => stateScript.build(rendered.state))
 }
 
 const sendRendered = async (response, rendered) => {
@@ -57,7 +52,7 @@ const createDevelopmentServer = async app => {
       const url = req.originalUrl
       const rawTemplate = fs.readFileSync(path.resolve(__dirname, 'index.html'), 'utf8')
       const template = await vite.transformIndexHtml(url, rawTemplate)
-      const { render } = await vite.ssrLoadModule('/src/ssr/entry-server.js')
+      const { render } = await vite.ssrLoadModule('/src/ssr/engine/entry-server.js')
 
       const rendered = await render(url, { cookie: req.headers.cookie })
       await sendRendered(response, { ...rendered, template: buildHtml(template, rendered) })

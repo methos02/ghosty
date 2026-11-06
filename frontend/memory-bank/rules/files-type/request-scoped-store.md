@@ -25,6 +25,6 @@ const novels = ref([])
 export const useNovelStore = () => ({ novels, novelStore: { setNovels } })
 ```
 
-Each store exposes `serialize()` / `hydrate()`, is provided per request in `ssr/app.js`, and is read through `useXStore()` (`inject`). Guarded by the test `creates isolated stores per call (request-scoped)`.
+Each store exposes `serialize()` / `hydrate()` and is read through `useXStore()` (`inject`). A store rendered at SSR has exactly one `{ name, key, create }` entry in `STORE_ENTRIES` of `src/ssr/store-registry.js`; never create, `provide()`, serialize or hydrate it by hand in `ssr/app.js` or the engine — a store missing from the registry is neither provided nor sent to the browser. Guarded by the test `creates isolated stores per call (request-scoped)`, in each store's `createXStore` test and in `tests/ssr/store-registry/store-registry.createStores.test.js`.
 
 Passing the refs in as `xStore(state)` to lift them into the factory was tried and rejected: the state ends up listed three times (signature, allocation, returned object).

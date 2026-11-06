@@ -3,12 +3,12 @@ import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
 import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
-export const useChapterReading = () => {
-  const readingStore = useReadingStore()
-  const novelStore = useNovelStore()
-
-  const load = async (novelSlug, chapterId) => {
-    const response = await ChapterController.reading(novelSlug, chapterId)
+export const useChapterReading = ({
+  readingStore = useReadingStore(),
+  novelStore = useNovelStore(),
+} = {}) => {
+  const load = async (novelSlug, chapterId, options = {}) => {
+    const response = await ChapterController.reading(novelSlug, chapterId, options)
     if (!ajaxHelper.isSuccess(response.status)) {
       return response
     }

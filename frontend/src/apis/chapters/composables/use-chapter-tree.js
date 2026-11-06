@@ -2,11 +2,9 @@ import { ChapterController } from '@/apis/chapters/controllers/chapter-controlle
 import { useTreeStore } from '@/apis/chapters/stores/tree-store.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
-export const useChapterTree = () => {
-  const treeStore = useTreeStore()
-
-  const load = async (novelSlug, fromChapterId) => {
-    const response = await ChapterController.tree(novelSlug, fromChapterId)
+export const useChapterTree = ({ treeStore = useTreeStore() } = {}) => {
+  const load = async (novelSlug, fromChapterId, options = {}) => {
+    const response = await ChapterController.tree(novelSlug, fromChapterId, options)
     if (!ajaxHelper.isSuccess(response.status)) {
       return response
     }

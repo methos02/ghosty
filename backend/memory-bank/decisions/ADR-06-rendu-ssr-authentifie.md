@@ -36,5 +36,5 @@ Le cookie `ghosty_token` étant posé sur le domaine parent (`.ghosty.local`, `.
 ## Références
 
 - `frontend/src/services/auth/src/auth-store.js`, `frontend/src/services/auth/src/auth-functions.js` → `restoreSession()`
-- `frontend/src/ssr/app.js`, `frontend/src/ssr/entry-server.js`, `frontend/src/ssr/entry-client.js`
+- `frontend/src/ssr/server-app.js`, `frontend/src/ssr/client-app.js`, `frontend/src/ssr/store-registry.js` (chemins mis à jour par [ADR-14](ADR-14-librairie-externe-isolee-derriere-un-contrat.md))
 - `frontend/server.js`

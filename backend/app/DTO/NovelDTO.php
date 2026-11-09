@@ -2,6 +2,7 @@
 
 namespace App\DTO;
 
+use App\Http\Requests\StoreNovelRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
 final readonly class NovelDTO
@@ -11,13 +12,19 @@ final readonly class NovelDTO
         public int $genreId
     ) {}
 
-    public static function fromRequest(FormRequest $request, bool $addPrefix = false): self
+    public static function fromRequest(FormRequest $request): self
     {
-        $prefix = $addPrefix ? 'novel.' : '';
-
         return new self(
-            title: $request->string($prefix.'title')->toString(),
-            genreId: $request->integer($prefix.'genre_id'),
+            title: $request->string('title')->toString(),
+            genreId: $request->integer('genre_id'),
+        );
+    }
+
+    public static function fromNovelCreation(StoreNovelRequest $request): self
+    {
+        return new self(
+            title: $request->string('novel.title')->toString(),
+            genreId: $request->integer('novel.genre_id'),
         );
     }
 

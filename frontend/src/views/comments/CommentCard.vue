@@ -14,6 +14,8 @@ const { openLoginDialog } = useAuth()
 
 const mentionedAuthor = ref()
 
+const isReplyable = computed(() => !props.comment.isDeleted && !props.comment.isHidden)
+
 const threadUsernames = computed(() =>
   [props.comment, ...props.comment.replies]
     .filter(threadComment => threadComment.author !== undefined)
@@ -39,7 +41,7 @@ const closeReplyForm = () => {
     <CommentContent
       :comment="comment"
       :threadUsernames="threadUsernames"
-      :isReplyable="!comment.isDeleted"
+      :isReplyable="isReplyable"
       @reply="openReplyForm(comment.author)"
     />
 
@@ -55,7 +57,7 @@ const closeReplyForm = () => {
         <CommentContent
           :comment="reply"
           :threadUsernames="threadUsernames"
-          :isReplyable="!comment.isDeleted"
+          :isReplyable="isReplyable"
           @reply="openReplyForm(reply.author)"
         />
       </li>

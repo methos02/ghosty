@@ -17,7 +17,10 @@ class FollowControllerStoreTest extends TestCase
         $route = Route::getRoutes()->getByAction(FollowController::class.'@store');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(
+            ['api', 'auth:sanctum', 'can:follow,chapter'],
+            $route->gatherMiddleware()
+        );
     }
 
     #[Test]

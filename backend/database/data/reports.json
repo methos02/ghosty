@@ -1,0 +1,26 @@
+[
+  {
+    "reporter": "lecteur1",
+    "chapter": "Le passager",
+    "reason": "off_topic",
+    "description": "Ce chapitre ne suit pas du tout la scène du virage, on dirait un autre roman."
+  },
+  {
+    "reporter": "auteur2",
+    "chapter": "Le passager",
+    "reason": "poor_quality",
+    "description": "Plusieurs phrases s'arrêtent au milieu, le texte semble inachevé."
+  },
+  {
+    "reporter": "auteur3",
+    "chapter": "Bande 47",
+    "reason": "plagiarism",
+    "description": "Le deuxième paragraphe reprend mot pour mot une nouvelle publiée ailleurs."
+  },
+  {
+    "reporter": "auteur1",
+    "comment": "Petite incohérence",
+    "reason": "personal_attack",
+    "description": "Le ton vise l'auteur plus que le texte."
+  }
+]

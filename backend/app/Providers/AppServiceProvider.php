@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
+use App\Helpers\TokenCookieSettingsHelper;
 use App\Models\Chapter;
 use App\Models\Comment;
 use App\Models\Novel;
 use App\Models\User;
-use App\Support\TokenCookieSettingsSupport;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
     private function resolveAccessTokenFromCookie(): void
     {
         Sanctum::getAccessTokenFromRequestUsing(function (Request $request): ?string {
-            $cookieToken = $request->cookie(TokenCookieSettingsSupport::fromConfig()->name);
+            $cookieToken = $request->cookie(TokenCookieSettingsHelper::fromConfig()->name);
 
             return is_string($cookieToken) && $cookieToken !== '' ? $cookieToken : null;
         });

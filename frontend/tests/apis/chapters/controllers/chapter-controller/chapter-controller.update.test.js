@@ -3,7 +3,6 @@ import { ChapterController } from '@/apis/chapters/controllers/chapter-controlle
 import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
 import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
 import { STATUS } from '@/constants/ajax-constants.js'
-import { form } from '@/services/shortcuts/services-shortcut.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 
 describe('chapter-controller', () => {
@@ -24,6 +23,7 @@ describe('chapter-controller', () => {
       expect(ChapterRepository.update).toHaveBeenCalledWith({
         params: ChapterDto.toChapterParams(10),
         body: ChapterDto.toUpdate(formData),
+        form: 'chapter',
       })
     })
 
@@ -36,19 +36,6 @@ describe('chapter-controller', () => {
       const result = await ChapterController.update(10, chapterSeeder.getWriteForm())
 
       expect(result.chapter).toEqual(chapterSeeder.getChapter())
-    })
-
-    it('registers the refusal of a rewrite on 422 and returns an error status', async () => {
-      vi.spyOn(ChapterRepository, 'update').mockResolvedValue({
-        status: STATUS.UNPROCESSABLE_ENTITY,
-        data: { errors: { content: ['texte réécrit'] } },
-      })
-      const addValidationErrors = vi.spyOn(form, 'addValidationErrors').mockImplementation(() => {})
-
-      const result = await ChapterController.update(10, chapterSeeder.getWriteForm())
-
-      expect(addValidationErrors).toHaveBeenCalledWith({ content: ['texte réécrit'] }, 'chapter')
-      expect(result.status).toBe(STATUS.UNPROCESSABLE_ENTITY)
     })
 
     it('passes the repository error through untouched', async () => {

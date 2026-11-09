@@ -6,12 +6,12 @@ import { GenreRepository } from '@/apis/genres/repositories/genre-repository.js'
 import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
 import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
 import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
-import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
+import { createNovelStore, NOVEL_STORE_KEY } from '@/core-vue/stores/novels/novel-store.js'
 import {
   createNovelFilterStore,
   NOVEL_FILTER_STORE_KEY,
-} from '@/apis/novels/stores/novel-filter-store.js'
-import { createChapterStore, CHAPTER_STORE_KEY } from '@/apis/chapters/stores/chapter-store.js'
+} from '@/core-vue/stores/novels/novel-filter-store.js'
+import { createChapterStore, CHAPTER_STORE_KEY } from '@/core-vue/stores/chapters/chapter-store.js'
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { controllerSuccess } from '&/utils/helpers/controller-response.js'

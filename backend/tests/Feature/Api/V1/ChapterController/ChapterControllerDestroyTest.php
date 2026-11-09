@@ -27,7 +27,10 @@ class ChapterControllerDestroyTest extends TestCase
         $route = Route::getRoutes()->getByAction(ChapterController::class.'@destroy');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(
+            ['api', 'auth:sanctum', 'can:delete,chapter'],
+            $route->gatherMiddleware()
+        );
     }
 
     #[Test]

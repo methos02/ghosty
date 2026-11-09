@@ -3,7 +3,7 @@ import { mount, flushPromises } from '@vue/test-utils'
 import CommentForm from '@/views/comments/CommentForm.vue'
 import { CommentRepository } from '@/apis/comments/repositories/comment-repository.js'
 import { CommentDto } from '@/apis/comments/dtos/comment-dto.js'
-import { useCommentStore } from '@/apis/comments/stores/comment-store.js'
+import { useCommentStore } from '@/core-vue/stores/comments/comment-store.js'
 import { form, t } from '@/services/shortcuts/services-shortcut.js'
 import { useAuth } from '@/services/auth/src/use-auth.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
@@ -56,6 +56,7 @@ describe('CommentForm.vue', () => {
     expect(CommentRepository.createOnChapter).toHaveBeenCalledWith({
       params: CommentDto.toTargetParams(target),
       body: CommentDto.toCreate(formData),
+      form: 'comment',
     })
     expect(comments.value).toEqual([CommentDto.fromShow(createdApi.comment), ...loaded])
     expect(commentCount.value).toBe(CommentDto.fromCommentCount(createdApi))

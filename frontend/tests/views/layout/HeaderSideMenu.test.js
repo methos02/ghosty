@@ -3,20 +3,17 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import HeaderSideMenu from '@/views/layout/HeaderSideMenu.vue'
 import { auth } from '@/services/shortcuts/services-shortcut.js'
+import { useAuthStore } from '@/services/auth/src/auth-store.js'
+import { userSeeder } from '&/utils/seeders/user-seeder.js'
 
 describe('HeaderSideMenu.vue', () => {
   let wrapper
-
-  const openedMenu = async () => {
-    wrapper = mount(HeaderSideMenu)
-    await wrapper.find('.header-burger').trigger('click')
-    return wrapper
-  }
 
   const isOpen = () => wrapper.find('.header-side').classes('header-side--open')
 
   afterEach(() => {
     vi.clearAllMocks()
+    useAuthStore().clear()
     wrapper?.unmount()
     wrapper = undefined
   })
@@ -28,13 +25,16 @@ describe('HeaderSideMenu.vue', () => {
   })
 
   it('opens the panel when the burger is clicked', async () => {
-    await openedMenu()
+    wrapper = mount(HeaderSideMenu)
+
+    await wrapper.find('.header-burger').trigger('click')
 
     expect(isOpen()).toBe(true)
   })
 
   it('closes the panel when the burger is clicked a second time', async () => {
-    await openedMenu()
+    wrapper = mount(HeaderSideMenu)
+    await wrapper.find('.header-burger').trigger('click')
 
     await wrapper.find('.header-burger').trigger('click')
 
@@ -42,7 +42,8 @@ describe('HeaderSideMenu.vue', () => {
   })
 
   it('closes the panel when the backdrop is clicked', async () => {
-    await openedMenu()
+    wrapper = mount(HeaderSideMenu)
+    await wrapper.find('.header-burger').trigger('click')
 
     await wrapper.find('.header-side__backdrop').trigger('click')
 
@@ -50,7 +51,8 @@ describe('HeaderSideMenu.vue', () => {
   })
 
   it('closes the panel when Escape is pressed', async () => {
-    await openedMenu()
+    wrapper = mount(HeaderSideMenu)
+    await wrapper.find('.header-burger').trigger('click')
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
     await nextTick()
@@ -59,7 +61,8 @@ describe('HeaderSideMenu.vue', () => {
   })
 
   it('closes the panel when a menu entry is followed', async () => {
-    await openedMenu()
+    wrapper = mount(HeaderSideMenu)
+    await wrapper.find('.header-burger').trigger('click')
 
     await wrapper.find('.header-create').trigger('click')
 
@@ -68,7 +71,8 @@ describe('HeaderSideMenu.vue', () => {
 
   it('closes the panel when logging out', async () => {
     vi.spyOn(auth, 'logout').mockResolvedValue({ status: 200 })
-    await openedMenu()
+    wrapper = mount(HeaderSideMenu)
+    await wrapper.find('.header-burger').trigger('click')
 
     await wrapper.find('.header-logout').trigger('click')
 
@@ -76,9 +80,35 @@ describe('HeaderSideMenu.vue', () => {
   })
 
   it('reports the panel state to assistive technology', async () => {
-    await openedMenu()
+    wrapper = mount(HeaderSideMenu)
+
+    await wrapper.find('.header-burger').trigger('click')
 
     expect(wrapper.find('.header-burger').attributes('aria-expanded')).toBe('true')
     expect(wrapper.find('.header-side__panel').attributes('aria-hidden')).toBe('false')
+  })
+
+  it('leads a moderator to the moderation queue', () => {
+    useAuthStore().setUser(userSeeder.getUser({ roles: ['moderator'] }))
+
+    wrapper = mount(HeaderSideMenu)
+
+    expect(wrapper.findComponent('.header-moderation').props('to')).toEqual({ name: 'moderation' })
+  })
+
+  it('leads an admin to the moderation queue', () => {
+    useAuthStore().setUser(userSeeder.getUser({ roles: ['admin'] }))
+
+    wrapper = mount(HeaderSideMenu)
+
+    expect(wrapper.find('.header-moderation').exists()).toBe(true)
+  })
+
+  it('hides the moderation queue from a reader', () => {
+    useAuthStore().setUser(userSeeder.getUser())
+
+    wrapper = mount(HeaderSideMenu)
+
+    expect(wrapper.find('.header-moderation').exists()).toBe(false)
   })
 })

@@ -6,6 +6,7 @@ import { readingConfig } from '@/config/reading-config.js'
 import { chapterConfig } from '@/config/chapter-config.js'
 import { reportConfig } from '@/config/report-config.js'
 import { commentConfig } from '@/config/comment-config.js'
+import { moderationConfig } from '@/config/moderation-config.js'
 
 const configUser = {
   locales,
@@ -16,6 +17,7 @@ const configUser = {
   chapter: chapterConfig,
   report: reportConfig,
   comment: commentConfig,
+  moderation: moderationConfig,
 }
 
 const init = configs => {

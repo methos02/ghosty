@@ -57,6 +57,33 @@ return [
             'max' => 'La description ne peut pas dépasser :max caractères',
         ],
     ],
+    'moderation' => [
+        'resolution' => [
+            'required' => 'Choisissez une décision',
+            'enum' => 'Cette décision n\'est pas possible pour ce contenu',
+        ],
+        'content' => [
+            'required' => 'Le texte caviardé est obligatoire',
+            'altered' => 'Le texte caviardé ne peut que retirer des passages, sans en ajouter ni en modifier',
+            'nothing_removed' => 'Sélectionnez au moins un passage à retirer',
+        ],
+        'sanction' => [
+            'type' => [
+                'required' => 'Le type de sanction est obligatoire',
+                'required_for_hidden_comment' => 'Masquer un commentaire entraîne au minimum un avertissement de son auteur',
+                'enum' => 'Le type de sanction est invalide',
+            ],
+            'days' => [
+                'integer' => 'La durée doit être un nombre de jours',
+                'min' => 'La durée doit être d\'au moins :min jour',
+                'max' => 'La durée ne peut pas dépasser :max jours',
+            ],
+            'reason' => [
+                'required' => 'Indiquez le motif de la sanction',
+                'max' => 'Le motif ne peut pas dépasser :max caractères',
+            ],
+        ],
+    ],
     'report_filter' => [
         'status' => [
             'enum' => 'Le statut sélectionné est invalide',

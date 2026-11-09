@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FollowResource;
+use App\Models\Chapter;
 use App\Models\User;
-use App\Repositories\ChapterRepository;
 use App\Repositories\FollowRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Config;
 class FollowController extends Controller
 {
     public function __construct(
-        private readonly ChapterRepository $chaptersR,
         private readonly FollowRepository $followsR
     ) {}
 
@@ -38,24 +37,20 @@ class FollowController extends Controller
         ]);
     }
 
-    public function store(Request $request, int $chapterId): JsonResponse
+    public function store(Request $request, Chapter $chapter): JsonResponse
     {
         /** @var User $follower */
         $follower = $request->user();
-        $chapter = $this->chaptersR->find($chapterId, withoutRelations: true);
-
-        $this->authorize('follow', $chapter);
 
         $this->followsR->createIfAbsent($follower->id, $chapter->id);
 
         return response()->json(['is_followed' => true]);
     }
 
-    public function destroy(Request $request, int $chapterId): JsonResponse
+    public function destroy(Request $request, Chapter $chapter): JsonResponse
     {
         /** @var User $follower */
         $follower = $request->user();
-        $chapter = $this->chaptersR->find($chapterId, withoutRelations: true);
 
         $this->followsR->delete($follower->id, $chapter->id);
 

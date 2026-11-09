@@ -21,7 +21,6 @@ const drafts = ref([])
 
 const draftId = computed(() => Number(route.get('id')) || undefined)
 
-const draftLabel = draft => draft.novel.title || draft.title || t('novel_manage.draft_untitled')
 
 const selectedDraft = computed({
   get: () => draftId.value,
@@ -179,7 +178,7 @@ onMounted(async () => {
             :key="item.id"
             :value="item.id"
           >
-            {{ draftLabel(item) }}
+            {{ item.novel.title || item.title || t('novel_manage.draft_untitled') }}
           </option>
         </SelectComponent>
 

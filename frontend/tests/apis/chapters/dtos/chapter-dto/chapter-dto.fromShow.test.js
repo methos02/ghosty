@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
+import { CHAPTER_STATUSES } from '@/constants/chapter-constants.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 
 describe('chapter-dto', () => {
@@ -14,7 +15,14 @@ describe('chapter-dto', () => {
         title: 'Le virage',
         summary: 'Une route de montagne, un virage manqué.',
         content: 'La voiture avait quitté la route au troisième virage...',
-        paragraphs: ['La voiture avait quitté la route au troisième virage...'],
+        paragraphs: [
+          [
+            {
+              text: 'La voiture avait quitté la route au troisième virage...',
+              isRemoved: false,
+            },
+          ],
+        ],
         depth: 0,
         hasChildren: false,
         childrenCount: 0,
@@ -25,6 +33,8 @@ describe('chapter-dto', () => {
         isFollowed: false,
         commentCount: 0,
         isDraft: false,
+        isArchived: false,
+        isHidden: false,
         isCorrectable: true,
         isRoot: true,
         novel: { id: 1, slug: 'nuit-virage', title: 'Nuit virage', genreId: 3 },
@@ -46,10 +56,59 @@ describe('chapter-dto', () => {
       })
 
       expect(ChapterDto.fromShow(api).paragraphs).toEqual([
-        'Premier bloc.',
-        'Deuxième bloc.',
-        'Troisième.',
+        [
+          {
+            text: 'Premier bloc.',
+            isRemoved: false,
+          },
+        ],
+        [
+          {
+            text: 'Deuxième bloc.',
+            isRemoved: false,
+          },
+        ],
+        [
+          {
+            text: 'Troisième.',
+            isRemoved: false,
+          },
+        ],
       ])
+    })
+
+    it('marks the passages the moderation removed inside their paragraph', () => {
+      const result = ChapterDto.fromShow(chapterSeeder.getChapterWithRemovedPassageApi())
+
+      expect(result.paragraphs).toEqual([
+        [
+          {
+            text: 'La voiture avait quitté la route. ',
+            isRemoved: false,
+          },
+          {
+            text: '',
+            isRemoved: true,
+          },
+          {
+            text: ' Puis plus rien.',
+            isRemoved: false,
+          },
+        ],
+      ])
+    })
+
+    it('flags a chapter the moderation archived', () => {
+      expect(ChapterDto.fromShow(chapterSeeder.getArchivedChapterApi()).isArchived).toBe(true)
+    })
+
+    it('flags a chapter the moderation hid', () => {
+      const chapter = ChapterDto.fromShow(
+        chapterSeeder.getChapterApi({ status: CHAPTER_STATUSES.HIDDEN }),
+      )
+
+      expect(chapter.isHidden).toBe(true)
+      expect(chapter.isArchived).toBe(false)
     })
 
     it('leaves the content undefined when the api omits it', () => {

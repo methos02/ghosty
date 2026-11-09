@@ -7,6 +7,7 @@ use App\Models\Chapter;
 use App\Models\Novel;
 use App\Models\User;
 use App\Repositories\ChapterRepository;
+use App\Repositories\ChapterVersionRepository;
 use App\Repositories\NovelRepository;
 use App\Services\Notifications\ChapterContinuedNotificationService;
 use App\Services\Notifications\FollowedBranchExtendedNotificationService;
@@ -21,6 +22,7 @@ class ChapterService
     public function __construct(
         private readonly ChapterRepository $chaptersR,
         private readonly NovelRepository $novelsR,
+        private readonly ChapterVersionRepository $chapterVersionsR,
         private readonly ChapterContinuedNotificationService $chapterContinuedNotificationService,
         private readonly FollowedBranchExtendedNotificationService $followedBranchExtendedNotificationService
     ) {}
@@ -97,6 +99,55 @@ class ChapterService
 
             $this->chaptersR->deleteByNovel($chapter->novel_id);
             $this->novelsR->deleteById($chapter->novel_id);
+        });
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function removeFromReading(Chapter $chapter, int $status): void
+    {
+        DB::transaction(function () use ($chapter, $status) {
+            $this->trimMainBranchAt($chapter);
+            $this->chaptersR->update($chapter, ['status' => $status]);
+            $this->novelsR->decrementChapterCount($chapter->novel_id);
+
+            $parent = $this->chaptersR->findParent($chapter);
+
+            if ($parent !== null) {
+                $this->chaptersR->decrementChildrenCount($parent);
+            }
+        });
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function restore(Chapter $chapter): void
+    {
+        DB::transaction(function () use ($chapter) {
+            $this->chaptersR->update($chapter, ['status' => Chapter::STATUS_PUBLISHED]);
+            $this->novelsR->incrementChapterCount($chapter->novel_id);
+
+            $parent = $this->chaptersR->findParent($chapter);
+
+            if ($parent !== null) {
+                $this->chaptersR->incrementChildrenCount($parent);
+            }
+        });
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function removePassages(Chapter $chapter, User $moderator, string $contentAfterRemoval): void
+    {
+        DB::transaction(function () use ($chapter, $moderator, $contentAfterRemoval) {
+            $this->chapterVersionsR->create($chapter->id, $moderator->id, $chapter->content);
+            $this->chaptersR->update($chapter, [
+                'content' => $contentAfterRemoval,
+                'corrected_at' => now(),
+            ]);
         });
     }
 

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { NotificationDto } from '@/apis/notifications/dtos/notification-dto.js'
 import { LikeReceivedDto } from '@/apis/notifications/dtos/types/like-received-dto.js'
 import { CommentPayloadDto } from '@/apis/notifications/dtos/types/comment-payload-dto.js'
+import { ModerationPayloadDto } from '@/apis/notifications/dtos/types/moderation-payload-dto.js'
 import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
 import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
@@ -47,6 +48,17 @@ describe('notification-dto', () => {
 
         expect(NotificationDto.fromNotification(notificationApi).payload).toEqual(
           CommentPayloadDto.fromNotification(notificationApi),
+        )
+      },
+    )
+
+    it.each([NOTIFICATION_TYPES.CONTENT_MODERATED, NOTIFICATION_TYPES.REPORT_PROCESSED])(
+      'maps the payload of a %s notification through the moderation payload dto',
+      type => {
+        const notificationApi = notificationSeeder.getModerationNotificationApi(type)
+
+        expect(NotificationDto.fromNotification(notificationApi).payload).toEqual(
+          ModerationPayloadDto.fromNotification(notificationApi),
         )
       },
     )

@@ -7,7 +7,7 @@ const currentRoute = route.current()
 
 const isOpen = defineModel('open', { type: Boolean, default: false })
 
-const label = computed(() => (isOpen.value ? t('header.menu_close') : t('header.menu_open')))
+const labelKey = computed(() => (isOpen.value ? 'header.menu_close' : 'header.menu_open'))
 
 const close = () => {
   isOpen.value = false
@@ -21,6 +21,8 @@ watch(currentRoute, close)
 
 onKeyStroke('Escape', close)
 
+const canModerate = computed(() => auth.hasRole('moderator') || auth.hasRole('admin'))
+
 const handleLogout = async () => {
   close()
   await auth.logout()
@@ -33,7 +35,7 @@ const handleLogout = async () => {
     @click="toggle"
     class="header-burger | pointer d-flex a-center"
     :class="{ 'header-burger--active': isOpen }"
-    :aria-label="label"
+    :aria-label="t(labelKey)"
     :aria-expanded="isOpen"
     aria-controls="header-side-panel"
   >
@@ -109,6 +111,17 @@ const handleLogout = async () => {
           >
             <span class="header-side__label | flex-1">{{ t('header.favorites') }}</span>
             <i class="header-side__icon | fa-regular fa-heart"></i>
+          </router-link>
+        </li>
+
+        <li v-if="canModerate">
+          <router-link
+            :to="{ name: 'moderation' }"
+            @click="close"
+            class="header-moderation | header-side__link | d-flex a-center g-25"
+          >
+            <span class="header-side__label | flex-1">{{ t('header.moderation') }}</span>
+            <i class="header-side__icon | fa-solid fa-shield-halved"></i>
           </router-link>
         </li>
 

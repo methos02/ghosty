@@ -1,16 +1,16 @@
 import { createAuthStore, AUTH_STORE_KEY } from '@/services/auth/src/auth-store.js'
-import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
-import { createChapterStore, CHAPTER_STORE_KEY } from '@/apis/chapters/stores/chapter-store.js'
-import { createReadingStore, READING_STORE_KEY } from '@/apis/chapters/stores/reading-store.js'
-import { createTreeStore, TREE_STORE_KEY } from '@/apis/chapters/stores/tree-store.js'
+import { createNovelStore, NOVEL_STORE_KEY } from '@/core-vue/stores/novels/novel-store.js'
+import { createChapterStore, CHAPTER_STORE_KEY } from '@/core-vue/stores/chapters/chapter-store.js'
+import { createReadingStore, READING_STORE_KEY } from '@/core-vue/stores/chapters/reading-store.js'
+import { createTreeStore, TREE_STORE_KEY } from '@/core-vue/stores/chapters/tree-store.js'
 import {
   createReadingSettingsStore,
   READING_SETTINGS_STORE_KEY,
-} from '@/apis/chapters/stores/reading-settings-store.js'
+} from '@/core-vue/stores/chapters/reading-settings-store.js'
 import {
   createNovelFilterStore,
   NOVEL_FILTER_STORE_KEY,
-} from '@/apis/novels/stores/novel-filter-store.js'
+} from '@/core-vue/stores/novels/novel-filter-store.js'
 
 const STORE_ENTRIES = [
   {

@@ -1,11 +1,11 @@
 import { req } from '@/services/shortcuts/services-shortcut.js'
 
-const register = async data => {
-  return await req('auth.register', { body: data })
+const register = async options => {
+  return await req('auth.register', options)
 }
 
-const login = async data => {
-  return await req('auth.login', { body: data })
+const login = async options => {
+  return await req('auth.login', options)
 }
 
 const logout = async () => {

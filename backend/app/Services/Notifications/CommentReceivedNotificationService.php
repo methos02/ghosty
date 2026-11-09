@@ -3,12 +3,12 @@
 namespace App\Services\Notifications;
 
 use App\Enums\NotificationType;
+use App\Helpers\NotificationDataHelper;
 use App\Models\Chapter;
 use App\Models\Comment;
 use App\Models\Notification;
 use App\Models\Novel;
 use App\Services\NotificationService;
-use App\Support\NotificationDataSupport;
 
 /**
  * @see memory-bank/decisions/ADR-13-commentaires.md
@@ -26,7 +26,7 @@ class CommentReceivedNotificationService
             $comment->author_id,
             NotificationType::CommentReceived,
             $commentable,
-            fn (?Notification $pending): array => NotificationDataSupport::commentData($comment, $commentable, $pending)
+            fn (?Notification $pending): array => NotificationDataHelper::commentData($comment, $commentable, $pending)
         );
     }
 }

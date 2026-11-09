@@ -1,6 +1,8 @@
 {
   "comment_content": {
     "deleted_comment": "Commentaire supprimé",
+    "hidden_comment": "Commentaire masqué par la modération",
+    "report": "Signaler",
     "reveal_spoiler": "Ce commentaire contient un divulgâcheur : l'afficher",
     "reply": "Répondre",
     "delete": "Supprimer",

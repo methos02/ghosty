@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Helpers\CoverUrlHelper;
 use App\Models\Concerns\HasComments;
 use App\Models\Concerns\HasSlug;
-use App\Support\CoverUrlSupport;
+use App\Models\Concerns\IsNotificationSubject;
+use App\Models\Contracts\NotificationSubject;
 use Database\Factories\NovelFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,9 +17,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 /**
  * @mixin IdeHelperNovel
  */
-class Novel extends Model
+class Novel extends Model implements NotificationSubject
 {
-    use HasComments, HasSlug;
+    use HasComments, HasSlug, IsNotificationSubject;
 
     /** @use HasFactory<NovelFactory> */
     use HasFactory;
@@ -53,7 +55,7 @@ class Novel extends Model
 
     public function coverUrl(): string
     {
-        return CoverUrlSupport::forNovel($this);
+        return CoverUrlHelper::forNovel($this);
     }
 
     /**

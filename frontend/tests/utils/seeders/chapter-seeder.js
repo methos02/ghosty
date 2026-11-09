@@ -1,4 +1,6 @@
 import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
+import { CHAPTER_STATUSES } from '@/constants/chapter-constants.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 
 const getChapterApi = (overrides = {}) => ({
@@ -24,12 +26,25 @@ const getChapterApi = (overrides = {}) => ({
     title: 'Nuit virage',
     genre_id: 3,
   },
+  status: CHAPTER_STATUSES.PUBLISHED,
   is_draft: false,
   is_correctable: true,
   is_root: true,
   published_at: '2026-07-31T10:00:00+00:00',
   ...overrides,
 })
+
+const getChapterWithRemovedPassageApi = (overrides = {}) =>
+  getChapterApi({
+    content: `La voiture avait quitté la route. ${ConfigLoader.get('moderation.removedPassageMarker')} Puis plus rien.`,
+    ...overrides,
+  })
+
+const getArchivedChapterApi = (overrides = {}) =>
+  getChapterApi({
+    status: CHAPTER_STATUSES.ARCHIVED,
+    ...overrides,
+  })
 
 const getMainBranchApi = (count = 3) => {
   return Array.from({ length: count }, (_, index) =>
@@ -176,7 +191,9 @@ const getWriteForm = (overrides = {}) => ({
 })
 
 export const chapterSeeder = {
+  getArchivedChapterApi,
   getChapterApi,
+  getChapterWithRemovedPassageApi,
   getMainBranchApi,
   getListApi,
   getPublishedApi,

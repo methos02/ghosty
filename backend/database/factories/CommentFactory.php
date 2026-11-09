@@ -70,6 +70,11 @@ class CommentFactory extends Factory
         ]);
     }
 
+    public function hidden(): static
+    {
+        return $this->state(fn () => ['status' => Comment::STATUS_HIDDEN]);
+    }
+
     public function configure(): static
     {
         return $this->afterCreating(function (Comment $comment) {

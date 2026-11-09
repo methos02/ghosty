@@ -2,72 +2,68 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\DTO\ReportFilterDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ReportFilterRequest;
 use App\Http\Requests\StoreReportRequest;
-use App\Http\Resources\ReportResource;
-use App\Models\Report;
+use App\Models\Chapter;
+use App\Models\Comment;
 use App\Models\User;
-use App\Repositories\ChapterRepository;
 use App\Repositories\ReportRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 
 /**
  * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
+ * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
  */
 class ReportController extends Controller
 {
     public function __construct(
-        private readonly ChapterRepository $chaptersR,
         private readonly ReportRepository $reportsR
     ) {}
 
     /**
      * @throws AuthorizationException
      */
-    public function index(ReportFilterRequest $request): JsonResponse
+    public function storeForChapter(StoreReportRequest $request, Chapter $chapter): JsonResponse
     {
-        $this->authorize('viewAny', Report::class);
-
-        $reports = $this->reportsR->paginate(ReportFilterDTO::fromRequest($request));
-
-        return response()->json([
-            'reports' => ReportResource::collection($reports->items()),
-            'meta' => [
-                'current_page' => $reports->currentPage(),
-                'per_page' => $reports->perPage(),
-                'total' => $reports->total(),
-                'last_page' => $reports->lastPage(),
-            ],
-        ]);
+        return $this->store($request, $chapter);
     }
 
     /**
      * @throws AuthorizationException
      */
-    public function storeForChapter(StoreReportRequest $request, int $chapterId): JsonResponse
+    public function storeForComment(StoreReportRequest $request, Comment $comment): JsonResponse
+    {
+        if (! $comment->isVisible()) {
+            abort(404);
+        }
+
+        return $this->store($request, $comment);
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
+    private function store(StoreReportRequest $request, Chapter|Comment $reportable): JsonResponse
     {
         /** @var User $reporter */
         $reporter = $request->user();
-        $chapter = $this->chaptersR->find($chapterId, withoutRelations: true);
 
         if ($reporter->isBanned()) {
             throw new AuthorizationException(__('reports.denied.banned'));
         }
 
-        if ($reporter->id === $chapter->author_id) {
-            throw new AuthorizationException(__('reports.denied.own_chapter'));
+        if ($reporter->id === $reportable->author_id) {
+            throw new AuthorizationException(__('reports.denied.own_content'));
         }
 
-        if ($this->reportsR->exists($reporter->id, $chapter)) {
+        if ($this->reportsR->exists($reporter->id, $reportable)) {
             return response()->json(['message' => __('reports.denied.already_reported')], 409);
         }
 
         $this->reportsR->create(
             $reporter->id,
-            $chapter,
+            $reportable,
             $request->string('reason')->toString(),
             $request->filled('description') ? $request->string('description')->toString() : null
         );

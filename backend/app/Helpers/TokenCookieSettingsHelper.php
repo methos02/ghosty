@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Helpers;
+
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Cookie;
+use Symfony\Component\HttpFoundation\Cookie as SymfonyCookie;
+
+/**
+ * @see memory-bank/decisions/ADR-04-token-en-cookie-httponly.md
+ */
+final readonly class TokenCookieSettingsHelper
+{
+    public function __construct(
+        public string $name,
+        public string $sessionName,
+        public int $lifetime,
+        public string $path,
+        public ?string $domain,
+        public bool $secure,
+        public string $sameSite
+    ) {}
+
+    public static function fromConfig(): self
+    {
+        return new self(
+            name: Config::string('sanctum.token_cookie.name'),
+            sessionName: Config::string('sanctum.token_cookie.session_name'),
+            lifetime: Config::integer('sanctum.token_cookie.lifetime'),
+            path: Config::string('sanctum.token_cookie.path'),
+            domain: self::domain(),
+            secure: Config::boolean('sanctum.token_cookie.secure'),
+            sameSite: Config::string('sanctum.token_cookie.same_site'),
+        );
+    }
+
+    public function forget(string $cookieName): SymfonyCookie
+    {
+        return Cookie::forget(
+            name: $cookieName,
+            path: $this->path,
+            domain: $this->domain,
+        );
+    }
+
+    private static function domain(): ?string
+    {
+        $domain = Config::get('sanctum.token_cookie.domain');
+
+        return is_string($domain) && $domain !== '' ? $domain : null;
+    }
+}

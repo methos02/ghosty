@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use LogicException;
 
 /**
  * @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md
@@ -49,6 +50,7 @@ class NotificationSeeder extends Seeder
         return match ($type) {
             NotificationType::MainBranchGained, NotificationType::MainBranchLost, NotificationType::FollowedBranchExtended => $chapter->novel,
             NotificationType::LikeReceived, NotificationType::ChapterContinued, NotificationType::CommentReceived, NotificationType::CommentReplied => $chapter,
+            NotificationType::ContentModerated, NotificationType::ReportProcessed => throw new LogicException("{$type->value} is only produced by ModerationService."),
         };
     }
 
@@ -65,6 +67,7 @@ class NotificationSeeder extends Seeder
                 $notification['chapters'] ?? [$chapter->title]
             ),
             NotificationType::CommentReceived, NotificationType::CommentReplied => $this->commentDetails($notification['actors'] ?? []),
+            NotificationType::ContentModerated, NotificationType::ReportProcessed => throw new LogicException("{$type->value} is only produced by ModerationService."),
         };
     }
 

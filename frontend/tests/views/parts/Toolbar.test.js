@@ -6,11 +6,11 @@ import { GenreRepository } from '@/apis/genres/repositories/genre-repository.js'
 import { GenreDto } from '@/apis/genres/dtos/genre-dto.js'
 import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
-import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
+import { createNovelStore, NOVEL_STORE_KEY } from '@/core-vue/stores/novels/novel-store.js'
 import {
   createNovelFilterStore,
   NOVEL_FILTER_STORE_KEY,
-} from '@/apis/novels/stores/novel-filter-store.js'
+} from '@/core-vue/stores/novels/novel-filter-store.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { controllerSuccess } from '&/utils/helpers/controller-response.js'
 import { genreSeeder } from '&/utils/seeders/genre-seeder.js'

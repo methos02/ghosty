@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\IsNotificationSubject;
+use App\Models\Concerns\Reportable;
+use App\Models\Contracts\NotificationSubject;
 use Database\Factories\CommentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,10 +19,10 @@ use LogicException;
  *
  * @mixin IdeHelperComment
  */
-class Comment extends Model
+class Comment extends Model implements NotificationSubject
 {
     /** @use HasFactory<CommentFactory> */
-    use HasFactory;
+    use HasFactory, IsNotificationSubject, Reportable;
 
     const STATUS_VISIBLE = 1;
 
@@ -110,6 +113,11 @@ class Comment extends Model
         return $this->status === self::STATUS_DELETED;
     }
 
+    public function isHidden(): bool
+    {
+        return $this->status === self::STATUS_HIDDEN;
+    }
+
     public function startsWithMentionOf(User $user): bool
     {
         $mention = preg_quote('@'.$user->username, '/');
@@ -137,8 +145,8 @@ class Comment extends Model
     {
         $query->where(fn (Builder $shown) => $shown
             ->where('status', self::STATUS_VISIBLE)
-            ->orWhere(fn (Builder $deletedWithReplies) => $deletedWithReplies
-                ->where('status', self::STATUS_DELETED)
+            ->orWhere(fn (Builder $removedWithReplies) => $removedWithReplies
+                ->whereIn('status', [self::STATUS_DELETED, self::STATUS_HIDDEN])
                 ->where('reply_count', '>', 0)));
     }
 }

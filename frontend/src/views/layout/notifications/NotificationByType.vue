@@ -6,6 +6,8 @@ import FollowedBranchExtendedNotification from '@/views/layout/notifications/Fol
 import LikeReceivedNotification from '@/views/layout/notifications/LikeReceivedNotification.vue'
 import CommentReceivedNotification from '@/views/layout/notifications/CommentReceivedNotification.vue'
 import CommentRepliedNotification from '@/views/layout/notifications/CommentRepliedNotification.vue'
+import ContentModeratedNotification from '@/views/layout/notifications/ContentModeratedNotification.vue'
+import ReportProcessedNotification from '@/views/layout/notifications/ReportProcessedNotification.vue'
 import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 
 defineProps({
@@ -41,6 +43,14 @@ defineProps({
     />
     <CommentRepliedNotification
       v-if="notification.type === NOTIFICATION_TYPES.COMMENT_REPLIED"
+      :notification="notification"
+    />
+    <ContentModeratedNotification
+      v-if="notification.type === NOTIFICATION_TYPES.CONTENT_MODERATED"
+      :notification="notification"
+    />
+    <ReportProcessedNotification
+      v-if="notification.type === NOTIFICATION_TYPES.REPORT_PROCESSED"
       :notification="notification"
     />
   </div>

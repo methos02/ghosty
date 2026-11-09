@@ -165,7 +165,7 @@ Changer de moteur (Vike, autre) = réécrire `engine/` et `server.js`, jamais `a
 
 ### Règles SSR (à respecter pour tout nouveau code)
 
-1. **Stores request-scoped** : un store consommé au SSR est une **factory** (`createXStore()`) déclarée dans `ssr/store-registry.js` ; `useXStore()` fait `inject(KEY, false) ?? fallback`. **JAMAIS** de `ref()` au niveau module partagé pour de la donnée rendue au serveur (fuite entre requêtes). Chaque store expose `serialize()` / `hydrate()`. Voir `apis/novels/stores/novel-store.js`.
+1. **Stores request-scoped** : un store consommé au SSR est une **factory** (`createXStore()`) déclarée dans `ssr/store-registry.js` ; `useXStore()` fait `inject(KEY, false) ?? fallback`. **JAMAIS** de `ref()` au niveau module partagé pour de la donnée rendue au serveur (fuite entre requêtes). Chaque store expose `serialize()` / `hydrate()`. Voir `core-vue/stores/novels/novel-store.js`.
 
    **Forme imposée** : `memory-bank/rules/files-type/request-scoped-store.md` — deux fonctions, `xStore()` pour le comportement et `createXStore()` pour énoncer le type de retour. Le wrapper d'une ligne n'est pas une indirection morte.
 2. **Aucun accès navigateur au module-load ou en `setup()`** : `window`, `document`, `localStorage` uniquement derrière un guard. Utiliser **`core/helpers/ssr-storage.js`** pour le storage. OK dans `onMounted`/handlers (non exécutés au serveur).
@@ -471,9 +471,9 @@ export const useNovels = () => {
 - **États temporaires UI** (loading, error) - à gérer localement dans les composants
 
 Un **store** ne stocke que de l'état. L'orchestration qui lit des stores et appelle un
-controller vit dans un **composable** (`apis/{domaine}/composables/use-*.js`) — c'est le cas
+controller vit dans un **composable** (`core-vue/composables/{domaine}/use-*.js`) — c'est le cas
 d'usage décrit par `memory-bank/rules/files-type/composable.md`. Voir
-`apis/novels/composables/use-novel-search.js`, qui combine `novel-store`, `novel-filter-store`
+`core-vue/composables/novels/use-novel-search.js`, qui combine `novel-store`, `novel-filter-store`
 et `NovelController` sans qu'aucun des trois ne connaisse les autres.
 
 ### 📦 Composables de Services (Pattern Alternatif)

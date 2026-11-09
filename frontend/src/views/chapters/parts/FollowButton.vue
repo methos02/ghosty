@@ -6,7 +6,7 @@ import { FollowController } from '@/apis/follows/controllers/follow-controller.j
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 import { useAuth } from '@/services/auth/src/use-auth.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
-import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
+import { useReadingStore } from '@/core-vue/stores/chapters/reading-store.js'
 
 const authStore = useAuthStore()
 const { openLoginDialog } = useAuth()
@@ -14,8 +14,8 @@ const { chapter, setChapterFollow } = useReadingStore()
 
 const isFollowed = computed(() => chapter.value?.isFollowed === true)
 
-const label = computed(() =>
-  isFollowed.value ? t('follow_button.unfollow') : t('follow_button.follow'),
+const labelKey = computed(() =>
+  isFollowed.value ? 'follow_button.unfollow' : 'follow_button.follow',
 )
 
 const buttonClasses = computed(() =>
@@ -62,8 +62,8 @@ const toggleFollow = async () => {
   <LoaderComponent
     :cb="toggleFollow"
     :buttonClasses="buttonClasses"
-    :title="label"
-    :aria-label="label"
+    :title="t(labelKey)"
+    :aria-label="t(labelKey)"
     :aria-pressed="isFollowed"
   >
     <i

@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Api\V1\AuthController;
 
+use App\Enums\SanctionType;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Requests\LoginRequest;
+use App\Models\Sanction;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
@@ -164,17 +166,49 @@ class AuthControllerLoginTest extends TestCase
     }
 
     #[Test]
-    public function rejects_banned_user(): void
+    public function rejects_a_temporarily_banned_user_with_the_end_date(): void
     {
-        User::factory()->banned()->create([
-            'email' => 'john@example.com',
-            'password' => 'password123',
-        ]);
+        $user = User::factory()->create(['email' => 'john@example.com', 'password' => 'password123']);
+        Sanction::factory()->for($user)->create(['until' => now()->addDays(3)]);
 
         $response = $this->postJson($this->route, $this->getDatas());
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['identifier']);
+        $response->assertJsonValidationErrors([
+            'identifier' => __('moderation.banned_until', ['date' => now()->addDays(3)->format('d/m/Y')]),
+        ]);
+    }
+
+    #[Test]
+    public function rejects_a_permanently_banned_user(): void
+    {
+        $user = User::factory()->create(['email' => 'john@example.com', 'password' => 'password123']);
+        Sanction::factory()->for($user)->permanent()->create();
+
+        $response = $this->postJson($this->route, $this->getDatas());
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['identifier' => __('moderation.banned_permanently')]);
+    }
+
+    #[Test]
+    public function logs_in_a_user_whose_ban_has_expired(): void
+    {
+        $user = User::factory()->create(['email' => 'john@example.com', 'password' => 'password123']);
+        Sanction::factory()->for($user)->expired()->create();
+
+        $this->postJson($this->route, $this->getDatas())->assertOk();
+    }
+
+    #[Test]
+    public function logs_in_a_user_banned_only_from_writing(): void
+    {
+        User::factory()->banned(SanctionType::WriteBan)->create([
+            'email' => 'john@example.com',
+            'password' => 'password123',
+        ]);
+
+        $this->postJson($this->route, $this->getDatas())->assertOk();
     }
 
     #[Test]

@@ -12,4 +12,13 @@ export const reportConfig = {
     'like_manipulation',
     'illegal',
   ],
+  commentReasons: [
+    'off_topic',
+    'spam',
+    'hate_speech',
+    'insult',
+    'harassment',
+    'personal_attack',
+    'illegal',
+  ],
 }

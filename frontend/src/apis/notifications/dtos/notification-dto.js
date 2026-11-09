@@ -4,6 +4,7 @@ import { ChapterContinuedDto } from '@/apis/notifications/dtos/types/chapter-con
 import { ChaptersPayloadDto } from '@/apis/notifications/dtos/types/chapters-payload-dto.js'
 import { CommentPayloadDto } from '@/apis/notifications/dtos/types/comment-payload-dto.js'
 import { LikeReceivedDto } from '@/apis/notifications/dtos/types/like-received-dto.js'
+import { ModerationPayloadDto } from '@/apis/notifications/dtos/types/moderation-payload-dto.js'
 
 const fromList = data => ({
   notifications: NotificationDto.fromNotifications(data.notifications ?? []),
@@ -52,6 +53,11 @@ const COMMENT_PAYLOAD_TYPES = new Set([
   NOTIFICATION_TYPES.COMMENT_REPLIED,
 ])
 
+const MODERATION_PAYLOAD_TYPES = new Set([
+  NOTIFICATION_TYPES.CONTENT_MODERATED,
+  NOTIFICATION_TYPES.REPORT_PROCESSED,
+])
+
 const isKnownType = notification => Object.values(NOTIFICATION_TYPES).includes(notification.type)
 
 const mapChapter = notification =>
@@ -81,6 +87,10 @@ const mapPayload = notification => {
 
   if (COMMENT_PAYLOAD_TYPES.has(notification.type)) {
     return CommentPayloadDto.fromNotification(notification)
+  }
+
+  if (MODERATION_PAYLOAD_TYPES.has(notification.type)) {
+    return ModerationPayloadDto.fromNotification(notification)
   }
 
   return {}

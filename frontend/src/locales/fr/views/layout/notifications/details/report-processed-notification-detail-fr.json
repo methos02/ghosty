@@ -1,0 +1,7 @@
+{
+  "report_processed_notification_detail": {
+    "dismissed": "Un modérateur a relu le contenu et n'a pas retenu d'infraction aux règles de Ghosty.",
+    "acted": "Un modérateur a relu le contenu et a pris une décision. Merci pour votre vigilance.",
+    "anonymous": "L'auteur du contenu ne sait pas qui l'a signalé."
+  }
+}

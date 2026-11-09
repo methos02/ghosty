@@ -6,7 +6,7 @@ import { LIKE_GUARD_STATUSES } from '@/constants/like-constants.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 import { useAuth } from '@/services/auth/src/use-auth.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
-import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
+import { useReadingStore } from '@/core-vue/stores/chapters/reading-store.js'
 
 const authStore = useAuthStore()
 const { openLoginDialog } = useAuth()
@@ -22,12 +22,12 @@ const countStyle = computed(() => ({
   width: `${String(likeCount.value).length}ch`,
 }))
 
-const label = computed(() => {
+const labelKey = computed(() => {
   if (isOwnChapter.value) {
-    return t('like_button.own_chapter')
+    return 'like_button.own_chapter'
   }
 
-  return isLiked.value ? t('like_button.withdraw') : t('like_button.support')
+  return isLiked.value ? 'like_button.withdraw' : 'like_button.support'
 })
 
 const sendLike = async chapterId => {
@@ -89,8 +89,8 @@ const toggle = async () => {
       'btn-primary-alt': !isLiked,
     }"
     :disabled="likePending || isOwnChapter"
-    :title="label"
-    :aria-label="label"
+    :title="t(labelKey)"
+    :aria-label="t(labelKey)"
     :aria-pressed="isLiked"
     :aria-busy="likePending"
     @click.stop="toggle"

@@ -126,6 +126,7 @@ describe('NovelManageForm.vue', () => {
         novel: formData.novel,
         chapter: { ...formData.chapter, isDraft: false },
       }),
+      form: 'novel',
     })
     expect(router.push).toHaveBeenCalledWith({
       name: 'novel-detail',
@@ -157,6 +158,7 @@ describe('NovelManageForm.vue', () => {
         novel: formData.novel,
         chapter: { ...formData.chapter, isDraft: true },
       }),
+      form: 'novel',
     })
     expect(router.push).toHaveBeenCalledWith({ name: 'drafts' })
   })
@@ -201,10 +203,12 @@ describe('NovelManageForm.vue', () => {
     expect(NovelRepository.update).toHaveBeenCalledWith({
       params: NovelDto.toShowParams(resumed.novel.slug),
       body: NovelDto.toUpdate(resumed.novel),
+      form: 'novel',
     })
     expect(ChapterRepository.update).toHaveBeenCalledWith({
       params: ChapterDto.toChapterParams(resumed.id),
       body: ChapterDto.toUpdate(resumed),
+      form: 'chapter',
     })
     expect(router.push).toHaveBeenCalledWith({ name: 'drafts' })
   })
@@ -233,6 +237,7 @@ describe('NovelManageForm.vue', () => {
 
     expect(ChapterRepository.publish).toHaveBeenCalledWith({
       params: ChapterDto.toChapterParams(resumedApi.id),
+      form: 'chapter',
     })
     expect(router.push).toHaveBeenCalledWith({
       name: 'novel-detail',

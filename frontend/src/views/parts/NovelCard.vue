@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
+import { useNovelStore } from '@/core-vue/stores/novels/novel-store.js'
 
 const props = defineProps({
   novel: { type: Object, required: true },

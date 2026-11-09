@@ -1,0 +1,7 @@
+{
+  "moderation_restore_button": {
+    "restore": "Rétablir",
+    "confirm": "Le contenu redevient visible comme avant la décision. Les sanctions éventuelles restent en place.",
+    "restored": "Contenu rétabli."
+  }
+}

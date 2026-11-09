@@ -1,8 +1,8 @@
-import { novelDetailAsyncData } from '@/apis/novels/ssr/novel-async-data.js'
+import { novelDetailAsyncData } from '@/ssr/async-data/novel-async-data.js'
 import {
   chapterReadingAsyncData,
   multiverseAsyncData,
-} from '@/apis/chapters/ssr/chapter-async-data.js'
+} from '@/ssr/async-data/chapter-async-data.js'
 
 export const routes = [
   {
@@ -51,6 +51,33 @@ export const routes = [
     name: 'favorites',
     component: () => import('@/views/novels/FavoritesPage.vue'),
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/moderation',
+    name: 'moderation',
+    component: () => import('@/views/moderation/ModerationPage.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: ['moderator', 'admin'],
+    },
+  },
+  {
+    path: '/moderation/chapters/:id',
+    name: 'moderation-chapter',
+    component: () => import('@/views/moderation/ModerationChapterPage.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: ['moderator', 'admin'],
+    },
+  },
+  {
+    path: '/moderation/comments/:id',
+    name: 'moderation-comment',
+    component: () => import('@/views/moderation/ModerationCommentPage.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: ['moderator', 'admin'],
+    },
   },
   {
     path: '/chapters/:id/edit',

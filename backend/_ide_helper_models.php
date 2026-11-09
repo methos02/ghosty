@@ -110,6 +110,30 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+ * @property int $id
+ * @property int $chapter_id
+ * @property int|null $moderator_id
+ * @property string $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterVersion newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterVersion newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterVersion query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterVersion whereChapterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterVersion whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterVersion whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterVersion whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterVersion whereModeratorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ChapterVersion whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperChapterVersion {}
+}
+
+namespace App\Models{
+/**
  * @see memory-bank/decisions/ADR-13-commentaires.md
  * @property int $id
  * @property int $author_id
@@ -127,6 +151,8 @@ namespace App\Models{
  * @property-read Comment|null $parent
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Comment> $replies
  * @property-read int|null $replies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Report> $reports
+ * @property-read int|null $reports_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Comment> $visibleReplies
  * @property-read int|null $visible_replies_count
  * @method static \Database\Factories\CommentFactory factory($count = null, $state = [])
@@ -146,6 +172,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereReplyCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment withUserReport(?int $userId)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -227,11 +254,11 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md
+ * @property array<string, mixed> $data
  * @property string $id
  * @property string $type
  * @property string $notifiable_type
  * @property int $notifiable_id
- * @property array<array-key, mixed> $data
  * @property \Illuminate\Support\Carbon|null $read_at
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
@@ -375,6 +402,39 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+ * @property int $id
+ * @property int $user_id
+ * @property int|null $moderator_id
+ * @property int|null $report_id
+ * @property \App\Enums\SanctionType $type
+ * @property \Illuminate\Support\Carbon|null $until
+ * @property string $reason
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction activeBans()
+ * @method static \Database\Factories\SanctionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction whereModeratorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction whereReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction whereReportId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction whereUntil($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sanction whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperSanction {}
+}
+
+namespace App\Models{
+/**
  * @property int $id
  * @property string $username
  * @property string $email
@@ -386,14 +446,16 @@ namespace App\Models{
  * @property string|null $firstname
  * @property string|null $lastname
  * @property \Illuminate\Support\Carbon|null $birth_date
- * @property int $warning_count
  * @property int $new_messages_count
- * @property \Illuminate\Support\Carbon|null $banned_until
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Sanction> $activeBans
+ * @property-read int|null $active_bans_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Sanction> $sanctions
+ * @property-read int|null $sanctions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
@@ -401,7 +463,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAvatar($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereBannedUntil($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereBirthDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
@@ -416,7 +477,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRoles($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUsername($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereWarningCount($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

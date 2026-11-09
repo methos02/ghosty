@@ -1,7 +1,7 @@
 ---
 paths:
   - "src/views/**/*.vue"
-  - "src/apis/**/composables/*.js"
+  - "src/core-vue/composables/**/*.js"
 ---
 # Global Dialog, Single Instance
 

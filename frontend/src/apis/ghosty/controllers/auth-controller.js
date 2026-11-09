@@ -1,67 +1,43 @@
 import { AuthRepository } from '@/apis/ghosty/repositories/auth-repository.js'
 import { AuthDto } from '@/apis/ghosty/dtos/auth-dto.js'
-import { STATUS } from '@/constants/ajax-constants.js'
-import { form } from '@/services/shortcuts/services-shortcut.js'
-import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
+import { controllerResponseHelper } from '@/core/helpers/controller-response-helper.js'
 
 const register = async datas => {
-  const data = AuthDto.toRegister(datas)
-  const response = await AuthRepository.register(data)
+  const response = await AuthRepository.register({
+    body: AuthDto.toRegister(datas),
+    form: 'register',
+  })
 
-  if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
-    form.addValidationErrors(response.data.errors, 'register')
-  }
-
-  if (!ajaxHelper.isSuccess(response.status)) {
-    return response
-  }
-
-  return {
-    status: STATUS.SUCCESS,
-    user: AuthDto.fromUser(response.data.user),
-  }
+  return controllerResponseHelper.buildResponse(response, data => ({
+    user: AuthDto.fromUser(data.user),
+  }))
 }
 
 const login = async datas => {
-  const data = AuthDto.toLogin(datas)
-  const response = await AuthRepository.login(data)
+  const response = await AuthRepository.login({
+    body: AuthDto.toLogin(datas),
+    form: 'login',
+  })
 
-  if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
-    form.addValidationErrors(response.data.errors, 'login')
-  }
-
-  if (!ajaxHelper.isSuccess(response.status)) {
-    return response
-  }
-
-  return {
-    status: STATUS.SUCCESS,
-    user: AuthDto.fromUser(response.data.user),
-  }
+  return controllerResponseHelper.buildResponse(response, data => ({
+    user: AuthDto.fromUser(data.user),
+  }))
 }
 
 const logout = async () => {
   const response = await AuthRepository.logout()
-  if (!ajaxHelper.isSuccess(response.status)) {
-    return response
-  }
 
-  return {
-    status: STATUS.SUCCESS,
-    message: response.data.message,
-  }
+  return controllerResponseHelper.buildResponse(response, data => ({
+    message: data.message,
+  }))
 }
 
 const me = async (options = {}) => {
   const response = await AuthRepository.me(options)
-  if (!ajaxHelper.isSuccess(response.status)) {
-    return response
-  }
 
-  return {
-    status: STATUS.SUCCESS,
-    user: AuthDto.fromUser(response.data.user),
-  }
+  return controllerResponseHelper.buildResponse(response, data => ({
+    user: AuthDto.fromUser(data.user),
+  }))
 }
 
 export const AuthController = {

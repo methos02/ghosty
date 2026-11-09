@@ -5,12 +5,12 @@ import { createHead } from '@unhead/vue/client'
 import ChapterReaderPage from '@/views/chapters/ChapterReaderPage.vue'
 import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
 import { LikeRepository } from '@/apis/likes/repositories/like-repository.js'
-import { createReadingStore, READING_STORE_KEY } from '@/apis/chapters/stores/reading-store.js'
+import { createReadingStore, READING_STORE_KEY } from '@/core-vue/stores/chapters/reading-store.js'
 import {
   createReadingSettingsStore,
   READING_SETTINGS_STORE_KEY,
-} from '@/apis/chapters/stores/reading-settings-store.js'
-import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
+} from '@/core-vue/stores/chapters/reading-settings-store.js'
+import { createNovelStore, NOVEL_STORE_KEY } from '@/core-vue/stores/novels/novel-store.js'
 import { routerPlugin } from '@/services/router/src/router-plugin.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { ConfigLoader } from '@/config/config-loader.js'
@@ -298,6 +298,55 @@ describe('ChapterReaderPage.vue', () => {
       'Deuxième bloc.',
       'Troisième.',
     ])
+  })
+
+  it('shows a passage removed by the moderation as a mention inside its paragraph', async () => {
+    const reading = chapterSeeder.getReading()
+    const provide = readerProvide()
+    provide[READING_STORE_KEY].setReading({
+      ...reading,
+      chapter: ChapterDto.fromShow(
+        chapterSeeder.getChapterWithRemovedPassageApi({ id: reading.chapter.id }),
+      ),
+    })
+    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: reading.novel.slug, id: reading.chapter.id },
+    })
+
+    wrapper = mount(ChapterReaderPage, {
+      global: { plugins: [router, createHead()], provide },
+    })
+    await flushPromises()
+
+    expect(wrapper.find('.chapter-reader-page__removed-passage').text()).toBe(
+      t('chapter_read.removed_passage'),
+    )
+    expect(wrapper.find('.chapter-reader-page__paragraph').text()).not.toContain(
+      ConfigLoader.get('moderation.removedPassageMarker'),
+    )
+  })
+
+  it('warns the reader that a chapter opened by link was archived by the moderation', async () => {
+    const reading = chapterSeeder.getReading()
+    const provide = readerProvide()
+    provide[READING_STORE_KEY].setReading({
+      ...reading,
+      chapter: ChapterDto.fromShow(chapterSeeder.getArchivedChapterApi({ id: reading.chapter.id })),
+    })
+    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
+    await router.push({
+      name: 'chapter-read',
+      params: { slug: reading.novel.slug, id: reading.chapter.id },
+    })
+
+    wrapper = mount(ChapterReaderPage, {
+      global: { plugins: [router, createHead()], provide },
+    })
+    await flushPromises()
+
+    expect(wrapper.find('.chapter-reader-page__archived').text()).toBe(t('chapter_read.archived'))
   })
 
   it('opens the correction only to the author of the chapter', async () => {

@@ -1,8 +1,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import DropdownComponent from '@/components/DropdownComponent.vue'
-import { useNovelFilterStore } from '@/apis/novels/stores/novel-filter-store.js'
-import { useNovelSearch } from '@/apis/novels/composables/use-novel-search.js'
+import { useNovelFilterStore } from '@/core-vue/stores/novels/novel-filter-store.js'
+import { useNovelSearch } from '@/core-vue/composables/novels/use-novel-search.js'
 import { GenreController } from '@/apis/genres/controllers/genre-controller.js'
 import { t } from '@/services/shortcuts/services-shortcut.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
@@ -18,19 +18,11 @@ const { novelSearch } = useNovelSearch()
 const genreDropdown = ref()
 const genres = ref([])
 
-const genreItems = computed(() => [
-  { id: undefined, label: t('toolbar.all_genres') },
-  ...genres.value,
-])
+const currentGenre = computed(() => genres.value.find(genre => genre.id === genreId.value))
 
-const currentGenreLabel = computed(
-  () =>
-    genreItems.value.find(genre => genre.id === genreId.value)?.label ?? t('toolbar.all_genres'),
-)
-
-const pickGenre = async genre => {
+const pickGenre = async id => {
   genreDropdown.value?.hide()
-  await novelSearch.filterByGenre(genre.id)
+  await novelSearch.filterByGenre(id)
 }
 
 onMounted(async () => {
@@ -100,7 +92,7 @@ onMounted(async () => {
             class="toolbar__dropdown | bg-neutral-100 bg-neutral-300-hover radius-10 d-flex a-center j-between px-5 pointer"
           >
             <span class="toolbar__dropdown-text | fs-300 flex-1">
-              {{ currentGenreLabel }}
+              {{ currentGenre?.label ?? t('toolbar.all_genres') }}
             </span>
             <i class="toolbar__icon | fas fa-chevron-down d-flex a-center j-center"></i>
           </button>
@@ -108,11 +100,18 @@ onMounted(async () => {
         <template #items>
           <div class="dropdown-menu">
             <button
-              v-for="genre in genreItems"
-              :key="genre.label"
+              class="dropdown-item | py-5 px-10 pointer"
+              :class="{ 'dropdown-item--active': genreId === undefined }"
+              @click="pickGenre(undefined)"
+            >
+              {{ t('toolbar.all_genres') }}
+            </button>
+            <button
+              v-for="genre in genres"
+              :key="genre.id"
               class="dropdown-item | py-5 px-10 pointer"
               :class="{ 'dropdown-item--active': genreId === genre.id }"
-              @click="pickGenre(genre)"
+              @click="pickGenre(genre.id)"
             >
               {{ genre.label }}
             </button>

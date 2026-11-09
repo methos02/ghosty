@@ -2,8 +2,7 @@
 
 namespace App\Enums;
 
-use App\Models\Chapter;
-use App\Models\Novel;
+use App\Models\Contracts\NotificationSubject;
 
 /**
  * @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md
@@ -17,9 +16,11 @@ enum NotificationType: string
     case FollowedBranchExtended = 'followed_branch_extended';
     case CommentReceived = 'comment_received';
     case CommentReplied = 'comment_replied';
+    case ContentModerated = 'content_moderated';
+    case ReportProcessed = 'report_processed';
 
-    public function groupKey(Chapter|Novel $subject): string
+    public function groupKey(NotificationSubject $subject): string
     {
-        return $this->value.':'.$subject->getMorphClass().':'.$subject->id;
+        return $this->value.':'.$subject->notificationKey();
     }
 }

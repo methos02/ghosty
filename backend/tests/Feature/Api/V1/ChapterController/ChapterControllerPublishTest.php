@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api\V1\ChapterController;
 
+use App\Enums\SanctionType;
 use App\Http\Controllers\Api\V1\ChapterController;
 use App\Models\Chapter;
 use App\Models\Novel;
@@ -43,7 +44,10 @@ class ChapterControllerPublishTest extends TestCase
         $route = Route::getRoutes()->getByAction(ChapterController::class.'@publish');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(
+            ['api', 'auth:sanctum', 'can:publish,chapter'],
+            $route->gatherMiddleware()
+        );
     }
 
     #[Test]
@@ -100,6 +104,48 @@ class ChapterControllerPublishTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->postJson("/api/v1/chapters/{$draft->id}/publish")
             ->assertForbidden();
+    }
+
+    #[Test]
+    public function refuses_an_author_banned_from_writing(): void
+    {
+        $draft = Chapter::factory()->draft()->continuing($this->root)->create([
+            'author_id' => User::factory()->banned(SanctionType::WriteBan),
+        ]);
+
+        $this->actingAs($draft->author)
+            ->postJson("/api/v1/chapters/{$draft->id}/publish")
+            ->assertForbidden();
+
+        $this->assertTrue($draft->refresh()->isDraft());
+    }
+
+    #[Test]
+    public function refuses_to_publish_a_draft_whose_parent_was_archived(): void
+    {
+        $parent = Chapter::factory()->continuing($this->root)->create();
+        $draft = Chapter::factory()->draft()->continuing($parent)->create(['author_id' => $this->author->id]);
+        $parent->update(['status' => Chapter::STATUS_ARCHIVED]);
+
+        $this->actingAs($this->author)
+            ->postJson("/api/v1/chapters/{$draft->id}/publish")
+            ->assertForbidden();
+
+        $this->assertTrue($draft->refresh()->isDraft());
+    }
+
+    #[Test]
+    public function refuses_to_publish_a_draft_whose_parent_was_hidden(): void
+    {
+        $parent = Chapter::factory()->continuing($this->root)->create();
+        $draft = Chapter::factory()->draft()->continuing($parent)->create(['author_id' => $this->author->id]);
+        $parent->update(['status' => Chapter::STATUS_HIDDEN]);
+
+        $this->actingAs($this->author)
+            ->postJson("/api/v1/chapters/{$draft->id}/publish")
+            ->assertForbidden();
+
+        $this->assertTrue($draft->refresh()->isDraft());
     }
 
     #[Test]

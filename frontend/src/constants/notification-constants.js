@@ -6,6 +6,8 @@ export const NOTIFICATION_TYPES = {
   FOLLOWED_BRANCH_EXTENDED: 'followed_branch_extended',
   COMMENT_RECEIVED: 'comment_received',
   COMMENT_REPLIED: 'comment_replied',
+  CONTENT_MODERATED: 'content_moderated',
+  REPORT_PROCESSED: 'report_processed',
 }
 
 export const NOTIFICATION_BELL_LIMIT = 6

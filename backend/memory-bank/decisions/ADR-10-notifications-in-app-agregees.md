@@ -28,7 +28,7 @@ Contraintes techniques du projet : hébergement mutualisé O2Switch, `QUEUE_CONN
 | `current_continuity_gained` | ma suite devient la continuité courante |
 | `followed_branch_extended` | une branche que je suis reçoit une suite |
 | `comment_received` / `comment_replied` | commentaire sur mon contenu, réponse à mon commentaire |
-| `moderation_decision` | mon contenu est archivé ou masqué, ou mon signalement est traité |
+| `content_moderated` / `report_processed` | mon contenu est archivé, masqué ou un passage en est retiré (sanction éventuelle) ; mon signalement est traité ([ADR-15](ADR-15-traitement-de-la-moderation.md)) |
 | `cover_selected` | mon illustration devient officielle |
 
 **5. Deux interdits :**

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api\V1\LikeController;
 
+use App\Enums\SanctionType;
 use App\Http\Controllers\Api\V1\LikeController;
 use App\Models\Chapter;
 use App\Models\User;
@@ -126,6 +127,16 @@ class LikeControllerStoreTest extends TestCase
         $this->actingAs($banned)
             ->postJson("/api/v1/chapters/{$this->chapter->id}/like")
             ->assertForbidden();
+    }
+
+    #[Test]
+    public function lets_a_reader_banned_from_writing_like(): void
+    {
+        $writeBanned = User::factory()->banned(SanctionType::WriteBan)->create(['created_at' => now()->subWeek()]);
+
+        $this->actingAs($writeBanned)
+            ->postJson("/api/v1/chapters/{$this->chapter->id}/like")
+            ->assertOk();
     }
 
     #[Test]

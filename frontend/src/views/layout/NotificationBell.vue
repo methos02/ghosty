@@ -5,8 +5,8 @@ import NotificationByType from '@/views/layout/notifications/NotificationByType.
 import { t } from '@/services/shortcuts/services-shortcut.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { NotificationController } from '@/apis/notifications/controllers/notification-controller.js'
-import { useNotificationStore } from '@/apis/notifications/stores/notification-store.js'
-import { useLinkedNotificationDetails } from '@/apis/notifications/composables/use-inline-notification-details.js'
+import { useNotificationStore } from '@/core-vue/stores/notifications/notification-store.js'
+import { useLinkedNotificationDetails } from '@/core-vue/composables/notifications/use-inline-notification-details.js'
 import { NOTIFICATION_BELL_LIMIT } from '@/constants/notification-constants.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 

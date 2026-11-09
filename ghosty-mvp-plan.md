@@ -137,7 +137,7 @@ Motifs, en clair (MVP §12 + D2) :
 | `plagiarism`, `unauthorized_illustration`, `spam`, `like_manipulation`, `illegal` | MVP §12 |
 
 ```
-sanctions : user_id, moderator_id, type (warning|like_ban|write_ban|comment_ban|account_ban),
+sanctions : user_id, moderator_id, type (warning|write_ban|comment_ban|account_ban),
             until (nullable), reason, report_id (nullable), timestamps
 ```
 
@@ -273,7 +273,7 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 | `current_continuity_gained` | ma suite devient la continuité courante (D3) | 3b |
 | `followed_branch_extended` ★ | une branche que je suis reçoit une suite | 4 |
 | `comment_received` / `comment_replied` | commentaire sur mon contenu, réponse à mon commentaire | 5 |
-| `moderation_decision` | mon contenu est archivé/masqué, ou mon signalement est traité | 6 |
+| `content_moderated` / `report_processed` | mon contenu est archivé/masqué ou un passage en est retiré, ou je suis sanctionné ; mon signalement est traité | 6 |
 | `cover_selected` | mon illustration devient officielle | 7 |
 
 **Trois règles non négociables :**
@@ -295,7 +295,7 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 - Front : `CommentThread`, `CommentForm`, masque spoiler cliquable, compteurs.
 - Arbitrages ([ADR-13](backend/memory-bank/decisions/ADR-13-commentaires.md)) : cibles roman et chapitre (branche = chapitre-tête, cover au lot 7) ; pas d'édition ; suppression = texte effacé, trace « Commentaire supprimé » seulement si des réponses restent ; récents en haut, réponses chronologiques ; routes imbriquées sous `/chapters/{id}` et `/novels/{slug}` au lieu de `/comments?on=…`.
 
-### Lot 6 — Traitement de la modération · M
+### Lot 6 — Traitement de la modération · M ✅
 
 - `sanctions` + `ModerationService`, rôle `moderator`, policies de masquage (`status = hidden` sur chapitre/commentaire/cover).
 - File de traitement des signalements ouverts au lot 3. Deux issues distinctes selon la gravité (D5) : **`archived`** pour un problème de qualité ou de hors-sujet — le texte reste consultable depuis le profil de son auteur (§9), la décision est réversible ; **`hidden` + sanction** pour la haine, l'insulte, le harcèlement ou l'illégal — retrait de la lecture. Un contenu haineux n'est jamais « simplement archivé ».
@@ -303,6 +303,7 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 - Sanctions graduées appliquées aux gardes d'écriture / soutien / commentaire ; articulation avec `users.banned_until` (**revoir ADR-01** : la table `sanctions` peut le remplacer).
 - Extension du signalement aux commentaires et aux covers (le lot 3 ne couvrait que les chapitres).
 - Front : back-office minimal `/moderation`, `ReportDialog` étendu aux autres contenus.
+- Arbitrages ([ADR-15](backend/memory-bank/decisions/ADR-15-traitement-de-la-moderation.md)) : la décision vise un **contenu** et clôt tous ses signalements ; seule une **feuille** (sans suite publiée, non racine) s'archive ou se masque ; un chapitre poursuivi perd seulement un **passage retiré** (passages remplacés par une mention, original conservé dans `chapter_versions`, aucune réécriture possible) ; `sanctions` **remplace** `users.banned_until` (ban définitif possible, jetons révoqués sur `account_ban`) ; signalement étendu aux **commentaires** seulement (covers au lot 7, utilisateurs au lot 8) ; notifications `content_moderated` (auteur) et `report_processed` (signaleurs).
 
 ### Lot 7 — Illustration du roman · M
 

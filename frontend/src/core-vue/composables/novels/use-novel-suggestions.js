@@ -1,0 +1,28 @@
+import { ref } from 'vue'
+import { NovelController } from '@/apis/novels/controllers/novel-controller.js'
+import { useNovelStore } from '@/core-vue/stores/novels/novel-store.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
+
+const SUGGESTIONS_COUNT = 3
+
+export const useNovelSuggestions = () => {
+  const { selectedNovel } = useNovelStore()
+
+  const suggestions = ref([])
+
+  const loadSuggestions = async () => {
+    const response = await NovelController.list()
+    if (!ajaxHelper.isSuccess(response.status)) {
+      return
+    }
+
+    suggestions.value = response.novels
+      .filter(novel => novel.id !== selectedNovel.value?.id)
+      .slice(0, SUGGESTIONS_COUNT)
+  }
+
+  return {
+    suggestions,
+    loadSuggestions,
+  }
+}

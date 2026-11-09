@@ -3,7 +3,6 @@ import { ChapterController } from '@/apis/chapters/controllers/chapter-controlle
 import { ChapterRepository } from '@/apis/chapters/repositories/chapter-repository.js'
 import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
 import { STATUS } from '@/constants/ajax-constants.js'
-import { form } from '@/services/shortcuts/services-shortcut.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 
 describe('chapter-controller', () => {
@@ -24,6 +23,7 @@ describe('chapter-controller', () => {
       expect(ChapterRepository.create).toHaveBeenCalledWith({
         params: ChapterDto.toCreateParams('nuit-virage'),
         body: ChapterDto.toCreate(formData),
+        form: 'chapter',
       })
     })
 
@@ -49,19 +49,6 @@ describe('chapter-controller', () => {
 
       expect(result.status).toBe(STATUS.SUCCESS)
       expect(result.chapter).toEqual(chapterSeeder.getChapter())
-    })
-
-    it('registers validation errors on 422 and returns an error status', async () => {
-      vi.spyOn(ChapterRepository, 'create').mockResolvedValue({
-        status: STATUS.UNPROCESSABLE_ENTITY,
-        data: { errors: { parent_id: ['introuvable'] } },
-      })
-      const addValidationErrors = vi.spyOn(form, 'addValidationErrors').mockImplementation(() => {})
-
-      const result = await ChapterController.create('nuit-virage', chapterSeeder.getWriteForm())
-
-      expect(addValidationErrors).toHaveBeenCalledWith({ parent_id: ['introuvable'] }, 'chapter')
-      expect(result.status).toBe(STATUS.UNPROCESSABLE_ENTITY)
     })
 
     it('passes the repository error through untouched', async () => {

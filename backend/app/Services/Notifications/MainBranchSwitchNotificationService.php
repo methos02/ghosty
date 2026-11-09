@@ -3,12 +3,12 @@
 namespace App\Services\Notifications;
 
 use App\Enums\NotificationType;
+use App\Helpers\NotificationDataHelper;
 use App\Models\Chapter;
 use App\Models\Notification;
 use App\Models\Novel;
 use App\Repositories\ChapterRepository;
 use App\Services\NotificationService;
-use App\Support\NotificationDataSupport;
 use Illuminate\Support\Collection;
 
 /**
@@ -51,9 +51,9 @@ class MainBranchSwitchNotificationService
             null,
             $type,
             $novel,
-            fn (?Notification $pending): array => NotificationDataSupport::novelChaptersData($novel, NotificationDataSupport::mergeChapterSummaries(
-                NotificationDataSupport::pendingChapterSummaries($pending),
-                NotificationDataSupport::chapterSummaries($authorChapters)
+            fn (?Notification $pending): array => NotificationDataHelper::novelChaptersData($novel, NotificationDataHelper::mergeChapterSummaries(
+                NotificationDataHelper::pendingChapterSummaries($pending),
+                NotificationDataHelper::chapterSummaries($authorChapters)
             ))
         );
     }
@@ -71,7 +71,7 @@ class MainBranchSwitchNotificationService
 
         $withdrawnIds = $authorChapters->pluck('id')->all();
         $remainingChapters = array_values(array_filter(
-            NotificationDataSupport::pendingChapterSummaries($pending),
+            NotificationDataHelper::pendingChapterSummaries($pending),
             fn (array $chapter): bool => ! in_array($chapter['id'], $withdrawnIds, true)
         ));
 
@@ -81,6 +81,6 @@ class MainBranchSwitchNotificationService
             return;
         }
 
-        $this->notificationService->update($pending, NotificationDataSupport::novelChaptersData($novel, $remainingChapters));
+        $this->notificationService->update($pending, NotificationDataHelper::novelChaptersData($novel, $remainingChapters));
     }
 }

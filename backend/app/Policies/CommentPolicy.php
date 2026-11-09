@@ -14,7 +14,7 @@ class CommentPolicy
 {
     public function create(User $user, Chapter|Novel $commentable): bool
     {
-        if ($user->isBanned()) {
+        if ($user->isCommentBanned()) {
             return false;
         }
 
@@ -23,11 +23,27 @@ class CommentPolicy
 
     public function reply(User $user, Comment $parent): bool
     {
-        if ($user->isBanned() || ! $parent->isVisible() || $parent->isReply()) {
+        if ($user->isCommentBanned() || ! $parent->isVisible() || $parent->isReply()) {
             return false;
         }
 
         return $parent->target()->isOpenToComments();
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function moderate(User $user, Comment $comment): bool
+    {
+        return $user->canModerate() && $comment->isVisible();
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function restore(User $user, Comment $comment): bool
+    {
+        return $user->canModerate() && $comment->isHidden();
     }
 
     public function delete(User $user, Comment $comment): bool

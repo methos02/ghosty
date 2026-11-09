@@ -36,28 +36,12 @@ const beforeEach = async (to, _from) => {
     return true
   }
 
-  await servicesM.service('auth:routesAuthCheck')
-
-  const hasAccess = to.meta.roles.some(role => auth.hasRole(role))
-  if (!hasAccess) {
-    flash.warningT('access_denied')
-    return '/'
-  }
-
-  return true
+  return await routerFunctionsInternal.checkRoles(to)
 }
 
 export const routerFunctions = {
   afterEach,
   beforeEach,
-}
-
-const isDocumentationBlocked = to => {
-  return to.path.startsWith(DOCUMENTATION_PREFIX) && auth.requiresAuth() && !auth.isAuthenticated()
-}
-
-const isAuthBlocked = to => {
-  return to.meta?.requiresAuth === true && !auth.isAuthenticated()
 }
 
 const askForLogin = to => {
@@ -71,8 +55,35 @@ const askForLogin = to => {
   return false
 }
 
+const checkRoles = async to => {
+  if (routerFunctionsInternal.hasRequiredRole(to)) {
+    return true
+  }
+
+  await servicesM.service('auth:routesAuthCheck')
+
+  if (routerFunctionsInternal.hasRequiredRole(to)) {
+    return true
+  }
+
+  flash.warningT('access_denied')
+  return '/'
+}
+
+const hasRequiredRole = to => to.meta.roles.some(role => auth.hasRole(role))
+
+const isAuthBlocked = to => {
+  return to.meta?.requiresAuth === true && !auth.isAuthenticated()
+}
+
+const isDocumentationBlocked = to => {
+  return to.path.startsWith(DOCUMENTATION_PREFIX) && auth.requiresAuth() && !auth.isAuthenticated()
+}
+
 export const routerFunctionsInternal = {
-  isDocumentationBlocked,
-  isAuthBlocked,
   askForLogin,
+  checkRoles,
+  hasRequiredRole,
+  isAuthBlocked,
+  isDocumentationBlocked,
 }

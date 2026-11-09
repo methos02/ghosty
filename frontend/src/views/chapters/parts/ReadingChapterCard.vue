@@ -2,8 +2,8 @@
 import { computed } from 'vue'
 import { router } from '@/services/shortcuts/services-shortcut.js'
 import ChapterCard from '@/views/chapters/parts/ChapterCard.vue'
-import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
-import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
+import { useReadingStore } from '@/core-vue/stores/chapters/reading-store.js'
+import { useNovelStore } from '@/core-vue/stores/novels/novel-store.js'
 import { POPULARITY } from '@/constants/chapter-constants.js'
 
 const props = defineProps({

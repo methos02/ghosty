@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { router } from '@/services/shortcuts/services-shortcut.js'
-import { useChapterSummary } from '@/apis/chapters/composables/use-chapter-summary.js'
+import { useChapterSummary } from '@/core-vue/composables/chapters/use-chapter-summary.js'
 import ChildrenSwitcher from '@/views/chapters/parts/ChildrenSwitcher.vue'
-import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
-import { createReadingStore, READING_STORE_KEY } from '@/apis/chapters/stores/reading-store.js'
+import { createNovelStore, NOVEL_STORE_KEY } from '@/core-vue/stores/novels/novel-store.js'
+import { createReadingStore, READING_STORE_KEY } from '@/core-vue/stores/chapters/reading-store.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 

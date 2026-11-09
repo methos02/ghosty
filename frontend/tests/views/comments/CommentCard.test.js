@@ -90,4 +90,10 @@ describe('CommentCard.vue', () => {
 
     expect(wrapper.find('.comment-content__reply').exists()).toBe(false)
   })
+
+  it('offers no reply button anywhere in the card of a comment the moderation hid', () => {
+    wrapper = mount(CommentCard, { props: { comment: commentSeeder.getHiddenComment() } })
+
+    expect(wrapper.find('.comment-content__reply').exists()).toBe(false)
+  })
 })

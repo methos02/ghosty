@@ -60,7 +60,10 @@ class ChapterControllerUpdateTest extends TestCase
         $route = Route::getRoutes()->getByAction(ChapterController::class.'@update');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(
+            ['api', 'auth:sanctum', 'can:update,chapter'],
+            $route->gatherMiddleware()
+        );
     }
 
     #[Test]

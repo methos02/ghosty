@@ -13,6 +13,8 @@ const fromShow = data => ({
   content: data.content ?? '',
   isSpoiler: data.is_spoiler,
   isDeleted: data.is_deleted,
+  isHidden: data.is_hidden,
+  isReported: data.is_reported,
   replies: CommentDto.fromList(data.replies ?? []),
   createdAtFormat: dateHelper.formatDateLocal(data.created_at, 'DD/MM/YYYY HH:mm'),
 })

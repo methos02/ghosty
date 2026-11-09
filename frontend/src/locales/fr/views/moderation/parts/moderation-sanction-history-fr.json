@@ -1,0 +1,9 @@
+{
+  "moderation_sanction_history": {
+    "title": "Sanctions de l'auteur",
+    "empty": "Aucune sanction pour cet auteur.",
+    "given_on": "Le {date}",
+    "permanent": "Définitive",
+    "until": "Jusqu'au {date}"
+  }
+}

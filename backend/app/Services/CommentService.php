@@ -93,6 +93,40 @@ class CommentService
         });
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function hide(Comment $comment): void
+    {
+        $commentable = $comment->target();
+
+        DB::transaction(function () use ($comment, $commentable): void {
+            $this->commentsR->update($comment, ['status' => Comment::STATUS_HIDDEN]);
+            $this->decrementCommentCount($commentable);
+
+            if ($comment->parent instanceof Comment) {
+                $this->commentsR->decrementReplyCount($comment->parent);
+            }
+        });
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function restore(Comment $comment): void
+    {
+        $commentable = $comment->target();
+
+        DB::transaction(function () use ($comment, $commentable): void {
+            $this->commentsR->update($comment, ['status' => Comment::STATUS_VISIBLE]);
+            $this->incrementCommentCount($commentable);
+
+            if ($comment->parent instanceof Comment) {
+                $this->commentsR->incrementReplyCount($comment->parent);
+            }
+        });
+    }
+
     public function findCommentCount(Chapter|Novel $commentable): int
     {
         if ($commentable instanceof Chapter) {

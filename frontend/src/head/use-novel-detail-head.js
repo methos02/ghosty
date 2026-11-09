@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
+import { useNovelStore } from '@/core-vue/stores/novels/novel-store.js'
 import { headService } from '@/head/head-service.js'
 
 export const useNovelDetailHead = () => {

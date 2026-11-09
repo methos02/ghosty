@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Follow;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserRepository
 {
@@ -14,6 +15,17 @@ class UserRepository
     public function create(array $attributes): User
     {
         return User::create($attributes);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function deleteTokens(int $userId): void
+    {
+        PersonalAccessToken::query()
+            ->where('tokenable_type', (new User)->getMorphClass())
+            ->where('tokenable_id', $userId)
+            ->delete();
     }
 
     public function findByEmailOrUsername(string $identifier): ?User

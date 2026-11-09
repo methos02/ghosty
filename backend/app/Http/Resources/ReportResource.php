@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Chapter;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -26,24 +25,9 @@ class ReportResource extends JsonResource
                 'id' => $this->reporter_id,
                 'username' => $this->whenLoaded('reporter', fn () => $this->reporter->username),
             ],
-            'reported' => [
-                'type' => $this->reportable_type,
-                'id' => $this->reportable_id,
-                'title' => $this->whenLoaded('reportable', fn () => $this->reportedTitle()),
-            ],
-            'moderator_id' => $this->moderator_id,
             'resolution' => $this->resolution?->value,
             'processed_at' => $this->processed_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
-    }
-
-    private function reportedTitle(): ?string
-    {
-        if ($this->reportable instanceof Chapter) {
-            return $this->reportable->title;
-        }
-
-        return null;
     }
 }

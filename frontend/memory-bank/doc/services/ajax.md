@@ -18,7 +18,7 @@ HTTP requests (GET, POST, PUT, PATCH, DELETE).
 
 Main request function. Method determined by route definition.
 
-**Options:** `params` (Object — URL params, extras become GET params), `token` (String — override bearer), `abort` (Bool — cancel duplicate), `flash` (Bool — suppress all error flashes), `no-flash` (Array — skip flash for specific status codes), `errors` (Object — custom error messages per status code `{ statusCode: 'translation_key' }`), `headers` (Object), `log` (Bool, true), `empty404` (Bool — treat 404 as empty array with status 200), `responseType` (String — e.g. `'blob'` for file downloads)
+**Options:** `params` (Object — URL params, extras become GET params), `token` (String — override bearer), `abort` (Bool — cancel duplicate), `flash` (Bool — suppress all error flashes), `no-flash` (Array — skip flash for specific status codes), `errors` (Object — custom error messages per status code `{ statusCode: 'translation_key' }`), `headers` (Object), `log` (Bool, true), `empty404` (Bool — treat 404 as empty array with status 200), `responseType` (String — e.g. `'blob'` for file downloads), `form` (String — on a 422, puts `response.data.errors` on this form through `form.addValidationErrors`)
 
 **Skipped-API guard:** if the target route's API declares `skip(context) === true` for the current user (see [auth](auth.md#conditional-api-skip-skip)), `req` short-circuits **before** any HTTP call — it flashes `api_forbidden_for_user`, persists `log.send('user_forbidden_api', …)`, and returns `{ api, route, status: FORBIDDEN, data: {} }`.
 
@@ -28,6 +28,7 @@ req('users.create', { body: { email: 'test@example.com' } })
 req('users.search', { params: { query: 'john' }, empty404: true })
 req('users.validate', { body: { email: 'test' }, 'no-flash': [409] })
 req('users.search', { params, errors: { 404: 'user_not_found' } })
+req('novels.create', { body, form: 'novel' })
 ```
 
 ### Blob / File Download

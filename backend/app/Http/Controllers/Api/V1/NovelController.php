@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreNovelRequest;
 use App\Http\Requests\UpdateNovelRequest;
 use App\Http\Resources\NovelResource;
+use App\Models\Novel;
 use App\Models\User;
 use App\Repositories\NovelRepository;
 use App\Services\NovelService;
@@ -39,20 +40,20 @@ class NovelController extends Controller
         ]);
     }
 
-    public function show(string $slug): NovelResource
+    public function show(Novel $novel): NovelResource
     {
-        $novel = $this->novelsR->findBySlug($slug);
+        $novelDetailed = $this->novelsR->loadDetails($novel);
 
-        return new NovelResource($novel);
+        return new NovelResource($novelDetailed);
     }
 
-    public function update(UpdateNovelRequest $request, string $slug): NovelResource
+    public function update(UpdateNovelRequest $request, Novel $novel): NovelResource
     {
-        $novel = $this->novelsR->findBySlug($slug);
-
         $this->novelService->update($novel, NovelDTO::fromRequest($request));
 
-        return new NovelResource($this->novelsR->findBySlug($slug));
+        $updated = $this->novelsR->findBySlug($novel->slug);
+
+        return new NovelResource($updated);
     }
 
     public function store(StoreNovelRequest $request): JsonResponse
@@ -62,8 +63,8 @@ class NovelController extends Controller
 
         $novel = $this->novelService->create(
             $author,
-            NovelDTO::fromRequest($request, addPrefix: true),
-            ChapterDTO::fromRequest($request, addPrefix: true)
+            NovelDTO::fromNovelCreation($request),
+            ChapterDTO::fromNovelCreation($request)
         );
 
         $created = $this->novelsR->findBySlug($novel->slug);

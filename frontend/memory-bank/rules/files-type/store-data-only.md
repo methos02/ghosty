@@ -1,6 +1,6 @@
 ---
 paths:
-  - "src/apis/**/stores/**/*.js"
+  - "src/core-vue/stores/**/*.js"
   - "src/**/*.vue"
 ---
 # Store Data Only

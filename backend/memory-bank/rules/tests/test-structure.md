@@ -16,7 +16,7 @@ Tests mirror the source, one folder per source unit. The file name MUST identify
 | `Models/{Model}.php` | `tests/Feature/Models/` | `{Model}ModelTest.php` |
 | `Services/{Service}.php` | `tests/Feature/Services/` | `{Service}Test.php` |
 | `Services/Notifications/{Service}.php` | `tests/Feature/Services/Notifications/` | `{Service}Test.php` |
-| `Support/{Support}.php` | `tests/Feature/Support/` (database-free: `tests/Unit/Support/`) | `{Support}Test.php` |
+| `Helpers/{Helper}.php` | `tests/Feature/Helpers/` (database-free: `tests/Unit/Helpers/`) | `{Helper}Test.php` |
 | `Rules/`, `Console/Commands/` | `tests/Feature/Rules/`, `tests/Feature/Console/` | `{Class}Test.php` |
 
 **BAD** `RegisterTest.php`, `GenreTest.php`. **GOOD** `AuthControllerRegisterTest.php`, `GenreModelTest.php`.

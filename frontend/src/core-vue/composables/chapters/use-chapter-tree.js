@@ -1,0 +1,34 @@
+import { ChapterController } from '@/apis/chapters/controllers/chapter-controller.js'
+import { useTreeStore } from '@/core-vue/stores/chapters/tree-store.js'
+import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
+
+export const useChapterTree = ({ treeStore = useTreeStore() } = {}) => {
+  const load = async (novelSlug, fromChapterId, options = {}) => {
+    const response = await ChapterController.tree(novelSlug, fromChapterId, options)
+    if (!ajaxHelper.isSuccess(response.status)) {
+      return response
+    }
+
+    treeStore.setTree(response)
+
+    return response
+  }
+
+  const expand = async (novelSlug, fromChapterId) => {
+    const response = await ChapterController.tree(novelSlug, fromChapterId)
+    if (!ajaxHelper.isSuccess(response.status)) {
+      return response
+    }
+
+    treeStore.addChapters(response.chapters)
+
+    return response
+  }
+
+  return {
+    chapterTree: {
+      load,
+      expand,
+    },
+  }
+}

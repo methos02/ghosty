@@ -18,18 +18,18 @@ MUST give a class the suffix of its folder. When adding a class to a folder, ren
 | `Repositories` | `Repository` |
 | `Policies` | `Policy` |
 | `DTO` | `DTO` |
-| `Support` | `Support` |
+| `Helpers` | `Helper` |
 | `Console/Commands` | `Command` |
 | `Providers` | `ServiceProvider` |
 
-No suffix: `Models`, `Enums`, `Rules` (named after the constraint, `LimitedTextChange`), `Models/Concerns` traits (`HasSlug`, `Reportable`), `Exceptions`.
+No suffix: `Models`, `Enums`, `Rules` (named after the constraint, `LimitedTextChange`), `Models/Concerns` traits (`HasSlug`, `Reportable`), `Models/Contracts` interfaces (`NotificationSubject`), `Exceptions`.
 
-Tests append `Test` to the class name (`CoverUrlSupportTest`); file layout in `tests/test-structure.md`.
+Tests append `Test` to the class name (`CoverUrlHelperTest`); file layout in `tests/test-structure.md`.
 
 ## Injected dependency name
 
 - Repository: MUST be `{entities}R` (`$chaptersR`, `$novelsR`, `$likesR`).
-- Any other class (service, support): MUST be the lowerCamelCase class name (`$chapterService`, `$notificationService`, `$likeAuthorizationService`).
+- Any other class (service, helper): MUST be the lowerCamelCase class name (`$chapterService`, `$currentUserHelper`, `$likeAuthorizationService`).
 - A bare name (`$novels`, `$genre`) is reserved for data (model, collection, query result).
 
 ```php

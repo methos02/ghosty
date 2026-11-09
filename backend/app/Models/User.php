@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\SanctionType;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -46,7 +48,6 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'birth_date' => 'date',
-            'banned_until' => 'date',
             'notifications_enabled' => 'boolean',
             'password' => 'hashed',
             'roles' => 'array',
@@ -82,18 +83,53 @@ class User extends Authenticatable
     }
 
     /**
-     * @see memory-bank/decisions/ADR-01-modele-de-ban-utilisateur.md
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
      *
-     * @phpstan-assert-if-true !null $this->banned_until
+     * @return HasMany<Sanction, $this>
      */
+    public function sanctions(): HasMany
+    {
+        return $this->hasMany(Sanction::class);
+    }
+
+    /**
+     * @return HasMany<Sanction, $this>
+     */
+    public function activeBans(): HasMany
+    {
+        return $this->sanctions()
+            ->activeBans()
+            ->orderByRaw('until is null desc')
+            ->orderByDesc('until');
+    }
+
+    public function canModerate(): bool
+    {
+        return ($this->isModerator() || $this->isAdmin()) && ! $this->isBanned();
+    }
+
     public function isBanned(): bool
     {
-        $bannedUntil = $this->banned_until;
+        return $this->accountBan() !== null;
+    }
 
-        if (! $bannedUntil) {
-            return false;
-        }
+    public function isWriteBanned(): bool
+    {
+        return $this->isBanned() || $this->hasActiveBan(SanctionType::WriteBan);
+    }
 
-        return $bannedUntil->isFuture();
+    public function isCommentBanned(): bool
+    {
+        return $this->isBanned() || $this->hasActiveBan(SanctionType::CommentBan);
+    }
+
+    public function accountBan(): ?Sanction
+    {
+        return $this->activeBans->first(fn (Sanction $sanction): bool => $sanction->type === SanctionType::AccountBan);
+    }
+
+    private function hasActiveBan(SanctionType $type): bool
+    {
+        return $this->activeBans->contains(fn (Sanction $sanction): bool => $sanction->type === $type);
     }
 }

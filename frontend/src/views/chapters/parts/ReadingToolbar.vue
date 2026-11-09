@@ -5,18 +5,18 @@ import PaginatorChapter from '@/components/paginators/PaginatorChapterComponent.
 import ReadingSettingsPanel from '@/views/chapters/parts/ReadingSettingsPanel.vue'
 import LikeButton from '@/views/chapters/parts/LikeButton.vue'
 import FollowButton from '@/views/chapters/parts/FollowButton.vue'
-import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
-import { useReadingSettingsStore } from '@/apis/chapters/stores/reading-settings-store.js'
-import { useChapterReport } from '@/apis/reports/composables/use-chapter-report.js'
-import { useChapterComments } from '@/apis/comments/composables/use-chapter-comments.js'
-import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
-import { useReadingPosition } from '@/apis/chapters/composables/use-reading-position.js'
+import { useReadingStore } from '@/core-vue/stores/chapters/reading-store.js'
+import { useReadingSettingsStore } from '@/core-vue/stores/chapters/reading-settings-store.js'
+import { useReport } from '@/core-vue/composables/reports/use-report.js'
+import { useChapterComments } from '@/core-vue/composables/comments/use-chapter-comments.js'
+import { useNovelStore } from '@/core-vue/stores/novels/novel-store.js'
+import { useReadingPosition } from '@/core-vue/composables/chapters/use-reading-position.js'
 
 const { selectedNovel } = useNovelStore()
 const { position, branchLength, isMainBranch, chapterIdAt } = useReadingPosition()
 const { settings, setSetting, persist } = useReadingSettingsStore()
 const { chapter } = useReadingStore()
-const { canReport, openChapterReport } = useChapterReport()
+const { report } = useReport()
 const { openChapterComments } = useChapterComments()
 
 const goToPosition = async requestedPosition => {
@@ -63,12 +63,12 @@ const print = () => {
       </button>
 
       <button
-        v-if="chapter && canReport(chapter)"
+        v-if="chapter && report.canReport(chapter)"
         type="button"
         class="reading-toolbar__report | btn btn-icon btn-sm btn-primary-alt"
         :title="t('chapter_read.report')"
         :aria-label="t('chapter_read.report')"
-        @click="openChapterReport(chapter)"
+        @click="report.openChapterReport(chapter)"
       >
         <i class="fa-solid fa-circle-exclamation"></i>
       </button>

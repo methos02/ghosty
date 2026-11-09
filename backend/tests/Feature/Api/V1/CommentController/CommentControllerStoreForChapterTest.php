@@ -3,9 +3,11 @@
 namespace Tests\Feature\Api\V1\CommentController;
 
 use App\Enums\NotificationType;
+use App\Enums\SanctionType;
 use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Chapter;
+use App\Models\Sanction;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +34,10 @@ class CommentControllerStoreForChapterTest extends TestCase
         $route = Route::getRoutes()->getByAction(CommentController::class.'@storeForChapter');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum', 'throttle:comment'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(
+            ['api', 'auth:sanctum', 'throttle:comment', 'can:create,App\Models\Comment,chapter'],
+            $route->gatherMiddleware()
+        );
     }
 
     #[Test]
@@ -125,6 +130,41 @@ class CommentControllerStoreForChapterTest extends TestCase
         $this->actingAs(User::factory()->banned()->create())
             ->postJson("/api/v1/chapters/{$chapter->id}/comments", $this->getDatas())
             ->assertForbidden();
+    }
+
+    #[Test]
+    public function refuses_a_user_banned_from_commenting(): void
+    {
+        $chapter = Chapter::factory()->create();
+
+        $this->actingAs(User::factory()->banned(SanctionType::CommentBan)->create())
+            ->postJson("/api/v1/chapters/{$chapter->id}/comments", $this->getDatas())
+            ->assertForbidden();
+
+        $this->assertDatabaseCount('comments', 0);
+    }
+
+    #[Test]
+    public function lets_a_user_banned_from_writing_comment(): void
+    {
+        $chapter = Chapter::factory()->create();
+
+        $this->actingAs(User::factory()->banned(SanctionType::WriteBan)->create())
+            ->postJson("/api/v1/chapters/{$chapter->id}/comments", $this->getDatas())
+            ->assertCreated();
+    }
+
+    #[Test]
+    public function lets_a_user_comment_once_the_comment_ban_has_expired(): void
+    {
+        $chapter = Chapter::factory()->create();
+        $user = User::factory()
+            ->has(Sanction::factory()->ofType(SanctionType::CommentBan)->expired(), 'sanctions')
+            ->create();
+
+        $this->actingAs($user)
+            ->postJson("/api/v1/chapters/{$chapter->id}/comments", $this->getDatas())
+            ->assertCreated();
     }
 
     #[Test]

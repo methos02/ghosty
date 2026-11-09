@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
 import DialogComponent from '@/components/DialogComponent.vue'
-import { useChapterSummary } from '@/apis/chapters/composables/use-chapter-summary.js'
+import { useChapterSummary } from '@/core-vue/composables/chapters/use-chapter-summary.js'
 
 const { summarisedChapter, closeChapterSummary } = useChapterSummary()
 

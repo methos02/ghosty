@@ -1,0 +1,8 @@
+{
+  "content_moderated_notification_detail": {
+    "archived": "Le chapitre n'est plus proposé à la lecture mais reste consultable par lien direct. Cette décision est réversible.",
+    "hidden": "Le contenu n'est plus visible des lecteurs.",
+    "passage_removed": "Le passage en cause est remplacé par la mention « passage retiré par la modération ». Le reste du texte est inchangé.",
+    "dismissed": "Le contenu reste en ligne."
+  }
+}

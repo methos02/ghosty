@@ -3,10 +3,11 @@ import { computed, ref } from 'vue'
 import { flash, t } from '@/services/shortcuts/services-shortcut.js'
 import ConfirmButtonComponent from '@/components/ConfirmButtonComponent.vue'
 import { CommentController } from '@/apis/comments/controllers/comment-controller.js'
-import { useCommentStore } from '@/apis/comments/stores/comment-store.js'
+import { useCommentStore } from '@/core-vue/stores/comments/comment-store.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 import { mentionHelper } from '@/core/helpers/mention-helper.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
+import { useReport } from '@/core-vue/composables/reports/use-report.js'
 
 const props = defineProps({
   comment: { type: Object, required: true },
@@ -18,12 +19,11 @@ const emit = defineEmits(['reply'])
 
 const authStore = useAuthStore()
 const { commentStore } = useCommentStore()
+const { report } = useReport()
 
 const isSpoilerRevealed = ref(false)
 
-const isOwnComment = computed(
-  () => !props.comment.isDeleted && props.comment.author.id === authStore.user.value?.id,
-)
+const isOwnComment = computed(() => props.comment.author.id === authStore.user.value?.id)
 
 const contentParts = computed(() =>
   mentionHelper.split(props.comment.content, props.threadUsernames),
@@ -50,6 +50,13 @@ const deleteComment = async comment => {
       class="comment-content__deleted | fs-300 color-neutral-600"
     >
       {{ t('comment_content.deleted_comment') }}
+    </p>
+
+    <p
+      v-else-if="comment.isHidden"
+      class="comment-content__hidden | fs-300 color-neutral-600"
+    >
+      {{ t('comment_content.hidden_comment') }}
     </p>
 
     <template v-else>
@@ -103,6 +110,15 @@ const deleteComment = async comment => {
         >
           {{ t('comment_content.delete') }}
         </ConfirmButtonComponent>
+
+        <button
+          v-if="!isOwnComment"
+          type="button"
+          class="comment-content__report | btn btn-sm btn-primary-alt"
+          @click="report.openCommentReport(comment)"
+        >
+          {{ t('comment_content.report') }}
+        </button>
       </footer>
     </template>
   </article>

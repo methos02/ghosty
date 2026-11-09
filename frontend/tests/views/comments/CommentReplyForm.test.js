@@ -3,7 +3,7 @@ import { mount, flushPromises } from '@vue/test-utils'
 import CommentReplyForm from '@/views/comments/CommentReplyForm.vue'
 import { CommentRepository } from '@/apis/comments/repositories/comment-repository.js'
 import { CommentDto } from '@/apis/comments/dtos/comment-dto.js'
-import { useCommentStore } from '@/apis/comments/stores/comment-store.js'
+import { useCommentStore } from '@/core-vue/stores/comments/comment-store.js'
 import { form } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { commentSeeder } from '&/utils/seeders/comment-seeder.js'
@@ -51,6 +51,7 @@ describe('CommentReplyForm.vue', () => {
     expect(CommentRepository.createReply).toHaveBeenCalledWith({
       params: CommentDto.toCommentParams(parentComment.id),
       body: CommentDto.toCreateReply(formData, mentionedAuthor),
+      form: 'reply',
     })
     expect(comments.value[0].replies.at(-1)).toEqual(CommentDto.fromShow(createdApi.comment))
     expect(commentCount.value).toBe(CommentDto.fromCommentCount(createdApi))

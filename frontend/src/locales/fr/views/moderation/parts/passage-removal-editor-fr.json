@@ -1,0 +1,10 @@
+{
+  "passage_removal_editor": {
+    "hint": "Sélectionnez un passage dans le texte puis retirez-le. Seuls des retraits sont possibles : le texte ne peut pas être réécrit.",
+    "source": "Texte du chapitre",
+    "remove_selection": "Retirer le passage sélectionné",
+    "reset": "Réinitialiser",
+    "preview": "Aperçu pour les lecteurs",
+    "removed_passage": "[passage retiré par la modération]"
+  }
+}

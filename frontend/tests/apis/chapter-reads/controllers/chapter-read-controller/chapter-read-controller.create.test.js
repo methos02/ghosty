@@ -13,7 +13,7 @@ describe('chapter-read-controller', () => {
   })
 
   describe('create', () => {
-    it('records the read under the reading session and propagates the empty answer', async () => {
+    it('records the read under the reading session', async () => {
       const chapter = chapterSeeder.getChapter()
       vi.spyOn(ChapterReadRepository, 'create').mockResolvedValue({ status: STATUS.NO_CONTENT })
 
@@ -23,7 +23,7 @@ describe('chapter-read-controller', () => {
         params: ChapterReadDto.toChapterParams(chapter.id),
         body: ChapterReadDto.toCreate(chapterReadSeeder.getSessionKey()),
       })
-      expect(result).toEqual({ status: STATUS.NO_CONTENT })
+      expect(result).toEqual({ status: STATUS.SUCCESS })
     })
 
     it('passes the throttle refusal through untouched', async () => {

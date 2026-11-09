@@ -27,6 +27,7 @@ Les décisions structurantes sont dans les ADR :
 | [ADR-11](memory-bank/decisions/ADR-11-chapitre-publie-non-reecrivable.md) | Un chapitre publié est **immuable** : corrigeable une seule fois, sous 48 h, et dans une part limitée du texte |
 | [ADR-12](memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md) | Suivre une branche = suivre son **chapitre-tête** ; lecture unique par session/compte ; historique et reprise réservés aux comptes, aucune progression invitée |
 | [ADR-13](memory-bank/decisions/ADR-13-commentaires.md) | Commentaires sur roman et chapitre (branche = chapitre-tête) ; réponses à un niveau ; pas d'édition ; suppression = texte effacé, trace seulement s'il y a des réponses |
+| [ADR-15](memory-bank/decisions/ADR-15-traitement-de-la-moderation.md) | Décision par contenu signalé ; une feuille s'archive ou se masque, un chapitre poursuivi perd seulement le **passage retiré** ; table `sanctions` (remplace `banned_until`, ADR-01) |
 
 Plan de livraison par lots : [ghosty-mvp-plan.md](../ghosty-mvp-plan.md).
 
@@ -167,15 +168,13 @@ username VARCHAR UNIQUE
 email VARCHAR UNIQUE
 password VARCHAR                    -- Bcrypt (pas SHA1!)
 email_verified_at TIMESTAMP
-role ENUM('reader', 'author', 'moderator', 'admin')
+roles JSON                          -- cumulables : reader, author, moderator, admin
 photo VARCHAR
 notifications_enabled BOOLEAN
 firstname VARCHAR
 lastname VARCHAR
 birth_date DATE
-warning_count INT DEFAULT 0
 new_messages_count INT DEFAULT 0
-banned_until DATE NULLABLE
 created_at TIMESTAMP
 updated_at TIMESTAMP
 ```
@@ -263,19 +262,30 @@ INDEX (commentable_type, commentable_id, parent_id, status)
 - `comment_received` (commentaire principal → auteur du contenu) et `comment_replied`
   (réponse → auteur du commentaire), agrégées par contenu commenté.
 
-#### reports / sanctions — à venir (lots 3 et 6)
+#### reports / sanctions / chapter_versions ✅ implémenté (lots 3 et 6)
 ```sql
-reports   : reporter_id, reportable_type (Chapter|Comment|NovelCover|User), reportable_id,
-            reason ENUM('poor_quality','off_topic','plagiarism','unauthorized_illustration',
-                        'spam','hate_speech','insult','harassment','personal_attack',
-                        'like_manipulation','illegal'),
-            description, status ENUM('pending','processed'), moderator_id,
-            resolution ENUM('dismissed','hidden','archived','removed','sanction'), processed_at, timestamps
-            UNIQUE (reporter_id, reportable_type, reportable_id)
+reports    : reporter_id, reportable_type (chapter|comment, cover au lot 7), reportable_id,
+             reason ENUM('poor_quality','off_topic','plagiarism','unauthorized_illustration',
+                         'spam','hate_speech','insult','harassment','personal_attack',
+                         'like_manipulation','illegal'),
+             description, status (1 pending, 2 processed), moderator_id,
+             resolution ENUM('dismissed','archived','hidden','passage_removed'), processed_at, timestamps
+             UNIQUE (reporter_id, reportable_type, reportable_id)
 
-sanctions : user_id, moderator_id, type ENUM('warning','like_ban','write_ban',
-            'comment_ban','account_ban'), until NULLABLE, reason, report_id NULLABLE, timestamps
+sanctions  : user_id, moderator_id, report_id NULLABLE, type ENUM('warning','write_ban',
+             'comment_ban','account_ban'), until NULLABLE (null = définitive), reason, timestamps
+
+chapter_versions : chapter_id, moderator_id, content, timestamps   -- texte avant retrait de passage
 ```
+
+- **Une décision vise un contenu** et clôt tous ses signalements en attente
+  (`ModerationService`, seul chemin vers `archived` / `hidden` / `passage_removed`).
+- **Seule une feuille** (publiée, non racine, sans suite publiée) s'archive ou se masque ;
+  un chapitre poursuivi perd seulement un **passage retiré** : `PassageRemovalOnly` n'accepte que
+  des passages remplacés par `config('ghosty.moderation.removed_passage_marker')`.
+- Les bans se lisent dans `sanctions` : `User::isBanned()` (account_ban), `isWriteBanned()`,
+  `isCommentBanned()`. Soutenir n'est bloqué que par un `account_ban`. Plus de `users.banned_until`
+  ([ADR-15](memory-bank/decisions/ADR-15-traitement-de-la-moderation.md)).
 
 > ⛔ **Aucune bascule d'état sur un nombre de signalements.** Sans ce garde-fou, « signaler »
 > redevient le downvote supprimé, actionnable en brigade.
@@ -293,7 +303,7 @@ MySQL n'ayant pas d'index partiel, c'est la colonne générée qui porte le « W
 - **Une notification = un fichier** : `Services/Notifications/{Type}NotificationService` construit
   le `data` de son type et passe par `NotificationService::push()`. Les morceaux de `data`
   partagés (sujet chapitre / roman, listes de chapitres, compteur) sont dans
-  `Support/NotificationDataSupport`. Une nouvelle notification ajoute un fichier, sans toucher
+  `Helpers/NotificationDataHelper`. Une nouvelle notification ajoute un fichier, sans toucher
   aux autres.
 - `chapter_continued` (publication d'une suite), `like_received` (soutien effectif, compteur
   relu dans `likes` depuis l'ouverture du groupe), `main_branch_gained` /
@@ -331,7 +341,8 @@ chapter_reads    : chapter_id, user_id NULLABLE, session_key (uuid navigateur), 
 5. `notifications`
 6. `follows`, `reading_progress`, `chapter_reads`
 7. `comments`
-8. `sanctions`, `novel_covers`
+8. `sanctions`, `chapter_versions`
+9. `novel_covers`
 
 ## Seeders et Données de Test
 
@@ -684,163 +695,81 @@ choisie au point d'appel, qui surcharge `detailAttributes()` pour ne pas le prod
 
 ### 5. Policy (Authorization)
 
+Une policy répond à une capacité (`view`, `update`, `publish`, `moderate`…). Elle renvoie `bool`,
+ou une `Response` quand le refus doit cacher la ressource : `Response::denyAsNotFound()` répond
+404 au lieu de 403 (un brouillon reste introuvable pour un autre lecteur).
+
 ```php
-<?php
-// app/Policies/NovelPolicy.php
-
-namespace App\Policies;
-
-use App\Models\User;
-use App\Models\Novel;
-
-class NovelPolicy
+// app/Policies/ChapterPolicy.php
+public function view(?User $user, Chapter $chapter): Response
 {
-    public function viewAny(User $user): bool
-    {
-        return true;
+    if (in_array($chapter->status, [Chapter::STATUS_PUBLISHED, Chapter::STATUS_ARCHIVED], true)) {
+        return Response::allow();
     }
 
-    public function view(User $user, Novel $novel): bool
-    {
-        return $novel->status !== Novel::STATUS_DRAFT
-            || $user->id === $novel->author_id
-            || $user->isAdmin();
+    if ($user !== null && $user->id === $chapter->author_id) {
+        return Response::allow();
     }
 
-    public function create(User $user): bool
-    {
-        return $user->isAuthor();
+    return Response::denyAsNotFound();
+}
+
+public function update(User $user, Chapter $chapter): bool
+{
+    if (! $this->isOwnWork($user, $chapter)) {
+        return false;
     }
 
-    public function update(User $user, Novel $novel): bool
-    {
-        return $user->id === $novel->author_id
-            || $user->isAdmin();
-    }
-
-    public function delete(User $user, Novel $novel): bool
-    {
-        return $user->id === $novel->author_id
-            || $user->isAdmin();
-    }
+    return $chapter->isDraft() || ($chapter->isPublished() && $chapter->isCorrectable());
 }
 ```
 
 ### 6. Controller API
 
+Les modèles de l'URL arrivent **liés** par le binding natif de Laravel (`Chapter $chapter`) :
+un id inconnu répond 404 avant l'action. Un modèle à slug (trait `HasSlug`) se lie par son slug
+(`getRouteKeyName()`), `{novel}` attend donc le slug du roman. L'autorisation est déjà faite par la route : l'action ne charge ni
+n'autorise.
+
+Le modèle lié est léger. Quand la réponse a besoin de relations ou des indicateurs du lecteur,
+l'action recharge par le repository dans une variable nommée d'après ce qu'elle apporte.
+
 ```php
-<?php
-// app/Http/Controllers/Api/V1/NovelController.php
-
-namespace App\Http\Controllers\Api\V1;
-
-use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreNovelRequest;
-use App\Http\Resources\NovelResource;
-use App\Models\Novel;
-use Illuminate\Http\Request;
-
-class NovelController extends Controller
+// app/Http/Controllers/Api/V1/ChapterController.php
+public function show(Chapter $chapter): ChapterResource
 {
-    public function index(Request $request)
-    {
-        $query = Novel::with(['genre', 'author']);
+    $chapterForReader = $this->chaptersR->find($chapter->id, $this->currentUserHelper->id());
 
-        // Filtres
-        if ($request->filled('id_genre')) {
-            $query->where('genre_id', $request->id_genre);
-        }
+    return new ChapterResource($chapterForReader);
+}
 
-        if ($request->filled('id_author')) {
-            $query->where('author_id', $request->id_author);
-        }
+public function publish(Chapter $chapter): ChapterResource
+{
+    $this->chapterService->publish($chapter);
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+    $published = $this->chaptersR->find($chapter->id, $this->currentUserHelper->id());
 
-        // Tri
-        $sortBy = $request->input('sort', 'created_at');
-        $sortOrder = $request->input('order', 'desc');
-        $query->orderBy($sortBy, $sortOrder);
-
-        $novels = $query->paginate(20);
-
-        return NovelResource::collection($novels);
-    }
-
-    public function store(StoreNovelRequest $request)
-    {
-        $this->authorize('create', Novel::class);
-
-        $novel = Novel::create([
-            'title' => $request->title,
-            'genre_id' => $request->genre_id,
-            'author_id' => auth()->id(),
-            'status' => Novel::STATUS_DRAFT
-        ]);
-
-        // Créer le premier chapitre
-        $novel->chapters()->create([
-            'title' => $request->first_chapter_title,
-            'content' => $request->first_chapter_content,
-            'author_id' => auth()->id(),
-            'type' => 'chapter',
-            'order' => 1,
-            'status' => 'draft'
-        ]);
-
-        return new NovelResource($novel->load(['genre', 'author']));
-    }
-
-    public function show(Novel $novel)
-    {
-        $this->authorize('view', $novel);
-
-        $novel->load(['genre', 'author', 'chapters']);
-
-        return new NovelResource($novel);
-    }
-
-    public function update(StoreNovelRequest $request, Novel $novel)
-    {
-        $this->authorize('update', $novel);
-
-        $novel->update($request->validated());
-
-        return new NovelResource($novel->load(['genre', 'author']));
-    }
-
-    public function destroy(Novel $novel)
-    {
-        $this->authorize('delete', $novel);
-
-        $novel->delete();
-
-        return response()->json(['message' => 'Roman supprimé avec succès']);
-    }
+    return new ChapterResource($published);
 }
 ```
 
+`$this->authorize()` ne reste que pour un modèle désigné par le corps de la requête :
+`ChapterController::store` autorise `create` sur le parent lu dans `parent_id`.
+
 ### 7. Routes API
 
+`routes/api.php` est la table de qui peut faire quoi : une route par ligne, son `->can()` sur la
+même ligne. Une capacité commune à une zone se pose sur le groupe.
+
 ```php
-<?php
 // routes/api.php
+Route::get('/chapters/{chapter}', [ChapterController::class, 'show'])->can('view', 'chapter')->name('chapters.show');
 
-use App\Http\Controllers\Api\V1\NovelController;
-use Illuminate\Support\Facades\Route;
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/chapters/{chapter}', [ChapterController::class, 'update'])->can('update', 'chapter')->name('chapters.update');
 
-Route::prefix('v1')->group(function () {
-    // Public routes
-    Route::get('/novels', [NovelController::class, 'index']);
-    Route::get('/novels/{novel}', [NovelController::class, 'show']);
-
-    // Protected routes
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/novels', [NovelController::class, 'store']);
-        Route::put('/novels/{novel}', [NovelController::class, 'update']);
-        Route::delete('/novels/{novel}', [NovelController::class, 'destroy']);
+    Route::prefix('moderation')->middleware('can:moderate,'.Report::class)->group(function () {
+        Route::post('/chapters/{chapter}/restore', [ModerationController::class, 'restoreChapter'])->can('restore', 'chapter')->name('moderation.chapters.restore');
     });
 });
 ```

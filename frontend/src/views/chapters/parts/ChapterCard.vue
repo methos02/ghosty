@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import { router, t } from '@/services/shortcuts/services-shortcut.js'
-import { useChapterSummary } from '@/apis/chapters/composables/use-chapter-summary.js'
-import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
+import { useChapterSummary } from '@/core-vue/composables/chapters/use-chapter-summary.js'
+import { useNovelStore } from '@/core-vue/stores/novels/novel-store.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { correctionHelper } from '@/core/helpers/correction-helper.js'
 import { POPULARITY } from '@/constants/chapter-constants.js'
@@ -23,17 +23,6 @@ const authStore = useAuthStore()
 
 const chapterNumber = computed(() => props.chapter.depth + 1)
 
-const popularLabel = computed(() => {
-  if (props.popularity === POPULARITY.NOVEL) {
-    return t('common.main_branch')
-  }
-
-  if (props.popularity === POPULARITY.BRANCH) {
-    return t('common.main_branch_from_here')
-  }
-
-  return ''
-})
 const canCorrect = computed(() =>
   correctionHelper.isCorrectableBy(props.chapter, authStore.user.value?.id),
 )
@@ -79,10 +68,16 @@ const correct = async () => {
         </span>
 
         <span
-          v-if="popularLabel !== ''"
+          v-if="popularity === POPULARITY.NOVEL"
           class="chapter-card__popular | badge badge-primary"
         >
-          {{ popularLabel }}
+          {{ t('common.main_branch') }}
+        </span>
+        <span
+          v-else-if="popularity === POPULARITY.BRANCH"
+          class="chapter-card__popular | badge badge-primary"
+        >
+          {{ t('common.main_branch_from_here') }}
         </span>
       </div>
     </div>

@@ -1,0 +1,14 @@
+{
+  "report_processed_notification": {
+    "chapter": {
+      "dismissed": "Votre signalement de « {title} » a été examiné : aucune infraction retenue",
+      "archived": "Votre signalement de « {title} » a été traité : le chapitre a été archivé",
+      "hidden": "Votre signalement de « {title} » a été traité : le chapitre a été masqué",
+      "passage_removed": "Votre signalement de « {title} » a été traité : le passage en cause a été retiré"
+    },
+    "comment": {
+      "dismissed": "Votre signalement d'un commentaire sur « {title} » a été examiné : aucune infraction retenue",
+      "hidden": "Votre signalement d'un commentaire sur « {title} » a été traité : le commentaire a été masqué"
+    }
+  }
+}

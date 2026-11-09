@@ -1,0 +1,7 @@
+{
+  "moderation_report_list": {
+    "title": "Aucun signalement | 1 signalement | {count} signalements",
+    "pending": "En attente",
+    "reported_by": "Par {reporter}, le {date}"
+  }
+}

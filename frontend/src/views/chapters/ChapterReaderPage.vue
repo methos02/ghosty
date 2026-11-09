@@ -5,10 +5,10 @@ import ChapterCommentsDialog from '@/views/chapters/parts/ChapterCommentsDialog.
 import ChapterFooter from '@/views/chapters/parts/ChapterFooter.vue'
 import ReadingToolbar from '@/views/chapters/parts/ReadingToolbar.vue'
 import { route, t } from '@/services/shortcuts/services-shortcut.js'
-import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
-import { useReadingSettingsStore } from '@/apis/chapters/stores/reading-settings-store.js'
-import { useChapterReading } from '@/apis/chapters/composables/use-chapter-reading.js'
-import { useReadingPosition } from '@/apis/chapters/composables/use-reading-position.js'
+import { useReadingStore } from '@/core-vue/stores/chapters/reading-store.js'
+import { useReadingSettingsStore } from '@/core-vue/stores/chapters/reading-settings-store.js'
+import { useChapterReading } from '@/core-vue/composables/chapters/use-chapter-reading.js'
+import { useReadingPosition } from '@/core-vue/composables/chapters/use-reading-position.js'
 import { useWindowScrolled } from '@/core-vue/composables/use-window-scrolled.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { correctionHelper } from '@/core/helpers/correction-helper.js'
@@ -158,11 +158,31 @@ onUnmounted(readingStore.clear)
           </header>
 
           <p
+            v-if="chapter.isArchived"
+            class="chapter-reader-page__archived | bg-info-300 p-10 radius-5 fs-300 text-center"
+          >
+            {{ t('chapter_read.archived') }}
+          </p>
+
+          <p
             v-for="(paragraph, index) in chapter.paragraphs"
             :key="index"
             class="chapter-reader-page__paragraph"
           >
-            {{ paragraph }}
+            <template
+              v-for="(segment, segmentIndex) in paragraph"
+              :key="segmentIndex"
+            >
+              <span
+                v-if="segment.isRemoved"
+                class="chapter-reader-page__removed-passage | fs-300 color-neutral-600"
+              >
+                {{ t('chapter_read.removed_passage') }}
+              </span>
+              <template v-else>
+                {{ segment.text }}
+              </template>
+            </template>
           </p>
         </article>
 
@@ -205,6 +225,10 @@ onUnmounted(readingStore.clear)
     line-height: 1.8;
     margin: 0;
     text-align: justify;
+  }
+
+  &__removed-passage {
+    font-style: italic;
   }
 }
 </style>

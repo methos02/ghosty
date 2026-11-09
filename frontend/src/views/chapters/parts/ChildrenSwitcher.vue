@@ -12,14 +12,6 @@ const props = defineProps({
 
 const isShowingAllSuites = ref(false)
 
-const heading = computed(() => {
-  if (props.title !== '') {
-    return props.title
-  }
-
-  return t('children_switcher.title', { count: props.children.length })
-})
-
 const visibleSuites = computed(() => {
   if (isShowingAllSuites.value) {
     return props.children
@@ -37,7 +29,12 @@ const hiddenCount = computed(() => props.children.length - visibleSuites.value.l
     class="children-switcher | d-flex f-column g-15"
   >
     <h2 class="children-switcher__title | fs-500 fw-500">
-      {{ heading }}
+      <template v-if="title !== ''">
+        {{ title }}
+      </template>
+      <template v-else>
+        {{ t('children_switcher.title', { count: children.length }) }}
+      </template>
     </h2>
 
     <ul class="children-switcher__list | d-flex f-column g-10">

@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { ConfigLoader } from '@/config/config-loader.js'
-import { useReadingStore } from '@/apis/chapters/stores/reading-store.js'
-import { useNovelStore } from '@/apis/novels/stores/novel-store.js'
+import { useReadingStore } from '@/core-vue/stores/chapters/reading-store.js'
+import { useNovelStore } from '@/core-vue/stores/novels/novel-store.js'
 import { headService } from '@/head/head-service.js'
 import { router } from '@/services/shortcuts/services-shortcut.js'
 

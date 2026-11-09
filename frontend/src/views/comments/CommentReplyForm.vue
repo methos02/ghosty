@@ -5,7 +5,7 @@ import LoaderComponent from '@/components/LoaderComponent.vue'
 import CommentFields from '@/views/comments/CommentFields.vue'
 import { CommentController } from '@/apis/comments/controllers/comment-controller.js'
 import { validateCommentForm } from '@/apis/comments/formRequest/comment-form-request.js'
-import { useCommentStore } from '@/apis/comments/stores/comment-store.js'
+import { useCommentStore } from '@/core-vue/stores/comments/comment-store.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const props = defineProps({

@@ -1,16 +1,17 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import ReadingToolbar from '@/views/chapters/parts/ReadingToolbar.vue'
-import { useChapterReport } from '@/apis/reports/composables/use-chapter-report.js'
-import { useChapterComments } from '@/apis/comments/composables/use-chapter-comments.js'
+import { useReport } from '@/core-vue/composables/reports/use-report.js'
+import { REPORTED_CONTENT_TYPES } from '@/constants/moderation-constants.js'
+import { useChapterComments } from '@/core-vue/composables/comments/use-chapter-comments.js'
 import { useAuth } from '@/services/auth/src/use-auth.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
-import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
-import { createReadingStore, READING_STORE_KEY } from '@/apis/chapters/stores/reading-store.js'
+import { createNovelStore, NOVEL_STORE_KEY } from '@/core-vue/stores/novels/novel-store.js'
+import { createReadingStore, READING_STORE_KEY } from '@/core-vue/stores/chapters/reading-store.js'
 import {
   createReadingSettingsStore,
   READING_SETTINGS_STORE_KEY,
-} from '@/apis/chapters/stores/reading-settings-store.js'
+} from '@/core-vue/stores/chapters/reading-settings-store.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
@@ -22,7 +23,7 @@ describe('ReadingToolbar.vue', () => {
   })
 
   afterEach(() => {
-    useChapterReport().closeChapterReport()
+    useReport().report.closeReport()
     useChapterComments().closeChapterComments()
   })
 
@@ -45,7 +46,10 @@ describe('ReadingToolbar.vue', () => {
     })
     await wrapper.find('.reading-toolbar__report').trigger('click')
 
-    expect(useChapterReport().reportedChapter.value).toEqual(chapter)
+    expect(useReport().reportedContent.value).toEqual({
+      type: REPORTED_CONTENT_TYPES.CHAPTER,
+      content: chapter,
+    })
   })
 
   it('does not offer the author to report their own chapter', () => {
@@ -86,7 +90,7 @@ describe('ReadingToolbar.vue', () => {
 
     await wrapper.find('.reading-toolbar__report').trigger('click')
 
-    expect(useChapterReport().reportedChapter.value).toBeUndefined()
+    expect(useReport().reportedContent.value).toBeUndefined()
     expect(useAuth().showLoginDialog.value).toBe(true)
   })
 

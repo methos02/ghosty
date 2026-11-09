@@ -67,6 +67,22 @@ const getNovelCommentNotificationApi = (type, count, overrides = {}) =>
     ...overrides,
   })
 
+const getSanctionApi = (overrides = {}) => ({
+  type: 'write_ban',
+  until: '2026-12-01T10:00:00+00:00',
+  reason: 'Propos insultants envers un autre auteur',
+  ...overrides,
+})
+
+const getModerationNotificationApi = (type, overrides = {}) =>
+  getNotificationApi({
+    type,
+    content_type: 'chapter',
+    resolution: 'archived',
+    sanction: null,
+    ...overrides,
+  })
+
 const getNotification = (overrides = {}) => ({
   ...NotificationDto.fromNotification(getNotificationApi()),
   ...overrides,
@@ -84,6 +100,9 @@ const getCommentNotification = (type, count) =>
 
 const getNovelCommentNotification = (type, count) =>
   NotificationDto.fromNotification(getNovelCommentNotificationApi(type, count))
+
+const getModerationNotification = (type, overrides = {}) =>
+  NotificationDto.fromNotification(getModerationNotificationApi(type, overrides))
 
 const getListApi = (overrides = {}) => ({
   notifications: [getNotificationApi()],
@@ -115,9 +134,12 @@ export const notificationSeeder = {
   getLikeReceived,
   getLikeReceivedApi,
   getListApi,
+  getModerationNotification,
+  getModerationNotificationApi,
   getNotification,
   getNotificationApi,
   getNovelCommentNotification,
   getNovelCommentNotificationApi,
+  getSanctionApi,
   getUnreadCountApi,
 }

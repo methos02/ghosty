@@ -1,68 +1,70 @@
+import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
+import { CHAPTER_STATUSES } from '@/constants/chapter-constants.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
+import { passageRemovalHelper } from '@/core/helpers/passage-removal-helper.js'
 
-const fromList = (datas = []) => {
-  return datas.map(data => fromShow(data))
+const fromList = (chapters = []) => {
+  return chapters.map(chapter => ChapterDto.fromShow(chapter))
 }
 
-const fromReading = data => ({
-  novel: NovelDto.fromShow(data.novel),
-  chapter: fromShow(data.chapter),
-  ancestors: fromList(data.ancestors),
-  children: fromList(data.children),
-  branchChapterIds: data.branch_chapter_ids ?? [],
-  isMainBranch: data.is_main_branch === true,
-  nextChapterId: data.next_chapter_id,
+const fromPublished = novels => {
+  return novels.map(novel => ({
+    novel: NovelDto.fromShow(novel),
+    chapters: ChapterDto.fromList(novel.chapters),
+  }))
+}
+
+const fromReading = reading => ({
+  novel: NovelDto.fromShow(reading.novel),
+  chapter: ChapterDto.fromShow(reading.chapter),
+  ancestors: ChapterDto.fromList(reading.ancestors),
+  children: ChapterDto.fromList(reading.children),
+  branchChapterIds: reading.branch_chapter_ids ?? [],
+  isMainBranch: reading.is_main_branch === true,
+  nextChapterId: reading.next_chapter_id,
 })
 
-const fromShow = data => {
+const fromShow = chapter => {
   return {
-    id: data.id,
-    novelId: data.novel_id,
-    parentId: data.parent_id,
-    title: data.title,
-    summary: data.summary ?? '',
-    content: data.content,
-    paragraphs: ChapterDtoInternal.convertToParagraphs(data.content),
-    depth: data.depth,
-    hasChildren: data.has_children,
-    childrenCount: data.children_count,
-    likeCount: data.like_count,
-    branchLikeCount: data.branch_like_count,
-    isLiked: data.is_liked,
-    isReported: data.is_reported === true,
-    isFollowed: data.is_followed === true,
-    commentCount: data.comment_count,
-    isDraft: data.is_draft,
-    isCorrectable: data.is_correctable,
-    isRoot: data.is_root,
-    novel: {
-      id: data.novel?.id,
-      slug: data.novel?.slug,
-      title: data.novel?.title,
-      genreId: data.novel?.genre_id,
-    },
-    author: {
-      id: data.author?.id,
-      username: data.author?.username,
-    },
-    publishedAt: data.published_at,
-    publishedAtFormat: data.published_at
-      ? dateHelper.formatDateLocal(data.published_at, 'DD/MM/YYYY')
+    id: chapter.id,
+    novelId: chapter.novel_id,
+    parentId: chapter.parent_id,
+    title: chapter.title,
+    summary: chapter.summary ?? '',
+    content: chapter.content,
+    paragraphs: ChapterDtoInternal.convertToParagraphs(chapter.content),
+    depth: chapter.depth,
+    hasChildren: chapter.has_children,
+    childrenCount: chapter.children_count,
+    likeCount: chapter.like_count,
+    branchLikeCount: chapter.branch_like_count,
+    isLiked: chapter.is_liked,
+    isReported: chapter.is_reported === true,
+    isFollowed: chapter.is_followed === true,
+    commentCount: chapter.comment_count,
+    isDraft: chapter.is_draft,
+    isArchived: chapter.status === CHAPTER_STATUSES.ARCHIVED,
+    isHidden: chapter.status === CHAPTER_STATUSES.HIDDEN,
+    isCorrectable: chapter.is_correctable,
+    isRoot: chapter.is_root,
+    novel: NovelDto.fromSummary(chapter.novel),
+    author: AuthorDto.fromShow(chapter.author),
+    publishedAt: chapter.published_at,
+    publishedAtFormat: chapter.published_at
+      ? dateHelper.formatDateLocal(chapter.published_at, 'DD/MM/YYYY')
       : '-',
   }
 }
 
-const fromPublished = datas => {
-  return datas.map(data => ({
-    novel: NovelDto.fromShow(data),
-    chapters: fromList(data.chapters),
-  }))
-}
+const fromSummary = chapter => ({
+  id: chapter.id,
+  title: chapter.title,
+})
 
-const fromTree = data => ({
-  chapters: fromList(data.chapters),
-  mainBranchIds: data.main_branch_ids ?? [],
+const fromTree = tree => ({
+  chapters: ChapterDto.fromList(tree.chapters),
+  mainBranchIds: tree.main_branch_ids ?? [],
 })
 
 const toChapterParams = id => {
@@ -81,14 +83,14 @@ const toCreateParams = novelSlug => {
   return { slug: novelSlug }
 }
 
-const toMainBranchParams = novelSlug => {
-  return { slug: novelSlug }
-}
-
 const toDraftFilters = (filters = {}) => ({
   parent_id: filters.parentId,
   is_root: filters.isRoot,
 })
+
+const toMainBranchParams = novelSlug => {
+  return { slug: novelSlug }
+}
 
 const toReadingParams = (novelSlug, chapterId) => {
   return { slug: novelSlug, chapter: chapterId }
@@ -109,12 +111,13 @@ export const ChapterDto = {
   fromPublished,
   fromReading,
   fromShow,
+  fromSummary,
   fromTree,
   toChapterParams,
   toCreate,
   toCreateParams,
-  toMainBranchParams,
   toDraftFilters,
+  toMainBranchParams,
   toReadingParams,
   toTreeParams,
   toUpdate,
@@ -125,6 +128,7 @@ const convertToParagraphs = content => {
     .split(/\n+/)
     .map(paragraph => paragraph.trim())
     .filter(Boolean)
+    .map(paragraph => passageRemovalHelper.split(paragraph))
 }
 
 export const ChapterDtoInternal = {

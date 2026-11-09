@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
 import { ConfigLoader } from '@/config/config-loader.js'
 import SelectComponent from '@/services/form/views/inputs/SelectComponent.vue'
-import { useReadingSettingsStore } from '@/apis/chapters/stores/reading-settings-store.js'
+import { useReadingSettingsStore } from '@/core-vue/stores/chapters/reading-settings-store.js'
 import { readingSettingsHelper } from '@/core/helpers/reading-settings-helper.js'
 
 const { settings, setSetting, persist } = useReadingSettingsStore()

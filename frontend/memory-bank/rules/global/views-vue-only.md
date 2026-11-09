@@ -5,7 +5,7 @@ paths:
 ---
 # Views Vue Only
 
-`src/views/` MUST contain only `.vue` files. Vue-dependent JS (provide/inject keys, shared view state) goes in `src/apis/{domain}/composables/`, with the `Symbol` key private to the file and exposed through small functions (a provide/inject helper is the exception to the store export shape, see [composable-store-export-pattern](../files-type/composable-store-export-pattern.md)). `src/constants/` holds only framework-agnostic constants.
+`src/views/` MUST contain only `.vue` files. Vue-dependent JS (provide/inject keys, shared view state) goes in `src/core-vue/composables/{domain}/`, with the `Symbol` key private to the file and exposed through small functions (a provide/inject helper is the exception to the store export shape, see [composable-store-export-pattern](../files-type/composable-store-export-pattern.md)). `src/constants/` holds only framework-agnostic constants.
 
 ```js
 // BAD

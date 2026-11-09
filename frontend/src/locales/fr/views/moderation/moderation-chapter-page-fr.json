@@ -1,0 +1,7 @@
+{
+  "moderation_chapter_page": {
+    "archived": "Ce chapitre est archivé : il reste consultable mais n'est plus mis en avant.",
+    "hidden": "Ce chapitre est masqué : il est retiré de la lecture.",
+    "continued": "Ce chapitre a des suites ou ouvre le roman : il ne peut pas être retiré sans casser l'histoire. Seul le retrait d'un passage est possible."
+  }
+}

@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import ChapterCard from '@/views/chapters/parts/ChapterCard.vue'
-import { useChapterBranch } from '@/apis/chapters/composables/use-chapter-branch.js'
+import { useChapterBranch } from '@/core-vue/composables/chapters/use-chapter-branch.js'
 import { POPULARITY } from '@/constants/chapter-constants.js'
 
 const props = defineProps({

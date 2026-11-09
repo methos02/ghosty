@@ -1,0 +1,18 @@
+{
+  "moderation": {
+    "back_to_queue": "Retour à la file de modération",
+    "context": "{novel} · par {author}",
+    "resolutions": {
+      "dismissed": "Rejeter les signalements",
+      "archived": "Archiver",
+      "hidden": "Masquer",
+      "passage_removed": "Retirer un passage"
+    },
+    "sanction_types": {
+      "warning": "Avertissement",
+      "write_ban": "Interdiction d'écrire",
+      "comment_ban": "Interdiction de commenter",
+      "account_ban": "Bannissement du compte"
+    }
+  }
+}

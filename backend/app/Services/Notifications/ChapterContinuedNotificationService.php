@@ -3,10 +3,10 @@
 namespace App\Services\Notifications;
 
 use App\Enums\NotificationType;
+use App\Helpers\NotificationDataHelper;
 use App\Models\Chapter;
 use App\Models\Notification;
 use App\Services\NotificationService;
-use App\Support\NotificationDataSupport;
 
 /**
  * @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md
@@ -25,13 +25,13 @@ class ChapterContinuedNotificationService
             NotificationType::ChapterContinued,
             $parent,
             fn (?Notification $pending): array => [
-                ...NotificationDataSupport::chapterSubject($parent),
+                ...NotificationDataHelper::chapterSubject($parent),
                 'continuation' => [
                     'id' => $continuation->id,
                     'title' => $continuation->title,
                     'author_username' => $continuation->author->username,
                 ],
-                'count' => NotificationDataSupport::pendingCount($pending) + 1,
+                'count' => NotificationDataHelper::pendingCount($pending) + 1,
             ]
         );
     }

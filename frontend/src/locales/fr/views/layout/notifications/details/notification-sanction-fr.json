@@ -1,0 +1,18 @@
+{
+  "notification_sanction": {
+    "warning": "Vous recevez un avertissement de la modération.",
+    "reason": "Motif : {reason}",
+    "write_ban": {
+      "until": "Vous ne pouvez plus écrire ni publier jusqu'au {date}.",
+      "permanent": "Vous ne pouvez plus écrire ni publier."
+    },
+    "comment_ban": {
+      "until": "Vous ne pouvez plus commenter jusqu'au {date}.",
+      "permanent": "Vous ne pouvez plus commenter."
+    },
+    "account_ban": {
+      "until": "Votre compte est suspendu jusqu'au {date}.",
+      "permanent": "Votre compte est suspendu définitivement."
+    }
+  }
+}

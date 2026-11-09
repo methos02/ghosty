@@ -2,12 +2,15 @@
 
 namespace Tests\Feature\Api\V1\ChapterController;
 
+use App\Http\Controllers\Api\V1\ChapterController;
 use App\Models\Chapter;
 use App\Models\Follow;
+use App\Models\Genre;
 use App\Models\Like;
 use App\Models\Novel;
 use App\Models\Report;
 use App\Models\User;
+use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -22,6 +25,15 @@ class ChapterControllerReadingTest extends TestCase
         $root = Chapter::factory()->create(['novel_id' => $novel->id]);
 
         return [$novel, $root];
+    }
+
+    #[Test]
+    public function has_middleware(): void
+    {
+        $route = Route::getRoutes()->getByAction(ChapterController::class.'@reading');
+        $this->assertNotNull($route);
+
+        $this->assertEqualsCanonicalizing(['api', 'can:view,chapter'], $route->gatherMiddleware());
     }
 
     #[Test]
@@ -45,14 +57,21 @@ class ChapterControllerReadingTest extends TestCase
     #[Test]
     public function carries_the_novel_the_chapter_belongs_to(): void
     {
-        $novel = Novel::factory()->create(['slug' => 'nuit-virage', 'title' => 'Nuit virage']);
+        $novel = Novel::factory()->create([
+            'slug' => 'nuit-virage',
+            'title' => 'Nuit virage',
+            'genre_id' => Genre::factory()->create(['name' => 'Horreur'])->id,
+            'author_id' => User::factory()->create(['username' => 'auteur3'])->id,
+        ]);
         $chapter = Chapter::factory()->create(['novel_id' => $novel->id]);
 
         $response = $this->getJson("/api/v1/novels/{$novel->slug}/chapters/{$chapter->id}");
 
         $response->assertOk()
             ->assertJsonPath('novel.slug', 'nuit-virage')
-            ->assertJsonPath('novel.title', 'Nuit virage');
+            ->assertJsonPath('novel.title', 'Nuit virage')
+            ->assertJsonPath('novel.genre.name', 'Horreur')
+            ->assertJsonPath('novel.author.username', 'auteur3');
     }
 
     #[Test]

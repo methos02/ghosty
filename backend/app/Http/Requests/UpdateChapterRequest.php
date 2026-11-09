@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\RouteBindingHelper;
 use App\Models\Chapter;
-use App\Repositories\ChapterRepository;
 use App\Rules\LimitedTextChange;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Config;
@@ -21,9 +21,9 @@ class UpdateChapterRequest extends FormRequest
     /**
      * @return array<string, array<int, mixed>>
      */
-    public function rules(ChapterRepository $chaptersR): array
+    public function rules(RouteBindingHelper $routeBinding): array
     {
-        $chapter = $chaptersR->find((int) $this->route('chapter'));
+        $chapter = $routeBinding->chapter($this);
 
         if ($chapter->isDraft()) {
             return $this->draftRules();

@@ -1,7 +1,7 @@
 # ADR-01: Modèle de ban utilisateur (couplage à `banned_until`)
 
 **Date**: 2026-07-22
-**Status**: Accepted
+**Status**: Superseded by [ADR-15](ADR-15-traitement-de-la-moderation.md) — `banned_until` remplacé par la table `sanctions`
 
 ## Context
 

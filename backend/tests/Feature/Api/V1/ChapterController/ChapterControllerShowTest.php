@@ -2,13 +2,24 @@
 
 namespace Tests\Feature\Api\V1\ChapterController;
 
+use App\Http\Controllers\Api\V1\ChapterController;
 use App\Models\Chapter;
 use App\Models\User;
+use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ChapterControllerShowTest extends TestCase
 {
+    #[Test]
+    public function has_middleware(): void
+    {
+        $route = Route::getRoutes()->getByAction(ChapterController::class.'@show');
+        $this->assertNotNull($route);
+
+        $this->assertEqualsCanonicalizing(['api', 'can:view,chapter'], $route->gatherMiddleware());
+    }
+
     #[Test]
     public function returns_the_chapter_with_its_full_text(): void
     {

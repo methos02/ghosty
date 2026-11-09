@@ -1,0 +1,14 @@
+{
+  "content_moderated_notification": {
+    "chapter": {
+      "archived": "Votre chapitre « {title} » a été archivé par la modération",
+      "hidden": "Votre chapitre « {title} » a été masqué par la modération",
+      "passage_removed": "Un passage de votre chapitre « {title} » a été retiré par la modération",
+      "sanctioned": "La modération vous adresse une sanction à propos de votre chapitre « {title} »"
+    },
+    "comment": {
+      "hidden": "Votre commentaire sur « {title} » a été masqué par la modération",
+      "sanctioned": "La modération vous adresse une sanction à propos de votre commentaire sur « {title} »"
+    }
+  }
+}

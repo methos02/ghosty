@@ -197,6 +197,7 @@ describe('ChapterManagePage.vue', () => {
       expect(ChapterRepository.create).toHaveBeenCalledWith({
         params: ChapterDto.toCreateParams(parentApi.novel.slug),
         body: ChapterDto.toCreate(formData),
+        form: 'chapter',
       })
       expect(push).toHaveBeenCalledWith({
         name: 'chapter-read',
@@ -288,9 +289,11 @@ describe('ChapterManagePage.vue', () => {
       expect(ChapterRepository.update).toHaveBeenCalledWith({
         params: ChapterDto.toChapterParams(editedApi.id),
         body: ChapterDto.toUpdate(ChapterDto.fromShow(editedApi)),
+        form: 'chapter',
       })
       expect(ChapterRepository.publish).toHaveBeenCalledWith({
         params: ChapterDto.toChapterParams(editedApi.id),
+        form: 'chapter',
       })
       expect(push).toHaveBeenCalledWith({
         name: 'chapter-read',

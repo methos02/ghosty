@@ -10,17 +10,26 @@ A controller builds `{ params, body }` through the DTO, calls the repository, an
 - MUST pass every payload and response through the DTO.
 - MUST return the repository response as-is on error. MUST NOT rebuild an error object.
 - MUST NOT call a controller from a controller: orchestrating two controllers is the job of a service ([service](service.md)).
-- MUST judge success with `ajaxHelper.isSuccess(status)` (accepts `200`, `201`, `204`), never `status === STATUS.SUCCESS` alone: a creation answers `201` and the screen would not move. A controller that writes has at least one test simulating the status the API really returns.
+- MUST build the result with `controllerResponseHelper.buildResponse(response, mapData)` (`@/core/helpers/controller-response-helper.js`). It returns the response untouched on error, and on success (`200`, `201`, `204`) returns `{ ...mapData(response.data), status: STATUS.SUCCESS }`. Without `mapData`, it returns `{ status: STATUS.SUCCESS }`. MUST NOT write the `isSuccess` guard by hand. A controller that writes has at least one test simulating the status the API really returns.
+- MUST pass the form name as the `form` option of a request that can answer `422`: the ajax service then puts the errors on that form ([validation-errors-via-form-service](../global/validation-errors-via-form-service.md)).
 
 ```js
 // GOOD
-const get = async slug => {
-  const response = await NovelRepository.get({ params: { slug } })
-  if (!ajaxHelper.isSuccess(response.status)) {
-    return response
-  }
-  return { status: STATUS.SUCCESS, data: NovelDto.fromShow(response.data) }
+const getBySlug = async slug => {
+  const response = await NovelRepository.getBySlug({
+    params: NovelDto.toShowParams(slug),
+  })
+
+  return controllerResponseHelper.buildResponse(response, data => ({
+    novel: NovelDto.fromShow(data),
+  }))
 }
+
+// BAD
+if (!ajaxHelper.isSuccess(response.status)) {
+  return response
+}
+return { status: STATUS.SUCCESS, novel: NovelDto.fromShow(response.data) }
 
 // BAD
 if (!ajaxHelper.isSuccess(response.status)) {
@@ -85,7 +94,7 @@ const hydrated = await utils.hydrate(novels, ['author'])
 
 ## Derive the result from the response
 
-On a write whose endpoint returns the persisted record, MUST derive the result from `response.data` through the DTO, never from a literal copy of what was sent (the backend may transform it). When the endpoint returns nothing (`204`), propagate the status alone: MUST NOT invent a `data` payload.
+On a write whose endpoint returns the persisted record, MUST derive the result from `response.data` through the DTO, never from a literal copy of what was sent (the backend may transform it). When the endpoint returns nothing (`204`), call `buildResponse(response)` without mapping: MUST NOT invent a `data` payload.
 
 ```js
 // BAD
@@ -97,9 +106,9 @@ const cancel = async novel => {
 // GOOD
 const cancel = async novel => {
   const response = await NovelRepository.updateStatus(NovelDto.toStatus(novel.id, 'draft'))
-  if (!ajaxHelper.isSuccess(response.status)) {
-    return response
-  }
-  return { status: STATUS.SUCCESS, publicationStatus: NovelDto.fromStatus(response.data) }
+
+  return controllerResponseHelper.buildResponse(response, data => ({
+    publicationStatus: NovelDto.fromStatus(data),
+  }))
 }
 ```

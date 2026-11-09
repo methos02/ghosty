@@ -28,12 +28,22 @@ trait Reportable
     public function scopeWithUserReport(Builder $query, ?int $userId): void
     {
         $query->addSelect([
-            'is_reported' => Report::query()
-                ->selectRaw('1')
-                ->whereColumn('reportable_id', $query->getModel()->getQualifiedKeyName())
-                ->where('reportable_type', $query->getModel()->getMorphClass())
-                ->where('reporter_id', $userId ?? 0)
-                ->limit(1),
+            'is_reported' => static::userReportQuery($userId),
         ]);
+    }
+
+    /**
+     * @return Builder<Report>
+     */
+    public static function userReportQuery(?int $userId): Builder
+    {
+        $reportable = static::query()->getModel();
+
+        return Report::query()
+            ->selectRaw('1')
+            ->whereColumn('reportable_id', $reportable->getQualifiedKeyName())
+            ->where('reportable_type', $reportable->getMorphClass())
+            ->where('reporter_id', $userId ?? 0)
+            ->limit(1);
     }
 }

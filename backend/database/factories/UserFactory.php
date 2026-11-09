@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SanctionType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -32,11 +33,9 @@ class UserFactory extends Factory
         ]);
     }
 
-    public function banned(): static
+    public function banned(SanctionType $type = SanctionType::AccountBan): static
     {
-        return $this->state(fn (array $attributes) => [
-            'banned_until' => now()->addDays(7),
-        ]);
+        return $this->has(SanctionFactory::new()->ofType($type), 'sanctions');
     }
 
     public function moderator(): static

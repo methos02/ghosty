@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Helpers\CurrentUserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreChapterReadRequest;
 use App\Http\Resources\ChapterReadResource;
+use App\Models\Chapter;
 use App\Models\User;
 use App\Repositories\ChapterReadRepository;
-use App\Repositories\ChapterRepository;
 use App\Services\ReadingService;
-use App\Support\AuthSupport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Gate;
 
 /**
  * @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
@@ -22,10 +21,9 @@ use Illuminate\Support\Facades\Gate;
 class ChapterReadController extends Controller
 {
     public function __construct(
-        private readonly ChapterRepository $chaptersR,
         private readonly ChapterReadRepository $chapterReadsR,
         private readonly ReadingService $readingService,
-        private readonly AuthSupport $authSupport
+        private readonly CurrentUserHelper $currentUserHelper
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -45,17 +43,11 @@ class ChapterReadController extends Controller
         ]);
     }
 
-    public function store(StoreChapterReadRequest $request, int $chapterId): Response
+    public function store(StoreChapterReadRequest $request, Chapter $chapter): Response
     {
-        $chapter = $this->chaptersR->find($chapterId, withoutRelations: true);
-
-        if (Gate::denies('view', $chapter)) {
-            abort(404);
-        }
-
         $this->readingService->registerRead(
             $chapter,
-            $this->authSupport->id(),
+            $this->currentUserHelper->id(),
             $request->string('session_key')->toString()
         );
 

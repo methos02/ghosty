@@ -17,6 +17,8 @@ describe('comment-dto', () => {
         content: api.content,
         isSpoiler: api.is_spoiler,
         isDeleted: api.is_deleted,
+        isHidden: api.is_hidden,
+        isReported: api.is_reported,
         replies: [
           {
             id: replyApi.id,
@@ -25,6 +27,8 @@ describe('comment-dto', () => {
             content: replyApi.content,
             isSpoiler: replyApi.is_spoiler,
             isDeleted: replyApi.is_deleted,
+            isHidden: replyApi.is_hidden,
+            isReported: replyApi.is_reported,
             replies: [],
             createdAtFormat: dateHelper.formatDateLocal(replyApi.created_at, 'DD/MM/YYYY HH:mm'),
           },
@@ -39,6 +43,16 @@ describe('comment-dto', () => {
       expect(comment.author).toBeUndefined()
       expect(comment.content).toBe('')
       expect(comment.isDeleted).toBe(true)
+    })
+
+    it('flags a comment the moderation hid', () => {
+      expect(CommentDto.fromShow(commentSeeder.getHiddenCommentApi()).isHidden).toBe(true)
+    })
+
+    it('flags a comment the reader already reported', () => {
+      const api = commentSeeder.getCommentApi({ is_reported: true })
+
+      expect(CommentDto.fromShow(api).isReported).toBe(true)
     })
   })
 })

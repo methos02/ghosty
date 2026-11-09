@@ -1,0 +1,18 @@
+{
+  "moderation_page": {
+    "title": "Modération",
+    "pending": "En attente",
+    "processed": "Traités",
+    "reason": "Motif",
+    "all_reasons": "Tous les motifs",
+    "empty": "Aucun contenu signalé ici.",
+    "types": {
+      "chapter": "Chapitre",
+      "comment": "Commentaire"
+    },
+    "report_count": "Aucun signalement | 1 signalement | {count} signalements",
+    "reported_at": "Signalé le {date}",
+    "process": "Traiter",
+    "view": "Voir la décision"
+  }
+}

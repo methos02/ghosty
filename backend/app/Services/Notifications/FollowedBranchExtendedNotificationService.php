@@ -3,11 +3,11 @@
 namespace App\Services\Notifications;
 
 use App\Enums\NotificationType;
+use App\Helpers\NotificationDataHelper;
 use App\Models\Chapter;
 use App\Models\Notification;
 use App\Repositories\UserRepository;
 use App\Services\NotificationService;
-use App\Support\NotificationDataSupport;
 use Illuminate\Support\Collection;
 
 /**
@@ -23,7 +23,7 @@ class FollowedBranchExtendedNotificationService
     public function create(Chapter $continuation, Chapter $parent): void
     {
         $novel = $continuation->novel;
-        $continuationSummaries = NotificationDataSupport::chapterSummaries(new Collection([$continuation]));
+        $continuationSummaries = NotificationDataHelper::chapterSummaries(new Collection([$continuation]));
 
         foreach ($this->usersR->followersOfChapters($parent->pathChapterIds()) as $follower) {
             if ($follower->id === $parent->author_id) {
@@ -35,8 +35,8 @@ class FollowedBranchExtendedNotificationService
                 $continuation->author_id,
                 NotificationType::FollowedBranchExtended,
                 $novel,
-                fn (?Notification $pending): array => NotificationDataSupport::novelChaptersData($novel, NotificationDataSupport::mergeChapterSummaries(
-                    NotificationDataSupport::pendingChapterSummaries($pending),
+                fn (?Notification $pending): array => NotificationDataHelper::novelChaptersData($novel, NotificationDataHelper::mergeChapterSummaries(
+                    NotificationDataHelper::pendingChapterSummaries($pending),
                     $continuationSummaries
                 ))
             );

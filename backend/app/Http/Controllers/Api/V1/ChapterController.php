@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\DTO\ChapterDTO;
 use App\DTO\DraftFilterDTO;
 use App\DTO\TreeFilterDTO;
+use App\Helpers\CurrentUserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DraftFilterRequest;
 use App\Http\Requests\StoreChapterRequest;
@@ -14,15 +15,14 @@ use App\Http\Resources\ChapterListResource;
 use App\Http\Resources\ChapterResource;
 use App\Http\Resources\NovelResource;
 use App\Models\Chapter;
+use App\Models\Novel;
 use App\Models\User;
 use App\Repositories\ChapterRepository;
 use App\Repositories\NovelRepository;
 use App\Services\ChapterService;
-use App\Support\AuthSupport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Gate;
 
 class ChapterController extends Controller
 {
@@ -30,59 +30,57 @@ class ChapterController extends Controller
         private readonly ChapterRepository $chaptersR,
         private readonly NovelRepository $novelsR,
         private readonly ChapterService $chapterService,
-        private readonly AuthSupport $authSupport
+        private readonly CurrentUserHelper $currentUserHelper
     ) {}
 
-    public function mainBranch(string $novelSlug): JsonResponse
+    public function mainBranch(Novel $novel): JsonResponse
     {
-        $chapters = $this->chaptersR->mainBranch($novelSlug, $this->authSupport->id());
+        $chapters = $this->chaptersR->mainBranch($novel->slug, $this->currentUserHelper->id());
 
         return response()->json([
             'chapters' => ChapterListResource::collection($chapters),
         ]);
     }
 
-    public function show(int $chapterId): ChapterResource
+    public function show(Chapter $chapter): ChapterResource
     {
-        $chapter = $this->chaptersR->find($chapterId, $this->authSupport->id());
+        $chapterForReader = $this->chaptersR->find($chapter->id, $this->currentUserHelper->id());
 
-        $this->abortIfUnreadable($chapter);
-
-        return new ChapterResource($chapter);
+        return new ChapterResource($chapterForReader);
     }
 
     /**
      * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
      */
-    public function reading(string $novelSlug, int $chapterId): JsonResponse
+    public function reading(Novel $novel, Chapter $chapter): JsonResponse
     {
-        $userId = $this->authSupport->id();
-        $chapter = $this->chaptersR->findInNovel($chapterId, $novelSlug, $userId);
+        $userId = $this->currentUserHelper->id();
+        $chapterForReader = $this->chaptersR->findInNovel($chapter->id, $novel->slug, $userId);
 
-        $this->abortIfUnreadable($chapter);
-
-        $branch = $this->chaptersR->branchToFollow($chapter, $userId);
-        $mainBranch = $this->chaptersR->mainBranch($novelSlug);
+        $branch = $this->chaptersR->branchToFollow($chapterForReader, $userId);
+        $mainBranch = $this->chaptersR->mainBranch($novel->slug);
+        $novelDetailed = $this->novelsR->loadDetails($novel);
 
         return response()->json([
-            'novel' => new NovelResource($this->novelsR->findBySlug($novelSlug)),
-            'chapter' => new ChapterResource($chapter),
+            'novel' => new NovelResource($novelDetailed),
+            'chapter' => new ChapterResource($chapterForReader),
             'ancestors' => ChapterListResource::collection(
-                $this->chaptersR->ancestors($chapter, $userId)
+                $this->chaptersR->ancestors($chapterForReader, $userId)
             ),
             'children' => ChapterListResource::collection(
-                $this->chaptersR->children($chapter->id, $userId)
+                $this->chaptersR->children($chapterForReader->id, $userId)
             ),
             'branch_chapter_ids' => $branch->pluck('id')->all(),
             'is_main_branch' => $branch->last()?->id === $mainBranch->last()?->id,
-            'next_chapter_id' => $this->nextChapterIdInBranch($branch, $chapter),
+            'next_chapter_id' => $this->nextChapterIdInBranch($branch, $chapterForReader),
         ]);
     }
 
-    public function tree(TreeFilterRequest $request, string $novelSlug): JsonResponse
+    public function tree(TreeFilterRequest $request, Novel $novel): JsonResponse
     {
+        $novelSlug = $novel->slug;
         $fromChapterId = TreeFilterDTO::fromRequest($request)->fromChapterId;
-        $userId = $this->authSupport->id();
+        $userId = $this->currentUserHelper->id();
         $mainBranch = $this->chaptersR->mainBranch($novelSlug, $userId);
 
         $branch = $mainBranch;
@@ -99,18 +97,18 @@ class ChapterController extends Controller
         ]);
     }
 
-    public function children(int $chapterId): JsonResponse
+    public function children(Chapter $chapter): JsonResponse
     {
-        $children = $this->chaptersR->children($chapterId, $this->authSupport->id());
+        $children = $this->chaptersR->children($chapter->id, $this->currentUserHelper->id());
 
         return response()->json([
             'chapters' => ChapterListResource::collection($children),
         ]);
     }
 
-    public function store(StoreChapterRequest $request, string $novelSlug): JsonResponse
+    public function store(StoreChapterRequest $request, Novel $novel): JsonResponse
     {
-        $parent = $this->chaptersR->findInNovel($request->integer('parent_id'), $novelSlug);
+        $parent = $this->chaptersR->findInNovel($request->integer('parent_id'), $novel->slug);
 
         $this->authorize('create', $parent);
 
@@ -122,7 +120,7 @@ class ChapterController extends Controller
             ChapterDTO::fromRequest($request)
         );
 
-        $chapter = $this->chaptersR->find($created->id, $this->authSupport->id());
+        $chapter = $this->chaptersR->find($created->id, $this->currentUserHelper->id());
 
         return (new ChapterResource($chapter))
             ->response()
@@ -132,34 +130,24 @@ class ChapterController extends Controller
     /**
      * @see memory-bank/decisions/ADR-11-chapitre-publie-non-reecrivable.md
      */
-    public function update(UpdateChapterRequest $request, int $chapterId): ChapterResource
+    public function update(UpdateChapterRequest $request, Chapter $chapter): ChapterResource
     {
-        $chapter = $this->chaptersR->find($chapterId);
-
-        $this->authorize('update', $chapter);
-
         $updated = $this->chapterService->update($chapter, ChapterDTO::fromRequest($request));
 
         return new ChapterResource($updated);
     }
 
-    public function publish(int $chapterId): ChapterResource
+    public function publish(Chapter $chapter): ChapterResource
     {
-        $chapter = $this->chaptersR->find($chapterId);
-
-        $this->authorize('publish', $chapter);
-
         $this->chapterService->publish($chapter);
 
-        return new ChapterResource($this->chaptersR->find($chapterId, $this->authSupport->id()));
+        $published = $this->chaptersR->find($chapter->id, $this->currentUserHelper->id());
+
+        return new ChapterResource($published);
     }
 
-    public function destroy(int $chapterId): JsonResponse
+    public function destroy(Chapter $chapter): JsonResponse
     {
-        $chapter = $this->chaptersR->find($chapterId);
-
-        $this->authorize('delete', $chapter);
-
         $this->chapterService->delete($chapter);
 
         return response()->json(['message' => __('chapters.draft_discarded')]);
@@ -199,14 +187,5 @@ class ChapterController extends Controller
         }
 
         return $branch->get($position + 1)?->id;
-    }
-
-    private function abortIfUnreadable(Chapter $chapter): void
-    {
-        if (Gate::allows('view', $chapter)) {
-            return;
-        }
-
-        abort(404);
     }
 }

@@ -1,26 +1,28 @@
 import { ReportRepository } from '@/apis/reports/repositories/report-repository.js'
 import { ReportDto } from '@/apis/reports/dtos/report-dto.js'
-import { STATUS } from '@/constants/ajax-constants.js'
-import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
-import { form } from '@/services/shortcuts/services-shortcut.js'
+import { controllerResponseHelper } from '@/core/helpers/controller-response-helper.js'
 
 const reportChapter = async (chapterId, formData) => {
   const response = await ReportRepository.reportChapter({
     params: ReportDto.toChapterParams(chapterId),
     body: ReportDto.toCreate(formData),
+    form: 'report',
   })
 
-  if (response.status === STATUS.UNPROCESSABLE_ENTITY) {
-    form.addValidationErrors(response.data.errors, 'report')
-  }
+  return controllerResponseHelper.buildResponse(response)
+}
 
-  if (!ajaxHelper.isSuccess(response.status)) {
-    return response
-  }
+const reportComment = async (commentId, formData) => {
+  const response = await ReportRepository.reportComment({
+    params: ReportDto.toCommentParams(commentId),
+    body: ReportDto.toCreate(formData),
+    form: 'report',
+  })
 
-  return { status: STATUS.SUCCESS }
+  return controllerResponseHelper.buildResponse(response)
 }
 
 export const ReportController = {
   reportChapter,
+  reportComment,
 }

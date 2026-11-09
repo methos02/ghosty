@@ -3,9 +3,9 @@
 namespace App\Repositories;
 
 use App\DTO\DraftFilterDTO;
+use App\Helpers\ChapterChainHelper;
 use App\Models\Chapter;
 use App\Models\Novel;
-use App\Support\ChapterChainSupport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -180,6 +180,17 @@ class ChapterRepository
     }
 
     /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function decrementChildrenCount(Chapter $parent): void
+    {
+        Chapter::query()
+            ->whereKey($parent->id)
+            ->where('continuations_count', '>', 0)
+            ->decrement('continuations_count');
+    }
+
+    /**
      * @see memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md
      */
     public function incrementReadCount(Chapter $chapter): void
@@ -316,7 +327,7 @@ class ChapterRepository
             ->orderBranchByLike()
             ->get();
 
-        return ChapterChainSupport::fromRoot($candidates);
+        return ChapterChainHelper::fromRoot($candidates);
     }
 
     private function mostLikedDescendant(Chapter $chapter): ?Chapter

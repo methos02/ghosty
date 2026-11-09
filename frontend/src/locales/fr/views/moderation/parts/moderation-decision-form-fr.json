@@ -1,0 +1,27 @@
+{
+  "moderation_decision": {
+    "resolution": "Décision",
+    "resolution_help": {
+      "dismissed": "Le contenu reste tel quel ; les signaleurs sont prévenus que leur signalement a été traité.",
+      "archived": "Problème de qualité ou hors-sujet : le texte reste consultable mais n'est plus mis en avant.",
+      "hidden": "Haine, insulte, harcèlement ou contenu illégal : le contenu est retiré de la lecture.",
+      "passage_removed": "Les passages sélectionnés sont remplacés par une mention ; le reste du texte est conservé."
+    },
+    "sanction": "Sanction de l'auteur (facultatif)",
+    "sanction_type": "Type de sanction",
+    "sanction_none": "Aucune sanction",
+    "sanction_duration": "Durée",
+    "sanction_permanent": "Définitive",
+    "sanction_days": "{count} jour | {count} jour | {count} jours",
+    "sanction_reason": "Motif communiqué à l'auteur",
+    "submit": "Enregistrer la décision",
+    "confirm": "Cette décision clôt tous les signalements en attente sur ce contenu et prévient son auteur ainsi que les signaleurs.",
+    "decided": "Décision enregistrée.",
+    "already_processed": "Ces signalements ont déjà été traités par un autre modérateur.",
+    "error_resolution_required": "Choisissez une décision.",
+    "error_nothing_removed": "Sélectionnez au moins un passage à retirer.",
+    "error_sanction_required": "Masquer un commentaire entraîne au minimum un avertissement de son auteur.",
+    "error_sanction_reason_required": "Indiquez le motif de la sanction.",
+    "error_sanction_reason_size_max": "Le motif est trop long."
+  }
+}

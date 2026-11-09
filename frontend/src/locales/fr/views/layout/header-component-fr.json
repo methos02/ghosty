@@ -9,6 +9,7 @@
     "favorites": "Mes favoris",
     "login": "Connexion",
     "register": "Inscription",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "moderation": "Modération"
   }
 }

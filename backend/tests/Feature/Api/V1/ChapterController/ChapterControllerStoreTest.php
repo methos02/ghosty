@@ -2,12 +2,15 @@
 
 namespace Tests\Feature\Api\V1\ChapterController;
 
+use App\Enums\SanctionType;
 use App\Http\Controllers\Api\V1\ChapterController;
 use App\Http\Requests\StoreChapterRequest;
 use App\Models\Chapter;
 use App\Models\Novel;
+use App\Models\Sanction;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -130,6 +133,48 @@ class ChapterControllerStoreTest extends TestCase
             ->assertForbidden();
 
         $this->assertSame(0, $this->root->refresh()->continuations_count);
+    }
+
+    #[Test]
+    public function refuses_an_author_banned_from_writing(): void
+    {
+        $this->actingAs(User::factory()->banned(SanctionType::WriteBan)->create())
+            ->postJson($this->route(), $this->getDatas())
+            ->assertForbidden();
+
+        $this->assertSame(0, $this->root->refresh()->continuations_count);
+    }
+
+    #[Test]
+    #[DataProvider('sanctionsLeavingWritingOpen')]
+    public function lets_an_author_write_under_a_sanction_that_does_not_target_writing(SanctionType $type): void
+    {
+        $this->actingAs(User::factory()->banned($type)->create())
+            ->postJson($this->route(), $this->getDatas())
+            ->assertCreated();
+    }
+
+    /**
+     * @return array<string, array{SanctionType}>
+     */
+    public static function sanctionsLeavingWritingOpen(): array
+    {
+        return [
+            'warning' => [SanctionType::Warning],
+            'comment ban' => [SanctionType::CommentBan],
+        ];
+    }
+
+    #[Test]
+    public function lets_an_author_write_once_the_write_ban_has_expired(): void
+    {
+        $author = User::factory()
+            ->has(Sanction::factory()->ofType(SanctionType::WriteBan)->expired(), 'sanctions')
+            ->create();
+
+        $this->actingAs($author)
+            ->postJson($this->route(), $this->getDatas())
+            ->assertCreated();
     }
 
     #[Test]

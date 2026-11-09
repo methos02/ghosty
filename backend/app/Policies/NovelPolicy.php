@@ -8,11 +8,11 @@ use App\Models\User;
 class NovelPolicy
 {
     /**
-     * @see memory-bank/decisions/ADR-01-modele-de-ban-utilisateur.md
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
      */
     public function create(User $user): bool
     {
-        return ! $user->isBanned();
+        return ! $user->isWriteBanned();
     }
 
     /**
@@ -20,7 +20,7 @@ class NovelPolicy
      */
     public function update(User $user, Novel $novel): bool
     {
-        if ($user->isBanned() || $user->id !== $novel->author_id) {
+        if ($user->isWriteBanned() || $user->id !== $novel->author_id) {
             return false;
         }
 

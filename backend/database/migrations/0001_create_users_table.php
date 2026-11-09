@@ -20,9 +20,7 @@ return new class extends Migration
             $table->string('firstname')->nullable();
             $table->string('lastname')->nullable();
             $table->date('birth_date')->nullable();
-            $table->integer('warning_count')->default(0);
             $table->integer('new_messages_count')->default(0);
-            $table->date('banned_until')->nullable();
             $table->rememberToken();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

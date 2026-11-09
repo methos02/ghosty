@@ -1,39 +1,47 @@
 import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
 import { GenreDto } from '@/apis/genres/dtos/genre-dto.js'
 
-const fromShow = data => ({
-  id: data.id,
-  slug: data.slug,
-  title: data.title,
-  coverUrl: data.cover_url,
-  isFavorite: data.is_favorite,
-  chaptersCount: data.chapters_count,
-  commentCount: data.comment_count,
-  author: AuthorDto.fromShow(data.author),
-  genre: GenreDto.fromShow(data.genre),
-})
-
-const fromList = (datas = []) => {
-  return datas.map(data => fromShow(data))
+const fromList = (novels = []) => {
+  return novels.map(novel => NovelDto.fromShow(novel))
 }
 
-const toCreate = formData => ({
-  novel: {
-    title: formData.novel.title,
-    genre_id: formData.novel.genreId,
-  },
-  chapter: {
-    title: formData.chapter.title,
-    content: formData.chapter.content,
-    summary: formData.chapter.summary,
-    is_draft: formData.chapter.isDraft,
-  },
-})
+const fromShow = novel => {
+  return {
+    id: novel.id,
+    slug: novel.slug,
+    title: novel.title,
+    coverUrl: novel.cover_url,
+    isFavorite: novel.is_favorite,
+    chaptersCount: novel.chapters_count,
+    commentCount: novel.comment_count,
+    author: AuthorDto.fromShow(novel.author),
+    genre: GenreDto.fromShow(novel.genre),
+  }
+}
 
-const toUpdate = formData => ({
-  title: formData.title,
-  genre_id: formData.genreId,
-})
+const fromSummary = novel => {
+  return {
+    id: novel?.id,
+    slug: novel?.slug,
+    title: novel?.title,
+    genreId: novel?.genre_id,
+  }
+}
+
+const toCreate = formData => {
+  return {
+    novel: {
+      title: formData.novel.title,
+      genre_id: formData.novel.genreId,
+    },
+    chapter: {
+      title: formData.chapter.title,
+      content: formData.chapter.content,
+      summary: formData.chapter.summary,
+      is_draft: formData.chapter.isDraft,
+    },
+  }
+}
 
 const toListParams = filters => {
   return {
@@ -47,11 +55,19 @@ const toShowParams = slug => {
   return { slug }
 }
 
+const toUpdate = formData => {
+  return {
+    title: formData.title,
+    genre_id: formData.genreId,
+  }
+}
+
 export const NovelDto = {
   fromList,
   fromShow,
+  fromSummary,
   toCreate,
-  toUpdate,
   toListParams,
   toShowParams,
+  toUpdate,
 }

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import NovelCard from '@/views/parts/NovelCard.vue'
-import { createNovelStore, NOVEL_STORE_KEY } from '@/apis/novels/stores/novel-store.js'
+import { createNovelStore, NOVEL_STORE_KEY } from '@/core-vue/stores/novels/novel-store.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 
 describe('NovelCard.vue', () => {

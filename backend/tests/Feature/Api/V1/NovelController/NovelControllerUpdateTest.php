@@ -55,7 +55,10 @@ class NovelControllerUpdateTest extends TestCase
         $route = Route::getRoutes()->getByAction(NovelController::class.'@update');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(
+            ['api', 'auth:sanctum', 'can:update,novel'],
+            $route->gatherMiddleware()
+        );
     }
 
     #[Test]

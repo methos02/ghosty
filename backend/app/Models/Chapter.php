@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Models\Concerns\HasComments;
 use App\Models\Concerns\HasLikes;
+use App\Models\Concerns\IsNotificationSubject;
 use App\Models\Concerns\Reportable;
+use App\Models\Contracts\NotificationSubject;
 use Database\Factories\ChapterFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,10 +18,10 @@ use Illuminate\Support\Facades\Config;
 /**
  * @mixin IdeHelperChapter
  */
-class Chapter extends Model
+class Chapter extends Model implements NotificationSubject
 {
     /** @use HasFactory<ChapterFactory> */
-    use HasComments, HasFactory, HasLikes, Reportable;
+    use HasComments, HasFactory, HasLikes, IsNotificationSubject, Reportable;
 
     const STATUS_DRAFT = 0;
 
@@ -186,6 +188,24 @@ class Chapter extends Model
     public function isDraft(): bool
     {
         return $this->status === self::STATUS_DRAFT;
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->status === self::STATUS_ARCHIVED;
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->status === self::STATUS_HIDDEN;
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function isRemovableByModeration(): bool
+    {
+        return $this->isPublished() && ! $this->isRoot() && ! $this->hasChildren();
     }
 
     public function isOpenToComments(): bool

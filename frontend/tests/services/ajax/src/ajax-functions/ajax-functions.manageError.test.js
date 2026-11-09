@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { ajaxFunctions } from '@/services/ajax/src/ajax-functions.js'
-import { flash } from '@/services/shortcuts/services-shortcut.js'
+import { Request } from '@/services/ajax/src/models/request.js'
+import { flash, form } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 
 const httpError = (status, data = {}) => ({
@@ -43,6 +44,41 @@ describe('ajax-functions', () => {
 
       expect(errorT).not.toHaveBeenCalled()
       expect(result).toBe(error.response)
+    })
+
+    it('puts the errors of a 422 on the form named by the request', async () => {
+      const addValidationErrors = vi.spyOn(form, 'addValidationErrors').mockImplementation(() => {})
+      const requestId = Request.init({ api: 'ghosty' }, { form: 'novel' })
+      const errors = { title: ['Le titre du roman est obligatoire'] }
+      const error = { ...httpError(STATUS.UNPROCESSABLE_ENTITY, { errors }), config: { requestId } }
+
+      await ajaxFunctions.manageError(error)
+
+      expect(addValidationErrors).toHaveBeenCalledWith(errors, 'novel')
+      Request.remove(requestId)
+    })
+
+    it('leaves the forms alone when the request names no form', async () => {
+      const addValidationErrors = vi.spyOn(form, 'addValidationErrors').mockImplementation(() => {})
+      const requestId = Request.init({ api: 'ghosty' }, {})
+      const error = { ...httpError(STATUS.UNPROCESSABLE_ENTITY, { errors: {} }), config: { requestId } }
+
+      await ajaxFunctions.manageError(error)
+
+      expect(addValidationErrors).not.toHaveBeenCalled()
+      Request.remove(requestId)
+    })
+
+    it('leaves the form alone on an error other than a 422', async () => {
+      vi.spyOn(flash, 'errorT').mockImplementation(() => {})
+      const addValidationErrors = vi.spyOn(form, 'addValidationErrors').mockImplementation(() => {})
+      const requestId = Request.init({ api: 'ghosty' }, { form: 'novel', log: false })
+      const error = { ...httpError(STATUS.ERROR_SERVER), config: { requestId } }
+
+      await ajaxFunctions.manageError(error)
+
+      expect(addValidationErrors).not.toHaveBeenCalled()
+      Request.remove(requestId)
     })
   })
 })

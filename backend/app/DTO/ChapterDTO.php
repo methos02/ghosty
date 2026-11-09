@@ -2,6 +2,7 @@
 
 namespace App\DTO;
 
+use App\Http\Requests\StoreNovelRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
 final readonly class ChapterDTO
@@ -13,15 +14,23 @@ final readonly class ChapterDTO
         public bool $asDraft = false
     ) {}
 
-    public static function fromRequest(FormRequest $request, bool $addPrefix = false): self
+    public static function fromRequest(FormRequest $request): self
     {
-        $prefix = $addPrefix ? 'chapter.' : '';
-
         return new self(
-            title: $request->string($prefix.'title')->toString(),
-            content: $request->string($prefix.'content')->toString(),
-            summary: $request->filled($prefix.'summary') ? $request->string($prefix.'summary')->toString() : null,
-            asDraft: $request->boolean($prefix.'is_draft'),
+            title: $request->string('title')->toString(),
+            content: $request->string('content')->toString(),
+            summary: $request->filled('summary') ? $request->string('summary')->toString() : null,
+            asDraft: $request->boolean('is_draft'),
+        );
+    }
+
+    public static function fromNovelCreation(StoreNovelRequest $request): self
+    {
+        return new self(
+            title: $request->string('chapter.title')->toString(),
+            content: $request->string('chapter.content')->toString(),
+            summary: $request->filled('chapter.summary') ? $request->string('chapter.summary')->toString() : null,
+            asDraft: $request->boolean('chapter.is_draft'),
         );
     }
 

@@ -5,6 +5,11 @@ const reportChapter = async options => {
   return await req('chapter.report', { ...options, 'no-flash': REPORT_GUARD_STATUSES })
 }
 
+const reportComment = async options => {
+  return await req('comment.report', { ...options, 'no-flash': REPORT_GUARD_STATUSES })
+}
+
 export const ReportRepository = {
   reportChapter,
+  reportComment,
 }

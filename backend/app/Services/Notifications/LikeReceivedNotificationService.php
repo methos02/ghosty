@@ -3,12 +3,12 @@
 namespace App\Services\Notifications;
 
 use App\Enums\NotificationType;
+use App\Helpers\NotificationDataHelper;
 use App\Models\Chapter;
 use App\Models\Notification;
 use App\Models\User;
 use App\Repositories\LikeRepository;
 use App\Services\NotificationService;
-use App\Support\NotificationDataSupport;
 
 /**
  * @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md
@@ -28,7 +28,7 @@ class LikeReceivedNotificationService
             NotificationType::LikeReceived,
             $chapter,
             fn (?Notification $pending): array => [
-                ...NotificationDataSupport::chapterSubject($chapter),
+                ...NotificationDataHelper::chapterSubject($chapter),
                 'last_actor_username' => $liker->username,
                 ...$this->likesSinceFirstUnreadLike($chapter, $liker, $pending),
             ]

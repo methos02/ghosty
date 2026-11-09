@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Chapter;
 use App\Models\User;
-use App\Repositories\ChapterRepository;
 use App\Services\LikeAuthorizationService;
 use App\Services\LikeService;
 use Illuminate\Http\JsonResponse;
@@ -16,16 +16,14 @@ use Illuminate\Http\Request;
 class LikeController extends Controller
 {
     public function __construct(
-        private readonly ChapterRepository $chaptersR,
         private readonly LikeAuthorizationService $likeAuthorizationService,
         private readonly LikeService $likeService
     ) {}
 
-    public function store(Request $request, int $chapterId): JsonResponse
+    public function store(Request $request, Chapter $chapter): JsonResponse
     {
         /** @var User $user */
         $user = $request->user();
-        $chapter = $this->chaptersR->find($chapterId, withoutRelations: true);
 
         $this->likeAuthorizationService->authorize($user, $chapter);
         $this->likeService->like($user, $chapter, $request->ip());
@@ -36,11 +34,10 @@ class LikeController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, int $chapterId): JsonResponse
+    public function destroy(Request $request, Chapter $chapter): JsonResponse
     {
         /** @var User $user */
         $user = $request->user();
-        $chapter = $this->chaptersR->find($chapterId, withoutRelations: true);
 
         $this->likeService->unlike($user, $chapter);
 

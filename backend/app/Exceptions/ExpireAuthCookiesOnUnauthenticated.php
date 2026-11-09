@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Support\TokenCookieSettingsSupport;
+use App\Helpers\TokenCookieSettingsHelper;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ final class ExpireAuthCookiesOnUnauthenticated
 {
     public function __invoke(AuthenticationException $exception, Request $request): ?JsonResponse
     {
-        $settings = TokenCookieSettingsSupport::fromConfig();
+        $settings = TokenCookieSettingsHelper::fromConfig();
 
         if (! $request->expectsJson() || ! $this->hasAuthCookies($request, $settings)) {
             return null;
@@ -25,7 +25,7 @@ final class ExpireAuthCookiesOnUnauthenticated
             ->withCookie($settings->forget($settings->sessionName));
     }
 
-    private function hasAuthCookies(Request $request, TokenCookieSettingsSupport $settings): bool
+    private function hasAuthCookies(Request $request, TokenCookieSettingsHelper $settings): bool
     {
         return $request->cookies->has($settings->name) || $request->cookies->has($settings->sessionName);
     }

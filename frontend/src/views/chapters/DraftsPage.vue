@@ -29,14 +29,6 @@ const load = async () => {
   drafts.value = response.chapters
 }
 
-const discardQuestion = draft => {
-  if (draft.isRoot) {
-    return t('drafts.discard_novel_question')
-  }
-
-  return t('drafts.discard_chapter_question')
-}
-
 const resumeRoute = draft => {
   if (draft.isRoot) {
     return { name: 'novel-edit', params: { id: draft.id } }
@@ -130,7 +122,11 @@ onMounted(load)
             <ConfirmButton
               :cb="discard"
               :params="[draft]"
-              :question="discardQuestion(draft)"
+              :question="
+                draft.isRoot
+                  ? t('drafts.discard_novel_question')
+                  : t('drafts.discard_chapter_question')
+              "
               buttonClasses="drafts-page__discard | btn btn-sm btn-danger-alt"
             >
               {{ t('drafts.discard') }}

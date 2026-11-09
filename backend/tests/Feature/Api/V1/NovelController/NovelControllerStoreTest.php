@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api\V1\NovelController;
 
+use App\Enums\SanctionType;
 use App\Http\Controllers\Api\V1\NovelController;
 use App\Http\Requests\StoreNovelRequest;
 use App\Models\Chapter;
@@ -101,6 +102,19 @@ class NovelControllerStoreTest extends TestCase
     public function refuses_a_banned_author(): void
     {
         $author = User::factory()->banned()->create();
+        $genre = Genre::factory()->create();
+
+        $this->actingAs($author)
+            ->postJson($this->route, $this->payload(['genre_id' => $genre->id]))
+            ->assertForbidden();
+
+        $this->assertDatabaseCount('novels', 0);
+    }
+
+    #[Test]
+    public function refuses_an_author_banned_from_writing(): void
+    {
+        $author = User::factory()->banned(SanctionType::WriteBan)->create();
         $genre = Genre::factory()->create();
 
         $this->actingAs($author)

@@ -1,0 +1,9 @@
+{
+  "moderation_comment_page": {
+    "title": "Commentaire de {author}",
+    "on_chapter": "Sur « {chapter} » · {novel}",
+    "on_novel": "Sur le roman {novel}",
+    "hidden": "Ce commentaire est masqué par la modération.",
+    "deleted": "Ce commentaire a été supprimé par son auteur."
+  }
+}

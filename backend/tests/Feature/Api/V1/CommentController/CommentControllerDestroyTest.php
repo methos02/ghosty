@@ -18,7 +18,10 @@ class CommentControllerDestroyTest extends TestCase
         $route = Route::getRoutes()->getByAction(CommentController::class.'@destroy');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(
+            ['api', 'auth:sanctum', 'can:delete,comment'],
+            $route->gatherMiddleware()
+        );
     }
 
     #[Test]

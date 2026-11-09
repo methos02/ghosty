@@ -4,21 +4,26 @@ namespace App\Policies;
 
 use App\Models\Chapter;
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
 
 class ChapterPolicy
 {
-    public function view(?User $user, Chapter $chapter): bool
+    public function view(?User $user, Chapter $chapter): Response
     {
         if (in_array($chapter->status, [Chapter::STATUS_PUBLISHED, Chapter::STATUS_ARCHIVED], true)) {
-            return true;
+            return Response::allow();
         }
 
-        return $user !== null && $user->id === $chapter->author_id;
+        if ($user !== null && $user->id === $chapter->author_id) {
+            return Response::allow();
+        }
+
+        return Response::denyAsNotFound();
     }
 
     public function create(User $user, Chapter $parent): bool
     {
-        if ($user->isBanned()) {
+        if ($user->isWriteBanned()) {
             return false;
         }
 
@@ -43,7 +48,11 @@ class ChapterPolicy
 
     public function publish(User $user, Chapter $chapter): bool
     {
-        return $this->isOwnWork($user, $chapter) && $chapter->isDraft();
+        if (! $this->isOwnWork($user, $chapter) || ! $chapter->isDraft()) {
+            return false;
+        }
+
+        return $chapter->isRoot() || $chapter->parent?->isPublished() === true;
     }
 
     /**
@@ -63,8 +72,28 @@ class ChapterPolicy
         return $this->isOwnWork($user, $chapter) && $chapter->isDraft();
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function moderate(User $user, Chapter $chapter): bool
+    {
+        return $user->canModerate() && $chapter->isPublished();
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function restore(User $user, Chapter $chapter): bool
+    {
+        if (! $user->canModerate() || (! $chapter->isArchived() && ! $chapter->isHidden())) {
+            return false;
+        }
+
+        return $chapter->isRoot() || $chapter->parent?->isPublished() === true;
+    }
+
     private function isOwnWork(User $user, Chapter $chapter): bool
     {
-        return ! $user->isBanned() && $user->id === $chapter->author_id;
+        return ! $user->isWriteBanned() && $user->id === $chapter->author_id;
     }
 }

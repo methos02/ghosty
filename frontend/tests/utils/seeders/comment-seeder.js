@@ -12,6 +12,8 @@ const getCommentApi = (overrides = {}) => ({
   content: 'Le phare qui s’éteint au dernier paragraphe, quelle image.',
   is_spoiler: false,
   is_deleted: false,
+  is_hidden: false,
+  is_reported: false,
   reply_count: 0,
   replies: [],
   created_at: '2026-10-30T20:15:00+00:00',
@@ -35,6 +37,16 @@ const getDeletedCommentApi = (overrides = {}) =>
     author: null,
     content: null,
     is_deleted: true,
+    reply_count: 1,
+    replies: [getReplyApi()],
+    ...overrides,
+  })
+
+const getHiddenCommentApi = (overrides = {}) =>
+  getCommentApi({
+    author: null,
+    content: null,
+    is_hidden: true,
     reply_count: 1,
     replies: [getReplyApi()],
     ...overrides,
@@ -115,6 +127,8 @@ const getCommentWithReply = () => CommentDto.fromShow(getCommentWithReplyApi())
 
 const getDeletedComment = () => CommentDto.fromShow(getDeletedCommentApi())
 
+const getHiddenComment = () => CommentDto.fromShow(getHiddenCommentApi())
+
 const getComments = (count = 2) => CommentDto.fromList(getCommentsApi(count))
 
 const getReply = (overrides = {}) => ({ ...CommentDto.fromShow(getReplyApi()), ...overrides })
@@ -133,6 +147,8 @@ export const commentSeeder = {
   getDeletedApi,
   getDeletedCommentApi,
   getEmptyThreadApi,
+  getHiddenComment,
+  getHiddenCommentApi,
   getNovelTarget,
   getReply,
   getReplyApi,

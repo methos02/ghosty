@@ -3,9 +3,8 @@
 namespace App\Services;
 
 use App\Enums\NotificationType;
-use App\Models\Chapter;
+use App\Models\Contracts\NotificationSubject;
 use App\Models\Notification;
-use App\Models\Novel;
 use App\Models\User;
 use App\Repositories\NotificationRepository;
 use Closure;
@@ -22,7 +21,7 @@ class NotificationService
     /**
      * @param  Closure(?Notification): array<string, mixed>  $data
      */
-    public function push(User $recipient, ?int $actorId, NotificationType $type, Chapter|Novel $subject, Closure $data): void
+    public function push(User $recipient, ?int $actorId, NotificationType $type, NotificationSubject $subject, Closure $data): void
     {
         if ($recipient->id === $actorId || ! $recipient->notifications_enabled) {
             return;
@@ -34,7 +33,7 @@ class NotificationService
         $this->notificationsR->saveUnread($recipient, $type, $groupKey, $data($pending));
     }
 
-    public function findUnread(User $recipient, NotificationType $type, Chapter|Novel $subject): ?Notification
+    public function findUnread(User $recipient, NotificationType $type, NotificationSubject $subject): ?Notification
     {
         return $this->notificationsR->findUnread($recipient, $type->groupKey($subject));
     }

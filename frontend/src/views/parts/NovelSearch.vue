@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
-import { useNovelFilterStore } from '@/apis/novels/stores/novel-filter-store.js'
-import { useNovelSearch } from '@/apis/novels/composables/use-novel-search.js'
+import { useNovelFilterStore } from '@/core-vue/stores/novels/novel-filter-store.js'
+import { useNovelSearch } from '@/core-vue/composables/novels/use-novel-search.js'
 
 const { search } = useNovelFilterStore()
 const { novelSearch } = useNovelSearch()

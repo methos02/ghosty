@@ -7,6 +7,7 @@ use App\Models\Comment;
 use App\Models\Novel;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * @see memory-bank/decisions/ADR-13-commentaires.md
@@ -16,10 +17,17 @@ class CommentRepository
     /**
      * @return LengthAwarePaginator<int, Comment>
      */
-    public function paginateThread(Chapter|Novel $commentable, int $perPage): LengthAwarePaginator
+    public function paginateThread(Chapter|Novel $commentable, int $perPage, ?int $userId = null): LengthAwarePaginator
     {
         return Comment::query()
-            ->with(['author', 'visibleReplies.author'])
+            ->with([
+                'author',
+                'visibleReplies' => function (Relation $replies) use ($userId): void {
+                    $replies->addSelect(['is_reported' => Comment::userReportQuery($userId)]);
+                    $replies->with('author');
+                },
+            ])
+            ->withUserReport($userId)
             ->where('commentable_type', $commentable->getMorphClass())
             ->where('commentable_id', $commentable->id)
             ->topLevel()
@@ -32,6 +40,13 @@ class CommentRepository
     public function find(int $commentId): Comment
     {
         return Comment::query()
+            ->findOrFail($commentId);
+    }
+
+    public function findWithAuthorAndTarget(int $commentId): Comment
+    {
+        return Comment::query()
+            ->with(['author', 'commentable'])
             ->findOrFail($commentId);
     }
 

@@ -6,6 +6,18 @@
     "explore_novel": "Explorer le roman",
     "main_branch": "Branche principale",
     "main_branch_from_here": "Branche principale depuis ici",
-    "see_more": "Voir plus"
+    "see_more": "Voir plus",
+    "report_reasons": {
+      "poor_quality": "Chapitre bâclé ou illisible",
+      "off_topic": "Hors-sujet",
+      "plagiarism": "Plagiat",
+      "spam": "Spam ou publicité",
+      "hate_speech": "Propos haineux",
+      "insult": "Insulte",
+      "harassment": "Harcèlement",
+      "personal_attack": "Attaque personnelle",
+      "like_manipulation": "Soutiens truqués",
+      "illegal": "Contenu illégal"
+    }
   }
 }

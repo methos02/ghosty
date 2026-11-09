@@ -15,6 +15,11 @@ use LogicException;
  */
 trait HasSlug
 {
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     public static function bootHasSlug(): void
     {
         static::creating(function (self $model): void {

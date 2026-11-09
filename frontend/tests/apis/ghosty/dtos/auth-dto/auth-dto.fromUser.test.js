@@ -19,9 +19,7 @@ describe('auth-dto', () => {
         lastname: api.lastname,
         birthDate: api.birth_date,
         notificationsEnabled: api.notifications_enabled,
-        warningCount: api.warning_count,
         newMessagesCount: api.new_messages_count,
-        bannedUntil: api.banned_until,
         emailVerifiedAt: api.email_verified_at,
         createdAt: api.created_at,
       })

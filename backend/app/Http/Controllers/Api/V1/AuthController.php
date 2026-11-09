@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Helpers\TokenCookieSettingsHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Sanction;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use App\Support\TokenCookieSettingsSupport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
@@ -49,13 +50,27 @@ class AuthController extends Controller
             ]);
         }
 
-        if ($user->isBanned()) {
+        $accountBan = $user->accountBan();
+
+        if ($accountBan !== null) {
             throw ValidationException::withMessages([
-                'identifier' => ['Compte banni jusqu\'au '.$user->banned_until->format('d/m/Y')],
+                'identifier' => [$this->banMessage($accountBan)],
             ]);
         }
 
         return $this->authenticated($user);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    private function banMessage(Sanction $accountBan): string
+    {
+        if ($accountBan->until === null) {
+            return __('moderation.banned_permanently');
+        }
+
+        return __('moderation.banned_until', ['date' => $accountBan->until->format('d/m/Y')]);
     }
 
     public function logout(Request $request): JsonResponse
@@ -64,7 +79,7 @@ class AuthController extends Controller
         $user = $request->user();
         $user->currentAccessToken()->delete();
 
-        $settings = TokenCookieSettingsSupport::fromConfig();
+        $settings = TokenCookieSettingsHelper::fromConfig();
 
         return response()->json([
             'message' => 'Déconnecté avec succès',
@@ -93,7 +108,7 @@ class AuthController extends Controller
 
     private function tokenCookie(string $token): SymfonyCookie
     {
-        $settings = TokenCookieSettingsSupport::fromConfig();
+        $settings = TokenCookieSettingsHelper::fromConfig();
 
         return Cookie::make(
             name: $settings->name,
@@ -109,7 +124,7 @@ class AuthController extends Controller
 
     private function sessionCookie(): SymfonyCookie
     {
-        $settings = TokenCookieSettingsSupport::fromConfig();
+        $settings = TokenCookieSettingsHelper::fromConfig();
 
         return Cookie::make(
             name: $settings->sessionName,

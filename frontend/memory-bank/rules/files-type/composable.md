@@ -7,11 +7,11 @@ paths:
 
 A composable is justified by exactly two situations: the same logic is consumed by two or more components, or the component is too large to keep whole and its template must be split (the logic would otherwise be duplicated across the pieces). Otherwise the logic stays in the `.vue` next to its template, even when it reads stores, calls a controller and raises flashes: reading a store is not a reason to extract. Export shape: [composable-store-export-pattern](composable-store-export-pattern.md).
 
-When justified, use a composable (not a helper) for a view-oriented function that depends on a store. Helpers are pure JS and cannot import stores ([layer-boundaries](../global/layer-boundaries.md)). The store keeps state; the composable owns derived UI bindings and the orchestration of several stores plus a controller (`apis/{domain}/composables/use-*.js`).
+When justified, use a composable (not a helper) for a view-oriented function that depends on a store. Helpers are pure JS and cannot import stores ([layer-boundaries](../global/layer-boundaries.md)). The store keeps state; the composable owns derived UI bindings and the orchestration of several stores plus a controller (`core-vue/composables/{domain}/use-*.js`).
 
 ```js
 // BAD
-import { useNotificationStore } from '@/apis/notifications/stores/notification-store.js'
+import { useNotificationStore } from '@/core-vue/stores/notifications/notification-store.js'
 
 // BAD
 const getBadge = () => ({ label: unreadCount.value > 99 ? '99+' : String(unreadCount.value) })

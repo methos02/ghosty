@@ -30,7 +30,10 @@ class ChapterReadControllerStoreTest extends TestCase
         $route = Route::getRoutes()->getByAction(ChapterReadController::class.'@store');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'throttle:chapter-read'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(
+            ['api', 'throttle:chapter-read', 'can:view,chapter'],
+            $route->gatherMiddleware()
+        );
     }
 
     #[Test]

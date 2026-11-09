@@ -2,17 +2,14 @@
 
 namespace App\Http\Requests;
 
-use App\Repositories\NovelRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Config;
 
 class UpdateNovelRequest extends FormRequest
 {
-    public function authorize(NovelRepository $novelsR): bool
+    public function authorize(): bool
     {
-        $novel = $novelsR->findBySlug($this->route('slug'));
-
-        return $this->user()?->can('update', $novel) ?? false;
+        return true;
     }
 
     /**

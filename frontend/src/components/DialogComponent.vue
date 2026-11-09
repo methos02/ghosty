@@ -64,10 +64,10 @@ const closeFromBackground = event => {
   >
     <div class="dialog-header | d-flex g-25 color-neutral-100 bg-primary">
       <h2
-        v-if="title !== ''"
+        v-if="title !== '' || $slots.title"
         class="fs-700 fw-400"
       >
-        {{ title }}
+        <slot name="title">{{ title }}</slot>
       </h2>
       <div
         v-if="closeCross === true"

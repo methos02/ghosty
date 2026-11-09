@@ -11,12 +11,14 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 class NovelRepository
 {
+    private const DETAIL_RELATIONS = ['genre', 'author'];
+
     /**
      * @return LengthAwarePaginator<int, Novel>
      */
     public function paginate(string $search = '', ?int $genreId = null, int $perPage = 15): LengthAwarePaginator
     {
-        return Novel::with(['genre', 'author'])
+        return Novel::with(self::DETAIL_RELATIONS)
             ->whereNotIn(
                 'id',
                 Chapter::query()
@@ -29,9 +31,14 @@ class NovelRepository
             ->paginate($perPage);
     }
 
+    public function loadDetails(Novel $novel): Novel
+    {
+        return $novel->load(self::DETAIL_RELATIONS);
+    }
+
     public function findBySlug(string $slug): Novel
     {
-        return Novel::with(['genre', 'author'])
+        return Novel::with(self::DETAIL_RELATIONS)
             ->where('slug', $slug)
             ->firstOrFail();
     }
@@ -89,6 +96,16 @@ class NovelRepository
     {
         Novel::whereKey($novelId)
             ->increment('chapter_count');
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     */
+    public function decrementChapterCount(int $novelId): void
+    {
+        Novel::whereKey($novelId)
+            ->where('chapter_count', '>', 0)
+            ->decrement('chapter_count');
     }
 
     /**

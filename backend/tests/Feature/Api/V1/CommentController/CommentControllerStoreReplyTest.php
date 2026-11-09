@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api\V1\CommentController;
 
 use App\Enums\NotificationType;
+use App\Enums\SanctionType;
 use App\Http\Controllers\Api\V1\CommentController;
 use App\Http\Requests\StoreCommentReplyRequest;
 use App\Models\Chapter;
@@ -31,7 +32,10 @@ class CommentControllerStoreReplyTest extends TestCase
         $route = Route::getRoutes()->getByAction(CommentController::class.'@storeReply');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum', 'throttle:comment'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(
+            ['api', 'auth:sanctum', 'throttle:comment', 'can:reply,comment'],
+            $route->gatherMiddleware()
+        );
     }
 
     #[Test]
@@ -251,6 +255,18 @@ class CommentControllerStoreReplyTest extends TestCase
         $this->actingAs(User::factory()->banned()->create())
             ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas())
             ->assertForbidden();
+    }
+
+    #[Test]
+    public function refuses_a_user_banned_from_commenting(): void
+    {
+        $comment = Comment::factory()->create();
+
+        $this->actingAs(User::factory()->banned(SanctionType::CommentBan)->create())
+            ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas())
+            ->assertForbidden();
+
+        $this->assertDatabaseCount('comments', 1);
     }
 
     #[Test]

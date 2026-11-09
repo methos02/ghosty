@@ -30,7 +30,10 @@ class CommentControllerStoreForNovelTest extends TestCase
         $route = Route::getRoutes()->getByAction(CommentController::class.'@storeForNovel');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum', 'throttle:comment'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(
+            ['api', 'auth:sanctum', 'throttle:comment', 'can:create,App\Models\Comment,novel'],
+            $route->gatherMiddleware()
+        );
     }
 
     #[Test]

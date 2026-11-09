@@ -14,6 +14,15 @@ describe('DialogComponent.vue', () => {
     expect(wrapper.find('.dialog-content').text()).toBe('Formulaire')
   })
 
+  it('renders the title slot in place of the title prop', () => {
+    const wrapper = mount(DialogComponent, {
+      slots: { default: 'Formulaire', title: 'Signaler' },
+      attachTo: document.body,
+    })
+
+    expect(wrapper.find('.dialog-header h2').text()).toBe('Signaler')
+  })
+
   it('does not render a title heading when title is empty', () => {
     const wrapper = mount(DialogComponent, {
       slots: { default: 'Contenu' },

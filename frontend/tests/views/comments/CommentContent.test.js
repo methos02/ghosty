@@ -3,13 +3,16 @@ import { mount, flushPromises } from '@vue/test-utils'
 import CommentContent from '@/views/comments/CommentContent.vue'
 import { CommentRepository } from '@/apis/comments/repositories/comment-repository.js'
 import { CommentDto } from '@/apis/comments/dtos/comment-dto.js'
-import { useCommentStore } from '@/apis/comments/stores/comment-store.js'
+import { useCommentStore } from '@/core-vue/stores/comments/comment-store.js'
 import { flash, t } from '@/services/shortcuts/services-shortcut.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { controllerError, controllerSuccess } from '&/utils/helpers/controller-response.js'
 import { commentSeeder } from '&/utils/seeders/comment-seeder.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
+import { useReport } from '@/core-vue/composables/reports/use-report.js'
+import { useAuth } from '@/services/auth/src/use-auth.js'
+import { REPORTED_CONTENT_TYPES } from '@/constants/moderation-constants.js'
 
 describe('CommentContent.vue', () => {
   let wrapper
@@ -20,6 +23,8 @@ describe('CommentContent.vue', () => {
     useCommentStore().commentStore.clear()
     flash.clearFlashes()
     useAuthStore().clear()
+    useReport().report.closeReport()
+    useAuth().closeDialogs()
     vi.clearAllMocks()
   })
 
@@ -73,6 +78,43 @@ describe('CommentContent.vue', () => {
     wrapper = mount(CommentContent, { props: { comment: commentSeeder.getDeletedComment() } })
 
     expect(wrapper.text()).toBe(t('comment_content.deleted_comment'))
+  })
+
+  it('shows only a moderation trace for a comment the moderation hid', () => {
+    wrapper = mount(CommentContent, { props: { comment: commentSeeder.getHiddenComment() } })
+
+    expect(wrapper.text()).toBe(t('comment_content.hidden_comment'))
+  })
+
+  it('hands the comment of another reader to the report dialog', async () => {
+    const comment = commentSeeder.getComment()
+    useAuthStore().setUser(userSeeder.getUser({ id: comment.author.id + 1 }))
+    wrapper = mount(CommentContent, { props: { comment } })
+
+    await wrapper.find('.comment-content__report').trigger('click')
+
+    expect(useReport().reportedContent.value).toEqual({
+      type: REPORTED_CONTENT_TYPES.COMMENT,
+      content: comment,
+    })
+  })
+
+  it('asks a visitor to sign in before reporting a comment', async () => {
+    wrapper = mount(CommentContent, { props: { comment: commentSeeder.getComment() } })
+
+    await wrapper.find('.comment-content__report').trigger('click')
+
+    expect(useReport().reportedContent.value).toBeUndefined()
+    expect(useAuth().showLoginDialog.value).toBe(true)
+  })
+
+  it('does not offer the author to report their own comment', () => {
+    const comment = commentSeeder.getComment()
+    useAuthStore().setUser(userSeeder.getUser({ id: comment.author.id }))
+
+    wrapper = mount(CommentContent, { props: { comment } })
+
+    expect(wrapper.find('.comment-content__report').exists()).toBe(false)
   })
 
   it('asks to reply when the reader clicks the reply button of a replyable comment', async () => {

@@ -160,6 +160,47 @@ export const routesApi = {
     method: 'delete',
     api: 'ghosty',
   },
+  'comment.report': {
+    url: 'v1/comments/{comment}/report',
+    method: 'post',
+    api: 'ghosty',
+  },
+
+  'moderation.reportedContents': {
+    url: 'v1/moderation/reports',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'moderation.showChapter': {
+    url: 'v1/moderation/chapters/{chapter}',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'moderation.moderateChapter': {
+    url: 'v1/moderation/chapters/{chapter}/decision',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'moderation.restoreChapter': {
+    url: 'v1/moderation/chapters/{chapter}/restore',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'moderation.showComment': {
+    url: 'v1/moderation/comments/{comment}',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'moderation.moderateComment': {
+    url: 'v1/moderation/comments/{comment}/decision',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'moderation.restoreComment': {
+    url: 'v1/moderation/comments/{comment}/restore',
+    method: 'post',
+    api: 'ghosty',
+  },
 
   'notification.list': {
     url: 'v1/me/notifications',

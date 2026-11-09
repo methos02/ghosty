@@ -28,6 +28,14 @@ return [
         'description_max_length' => 1000,
     ],
 
+    /* @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md */
+    'moderation' => [
+        'per_page' => 20,
+        'removed_passage_marker' => '[[removed]]',
+        'sanction_max_days' => 3650,
+        'reason_max_length' => 1000,
+    ],
+
     /* @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md */
     'notifications' => [
         'per_page' => 20,

@@ -1,5 +1,5 @@
 import { ConfigLoader } from '@/config/config-loader.js'
-import { flash, t, log } from '@/services/shortcuts/services-shortcut.js'
+import { flash, form, t, log } from '@/services/shortcuts/services-shortcut.js'
 import { Request } from '@/services/ajax/src/models/request.js'
 import { httpClient } from '@/services/ajax/src/models/http-client.js'
 
@@ -21,6 +21,7 @@ const manageError = async (error, fallbackRequestId) => {
     return { data: [], status: STATUS.SUCCESS }
   }
 
+  ajaxFunctionsInternal.addFormErrors(error, requestId)
   ajaxFunctionsInternal.showFlash(error, requestId)
   await ajaxFunctionsInternal.logError(error, requestId)
 
@@ -80,6 +81,19 @@ export const ajaxFunctions = {
 const resolveErrorKey = (status, requestId) => {
   const customErrors = Request.get('errors', requestId)
   return customErrors?.[status] ?? DEFAULT_ERRORS[status] ?? ERROR_UNKNOWN
+}
+
+const addFormErrors = (error, requestId) => {
+  if (error.response.status !== STATUS.UNPROCESSABLE_ENTITY) {
+    return
+  }
+
+  const formName = Request.get('form', requestId)
+  if (formName === undefined) {
+    return
+  }
+
+  form.addValidationErrors(error.response.data.errors, formName)
 }
 
 const showFlash = (error, requestId) => {
@@ -143,6 +157,7 @@ const getRouteFromConfig = (routeName, api) => {
 }
 
 export const ajaxFunctionsInternal = {
+  addFormErrors,
   getRouteFromConfig,
   logError,
   showFlash,

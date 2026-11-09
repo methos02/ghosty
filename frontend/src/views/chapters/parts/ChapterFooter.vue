@@ -5,8 +5,8 @@ import ChildrenSwitcher from '@/views/chapters/parts/ChildrenSwitcher.vue'
 import LikeButton from '@/views/chapters/parts/LikeButton.vue'
 import LoaderComponent from '@/components/LoaderComponent.vue'
 import NovelCard from '@/views/parts/NovelCard.vue'
-import { useLastFork } from '@/apis/chapters/composables/use-last-fork.js'
-import { useNovelSuggestions } from '@/apis/novels/composables/use-novel-suggestions.js'
+import { useLastFork } from '@/core-vue/composables/chapters/use-last-fork.js'
+import { useNovelSuggestions } from '@/core-vue/composables/novels/use-novel-suggestions.js'
 
 const props = defineProps({
   novelSlug: { type: String, required: true },

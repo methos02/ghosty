@@ -7,11 +7,11 @@ paths:
 
 ## Core vs core-vue
 
-`src/core/**` is pure JS (helpers): it MUST NOT import Vue. `src/core-vue/**` is Vue-dependent (composables) and may. Vue-free helpers live in `src/core/helpers/`, not in a `src/helpers/` folder.
+`src/core/**` is pure JS (helpers): it MUST NOT import Vue. `src/core-vue/**` is Vue-dependent and may: composables in `src/core-vue/composables/{domain}/`, stores in `src/core-vue/stores/{domain}/`. Vue-free helpers live in `src/core/helpers/`, not in a `src/helpers/` folder.
 
 ## Domain layer: pure JS, no store
 
-Controllers, repositories, DTOs and domain services (`src/apis/{domain}/**`) MUST NOT import Vue nor a store. Stores use `ref` / `readonly`; the domain layer stays framework-agnostic and portable.
+Controllers, repositories, DTOs and domain services (`src/apis/{domain}/**`) MUST NOT import Vue nor a store. `src/apis/` holds no composable and no store. Stores use `ref` / `readonly`; the domain layer stays framework-agnostic and portable.
 
 Dependency direction:
 
@@ -29,7 +29,7 @@ const response = await NotificationController.list(page)
 notificationStore.addNotifications(response.notifications)
 
 // BAD
-import { useNotificationStore } from '@/apis/notifications/stores/notification-store.js'
+import { useNotificationStore } from '@/core-vue/stores/notifications/notification-store.js'
 ```
 
 **Vuemann infrastructure services** (`src/services/**`: `ajax`, `form`, `auth`, `locale`, `flash`, `router`, `utils`) are not domain services. They own their runtime state, so their internal files MAY read their own store (`auth-functions.js` reads `auth-store.js`) or another service's store through `services-shortcut.js`.

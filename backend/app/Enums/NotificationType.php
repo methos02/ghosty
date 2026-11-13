@@ -18,6 +18,7 @@ enum NotificationType: string
     case CommentReplied = 'comment_replied';
     case ContentModerated = 'content_moderated';
     case ReportProcessed = 'report_processed';
+    case CoverSelected = 'cover_selected';
 
     public function groupKey(NotificationSubject $subject): string
     {

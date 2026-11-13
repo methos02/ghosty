@@ -22,22 +22,26 @@ const unreadCount = ref(0)
 const markAsRead = notificationId => { ... }
 const clear = () => { ... }
 
-export const useNotificationStore = () => ({
-  notifications: readonly(notifications),
-  unreadCount: readonly(unreadCount),
-  notificationStore: {
-    markAsRead,
-    clear,
-  },
-})
+export const useNotificationStore = () => {
+  return {
+    notifications: readonly(notifications),
+    unreadCount: readonly(unreadCount),
+    notificationStore: {
+      markAsRead,
+      clear,
+    },
+  }
+}
 
 const { notifications, notificationStore } = useNotificationStore()
 notificationStore.markAsRead(notificationId)
 
 // GOOD
-export const useChapterReading = () => ({
-  chapterReading: { load },
-})
+export const useChapterReading = () => {
+  return {
+    chapterReading: { load },
+  }
+}
 
 // BAD
 export const useNotificationStore = () => ({ notifications, unreadCount, markAsRead, clear })

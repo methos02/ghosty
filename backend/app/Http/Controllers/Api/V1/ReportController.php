@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReportRequest;
 use App\Models\Chapter;
 use App\Models\Comment;
+use App\Models\Contracts\Reportable;
+use App\Models\NovelCover;
 use App\Models\User;
 use App\Repositories\ReportRepository;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -42,9 +44,19 @@ class ReportController extends Controller
     }
 
     /**
+     * @see memory-bank/decisions/ADR-16-illustrations-du-roman.md
+     *
      * @throws AuthorizationException
      */
-    private function store(StoreReportRequest $request, Chapter|Comment $reportable): JsonResponse
+    public function storeForCover(StoreReportRequest $request, NovelCover $cover): JsonResponse
+    {
+        return $this->store($request, $cover);
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
+    private function store(StoreReportRequest $request, Reportable $reportable): JsonResponse
     {
         /** @var User $reporter */
         $reporter = $request->user();

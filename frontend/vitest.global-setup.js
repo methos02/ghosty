@@ -1,5 +1,4 @@
-import { localeViteInternal } from './src/services/locale/src/locale-vite.js'
-import { locales } from './src/config/locale-config.js'
+import { compileLocales } from './src/services/locale/src/locale-vite.js'
 
 /**
  * Le catalogue de traductions vit dans `public/`, qui est ignore par Git : une copie
@@ -9,10 +8,5 @@ import { locales } from './src/config/locale-config.js'
  * on rejoue donc la meme compilation avant la suite.
  */
 export default function setup() {
-  const projectDirectory = import.meta.dirname
-
-  for (const locale of Object.keys(locales)) {
-    const translations = localeViteInternal.collectTranslations(projectDirectory, locale)
-    localeViteInternal.writeTranslationFile(projectDirectory, locale, translations)
-  }
+  compileLocales(import.meta.dirname)
 }

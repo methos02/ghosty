@@ -6,7 +6,7 @@ use App\Models\Novel;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Config;
 
-class StoreNovelRequest extends FormRequest
+final class StoreNovelRequest extends FormRequest
 {
     public function authorize(): bool
     {

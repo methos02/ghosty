@@ -6,7 +6,7 @@ const buildResponse = async (response, mapData) => {
     return response
   }
 
-  return controllerResponseHelperInternal.buildSuccess(response, mapData)
+  return internals.buildSuccess(response, mapData)
 }
 
 export const controllerResponseHelper = {
@@ -25,6 +25,6 @@ const buildSuccess = async (response, mapData) => {
   }
 }
 
-export const controllerResponseHelperInternal = {
+export const internals = {
   buildSuccess,
 }

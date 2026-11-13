@@ -49,4 +49,24 @@ describe('CommentRepliedNotificationDetail.vue', () => {
       }),
     )
   })
+
+  it('tells what the cover received, leading to the covers page', () => {
+    const notification = notificationSeeder.getCoverNotification(
+      NOTIFICATION_TYPES.COMMENT_REPLIED,
+      2,
+    )
+
+    wrapper = mount(CommentRepliedNotificationDetail, { props: { notification } })
+
+    expect(wrapper.text()).toContain(
+      t('comment_replied_notification_detail.cover_replies.many', {
+        title: notification.novel.title,
+        count: notification.payload.count,
+      }),
+    )
+    expect(wrapper.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
+      name: 'novel-covers',
+      params: { slug: notification.novel.slug },
+    })
+  })
 })

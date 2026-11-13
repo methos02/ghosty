@@ -39,6 +39,19 @@ describe('comment-controller', () => {
       })
     })
 
+    it('asks the thread of a cover', async () => {
+      const target = commentSeeder.getCoverTarget()
+      vi.spyOn(CommentRepository, 'listForCover').mockResolvedValue(
+        controllerSuccess({ data: commentSeeder.getThreadApi() }),
+      )
+
+      await CommentController.list(target)
+
+      expect(CommentRepository.listForCover).toHaveBeenCalledWith({
+        params: CommentDto.toThreadParams(target, 1),
+      })
+    })
+
     it('returns the comments of the thread and their pagination', async () => {
       const threadApi = commentSeeder.getThreadApi()
       vi.spyOn(CommentRepository, 'listForChapter').mockResolvedValue(

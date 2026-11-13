@@ -5,13 +5,13 @@ import { COMMENT_TARGETS } from '@/constants/comment-constants.js'
 import { controllerResponseHelper } from '@/core/helpers/controller-response-helper.js'
 
 const create = async (target, formData) => {
-  const response = await CommentControllerInternal.sendCreate(target, {
+  const response = await internals.sendCreate(target, {
     params: CommentDto.toTargetParams(target),
     body: CommentDto.toCreate(formData),
     form: 'comment',
   })
 
-  return CommentControllerInternal.createdComment(response)
+  return internals.createdComment(response)
 }
 
 const createReply = async (parentComment, formData, mentionedAuthor) => {
@@ -21,7 +21,7 @@ const createReply = async (parentComment, formData, mentionedAuthor) => {
     form: 'reply',
   })
 
-  return CommentControllerInternal.createdComment(response)
+  return internals.createdComment(response)
 }
 
 const destroy = async comment => {
@@ -35,7 +35,7 @@ const destroy = async comment => {
 }
 
 const list = async (target, page = 1) => {
-  const response = await CommentControllerInternal.requestThread(target, {
+  const response = await internals.requestThread(target, {
     params: CommentDto.toThreadParams(target, page),
   })
 
@@ -64,6 +64,10 @@ const requestThread = async (target, options) => {
     return await CommentRepository.listForChapter(options)
   }
 
+  if (target.type === COMMENT_TARGETS.COVER) {
+    return await CommentRepository.listForCover(options)
+  }
+
   return await CommentRepository.listForNovel(options)
 }
 
@@ -72,10 +76,14 @@ const sendCreate = async (target, options) => {
     return await CommentRepository.createOnChapter(options)
   }
 
+  if (target.type === COMMENT_TARGETS.COVER) {
+    return await CommentRepository.createOnCover(options)
+  }
+
   return await CommentRepository.createOnNovel(options)
 }
 
-export const CommentControllerInternal = {
+export const internals = {
   createdComment,
   requestThread,
   sendCreate,

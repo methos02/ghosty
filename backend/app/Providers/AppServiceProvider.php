@@ -6,6 +6,7 @@ use App\Helpers\TokenCookieSettingsHelper;
 use App\Models\Chapter;
 use App\Models\Comment;
 use App\Models\Novel;
+use App\Models\NovelCover;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -39,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
             'chapter' => Chapter::class,
             'comment' => Comment::class,
             'novel' => Novel::class,
+            'novel_cover' => NovelCover::class,
             'user' => User::class,
         ]);
     }

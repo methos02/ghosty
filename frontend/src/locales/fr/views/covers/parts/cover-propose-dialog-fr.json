@@ -1,0 +1,13 @@
+{
+  "cover_propose_dialog": {
+    "title_propose": "Proposer une illustration",
+    "title_replace": "Remplacer mon illustration",
+    "replace_warning": "Votre nouvelle image remplacera l'actuelle. | Votre nouvelle image remplacera l'actuelle, qui perdra son soutien. | Votre nouvelle image remplacera l'actuelle, qui perdra ses {count} soutiens.",
+    "rules": "Une seule proposition par roman. Vous pourrez recadrer l'image avant de l'envoyer.",
+    "send_propose": "Proposer",
+    "send_replace": "Remplacer",
+    "proposed": "Illustration proposée.",
+    "replaced": "Illustration remplacée.",
+    "error_image_required": "Choisissez une image."
+  }
+}

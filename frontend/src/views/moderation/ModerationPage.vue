@@ -12,6 +12,14 @@ import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 useModerationHead()
 
+const REASONS = [
+  ...new Set([
+    ...ConfigLoader.get('report.chapterReasons'),
+    ...ConfigLoader.get('report.commentReasons'),
+    ...ConfigLoader.get('report.coverReasons'),
+  ]),
+]
+
 const filters = ref({ status: REPORT_STATUSES.PENDING })
 const reportedContents = ref([])
 const pagination = ref({})
@@ -35,12 +43,25 @@ const showStatus = status => {
   }
 }
 
-const statusClass = status => (filters.value.status === status ? 'btn-primary' : 'btn-primary-alt')
+const statusClass = status => {
+  if (filters.value.status === status) {
+    return 'btn-primary'
+  }
+
+  return 'btn-primary-alt'
+}
 
 const caseRoute = reportedContent => {
   if (reportedContent.type === REPORTED_CONTENT_TYPES.CHAPTER) {
     return {
       name: 'moderation-chapter',
+      params: { id: reportedContent.id },
+    }
+  }
+
+  if (reportedContent.type === REPORTED_CONTENT_TYPES.COVER) {
+    return {
+      name: 'moderation-cover',
       params: { id: reportedContent.id },
     }
   }
@@ -92,7 +113,7 @@ onMounted(() => load())
         >
           <option :value="undefined">{{ t('moderation_page.all_reasons') }}</option>
           <option
-            v-for="reason in ConfigLoader.get('report.chapterReasons')"
+            v-for="reason in REASONS"
             :key="reason"
             :value="reason"
           >
@@ -127,6 +148,19 @@ onMounted(() => load())
                 {{ reportedContent.chapter.title }}
               </template>
               <span
+                v-else-if="reportedContent.cover"
+                class="moderation-page__cover | d-flex a-center g-10"
+              >
+                <img
+                  :src="reportedContent.cover.imageUrl"
+                  :alt="
+                    t('moderation_page.cover_alt', { novel: reportedContent.cover.novel.title })
+                  "
+                  class="moderation-page__thumbnail | radius-5"
+                />
+                {{ t('moderation_page.cover_title', { novel: reportedContent.cover.novel.title }) }}
+              </span>
+              <span
                 v-else
                 class="moderation-page__excerpt"
               >
@@ -142,6 +176,17 @@ onMounted(() => load())
                 t('moderation.context', {
                   novel: reportedContent.chapter.novel.title,
                   author: reportedContent.chapter.author.username,
+                })
+              }}
+            </span>
+            <span
+              v-else-if="reportedContent.cover"
+              class="moderation-page__context | fs-300 color-neutral-700"
+            >
+              {{
+                t('moderation.context', {
+                  novel: reportedContent.cover.novel.title,
+                  author: reportedContent.cover.author.username,
                 })
               }}
             </span>
@@ -207,6 +252,12 @@ onMounted(() => load())
   &__body {
     margin: 0 auto;
     max-width: 1200px;
+  }
+
+  &__thumbnail {
+    width: 40px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
   }
 
   &__excerpt {

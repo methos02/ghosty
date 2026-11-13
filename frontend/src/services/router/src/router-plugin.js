@@ -14,8 +14,8 @@ const state = {
 const createAppRouter = ({ ssr = false } = {}) => {
   const router = createRouter({
     history: ssr ? createMemoryHistory() : createWebHistory(),
-    routes: routerPluginInternal.buildRoutes(),
-    scrollBehavior: routerPluginInternal.scrollBehavior,
+    routes: internals.buildRoutes(),
+    scrollBehavior: internals.scrollBehavior,
   })
 
   router.afterEach(routerFunctions.afterEach)
@@ -61,7 +61,7 @@ const scrollBehavior = (targetRoute, _previousRoute, savedPosition) => {
   return { top: 0 }
 }
 
-export const routerPluginInternal = {
+export const internals = {
   buildRoutes,
   scrollBehavior,
 }

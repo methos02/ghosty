@@ -5,8 +5,7 @@ namespace App\Services\Notifications;
 use App\Enums\NotificationType;
 use App\Enums\ReportResolution;
 use App\Helpers\NotificationDataHelper;
-use App\Models\Chapter;
-use App\Models\Comment;
+use App\Models\Contracts\Reportable;
 use App\Models\Sanction;
 use App\Models\User;
 use App\Services\NotificationService;
@@ -20,7 +19,7 @@ class ContentModeratedNotificationService
         private readonly NotificationService $notificationService
     ) {}
 
-    public function create(User $moderator, Chapter|Comment $content, ReportResolution $resolution, ?Sanction $sanction): void
+    public function create(User $moderator, Reportable $content, ReportResolution $resolution, ?Sanction $sanction): void
     {
         if ($resolution === ReportResolution::Dismissed && $sanction === null) {
             return;

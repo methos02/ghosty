@@ -22,7 +22,18 @@ const reportComment = async (commentId, formData) => {
   return controllerResponseHelper.buildResponse(response)
 }
 
+const reportCover = async (coverId, formData) => {
+  const response = await ReportRepository.reportCover({
+    params: ReportDto.toCoverParams(coverId),
+    body: ReportDto.toCreate(formData),
+    form: 'report',
+  })
+
+  return controllerResponseHelper.buildResponse(response)
+}
+
 export const ReportController = {
   reportChapter,
   reportComment,
+  reportCover,
 }

@@ -130,6 +130,29 @@ describe('ModerationPage.vue', () => {
     })
   })
 
+  it('lists a reported cover with the novel it was proposed for, leading to its decision page', async () => {
+    const reportedCoverApi = moderationSeeder.getReportedCoverApi()
+    vi.spyOn(ModerationRepository, 'listReportedContents').mockResolvedValue(
+      controllerSuccess({
+        data: moderationSeeder.getListApi({ reported_contents: [reportedCoverApi] }),
+      }),
+    )
+    wrapper = mount(ModerationPage)
+    await flushPromises()
+
+    const link = wrapper.findComponent('.moderation-page__link')
+    expect(link.text()).toBe(
+      t('moderation_page.cover_title', { novel: reportedCoverApi.cover.novel.title }),
+    )
+    expect(link.find('.moderation-page__thumbnail').attributes('src')).toBe(
+      reportedCoverApi.cover.image_url,
+    )
+    expect(link.props('to')).toEqual({
+      name: 'moderation-cover',
+      params: { id: reportedCoverApi.id },
+    })
+  })
+
   it('says when no content waits for a decision', async () => {
     vi.spyOn(ModerationRepository, 'listReportedContents').mockResolvedValue(
       controllerSuccess({ data: moderationSeeder.getListApi({ reported_contents: [] }) }),

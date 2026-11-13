@@ -10,7 +10,7 @@ const generateSubdirectoryFromRouteName = (routeName, params = {}) => {
   const route = ajaxFunctions.getRoute(routeName)
   const requestId = Request.init(route, { params })
 
-  const result = ajaxServiceInternal.generateSubdirectoryFromRoute(requestId)
+  const result = internals.generateSubdirectoryFromRoute(requestId)
   Request.remove(requestId)
   return result
 }
@@ -26,7 +26,7 @@ const generateUrlFromRouteName = (routeName, params = {}, api) => {
 
   const requestId = Request.init(route, { params })
 
-  const url = ajaxServiceInternal.generateUrlFromRoute(requestId)
+  const url = internals.generateUrlFromRoute(requestId)
   const requestParams = Request.get('params', requestId)
   Request.remove(requestId)
 
@@ -39,7 +39,7 @@ const generateUrlFromRouteName = (routeName, params = {}, api) => {
 const req = async (routeName, options = {}) => {
   const route = ajaxFunctions.getRoute(routeName, options['api'])
 
-  if (await ajaxServiceInternal.guardSkippedApi(route, routeName)) {
+  if (await internals.guardSkippedApi(route, routeName)) {
     return {
       api: route.api,
       route: routeName,
@@ -52,7 +52,7 @@ const req = async (routeName, options = {}) => {
 
   abortManager.setAbort(Request.get('abort', requestId))
 
-  Request.set({ url: ajaxServiceInternal.generateUrlFromRoute(requestId) }, requestId)
+  Request.set({ url: internals.generateUrlFromRoute(requestId) }, requestId)
   let response
   try {
     response = await httpClient[route.method](requestId)
@@ -66,7 +66,7 @@ const req = async (routeName, options = {}) => {
   Request.remove(requestId)
 
   if (responseType === 'blob') {
-    return ajaxServiceInternal.buildBlobResponse(api, requestRouteName, response)
+    return internals.buildBlobResponse(api, requestRouteName, response)
   }
 
   return {
@@ -111,7 +111,7 @@ const generateSubdirectoryFromRoute = requestId => {
     return url
   }
 
-  url = ajaxServiceInternal.injectParameters(url, requestId)
+  url = internals.injectParameters(url, requestId)
 
   if (url.includes('{')) {
     ajaxFunctions.throwError('error_missing_parameter', {
@@ -127,7 +127,7 @@ const generateUrlFromRoute = requestId => {
     Request.get('api', requestId),
     Request.get('api_url', requestId),
   )
-  const urlSubdirectory = ajaxServiceInternal.generateSubdirectoryFromRoute(requestId)
+  const urlSubdirectory = internals.generateSubdirectoryFromRoute(requestId)
   return apiUrl + urlSubdirectory
 }
 
@@ -166,7 +166,7 @@ const guardSkippedApi = async (route, routeName) => {
   return true
 }
 
-export const ajaxServiceInternal = {
+export const internals = {
   buildBlobResponse,
   generateSubdirectoryFromRoute,
   generateUrlFromRoute,

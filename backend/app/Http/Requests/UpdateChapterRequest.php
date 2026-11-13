@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Config;
 /**
  * @see memory-bank/decisions/ADR-11-chapitre-publie-non-reecrivable.md
  */
-class UpdateChapterRequest extends FormRequest
+final class UpdateChapterRequest extends FormRequest
 {
     public function authorize(): bool
     {

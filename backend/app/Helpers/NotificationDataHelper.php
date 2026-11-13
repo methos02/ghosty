@@ -5,9 +5,14 @@ namespace App\Helpers;
 use App\Enums\ReportResolution;
 use App\Models\Chapter;
 use App\Models\Comment;
+use App\Models\Contracts\AuthoredContent;
+use App\Models\Contracts\Commentable;
+use App\Models\Contracts\Reportable;
 use App\Models\Notification;
 use App\Models\Novel;
+use App\Models\NovelCover;
 use Illuminate\Support\Collection;
+use LogicException;
 
 /**
  * @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md
@@ -32,19 +37,59 @@ final class NotificationDataHelper
     }
 
     /**
-     * @return array{chapter: array{id: int, title: string}|null, novel: array{slug: string, title: string}}
+     * @see memory-bank/decisions/ADR-16-illustrations-du-roman.md
+     *
+     * @return array{chapter: null, novel: array{slug: string, title: string}, cover: array{id: int, image_url: string}}
      */
-    public static function commentableSubject(Chapter|Novel $commentable): array
+    public static function coverSubject(NovelCover $cover): array
     {
-        if ($commentable instanceof Chapter) {
-            return self::chapterSubject($commentable);
-        }
-
         return [
             'chapter' => null,
             'novel' => [
-                'slug' => $commentable->slug,
-                'title' => $commentable->title,
+                'slug' => $cover->novel->slug,
+                'title' => $cover->novel->title,
+            ],
+            'cover' => [
+                'id' => $cover->id,
+                'image_url' => $cover->imageUrl(),
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function contentSubject(AuthoredContent $content): array
+    {
+        if ($content instanceof Comment) {
+            return self::contentSubject($content->target());
+        }
+
+        if ($content instanceof Chapter) {
+            return self::chapterSubject($content);
+        }
+
+        if ($content instanceof NovelCover) {
+            return self::coverSubject($content);
+        }
+
+        if ($content instanceof Novel) {
+            return self::novelSubject($content);
+        }
+
+        throw new LogicException(sprintf('%s is not a supported notification subject.', $content::class));
+    }
+
+    /**
+     * @return array{chapter: null, novel: array{slug: string, title: string}}
+     */
+    public static function novelSubject(Novel $novel): array
+    {
+        return [
+            'chapter' => null,
+            'novel' => [
+                'slug' => $novel->slug,
+                'title' => $novel->title,
             ],
         ];
     }
@@ -54,12 +99,10 @@ final class NotificationDataHelper
      *
      * @return array<string, mixed>
      */
-    public static function moderatedContentData(Chapter|Comment $content, ReportResolution $resolution): array
+    public static function moderatedContentData(Reportable $content, ReportResolution $resolution): array
     {
-        $subject = $content instanceof Chapter ? self::chapterSubject($content) : self::commentableSubject($content->target());
-
         return [
-            ...$subject,
+            ...self::contentSubject($content),
             'content_type' => $content->getMorphClass(),
             'resolution' => $resolution->value,
         ];
@@ -68,10 +111,10 @@ final class NotificationDataHelper
     /**
      * @return array<string, mixed>
      */
-    public static function commentData(Comment $comment, Chapter|Novel $commentable, ?Notification $pending): array
+    public static function commentData(Comment $comment, Commentable $commentable, ?Notification $pending): array
     {
         return [
-            ...self::commentableSubject($commentable),
+            ...self::contentSubject($commentable),
             'last_actor_username' => $comment->author->username,
             'count' => self::pendingCount($pending) + 1,
         ];

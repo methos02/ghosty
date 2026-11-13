@@ -4,10 +4,9 @@ namespace App\Services\Notifications;
 
 use App\Enums\NotificationType;
 use App\Helpers\NotificationDataHelper;
-use App\Models\Chapter;
 use App\Models\Comment;
+use App\Models\Contracts\Commentable;
 use App\Models\Notification;
-use App\Models\Novel;
 use App\Services\NotificationService;
 
 /**
@@ -19,7 +18,7 @@ class CommentReceivedNotificationService
         private readonly NotificationService $notificationService
     ) {}
 
-    public function create(Comment $comment, Chapter|Novel $commentable): void
+    public function create(Comment $comment, Commentable $commentable): void
     {
         $this->notificationService->push(
             $commentable->author,

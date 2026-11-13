@@ -28,6 +28,15 @@ class UserRepository
             ->delete();
     }
 
+    public function addRole(User $user, string $role): void
+    {
+        if ($user->hasRole($role)) {
+            return;
+        }
+
+        $user->forceFill(['roles' => [...$user->roles, $role]])->save();
+    }
+
     public function findByEmailOrUsername(string $identifier): ?User
     {
         $userByEmail = User::query()

@@ -3,13 +3,10 @@
 namespace App\Services;
 
 use App\DTO\CommentDTO;
-use App\Models\Chapter;
 use App\Models\Comment;
-use App\Models\Novel;
+use App\Models\Contracts\Commentable;
 use App\Models\User;
-use App\Repositories\ChapterRepository;
 use App\Repositories\CommentRepository;
-use App\Repositories\NovelRepository;
 use App\Services\Notifications\CommentReceivedNotificationService;
 use App\Services\Notifications\CommentRepliedNotificationService;
 use Illuminate\Support\Facades\DB;
@@ -21,13 +18,11 @@ class CommentService
 {
     public function __construct(
         private readonly CommentRepository $commentsR,
-        private readonly ChapterRepository $chaptersR,
-        private readonly NovelRepository $novelsR,
         private readonly CommentReceivedNotificationService $commentReceivedNotificationService,
         private readonly CommentRepliedNotificationService $commentRepliedNotificationService
     ) {}
 
-    public function create(User $author, Chapter|Novel $commentable, CommentDTO $commentDTO): Comment
+    public function create(User $author, Commentable $commentable, CommentDTO $commentDTO): Comment
     {
         $comment = DB::transaction(function () use ($author, $commentable, $commentDTO): Comment {
             $comment = $this->commentsR->create([
@@ -38,7 +33,7 @@ class CommentService
                 'status' => Comment::STATUS_VISIBLE,
             ]);
 
-            $this->incrementCommentCount($commentable);
+            $this->commentsR->incrementCommentCount($commentable);
 
             return $comment;
         });
@@ -63,7 +58,7 @@ class CommentService
             ]);
 
             $this->commentsR->incrementReplyCount($parent);
-            $this->incrementCommentCount($commentable);
+            $this->commentsR->incrementCommentCount($commentable);
 
             return $reply;
         });
@@ -85,7 +80,7 @@ class CommentService
                 'content' => null,
             ]);
 
-            $this->decrementCommentCount($commentable);
+            $this->commentsR->decrementCommentCount($commentable);
 
             if ($comment->parent instanceof Comment) {
                 $this->commentsR->decrementReplyCount($comment->parent);
@@ -102,7 +97,7 @@ class CommentService
 
         DB::transaction(function () use ($comment, $commentable): void {
             $this->commentsR->update($comment, ['status' => Comment::STATUS_HIDDEN]);
-            $this->decrementCommentCount($commentable);
+            $this->commentsR->decrementCommentCount($commentable);
 
             if ($comment->parent instanceof Comment) {
                 $this->commentsR->decrementReplyCount($comment->parent);
@@ -119,21 +114,12 @@ class CommentService
 
         DB::transaction(function () use ($comment, $commentable): void {
             $this->commentsR->update($comment, ['status' => Comment::STATUS_VISIBLE]);
-            $this->incrementCommentCount($commentable);
+            $this->commentsR->incrementCommentCount($commentable);
 
             if ($comment->parent instanceof Comment) {
                 $this->commentsR->incrementReplyCount($comment->parent);
             }
         });
-    }
-
-    public function findCommentCount(Chapter|Novel $commentable): int
-    {
-        if ($commentable instanceof Chapter) {
-            return $this->chaptersR->findCommentCount($commentable);
-        }
-
-        return $this->novelsR->findCommentCount($commentable);
     }
 
     private function findMentionedUser(Comment $parent, Comment $reply, ?int $mentionedUserId): ?User
@@ -146,27 +132,5 @@ class CommentService
             ->reject(fn (Comment $sibling): bool => $sibling->is($reply))
             ->map(fn (Comment $sibling): User => $sibling->author)
             ->first(fn (User $participant): bool => $participant->id === $mentionedUserId && $reply->startsWithMentionOf($participant));
-    }
-
-    private function incrementCommentCount(Chapter|Novel $commentable): void
-    {
-        if ($commentable instanceof Chapter) {
-            $this->chaptersR->incrementCommentCount($commentable);
-
-            return;
-        }
-
-        $this->novelsR->incrementCommentCount($commentable);
-    }
-
-    private function decrementCommentCount(Chapter|Novel $commentable): void
-    {
-        if ($commentable instanceof Chapter) {
-            $this->chaptersR->decrementCommentCount($commentable);
-
-            return;
-        }
-
-        $this->novelsR->decrementCommentCount($commentable);
     }
 }

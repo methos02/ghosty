@@ -6,19 +6,21 @@ import { REPORTED_CONTENT_TYPES } from '@/constants/moderation-constants.js'
 const reportedContent = ref()
 const sentReports = ref({})
 
-const sentReportKey = reported => `${reported.type}:${reported.content.id}`
-
 const closeReport = () => {
   reportedContent.value = undefined
 }
 
-const isAlreadyReported = reported =>
-  reported.content.isReported === true || sentReports.value[sentReportKey(reported)] === true
+const isAlreadyReported = reported => {
+  return (
+    reported.content.isReported === true
+    || sentReports.value[internals.sentReportKey(reported)] === true
+  )
+}
 
 const markAsReported = reported => {
   sentReports.value = {
     ...sentReports.value,
-    [sentReportKey(reported)]: true,
+    [internals.sentReportKey(reported)]: true,
   }
 }
 
@@ -26,8 +28,9 @@ export const useReport = () => {
   const authStore = useAuthStore()
   const { openLoginDialog } = useAuth()
 
-  const canReport = content =>
-    !authStore.isAuthenticated.value || content.author.id !== authStore.user.value?.id
+  const canReport = content => {
+    return !authStore.isAuthenticated.value || content.author.id !== authStore.user.value?.id
+  }
 
   const openReport = (type, content) => {
     if (!authStore.isAuthenticated.value) {
@@ -38,9 +41,17 @@ export const useReport = () => {
     reportedContent.value = { type, content }
   }
 
-  const openChapterReport = chapter => openReport(REPORTED_CONTENT_TYPES.CHAPTER, chapter)
+  const openChapterReport = chapter => {
+    openReport(REPORTED_CONTENT_TYPES.CHAPTER, chapter)
+  }
 
-  const openCommentReport = comment => openReport(REPORTED_CONTENT_TYPES.COMMENT, comment)
+  const openCommentReport = comment => {
+    openReport(REPORTED_CONTENT_TYPES.COMMENT, comment)
+  }
+
+  const openCoverReport = cover => {
+    openReport(REPORTED_CONTENT_TYPES.COVER, cover)
+  }
 
   return {
     reportedContent: readonly(reportedContent),
@@ -51,6 +62,15 @@ export const useReport = () => {
       markAsReported,
       openChapterReport,
       openCommentReport,
+      openCoverReport,
     },
   }
+}
+
+const sentReportKey = reported => {
+  return `${reported.type}:${reported.content.id}`
+}
+
+export const internals = {
+  sentReportKey,
 }

@@ -9,6 +9,10 @@
     "comment": {
       "dismissed": "Votre signalement d'un commentaire sur « {title} » a été examiné : aucune infraction retenue",
       "hidden": "Votre signalement d'un commentaire sur « {title} » a été traité : le commentaire a été masqué"
+    },
+    "cover": {
+      "dismissed": "Votre signalement d'une illustration de « {title} » a été examiné : aucune infraction retenue",
+      "hidden": "Votre signalement d'une illustration de « {title} » a été traité : l'illustration a été masquée"
     }
   }
 }

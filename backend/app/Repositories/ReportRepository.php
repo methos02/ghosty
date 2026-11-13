@@ -7,15 +7,16 @@ use App\Enums\ReportResolution;
 use App\Enums\ReportStatus;
 use App\Models\Chapter;
 use App\Models\Comment;
+use App\Models\Contracts\Reportable;
+use App\Models\NovelCover;
 use App\Models\Report;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class ReportRepository
 {
-    public function exists(int $reporterId, Model $reportable): bool
+    public function exists(int $reporterId, Reportable $reportable): bool
     {
         return Report::query()
             ->where('reporter_id', $reporterId)
@@ -24,7 +25,7 @@ class ReportRepository
             ->exists();
     }
 
-    public function create(int $reporterId, Model $reportable, string $reason, ?string $description): Report
+    public function create(int $reporterId, Reportable $reportable, string $reason, ?string $description): Report
     {
         return Report::create([
             'reporter_id' => $reporterId,
@@ -58,6 +59,7 @@ class ReportRepository
         (new Collection($reportedContents->items()))->loadMorph('reportable', [
             Chapter::class => ['author', 'novel'],
             Comment::class => ['author', 'commentable'],
+            NovelCover::class => ['author', 'novel'],
         ]);
 
         return $reportedContents;
@@ -66,7 +68,7 @@ class ReportRepository
     /**
      * @return Collection<int, Report>
      */
-    public function listByReportable(Model $reportable): Collection
+    public function listByReportable(Reportable $reportable): Collection
     {
         return Report::query()
             ->with('reporter')
@@ -81,7 +83,7 @@ class ReportRepository
     /**
      * @return Collection<int, Report>
      */
-    public function listPending(Model $reportable): Collection
+    public function listPending(Reportable $reportable): Collection
     {
         return Report::query()
             ->with('reporter')

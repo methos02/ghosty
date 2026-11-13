@@ -1,0 +1,26 @@
+[
+  {
+    "novel": "Nuit virage",
+    "author": "auteur2",
+    "image": "cover_default_horreur.jpg",
+    "likers": ["lecteur1", "auteur3", "moderateur1"]
+  },
+  {
+    "novel": "Nuit virage",
+    "author": "auteur3",
+    "image": "cover_default.jpg",
+    "likers": ["admin"]
+  },
+  {
+    "novel": "Nuit virage",
+    "author": "lecteur1",
+    "image": "cover_default_dramatique.jpg",
+    "likers": []
+  },
+  {
+    "novel": "Compte à rebours",
+    "author": "auteur2",
+    "image": "cover_default_aventure.jpg",
+    "likers": ["lecteur1"]
+  }
+]

@@ -21,7 +21,7 @@ const vueTranslate = (message, params) => {
 const loadLocaleMessages = async locale => {
   state.translater.global.setLocaleMessage(
     locale,
-    await localeFunctionsInternal.getLocaleMessage(locale),
+    await internals.getLocaleMessage(locale),
   )
 }
 
@@ -39,7 +39,7 @@ export const localeFunctions = {
 }
 
 const getLocaleMessage = async locale => {
-  const version = localeFunctionsInternal.getAppVersion()
+  const version = internals.getAppVersion()
   const base = utilsH.isSsr() ? (globalThis.__SSR_ORIGIN__ ?? '') : ''
   const response = await fetch(`${base}/locales/app-translate-${locale}-${version}.json`)
   return response.json()
@@ -49,7 +49,7 @@ const getAppVersion = () => {
   return __APP_VERSION__.replaceAll('.', '_')
 }
 
-export const localeFunctionsInternal = {
+export const internals = {
   getLocaleMessage,
   getAppVersion,
 }

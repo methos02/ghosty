@@ -73,5 +73,23 @@ describe('notification-dto', () => {
         dateHelper.formatDateLocal(notificationApi.updated_at, 'DD/MM/YYYY HH:mm'),
       )
     })
+
+    it('maps the cover a notification is about', () => {
+      const notificationApi = notificationSeeder.getCoverNotificationApi(
+        NOTIFICATION_TYPES.COVER_SELECTED,
+        1,
+      )
+
+      expect(NotificationDto.fromNotification(notificationApi).cover).toEqual({
+        id: notificationApi.cover.id,
+        imageUrl: notificationApi.cover.image_url,
+      })
+    })
+
+    it('leaves the cover undefined for a notification about a chapter', () => {
+      expect(
+        NotificationDto.fromNotification(notificationSeeder.getLikeReceivedApi(1)).cover,
+      ).toBeUndefined()
+    })
   })
 })

@@ -2,9 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Chapter;
 use App\Models\Comment;
-use App\Models\Novel;
+use App\Models\Contracts\Commentable;
 use App\Models\User;
 
 /**
@@ -12,7 +11,7 @@ use App\Models\User;
  */
 class CommentPolicy
 {
-    public function create(User $user, Chapter|Novel $commentable): bool
+    public function create(User $user, Commentable $commentable): bool
     {
         if ($user->isCommentBanned()) {
             return false;

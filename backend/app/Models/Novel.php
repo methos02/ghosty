@@ -6,7 +6,7 @@ use App\Helpers\CoverUrlHelper;
 use App\Models\Concerns\HasComments;
 use App\Models\Concerns\HasSlug;
 use App\Models\Concerns\IsNotificationSubject;
-use App\Models\Contracts\NotificationSubject;
+use App\Models\Contracts\Commentable;
 use Database\Factories\NovelFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 /**
  * @mixin IdeHelperNovel
  */
-class Novel extends Model implements NotificationSubject
+class Novel extends Model implements Commentable
 {
     use HasComments, HasSlug, IsNotificationSubject;
 
@@ -44,6 +44,11 @@ class Novel extends Model implements NotificationSubject
     }
 
     public function isOpenToComments(): bool
+    {
+        return $this->isPublished();
+    }
+
+    public function isPublished(): bool
     {
         return $this->rootChapter?->isPublished() ?? false;
     }
@@ -80,6 +85,26 @@ class Novel extends Model implements NotificationSubject
     public function chapters(): HasMany
     {
         return $this->hasMany(Chapter::class);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-16-illustrations-du-roman.md
+     *
+     * @return HasMany<NovelCover, $this>
+     */
+    public function covers(): HasMany
+    {
+        return $this->hasMany(NovelCover::class);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-16-illustrations-du-roman.md
+     *
+     * @return BelongsTo<NovelCover, $this>
+     */
+    public function officialCover(): BelongsTo
+    {
+        return $this->belongsTo(NovelCover::class, 'official_cover_id');
     }
 
     /**

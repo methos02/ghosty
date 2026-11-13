@@ -1,0 +1,12 @@
+{
+  "cover_image_field": {
+    "choose": "Choisir une image",
+    "drop": "ou la déposer ici",
+    "processing": "Préparation de l'image…",
+    "preview": "Aperçu de l'illustration",
+    "crop": "Recadrer",
+    "change": "Changer d'image",
+    "error_unreadable": "Ce fichier n'est pas une image lisible.",
+    "error_too_small": "L'image est trop petite : elle doit faire au moins 800 pixels de large une fois recadrée en 16/9."
+  }
+}

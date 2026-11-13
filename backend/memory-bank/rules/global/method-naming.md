@@ -15,6 +15,7 @@ paths:
 - MUST use a business verb only for a state transition with its own effects (`publish`: counters, activity).
 - MUST merge two methods with identical bodies; the distinction lives elsewhere.
 - MUST drop a suffix true for every call (`WithRelations` when no variant lacks relations).
+- MUST NOT list the eager-loaded relations in a method name (`findWithAuthorAndNovel`): `find` loads what its callers need, and a reader-dependent flag is an optional parameter (`find(int $coverId, ?int $userId = null)`), not a second method.
 
 ## Explicit names
 

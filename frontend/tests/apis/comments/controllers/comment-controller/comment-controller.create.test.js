@@ -46,6 +46,23 @@ describe('comment-controller', () => {
       })
     })
 
+    it('sends the comment to the commented cover', async () => {
+      const target = commentSeeder.getCoverTarget()
+      const formData = commentSeeder.getCreateForm()
+      vi.spyOn(CommentRepository, 'createOnCover').mockResolvedValue({
+        status: STATUS.CREATED,
+        data: commentSeeder.getCreatedApi(),
+      })
+
+      await CommentController.create(target, formData)
+
+      expect(CommentRepository.createOnCover).toHaveBeenCalledWith({
+        params: CommentDto.toTargetParams(target),
+        body: CommentDto.toCreate(formData),
+        form: 'comment',
+      })
+    })
+
     it('returns the comment the api created and the new total', async () => {
       const createdApi = commentSeeder.getCreatedApi()
       vi.spyOn(CommentRepository, 'createOnChapter').mockResolvedValue({

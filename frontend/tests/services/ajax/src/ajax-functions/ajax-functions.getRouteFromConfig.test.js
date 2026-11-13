@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { ajaxFunctionsInternal } from '@/services/ajax/src/ajax-functions.js'
+import { internals } from '@/services/ajax/src/ajax-functions.js'
 
 describe('ajax-functions', () => {
   describe('getRouteFromConfig', () => {
     it('resolves a declared route and tags it with its name', () => {
-      const route = ajaxFunctionsInternal.getRouteFromConfig('novel.show')
+      const route = internals.getRouteFromConfig('novel.show')
 
       expect(route).toMatchObject({
         url: 'v1/novels/{slug}',
@@ -15,7 +15,7 @@ describe('ajax-functions', () => {
     })
 
     it('resolves a POST route', () => {
-      const route = ajaxFunctionsInternal.getRouteFromConfig('auth.login')
+      const route = internals.getRouteFromConfig('auth.login')
 
       expect(route).toMatchObject({
         url: 'v1/auth/login',
@@ -26,7 +26,7 @@ describe('ajax-functions', () => {
     })
 
     it('returns false for an unknown route', () => {
-      expect(ajaxFunctionsInternal.getRouteFromConfig('does.not.exist')).toBe(false)
+      expect(internals.getRouteFromConfig('does.not.exist')).toBe(false)
     })
   })
 })

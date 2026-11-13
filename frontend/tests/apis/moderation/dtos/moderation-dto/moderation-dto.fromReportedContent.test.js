@@ -31,5 +31,15 @@ describe('moderation-dto', () => {
       expect(reportedContent.chapter).toBeUndefined()
       expect(reportedContent.comment).toEqual(ModerationDto.fromComment(reportedApi.comment))
     })
+
+    it('maps a reported cover without a chapter nor a comment', () => {
+      const reportedApi = moderationSeeder.getReportedCoverApi()
+
+      const reportedContent = ModerationDto.fromReportedContent(reportedApi)
+
+      expect(reportedContent.chapter).toBeUndefined()
+      expect(reportedContent.comment).toBeUndefined()
+      expect(reportedContent.cover).toEqual(ModerationDto.fromCover(reportedApi.cover))
+    })
   })
 })

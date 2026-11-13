@@ -4,7 +4,7 @@ namespace App\Services\Notifications;
 
 use App\Enums\NotificationType;
 use App\Helpers\NotificationDataHelper;
-use App\Models\Chapter;
+use App\Models\Contracts\Likeable;
 use App\Models\Notification;
 use App\Models\User;
 use App\Repositories\LikeRepository;
@@ -20,17 +20,17 @@ class LikeReceivedNotificationService
         private readonly LikeRepository $likesR
     ) {}
 
-    public function create(Chapter $chapter, User $liker): void
+    public function create(Likeable $likeable, User $liker): void
     {
         $this->notificationService->push(
-            $chapter->author,
+            $likeable->author,
             $liker->id,
             NotificationType::LikeReceived,
-            $chapter,
+            $likeable,
             fn (?Notification $pending): array => [
-                ...NotificationDataHelper::chapterSubject($chapter),
+                ...NotificationDataHelper::contentSubject($likeable),
                 'last_actor_username' => $liker->username,
-                ...$this->likesSinceFirstUnreadLike($chapter, $liker, $pending),
+                ...$this->likesSinceFirstUnreadLike($likeable, $liker, $pending),
             ]
         );
     }
@@ -38,15 +38,15 @@ class LikeReceivedNotificationService
     /**
      * @return array{first_like_id: int, count: int}
      */
-    private function likesSinceFirstUnreadLike(Chapter $chapter, User $liker, ?Notification $pending): array
+    private function likesSinceFirstUnreadLike(Likeable $likeable, User $liker, ?Notification $pending): array
     {
         $firstLikeId = $pending === null
-            ? $this->likesR->findUserLikeId($liker->id, $chapter)
+            ? $this->likesR->findUserLikeId($liker->id, $likeable)
             : $this->pendingFirstLikeId($pending);
 
         return [
             'first_like_id' => $firstLikeId,
-            'count' => $this->likesR->countLikesSinceLikeId($chapter, $firstLikeId),
+            'count' => $this->likesR->countLikesSinceLikeId($likeable, $firstLikeId),
         ];
     }
 

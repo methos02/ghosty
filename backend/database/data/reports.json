@@ -22,5 +22,41 @@
     "comment": "Petite incohérence",
     "reason": "personal_attack",
     "description": "Le ton vise l'auteur plus que le texte."
+  },
+  {
+    "reporter": "lecteur1",
+    "cover": {
+      "novel": "Nuit virage",
+      "author": "auteur3"
+    },
+    "reason": "unauthorized_illustration",
+    "description": "Cette image vient d'une banque d'images payante, je l'ai déjà vue sur un autre site."
+  },
+  {
+    "reporter": "auteur1",
+    "cover": {
+      "novel": "Nuit virage",
+      "author": "auteur3"
+    },
+    "reason": "plagiarism",
+    "description": "C'est l'affiche d'un film, à peine recadrée."
+  },
+  {
+    "reporter": "auteur3",
+    "cover": {
+      "novel": "Nuit virage",
+      "author": "lecteur1"
+    },
+    "reason": "off_topic",
+    "description": "L'illustration n'a aucun rapport avec une route de nuit."
+  },
+  {
+    "reporter": "lecteur1",
+    "cover": {
+      "novel": "Compte à rebours",
+      "author": "auteur2"
+    },
+    "reason": "like_manipulation",
+    "description": "Les likes sont arrivés tous en même temps juste après la publication."
   }
 ]

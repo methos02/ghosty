@@ -9,11 +9,11 @@ const state = {
 const getServices = () => Object.keys(state.services)
 
 const hasService = serviceName => {
-  return state.services[servicesManagerInternal.formatServiceName(serviceName)] !== undefined
+  return state.services[internals.formatServiceName(serviceName)] !== undefined
 }
 
 const register = (serviceName, serviceMethods) => {
-  state.services[servicesManagerInternal.formatServiceName(serviceName)] = serviceMethods
+  state.services[internals.formatServiceName(serviceName)] = serviceMethods
 }
 
 const resetServices = () => {
@@ -22,11 +22,11 @@ const resetServices = () => {
 
 const service = (serviceKey, methodParams) => {
   const [serviceName, serviceMethod] = serviceKey.split(':', MAX_PARTS)
-  const method = servicesManagerInternal.serviceMethod(serviceName, serviceMethod)
-  const formattedParams = servicesManagerInternal.formatMethodParams(methodParams)
+  const method = internals.serviceMethod(serviceName, serviceMethod)
+  const formattedParams = internals.formatMethodParams(methodParams)
 
   if (method === undefined) {
-    return servicesManagerInternal.serviceDefault(serviceName, serviceMethod, formattedParams)
+    return internals.serviceDefault(serviceName, serviceMethod, formattedParams)
   }
 
   return formattedParams === false ? method() : method(...formattedParams)
@@ -70,10 +70,10 @@ const serviceError = serviceName => {
 }
 
 const serviceMethod = (serviceName, methodName) => {
-  const formattedName = servicesManagerInternal.formatServiceName(serviceName)
+  const formattedName = internals.formatServiceName(serviceName)
 
   if (state.services[formattedName] === undefined) {
-    return servicesManagerInternal.serviceError(formattedName)
+    return internals.serviceError(formattedName)
   }
 
   if (state.services[formattedName][methodName] === undefined) {
@@ -83,7 +83,7 @@ const serviceMethod = (serviceName, methodName) => {
   return state.services[formattedName][methodName]
 }
 
-export const servicesManagerInternal = {
+export const internals = {
   formatMethodParams,
   formatServiceName,
   serviceDefault,

@@ -8,6 +8,7 @@ import CommentReceivedNotificationDetail from '@/views/layout/notifications/deta
 import CommentRepliedNotificationDetail from '@/views/layout/notifications/details/CommentRepliedNotificationDetail.vue'
 import ContentModeratedNotificationDetail from '@/views/layout/notifications/details/ContentModeratedNotificationDetail.vue'
 import ReportProcessedNotificationDetail from '@/views/layout/notifications/details/ReportProcessedNotificationDetail.vue'
+import CoverSelectedNotificationDetail from '@/views/layout/notifications/details/CoverSelectedNotificationDetail.vue'
 import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 
 defineProps({
@@ -51,6 +52,10 @@ defineProps({
     />
     <ReportProcessedNotificationDetail
       v-if="notification.type === NOTIFICATION_TYPES.REPORT_PROCESSED"
+      :notification="notification"
+    />
+    <CoverSelectedNotificationDetail
+      v-if="notification.type === NOTIFICATION_TYPES.COVER_SELECTED"
       :notification="notification"
     />
   </div>

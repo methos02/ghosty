@@ -2,9 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Models\Chapter;
 use App\Models\Comment;
-use App\Models\Novel;
+use App\Models\Contracts\Commentable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -17,7 +16,7 @@ class CommentRepository
     /**
      * @return LengthAwarePaginator<int, Comment>
      */
-    public function paginateThread(Chapter|Novel $commentable, int $perPage, ?int $userId = null): LengthAwarePaginator
+    public function paginateThread(Commentable $commentable, int $perPage, ?int $userId = null): LengthAwarePaginator
     {
         return Comment::query()
             ->with([
@@ -38,12 +37,6 @@ class CommentRepository
     }
 
     public function find(int $commentId): Comment
-    {
-        return Comment::query()
-            ->findOrFail($commentId);
-    }
-
-    public function findWithAuthorAndTarget(int $commentId): Comment
     {
         return Comment::query()
             ->with(['author', 'commentable'])
@@ -95,5 +88,21 @@ class CommentRepository
             ->where('reply_count', '>', 0)
             ->toBase()
             ->decrement('reply_count');
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
+     */
+    public function incrementCommentCount(Commentable $commentable): void
+    {
+        $commentable::withoutTimestamps(fn () => $commentable->increment('comment_count'));
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md
+     */
+    public function decrementCommentCount(Commentable $commentable): void
+    {
+        $commentable::withoutTimestamps(fn () => $commentable->decrement('comment_count'));
     }
 }

@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 /**
  * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
  */
-class ModerateCommentRequest extends FormRequest
+final class ModerateCommentRequest extends FormRequest
 {
     public function authorize(): bool
     {

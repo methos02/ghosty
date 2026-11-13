@@ -27,6 +27,16 @@ enum ReportResolution: string
     }
 
     /**
+     * @see memory-bank/decisions/ADR-16-illustrations-du-roman.md
+     *
+     * @return list<self>
+     */
+    public static function allowedForCover(): array
+    {
+        return [self::Dismissed, self::Hidden];
+    }
+
+    /**
      * @return list<self>
      */
     public static function allowedForComment(): array

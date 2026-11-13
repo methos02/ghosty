@@ -5,8 +5,7 @@ namespace App\Services\Notifications;
 use App\Enums\NotificationType;
 use App\Enums\ReportResolution;
 use App\Helpers\NotificationDataHelper;
-use App\Models\Chapter;
-use App\Models\Comment;
+use App\Models\Contracts\Reportable;
 use App\Models\Report;
 use App\Models\User;
 use App\Services\NotificationService;
@@ -24,7 +23,7 @@ class ReportProcessedNotificationService
     /**
      * @param  Collection<int, Report>  $reports
      */
-    public function create(User $moderator, Chapter|Comment $content, ReportResolution $resolution, Collection $reports): void
+    public function create(User $moderator, Reportable $content, ReportResolution $resolution, Collection $reports): void
     {
         foreach ($reports as $report) {
             $this->notificationService->push(

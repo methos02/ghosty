@@ -1,6 +1,10 @@
 {
   "like_received_notification": {
     "one": "{author} a soutenu « {title} »",
-    "many": "{count} lecteurs ont soutenu « {title} »"
+    "many": "{count} lecteurs ont soutenu « {title} »",
+    "cover": {
+      "one": "{author} a soutenu votre illustration de « {title} »",
+      "many": "{count} lecteurs ont soutenu votre illustration de « {title} »"
+    }
   }
 }

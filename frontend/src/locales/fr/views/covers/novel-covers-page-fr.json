@@ -1,0 +1,12 @@
+{
+  "novel_covers_page": {
+    "head_title": "Illustrations — {novel}",
+    "title": "Illustrations du roman",
+    "back_to_novel": "Retour au roman",
+    "intro": "L'illustration la plus soutenue devient l'illustration officielle du roman. Vous pouvez soutenir une seule illustration par roman.",
+    "empty": "Aucune illustration n'a encore été proposée pour ce roman. Proposez la première !",
+    "propose": "Proposer une illustration",
+    "replace": "Remplacer mon illustration",
+    "replace_question": "Votre illustration n'a encore aucun soutien. La remplacer ? | Remplacer votre illustration lui fera perdre son soutien. Continuer ? | Remplacer votre illustration lui fera perdre ses {count} soutiens. Continuer ?"
+  }
+}

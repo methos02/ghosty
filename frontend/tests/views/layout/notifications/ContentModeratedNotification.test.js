@@ -53,4 +53,29 @@ describe('ContentModeratedNotification.vue', () => {
       )
     },
   )
+
+  it.each([
+    [RESOLUTIONS.HIDDEN, 'content_moderated_notification.cover.hidden'],
+    [RESOLUTIONS.DISMISSED, 'content_moderated_notification.cover.sanctioned'],
+  ])('tells about the cover of the novel when the decision is %s', (resolution, keypath) => {
+    const notification = notificationSeeder.getModerationNotification(
+      NOTIFICATION_TYPES.CONTENT_MODERATED,
+      {
+        content_type: REPORTED_CONTENT_TYPES.COVER,
+        chapter: null,
+        cover: notificationSeeder.getCoverNotificationApi(NOTIFICATION_TYPES.CONTENT_MODERATED, 1)
+          .cover,
+        resolution,
+      },
+    )
+
+    wrapper = mount(ContentModeratedNotification, { props: { notification } })
+
+    const message = wrapper.find('.notification-base__message')
+    expect(message.text()).toBe(t(keypath, { title: notification.novel.title }))
+    expect(message.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
+      name: 'novel-covers',
+      params: { slug: notification.novel.slug },
+    })
+  })
 })

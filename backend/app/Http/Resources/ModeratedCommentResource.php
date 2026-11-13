@@ -30,7 +30,7 @@ class ModeratedCommentResource extends JsonResource
             'is_spoiler' => $this->is_spoiler,
             'is_deleted' => $this->isDeleted(),
             'is_hidden' => $this->isHidden(),
-            ...NotificationDataHelper::commentableSubject($this->target()),
+            ...NotificationDataHelper::contentSubject($this->target()),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

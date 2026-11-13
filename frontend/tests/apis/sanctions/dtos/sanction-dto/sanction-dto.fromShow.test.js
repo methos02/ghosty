@@ -26,9 +26,9 @@ describe('sanction-dto', () => {
     })
 
     it('reads a sanction given without reason as an empty reason', () => {
-      expect(
-        SanctionDto.fromShow(moderationSeeder.getSanctionApi({ reason: null })).reason,
-      ).toBe('')
+      expect(SanctionDto.fromShow(moderationSeeder.getSanctionApi({ reason: null })).reason).toBe(
+        '',
+      )
     })
   })
 })

@@ -9,7 +9,12 @@ const reportComment = async options => {
   return await req('comment.report', { ...options, 'no-flash': REPORT_GUARD_STATUSES })
 }
 
+const reportCover = async options => {
+  return await req('cover.report', { ...options, 'no-flash': REPORT_GUARD_STATUSES })
+}
+
 export const ReportRepository = {
   reportChapter,
   reportComment,
+  reportCover,
 }

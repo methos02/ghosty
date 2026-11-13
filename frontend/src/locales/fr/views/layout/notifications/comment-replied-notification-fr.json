@@ -1,6 +1,10 @@
 {
   "comment_replied_notification": {
     "one": "{author} a répondu à votre commentaire sur « {title} »",
-    "many": "{count} réponses à vos commentaires sur « {title} »"
+    "many": "{count} réponses à vos commentaires sur « {title} »",
+    "cover": {
+      "one": "{author} a répondu à votre commentaire sur une illustration de « {title} »",
+      "many": "{count} réponses à vos commentaires sur une illustration de « {title} »"
+    }
   }
 }

@@ -10,6 +10,12 @@ describe('comment-dto', () => {
       expect(CommentDto.toTargetParams(target)).toEqual({ chapter: target.chapterId })
     })
 
+    it('addresses a cover by its id', () => {
+      const target = commentSeeder.getCoverTarget()
+
+      expect(CommentDto.toTargetParams(target)).toEqual({ cover: target.coverId })
+    })
+
     it('addresses a novel by its slug', () => {
       const target = commentSeeder.getNovelTarget()
 

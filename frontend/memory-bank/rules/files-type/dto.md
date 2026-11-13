@@ -98,6 +98,26 @@ const fromShow = chapter => ({
 })
 ```
 
+## Nested resources
+
+A DTO MUST NOT rebuild the shape of another resource: it delegates to that resource's DTO (`ChapterDto.fromSummary(notification.chapter)`). The mapping of a resource (`image_url` -> `imageUrl`) lives in one DTO only. When the API sends a partial object, the owning DTO exposes a `fromSummary`; never a local `mapX` internal. When the nested resource is nullable, the owning DTO handles the `null` (`return cover ? {...} : undefined`), not every caller.
+
+```js
+// BAD
+const fromNotification = notification => {
+  return {
+    cover: notification.cover ? { id: notification.cover.id, imageUrl: notification.cover.image_url } : undefined,
+  }
+}
+
+// GOOD
+const fromNotification = notification => {
+  return {
+    cover: CoverDto.fromSummary(notification.cover),
+  }
+}
+```
+
 ## Lists
 
 - MUST expose a plural method that maps through the singular; the caller passes the whole array, never loops on the singular.
@@ -111,7 +131,7 @@ const fromSearchByAuthor = (novel, author) => ({ ...fromShow(novel), authors: [a
 // GOOD
 const fromSearchByAuthor = (novel, author) => ({
   ...fromShow(novel),
-  searchedAuthor: { id: author.id, username: author.username },
+  searchedAuthor: AuthorDto.fromShow(author),
 })
 
 const fromList = novels => novels.map(novel => fromShow(novel))

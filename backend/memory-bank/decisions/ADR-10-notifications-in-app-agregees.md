@@ -29,7 +29,7 @@ Contraintes techniques du projet : hébergement mutualisé O2Switch, `QUEUE_CONN
 | `followed_branch_extended` | une branche que je suis reçoit une suite |
 | `comment_received` / `comment_replied` | commentaire sur mon contenu, réponse à mon commentaire |
 | `content_moderated` / `report_processed` | mon contenu est archivé, masqué ou un passage en est retiré (sanction éventuelle) ; mon signalement est traité ([ADR-15](ADR-15-traitement-de-la-moderation.md)) |
-| `cover_selected` | mon illustration devient officielle |
+| `cover_selected` | mon illustration devient officielle (élection automatique, [ADR-16](ADR-16-illustrations-du-roman.md)) |
 
 **5. Deux interdits :**
 

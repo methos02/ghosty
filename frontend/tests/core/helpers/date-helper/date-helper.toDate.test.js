@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { dateHelperInternal } from '@/core/helpers/date-helper.js'
+import { internals } from '@/core/helpers/date-helper.js'
 
 describe('date-helper', () => {
   afterEach(() => {
@@ -11,17 +11,17 @@ describe('date-helper', () => {
       vi.useFakeTimers()
       vi.setSystemTime(new Date('2025-04-27T00:00:00'))
 
-      expect(dateHelperInternal.toDate(null).toISOString()).toBe(
+      expect(internals.toDate(null).toISOString()).toBe(
         new Date('2025-04-27T00:00:00').toISOString(),
       )
     })
 
     it('should parse with native Date when no format is provided', () => {
-      expect(dateHelperInternal.toDate('2025-04-27')).toEqual(new Date('2025-04-27'))
+      expect(internals.toDate('2025-04-27')).toEqual(new Date('2025-04-27'))
     })
 
     it('should auto-detect DD/MM/YYYY format without explicit format', () => {
-      const result = dateHelperInternal.toDate('27/04/2025')
+      const result = internals.toDate('27/04/2025')
 
       expect(result.getFullYear()).toBe(2025)
       expect(result.getMonth()).toBe(3)
@@ -29,7 +29,7 @@ describe('date-helper', () => {
     })
 
     it('should parse with dayjs when format is provided', () => {
-      const result = dateHelperInternal.toDate('27/04/2025', 'DD/MM/YYYY')
+      const result = internals.toDate('27/04/2025', 'DD/MM/YYYY')
 
       expect(result.getFullYear()).toBe(2025)
       expect(result.getMonth()).toBe(3)

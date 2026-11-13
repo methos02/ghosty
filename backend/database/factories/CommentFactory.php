@@ -4,11 +4,9 @@ namespace Database\Factories;
 
 use App\Models\Chapter;
 use App\Models\Comment;
-use App\Models\Novel;
+use App\Models\Contracts\Commentable;
 use App\Models\User;
-use App\Repositories\ChapterRepository;
 use App\Repositories\CommentRepository;
-use App\Repositories\NovelRepository;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -36,7 +34,7 @@ class CommentFactory extends Factory
         return $this->state(fn () => ['author_id' => $author->id]);
     }
 
-    public function on(Chapter|Novel $commentable): static
+    public function on(Commentable $commentable): static
     {
         return $this->state(fn () => [
             'commentable_type' => $commentable->getMorphClass(),
@@ -82,17 +80,7 @@ class CommentFactory extends Factory
                 return;
             }
 
-            $commentable = $comment->commentable;
-
-            if ($commentable instanceof Chapter) {
-                app(ChapterRepository::class)->incrementCommentCount($commentable);
-
-                return;
-            }
-
-            if ($commentable instanceof Novel) {
-                app(NovelRepository::class)->incrementCommentCount($commentable);
-            }
+            app(CommentRepository::class)->incrementCommentCount($comment->target());
         });
     }
 }

@@ -57,6 +57,15 @@ return [
             'max' => 'La description ne peut pas dépasser :max caractères',
         ],
     ],
+    'cover' => [
+        'image' => [
+            'required' => 'Choisissez une image',
+            'mimes' => 'L\'image doit être au format JPG, PNG ou WebP',
+            'max' => 'L\'image ne peut pas dépasser :max Ko',
+            'dimensions' => 'L\'image doit mesurer entre 800 × 450 et 6000 × 4000 pixels',
+            'landscape' => 'L\'image doit être au format paysage (plus large que haute)',
+        ],
+    ],
     'moderation' => [
         'resolution' => [
             'required' => 'Choisissez une décision',
@@ -71,6 +80,7 @@ return [
             'type' => [
                 'required' => 'Le type de sanction est obligatoire',
                 'required_for_hidden_comment' => 'Masquer un commentaire entraîne au minimum un avertissement de son auteur',
+                'required_for_hidden_cover' => 'Masquer une illustration entraîne au minimum un avertissement de son auteur',
                 'enum' => 'Le type de sanction est invalide',
             ],
             'days' => [

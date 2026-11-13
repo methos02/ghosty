@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Chapter;
 use App\Models\Comment;
+use App\Models\NovelCover;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -43,6 +44,7 @@ class ReportedContentResource extends JsonResource
             return [
                 'chapter' => new ChapterListResource($reportable),
                 'comment' => null,
+                'cover' => null,
             ];
         }
 
@@ -50,6 +52,15 @@ class ReportedContentResource extends JsonResource
             return [
                 'chapter' => null,
                 'comment' => new ModeratedCommentResource($reportable),
+                'cover' => null,
+            ];
+        }
+
+        if ($reportable instanceof NovelCover) {
+            return [
+                'chapter' => null,
+                'comment' => null,
+                'cover' => new CoverResource($reportable),
             ];
         }
 

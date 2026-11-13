@@ -305,10 +305,11 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 - Front : back-office minimal `/moderation`, `ReportDialog` étendu aux autres contenus.
 - Arbitrages ([ADR-15](backend/memory-bank/decisions/ADR-15-traitement-de-la-moderation.md)) : la décision vise un **contenu** et clôt tous ses signalements ; seule une **feuille** (sans suite publiée, non racine) s'archive ou se masque ; un chapitre poursuivi perd seulement un **passage retiré** (passages remplacés par une mention, original conservé dans `chapter_versions`, aucune réécriture possible) ; `sanctions` **remplace** `users.banned_until` (ban définitif possible, jetons révoqués sur `account_ban`) ; signalement étendu aux **commentaires** seulement (covers au lot 7, utilisateurs au lot 8) ; notifications `content_moderated` (auteur) et `report_processed` (signaleurs).
 
-### Lot 7 — Illustration du roman · M
+### Lot 7 — Illustration du roman · M ✅
 
 - `novel_covers`, upload via `Storage::disk()` + validation MIME/taille, sélection de l'officielle par l'auteur du roman, archivage des autres.
-- Front : `CoverGallery`, `CoverProposeDialog`, remplacement de `cover_url` par la cover officielle.
+- Front : `NovelCoversPage`, `CoverProposeDialog`, remplacement de `cover_url` par la cover officielle.
+- Arbitrages ([ADR-16](backend/memory-bank/decisions/ADR-16-illustrations-du-roman.md)) : l'officielle n'est **pas choisie par l'auteur** mais **élue automatiquement** (la plus soutenue, égalité au profit de l'officielle en place, comme la branche principale) ; **aucun archivage** des autres propositions, qui restent des alternatives classées ; **une proposition par contributeur et par roman**, remplaçable en perdant ses soutiens ; **un soutien par lecteur et par roman**, déplaçable ; tout compte connecté propose (rôle `illustrator` ajouté) ; image validée (jpg/png/webp, 5 Mo, paysage) sans transformation ; soutiens, commentaires, signalement + modération (`hidden` avec sanction) et notification `cover_selected` inclus.
 
 ### Lot 8 — Profils et statistiques · S/M
 

@@ -22,21 +22,21 @@ const beforeEach = async (to, _from) => {
     return true
   }
 
-  if (routerFunctionsInternal.isDocumentationBlocked(to)) {
+  if (internals.isDocumentationBlocked(to)) {
     servicesM.service('router:setUrlIntented', [to.fullPath])
     await servicesM.service('auth:login')
     return false
   }
 
-  if (routerFunctionsInternal.isAuthBlocked(to)) {
-    return routerFunctionsInternal.askForLogin(to)
+  if (internals.isAuthBlocked(to)) {
+    return internals.askForLogin(to)
   }
 
   if (to.meta?.roles === undefined || to.meta.roles.length === 0) {
     return true
   }
 
-  return await routerFunctionsInternal.checkRoles(to)
+  return await internals.checkRoles(to)
 }
 
 export const routerFunctions = {
@@ -56,13 +56,13 @@ const askForLogin = to => {
 }
 
 const checkRoles = async to => {
-  if (routerFunctionsInternal.hasRequiredRole(to)) {
+  if (internals.hasRequiredRole(to)) {
     return true
   }
 
   await servicesM.service('auth:routesAuthCheck')
 
-  if (routerFunctionsInternal.hasRequiredRole(to)) {
+  if (internals.hasRequiredRole(to)) {
     return true
   }
 
@@ -80,7 +80,7 @@ const isDocumentationBlocked = to => {
   return to.path.startsWith(DOCUMENTATION_PREFIX) && auth.requiresAuth() && !auth.isAuthenticated()
 }
 
-export const routerFunctionsInternal = {
+export const internals = {
   askForLogin,
   checkRoles,
   hasRequiredRole,

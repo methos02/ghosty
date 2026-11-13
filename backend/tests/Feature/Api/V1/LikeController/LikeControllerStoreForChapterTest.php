@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class LikeControllerStoreTest extends TestCase
+class LikeControllerStoreForChapterTest extends TestCase
 {
     private User $reader;
 
@@ -30,7 +30,7 @@ class LikeControllerStoreTest extends TestCase
     #[Test]
     public function has_middleware(): void
     {
-        $route = Route::getRoutes()->getByAction(LikeController::class.'@store');
+        $route = Route::getRoutes()->getByAction(LikeController::class.'@storeForChapter');
         $this->assertNotNull($route);
 
         $this->assertEqualsCanonicalizing(['api', 'auth:sanctum', 'throttle:like'], $route->gatherMiddleware());

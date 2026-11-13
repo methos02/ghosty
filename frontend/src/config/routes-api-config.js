@@ -202,6 +202,62 @@ export const routesApi = {
     api: 'ghosty',
   },
 
+  'cover.list': {
+    url: 'v1/novels/{slug}/covers',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'cover.create': {
+    url: 'v1/novels/{slug}/covers',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'cover.replaceImage': {
+    url: 'v1/covers/{cover}/image',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'cover.like': {
+    url: 'v1/covers/{cover}/like',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'cover.unlike': {
+    url: 'v1/covers/{cover}/like',
+    method: 'delete',
+    api: 'ghosty',
+  },
+  'cover.report': {
+    url: 'v1/covers/{cover}/report',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'comment.coverThread': {
+    url: 'v1/covers/{cover}/comments',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'comment.createOnCover': {
+    url: 'v1/covers/{cover}/comments',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'moderation.showCover': {
+    url: 'v1/moderation/covers/{cover}',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'moderation.moderateCover': {
+    url: 'v1/moderation/covers/{cover}/decision',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'moderation.restoreCover': {
+    url: 'v1/moderation/covers/{cover}/restore',
+    method: 'post',
+    api: 'ghosty',
+  },
+
   'notification.list': {
     url: 'v1/me/notifications',
     method: 'get',

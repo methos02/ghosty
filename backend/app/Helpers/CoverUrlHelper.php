@@ -12,7 +12,7 @@ final class CoverUrlHelper
 
     public static function forNovel(Novel $novel): string
     {
-        return $novel->cover_url ?? self::forGenreSlug($novel->genre->slug);
+        return $novel->officialCover?->imageUrl() ?? $novel->cover_url ?? self::forGenreSlug($novel->genre->slug);
     }
 
     public static function forGenreSlug(?string $slug): string

@@ -31,6 +31,18 @@ req('users.search', { params, errors: { 404: 'user_not_found' } })
 req('novels.create', { body, form: 'novel' })
 ```
 
+### Envoi de fichier (FormData)
+
+Un `body` de type `FormData` part tel quel : il n'est ni sérialisé en JSON ni accompagné d'un `Content-Type`, que le navigateur pose lui-même avec la frontière multipart. Le DTO construit le `FormData` (`CoverDto.toCreate`), le repository le passe sans y toucher.
+
+```javascript
+const formData = new FormData()
+formData.append('image', file)
+req('cover.create', { params: { slug }, body: formData, form: 'cover' })
+```
+
+Laravel ne lit pas un corps multipart envoyé en `PUT` : un remplacement de fichier passe par une route `POST`.
+
 ### Blob / File Download
 
 When `responseType: 'blob'` is set, `req()` returns a different response shape with the blob data and the filename extracted from the `Content-Disposition` header:
@@ -84,7 +96,7 @@ const download = async () => {
 
 Uses native `fetch` API (no external HTTP library). The HTTP client is in `src/services/ajax/src/models/http-client.js`.
 
-Key internal functions (in `httpClientInternal`):
+Key internal functions (in the `internals` export of `http-client.js`):
 - `prepareFetchRequest` — applies request interceptor, builds fetch options and request config
 - `sendFetch` — executes fetch, handles AbortError and network errors
 - `handleFetchResponse` — normalizes response, delegates to response error interceptor on failure

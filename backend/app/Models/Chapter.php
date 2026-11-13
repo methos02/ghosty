@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\Concerns\HasComments;
 use App\Models\Concerns\HasLikes;
+use App\Models\Concerns\HasReports;
 use App\Models\Concerns\IsNotificationSubject;
-use App\Models\Concerns\Reportable;
-use App\Models\Contracts\NotificationSubject;
+use App\Models\Contracts\Commentable;
+use App\Models\Contracts\Likeable;
+use App\Models\Contracts\Reportable;
 use Database\Factories\ChapterFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,10 +20,10 @@ use Illuminate\Support\Facades\Config;
 /**
  * @mixin IdeHelperChapter
  */
-class Chapter extends Model implements NotificationSubject
+class Chapter extends Model implements Commentable, Likeable, Reportable
 {
     /** @use HasFactory<ChapterFactory> */
-    use HasComments, HasFactory, HasLikes, IsNotificationSubject, Reportable;
+    use HasComments, HasFactory, HasLikes, HasReports, IsNotificationSubject;
 
     const STATUS_DRAFT = 0;
 

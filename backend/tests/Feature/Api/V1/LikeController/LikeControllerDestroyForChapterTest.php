@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class LikeControllerDestroyTest extends TestCase
+class LikeControllerDestroyForChapterTest extends TestCase
 {
     private User $reader;
 
@@ -26,7 +26,7 @@ class LikeControllerDestroyTest extends TestCase
     #[Test]
     public function has_middleware(): void
     {
-        $route = Route::getRoutes()->getByAction(LikeController::class.'@destroy');
+        $route = Route::getRoutes()->getByAction(LikeController::class.'@destroyForChapter');
         $this->assertNotNull($route);
 
         $this->assertEqualsCanonicalizing(['api', 'auth:sanctum', 'throttle:like'], $route->gatherMiddleware());

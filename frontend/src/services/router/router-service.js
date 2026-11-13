@@ -53,10 +53,10 @@ const push = async route => {
     return true
   }
 
-  if (routerServiceInternal.isUnknownNamedRoute(route)) {
+  if (internals.isUnknownNamedRoute(route)) {
     return flash.errorT('error_route_unknown', { route_name: route.name })
   }
-  if (routerServiceInternal.isUnknownPath(route)) {
+  if (internals.isUnknownPath(route)) {
     return flash.errorT('error_url_unknown', { url: route })
   }
 
@@ -71,10 +71,10 @@ const replace = async route => {
     return true
   }
 
-  if (routerServiceInternal.isUnknownNamedRoute(route)) {
+  if (internals.isUnknownNamedRoute(route)) {
     return flash.errorT('error_route_unknown', { route_name: route.name })
   }
-  if (routerServiceInternal.isUnknownPath(route)) {
+  if (internals.isUnknownPath(route)) {
     return flash.errorT('error_url_unknown', { url: route })
   }
 
@@ -124,7 +124,7 @@ const isUnknownPath = route =>
     .getRoutes()
     .every(routeConfig => routeConfig.path !== route.path)
 
-export const routerServiceInternal = {
+export const internals = {
   isUnknownNamedRoute,
   isUnknownPath,
 }

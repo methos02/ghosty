@@ -145,6 +145,22 @@ watch(() => route.get('slug'), openForSlug)
     :title="selectedNovel?.title || ''"
     @dialog-close="handleDialogClose"
   >
+    <template #actions>
+      <button
+        v-if="selectedNovel && currentView === NOVEL_DETAIL_VIEWS.NOVEL"
+        type="button"
+        class="novel-detail-dialog__comments | d-flex a-center g-5 fs-400 color-neutral-100 pointer"
+        :title="t('novel.comments')"
+        :aria-label="t('novel.comments')"
+        @click="showComments"
+      >
+        <i class="fa-solid fa-comments"></i>
+        <span class="novel-detail-dialog__comment-count">
+          {{ selectedNovel.commentCount }}
+        </span>
+      </button>
+    </template>
+
     <div class="novel-detail-dialog | w-full">
       <div
         v-if="errorMessage && !selectedNovel"
@@ -174,29 +190,24 @@ watch(() => route.get('slug'), openForSlug)
             </div>
           </div>
 
-          <div class="novel-detail-dialog__toolbar | d-flex a-center g-10">
+          <div class="novel-detail-dialog__links | d-flex j-between g-10 w-full mt-15">
             <button
               type="button"
-              class="novel-detail-dialog__comments | btn btn-sm btn-primary-alt d-flex a-center g-5"
-              :title="t('novel.comments')"
-              :aria-label="t('novel.comments')"
-              @click="showComments"
+              class="novel-detail-dialog__explore | novel-detail-dialog__link | d-flex a-center g-5 fs-300 color-primary"
+              @click="exploreNovel"
             >
-              <i class="fa-solid fa-comments"></i>
-              <span class="novel-detail-dialog__comment-count">
-                {{ selectedNovel.commentCount }}
-              </span>
+              <i class="fa-solid fa-code-branch"></i>
+              {{ t('common.explore_novel') }}
             </button>
-          </div>
 
-          <button
-            type="button"
-            class="novel-detail-dialog__explore | novel-detail-dialog__link | d-flex a-center g-5 fs-300 color-primary"
-            @click="exploreNovel"
-          >
-            <i class="fa-solid fa-code-branch"></i>
-            {{ t('common.explore_novel') }}
-          </button>
+            <router-link
+              :to="{ name: 'novel-covers', params: { slug: selectedNovel.slug } }"
+              class="novel-detail-dialog__covers | novel-detail-dialog__link | d-flex a-center g-5 fs-300 color-primary"
+            >
+              <i class="fa-solid fa-palette"></i>
+              {{ t('novel.covers') }}
+            </router-link>
+          </div>
         </div>
 
         <div class="novel-detail-dialog__right | d-flex f-column g-15">
@@ -261,7 +272,7 @@ watch(() => route.get('slug'), openForSlug)
   </DialogComponent>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 @use '@/assets/scss/variables' as *;
 
 .novel-detail-dialog {
@@ -305,8 +316,9 @@ watch(() => route.get('slug'), openForSlug)
     margin-top: auto;
   }
 
-  &__explore {
-    margin-block: auto;
+  &__comments:hover,
+  &__comments:focus-visible {
+    color: var(--neutral-400);
   }
 
   &__link {

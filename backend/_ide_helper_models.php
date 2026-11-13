@@ -302,6 +302,7 @@ namespace App\Models{
  * @property int $comment_count
  * @property \Illuminate\Support\Carbon|null $branch_recomputed_at
  * @property int|null $main_branch_last_chapter_id
+ * @property int|null $official_cover_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $author
@@ -309,7 +310,10 @@ namespace App\Models{
  * @property-read int|null $chapters_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
  * @property-read int|null $comments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\NovelCover> $covers
+ * @property-read int|null $covers_count
  * @property-read \App\Models\Genre $genre
+ * @property-read \App\Models\NovelCover|null $officialCover
  * @property-read \App\Models\Chapter|null $rootChapter
  * @method static \Database\Factories\NovelFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel newModelQuery()
@@ -325,6 +329,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereIsFavorite($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereMainBranchLastChapterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereOfficialCoverId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereUpdatedAt($value)
@@ -332,6 +337,48 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
 	class IdeHelperNovel {}
+}
+
+namespace App\Models{
+/**
+ * @see memory-bank/decisions/ADR-16-illustrations-du-roman.md
+ * @property int $id
+ * @property int $novel_id
+ * @property int $author_id
+ * @property string $image_path
+ * @property int $status
+ * @property int $like_count
+ * @property int $comment_count
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $author
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Comment> $comments
+ * @property-read int|null $comments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Like> $likes
+ * @property-read int|null $likes_count
+ * @property-read \App\Models\Novel $novel
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Report> $reports
+ * @property-read int|null $reports_count
+ * @method static \Database\Factories\NovelCoverFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover published()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover whereAuthorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover whereCommentCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover whereImagePath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover whereLikeCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover whereNovelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover withUserLike(?int $userId)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|NovelCover withUserReport(?int $userId)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperNovelCover {}
 }
 
 namespace App\Models{

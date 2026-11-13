@@ -7,6 +7,7 @@ import { chapterConfig } from '@/config/chapter-config.js'
 import { reportConfig } from '@/config/report-config.js'
 import { commentConfig } from '@/config/comment-config.js'
 import { moderationConfig } from '@/config/moderation-config.js'
+import { coverConfig } from '@/config/cover-config.js'
 
 const configUser = {
   locales,
@@ -18,6 +19,7 @@ const configUser = {
   report: reportConfig,
   comment: commentConfig,
   moderation: moderationConfig,
+  cover: coverConfig,
 }
 
 const init = configs => {
@@ -58,7 +60,7 @@ const set = (configName, configValue) => {
 }
 
 const get = configName => {
-  const result = configLoaderInternal.resolveKey(configName)
+  const result = internals.resolveKey(configName)
   if (!result.found) {
     throw new Error(`[ConfigLoader] Key "${configName}" not found`)
   }
@@ -66,16 +68,20 @@ const get = configName => {
 }
 
 const find = (configName, defaultValue) => {
-  const result = configLoaderInternal.resolveKey(configName)
+  const result = internals.resolveKey(configName)
   if (!result.found) {
     return defaultValue
   }
   return result.value
 }
 
-const has = configName => configLoaderInternal.resolveKey(configName).found
+const has = configName => {
+  return internals.resolveKey(configName).found
+}
 
-const getAll = () => configUser
+const getAll = () => {
+  return configUser
+}
 
 export const ConfigLoader = {
   init,
@@ -108,6 +114,6 @@ const resolveKey = configName => {
   return { found: true, value: config }
 }
 
-export const configLoaderInternal = {
+export const internals = {
   resolveKey,
 }

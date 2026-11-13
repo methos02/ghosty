@@ -8,11 +8,14 @@
     "empty": "Aucun contenu signalé ici.",
     "types": {
       "chapter": "Chapitre",
-      "comment": "Commentaire"
+      "comment": "Commentaire",
+      "novel_cover": "Illustration"
     },
     "report_count": "Aucun signalement | 1 signalement | {count} signalements",
     "reported_at": "Signalé le {date}",
     "process": "Traiter",
-    "view": "Voir la décision"
+    "view": "Voir la décision",
+    "cover_title": "Illustration de « {novel} »",
+    "cover_alt": "Illustration proposée pour « {novel} »"
   }
 }

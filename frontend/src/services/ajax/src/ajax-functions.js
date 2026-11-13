@@ -21,9 +21,9 @@ const manageError = async (error, fallbackRequestId) => {
     return { data: [], status: STATUS.SUCCESS }
   }
 
-  ajaxFunctionsInternal.addFormErrors(error, requestId)
-  ajaxFunctionsInternal.showFlash(error, requestId)
-  await ajaxFunctionsInternal.logError(error, requestId)
+  internals.addFormErrors(error, requestId)
+  internals.showFlash(error, requestId)
+  await internals.logError(error, requestId)
 
   return error.response
 }
@@ -35,7 +35,7 @@ const throwError = (message, params = {}) => {
 }
 
 const getRoute = (routeName, api) => {
-  const route = ajaxFunctionsInternal.getRouteFromConfig(routeName, api)
+  const route = internals.getRouteFromConfig(routeName, api)
 
   if (route === false) {
     ajaxFunctions.throwError('v_route_unknow', { route_name: routeName })
@@ -78,11 +78,6 @@ export const ajaxFunctions = {
   throwError,
 }
 
-const resolveErrorKey = (status, requestId) => {
-  const customErrors = Request.get('errors', requestId)
-  return customErrors?.[status] ?? DEFAULT_ERRORS[status] ?? ERROR_UNKNOWN
-}
-
 const addFormErrors = (error, requestId) => {
   if (error.response.status !== STATUS.UNPROCESSABLE_ENTITY) {
     return
@@ -94,41 +89,6 @@ const addFormErrors = (error, requestId) => {
   }
 
   form.addValidationErrors(error.response.data.errors, formName)
-}
-
-const showFlash = (error, requestId) => {
-  if (NO_FLASH_STATUSES.has(error.response.status)) {
-    return
-  }
-
-  if (Request.get('flash', requestId) === false) {
-    return
-  }
-
-  const noFlash = Request.get('no-flash', requestId)
-  if (Array.isArray(noFlash) && noFlash.includes(error.response.status)) {
-    return
-  }
-
-  if (error.response.data?.detail !== undefined) {
-    log.error(error.response.data.detail)
-  }
-
-  flash.errorT(resolveErrorKey(error.response.status, requestId))
-}
-
-const logError = async (error, requestId) => {
-  if (Request.get('log', requestId) === false) {
-    return
-  }
-  if (SILENT_ERROR_STATUSES.has(error.response.status)) {
-    return
-  }
-  await log.send(error.response.statusText, {
-    module: 'ajax',
-    response: error.response,
-    request: { ...Request.get(requestId) },
-  })
 }
 
 const getRouteFromConfig = (routeName, api) => {
@@ -156,9 +116,50 @@ const getRouteFromConfig = (routeName, api) => {
   }
 }
 
-export const ajaxFunctionsInternal = {
+const logError = async (error, requestId) => {
+  if (Request.get('log', requestId) === false) {
+    return
+  }
+  if (SILENT_ERROR_STATUSES.has(error.response.status)) {
+    return
+  }
+  await log.send(error.response.statusText, {
+    module: 'ajax',
+    response: error.response,
+    request: { ...Request.get(requestId) },
+  })
+}
+
+const resolveErrorKey = (status, requestId) => {
+  const customErrors = Request.get('errors', requestId)
+  return customErrors?.[status] ?? DEFAULT_ERRORS[status] ?? ERROR_UNKNOWN
+}
+
+const showFlash = (error, requestId) => {
+  if (NO_FLASH_STATUSES.has(error.response.status)) {
+    return
+  }
+
+  if (Request.get('flash', requestId) === false) {
+    return
+  }
+
+  const noFlash = Request.get('no-flash', requestId)
+  if (Array.isArray(noFlash) && noFlash.includes(error.response.status)) {
+    return
+  }
+
+  if (error.response.data?.detail !== undefined) {
+    log.error(error.response.data.detail)
+  }
+
+  flash.errorT(internals.resolveErrorKey(error.response.status, requestId))
+}
+
+export const internals = {
   addFormErrors,
   getRouteFromConfig,
   logError,
+  resolveErrorKey,
   showFlash,
 }

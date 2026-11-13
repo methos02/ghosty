@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
 /**
  * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
  */
-class ModerateChapterRequest extends FormRequest
+final class ModerateChapterRequest extends FormRequest
 {
     public function authorize(): bool
     {

@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\V1\ModerationController;
 use App\Http\Requests\ReportFilterRequest;
 use App\Models\Chapter;
 use App\Models\Comment;
+use App\Models\Novel;
+use App\Models\NovelCover;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -141,6 +143,24 @@ class ModerationControllerIndexTest extends TestCase
             ->assertJsonPath('reported_contents.0.chapter', null)
             ->assertJsonPath('reported_contents.0.comment.content', 'Propos injurieux')
             ->assertJsonPath('reported_contents.0.comment.chapter.title', 'Le virage');
+    }
+
+    #[Test]
+    public function serves_a_reported_cover_with_its_novel(): void
+    {
+        $novel = Novel::factory()->create(['title' => 'Nuit virage']);
+        $cover = NovelCover::factory()->on($novel)->create();
+        Report::factory()->on($cover)->create();
+
+        $this->actingAs(User::factory()->moderator()->create())
+            ->getJson($this->route)
+            ->assertOk()
+            ->assertJsonPath('reported_contents.0.type', 'novel_cover')
+            ->assertJsonPath('reported_contents.0.id', $cover->id)
+            ->assertJsonPath('reported_contents.0.chapter', null)
+            ->assertJsonPath('reported_contents.0.comment', null)
+            ->assertJsonPath('reported_contents.0.cover.id', $cover->id)
+            ->assertJsonPath('reported_contents.0.cover.novel.title', 'Nuit virage');
     }
 
     #[Test]

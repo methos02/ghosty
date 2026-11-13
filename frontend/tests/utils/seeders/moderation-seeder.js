@@ -76,6 +76,26 @@ const getModeratedCommentApi = (overrides = {}) => ({
   ...overrides,
 })
 
+const getModeratedCoverApi = (overrides = {}) => ({
+  id: 7,
+  novel_id: 3,
+  image_url: 'https://api.ghosty.local/storage/covers/3/lanterne.webp',
+  like_count: 4,
+  comment_count: 1,
+  is_hidden: false,
+  author: {
+    id: 64,
+    username: 'Pinceau',
+  },
+  novel: {
+    id: 3,
+    slug: 'nuit-virage',
+    title: 'Nuit virage',
+  },
+  created_at: '2026-11-04T08:00:00+00:00',
+  ...overrides,
+})
+
 const getReportedChapterApi = (overrides = {}) => ({
   type: REPORTED_CONTENT_TYPES.CHAPTER,
   id: 12,
@@ -84,6 +104,7 @@ const getReportedChapterApi = (overrides = {}) => ({
   first_reported_at: '2026-11-02T09:30:00+00:00',
   chapter: getModeratedChapterApi(),
   comment: null,
+  cover: null,
   ...overrides,
 })
 
@@ -95,6 +116,19 @@ const getReportedCommentApi = (overrides = {}) => ({
   first_reported_at: '2026-11-01T19:00:00+00:00',
   chapter: null,
   comment: getModeratedCommentApi(),
+  cover: null,
+  ...overrides,
+})
+
+const getReportedCoverApi = (overrides = {}) => ({
+  type: REPORTED_CONTENT_TYPES.COVER,
+  id: 7,
+  report_count: 3,
+  reasons: ['unauthorized_illustration'],
+  first_reported_at: '2026-11-05T11:00:00+00:00',
+  chapter: null,
+  comment: null,
+  cover: getModeratedCoverApi(),
   ...overrides,
 })
 
@@ -119,6 +153,13 @@ const getCommentCaseApi = (overrides = {}) => ({
   ...overrides,
 })
 
+const getCoverCaseApi = (overrides = {}) => ({
+  cover: getModeratedCoverApi(),
+  reports: [getReportApi({ reason: 'unauthorized_illustration' })],
+  author_sanctions: [],
+  ...overrides,
+})
+
 const getValidationErrorsApi = (overrides = {}) => ({
   errors: {
     content: ['validation.moderation.content.altered'],
@@ -133,6 +174,8 @@ const getChapterCase = (overrides = {}) =>
 
 const getCommentCase = (overrides = {}) =>
   ModerationDto.fromCommentCase(getCommentCaseApi(overrides))
+
+const getCoverCase = (overrides = {}) => ModerationDto.fromCoverCase(getCoverCaseApi(overrides))
 
 const getDecisionForm = (overrides = {}) => ({
   resolution: RESOLUTIONS.DISMISSED,
@@ -156,17 +199,21 @@ export const moderationSeeder = {
   getChapterCaseApi,
   getCommentCase,
   getCommentCaseApi,
+  getCoverCase,
+  getCoverCaseApi,
   getDecisionForm,
   getList,
   getListApi,
   getModeratedChapterApi,
   getModeratedCommentApi,
+  getModeratedCoverApi,
   getProcessedReportApi,
   getContentAfterRemoval,
   getRemovedPassage,
   getReportApi,
   getReportedChapterApi,
   getReportedCommentApi,
+  getReportedCoverApi,
   getSanctionApi,
   getSanctionReason,
   getValidationErrorsApi,

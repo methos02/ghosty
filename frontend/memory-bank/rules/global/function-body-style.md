@@ -10,14 +10,27 @@ Readable, explicit code over compact code. Formatting limits are enforced by too
 ## Callback and body shape
 
 - Array-method callbacks (`filter`, `map`, `some`, `every`, `reduce`) MUST be implicit-return arrows: no block, no `return`.
-- A function with real control flow (guards, several steps, an object built from locals) MUST use a block body with an explicit `return`.
+- Every named function (`const name = (...) => ...`) MUST use a block body with an explicit `return`, however short: the returned value is always introduced by `return`. A function returning either a value or nothing keeps `return cond ? undefined : value`: ESLint `consistent-return` forbids a bare `return` next to a valued one, and `unicorn/no-useless-undefined` forbids `return undefined`.
 
 ```js
 // BAD
 const names = users.map(user => { return user.name })
 
+const toCoverParams = coverId => ({ cover: coverId })
+
+const describeImage = datas =>
+  datas.image === undefined ? undefined : { type: datas.image.type, size: datas.image.size }
+
 // GOOD
 const names = users.map(user => user.name)
+
+const toCoverParams = coverId => {
+  return { cover: coverId }
+}
+
+const describeImage = datas => {
+  return datas.image === undefined ? undefined : { type: datas.image.type, size: datas.image.size }
+}
 
 const resolveLabel = chapter => {
   if (!chapter.isPublished) {
@@ -43,7 +56,7 @@ if (filters.genre?.id) {
 
 // GOOD
 if (filters.genre?.id) {
-  Object.assign(payload, NovelDtoInternal.buildGenrePayload(filters.genre))
+  Object.assign(payload, internals.buildGenrePayload(filters.genre))
 }
 ```
 

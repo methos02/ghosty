@@ -9,6 +9,10 @@
     "comment": {
       "hidden": "Votre commentaire sur « {title} » a été masqué par la modération",
       "sanctioned": "La modération vous adresse une sanction à propos de votre commentaire sur « {title} »"
+    },
+    "cover": {
+      "hidden": "Votre illustration de « {title} » a été masquée par la modération",
+      "sanctioned": "La modération vous adresse une sanction à propos de votre illustration de « {title} »"
     }
   }
 }

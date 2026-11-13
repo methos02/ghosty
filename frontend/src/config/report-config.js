@@ -21,4 +21,13 @@ export const reportConfig = {
     'personal_attack',
     'illegal',
   ],
+  coverReasons: [
+    'unauthorized_illustration',
+    'plagiarism',
+    'hate_speech',
+    'insult',
+    'spam',
+    'like_manipulation',
+    'illegal',
+  ],
 }

@@ -29,13 +29,13 @@ const read = () => {
     return defaults()
   }
 
-  return sanitize(readingSettingsHelperInternal.parse(stored))
+  return sanitize(internals.parse(stored))
 }
 
 const sanitize = (settings = {}) => ({
-  width: readingSettingsHelperInternal.clampToRange(settings.width, 'reading.width'),
-  fontSize: readingSettingsHelperInternal.clampToRange(settings.fontSize, 'reading.fontSize'),
-  fontFamily: readingSettingsHelperInternal.knownFontFamily(settings.fontFamily),
+  width: internals.clampToRange(settings.width, 'reading.width'),
+  fontSize: internals.clampToRange(settings.fontSize, 'reading.fontSize'),
+  fontFamily: internals.knownFontFamily(settings.fontFamily),
   nightMode: settings.nightMode === true,
 })
 
@@ -87,7 +87,7 @@ const parse = stored => {
   }
 }
 
-export const readingSettingsHelperInternal = {
+export const internals = {
   clampToRange,
   knownFontFamily,
   parse,

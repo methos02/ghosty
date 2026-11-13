@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\Rule;
 
-class StoreReportRequest extends FormRequest
+final class StoreReportRequest extends FormRequest
 {
     public function authorize(): bool
     {

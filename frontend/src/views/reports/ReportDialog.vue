@@ -22,9 +22,17 @@ const sendButton = ref()
 
 const isComment = computed(() => reportedContent.value?.type === REPORTED_CONTENT_TYPES.COMMENT)
 
-const reasons = computed(() =>
-  ConfigLoader.get(isComment.value ? 'report.commentReasons' : 'report.chapterReasons'),
-)
+const isCover = computed(() => reportedContent.value?.type === REPORTED_CONTENT_TYPES.COVER)
+
+const reasonsKey = computed(() => {
+  if (isComment.value) {
+    return 'report.commentReasons'
+  }
+
+  return isCover.value ? 'report.coverReasons' : 'report.chapterReasons'
+})
+
+const reasons = computed(() => ConfigLoader.get(reasonsKey.value))
 
 const alreadyReported = computed(() => {
   if (reportedContent.value === undefined) {
@@ -49,6 +57,10 @@ watch(reportedContent, reported => {
 const sendReport = reported => {
   if (reported.type === REPORTED_CONTENT_TYPES.COMMENT) {
     return ReportController.reportComment(reported.content.id, datas.value)
+  }
+
+  if (reported.type === REPORTED_CONTENT_TYPES.COVER) {
+    return ReportController.reportCover(reported.content.id, datas.value)
   }
 
   return ReportController.reportChapter(reported.content.id, datas.value)
@@ -101,6 +113,13 @@ const send = async () => {
             })
           }}
         </template>
+        <template v-else-if="isCover">
+          {{
+            t('report_dialog.title_cover', {
+              author: reportedContent.content.author.username,
+            })
+          }}
+        </template>
         <template v-else>
           {{ t('report_dialog.title_chapter', { chapter: reportedContent.content.title }) }}
         </template>
@@ -116,6 +135,12 @@ const send = async () => {
         class="report-dialog__already | bg-info-300 p-10 radius-5"
       >
         {{ t('report_dialog.already_comment') }}
+      </p>
+      <p
+        v-else-if="isCover"
+        class="report-dialog__already | bg-info-300 p-10 radius-5"
+      >
+        {{ t('report_dialog.already_cover') }}
       </p>
       <p
         v-else
@@ -143,6 +168,12 @@ const send = async () => {
         class="report-dialog__intro | fs-300 color-neutral-700"
       >
         {{ t('report_dialog.intro_comment') }}
+      </p>
+      <p
+        v-else-if="isCover"
+        class="report-dialog__intro | fs-300 color-neutral-700"
+      >
+        {{ t('report_dialog.intro_cover') }}
       </p>
       <p
         v-else

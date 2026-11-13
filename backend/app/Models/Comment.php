@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasReports;
 use App\Models\Concerns\IsNotificationSubject;
-use App\Models\Concerns\Reportable;
-use App\Models\Contracts\NotificationSubject;
+use App\Models\Contracts\Commentable;
+use App\Models\Contracts\Reportable;
 use Database\Factories\CommentFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,10 +20,10 @@ use LogicException;
  *
  * @mixin IdeHelperComment
  */
-class Comment extends Model implements NotificationSubject
+class Comment extends Model implements Reportable
 {
     /** @use HasFactory<CommentFactory> */
-    use HasFactory, IsNotificationSubject, Reportable;
+    use HasFactory, HasReports, IsNotificationSubject;
 
     const STATUS_VISIBLE = 1;
 
@@ -92,11 +93,11 @@ class Comment extends Model implements NotificationSubject
             ->orderBy('id');
     }
 
-    public function target(): Chapter|Novel
+    public function target(): Commentable
     {
         $commentable = $this->commentable;
 
-        if ($commentable instanceof Chapter || $commentable instanceof Novel) {
+        if ($commentable instanceof Commentable) {
             return $commentable;
         }
 

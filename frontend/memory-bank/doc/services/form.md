@@ -70,7 +70,7 @@ const validate = (formData, context) => {
 }
 
 export const XxxFormRequest = { validate }
-export const XxxFormRequestInternal = { sanitize }
+export const internals = { sanitize }
 ```
 
 Caller:

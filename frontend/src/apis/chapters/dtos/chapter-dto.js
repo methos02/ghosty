@@ -33,7 +33,7 @@ const fromShow = chapter => {
     title: chapter.title,
     summary: chapter.summary ?? '',
     content: chapter.content,
-    paragraphs: ChapterDtoInternal.convertToParagraphs(chapter.content),
+    paragraphs: internals.convertToParagraphs(chapter.content),
     depth: chapter.depth,
     hasChildren: chapter.has_children,
     childrenCount: chapter.children_count,
@@ -57,10 +57,9 @@ const fromShow = chapter => {
   }
 }
 
-const fromSummary = chapter => ({
-  id: chapter.id,
-  title: chapter.title,
-})
+const fromSummary = chapter => {
+  return chapter ? { id: chapter.id, title: chapter.title } : undefined
+}
 
 const fromTree = tree => ({
   chapters: ChapterDto.fromList(tree.chapters),
@@ -131,6 +130,6 @@ const convertToParagraphs = content => {
     .map(paragraph => passageRemovalHelper.split(paragraph))
 }
 
-export const ChapterDtoInternal = {
+export const internals = {
   convertToParagraphs,
 }

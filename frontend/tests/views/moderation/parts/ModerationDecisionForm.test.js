@@ -161,6 +161,56 @@ describe('ModerationDecisionForm.vue', () => {
     })
   })
 
+  it('suggests at least a warning once a cover is hidden', async () => {
+    wrapper = mount(ModerationDecisionForm, {
+      props: {
+        contentType: REPORTED_CONTENT_TYPES.COVER,
+        contentId: moderationSeeder.getModeratedCoverApi().id,
+        resolutions: [RESOLUTIONS.DISMISSED, RESOLUTIONS.HIDDEN],
+      },
+    })
+
+    await wrapper.find(`input[value="${RESOLUTIONS.HIDDEN}"]`).setValue(true)
+
+    const sanctionSelect = wrapper.find('select[name="moderation.sanction.type"]')
+    expect(sanctionSelect.element.value).toBe(SANCTION_TYPES.WARNING)
+    expect(sanctionSelect.text()).not.toContain(t('moderation_decision.sanction_none'))
+  })
+
+  it('sends the hidden cover with the sanction of its author', async () => {
+    const coverApi = moderationSeeder.getModeratedCoverApi()
+    vi.spyOn(ModerationRepository, 'moderateCover').mockResolvedValue(controllerSuccess())
+    wrapper = mount(ModerationDecisionForm, {
+      props: {
+        contentType: REPORTED_CONTENT_TYPES.COVER,
+        contentId: coverApi.id,
+        resolutions: [RESOLUTIONS.DISMISSED, RESOLUTIONS.HIDDEN],
+      },
+    })
+    await wrapper.find(`input[value="${RESOLUTIONS.HIDDEN}"]`).setValue(true)
+    await wrapper
+      .find('textarea[name="moderation.sanction.reason"]')
+      .setValue(moderationSeeder.getSanctionReason())
+
+    await wrapper.find('.moderation-decision__submit').trigger('click')
+    await wrapper.find('.confirm-button__valid').trigger('click')
+    await flushPromises()
+
+    expect(ModerationRepository.moderateCover).toHaveBeenCalledWith({
+      params: ModerationDto.toCoverParams(coverApi.id),
+      body: ModerationDto.toDecision(
+        moderationSeeder.getDecisionForm({
+          resolution: RESOLUTIONS.HIDDEN,
+          sanction: {
+            type: SANCTION_TYPES.WARNING,
+            reason: moderationSeeder.getSanctionReason(),
+          },
+        }),
+      ),
+      form: 'moderation',
+    })
+  })
+
   it('sends nothing while no resolution is chosen', async () => {
     vi.spyOn(ModerationRepository, 'moderateComment')
     wrapper = mount(ModerationDecisionForm, {

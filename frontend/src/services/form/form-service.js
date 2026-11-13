@@ -45,7 +45,7 @@ const addValidationErrors = (validationErrors, formName) => {
   const mapping = {}
 
   for (const field of Object.keys(validationErrors)) {
-    mapping[field] = formServiceInternal.toInputName(field, formName)
+    mapping[field] = internals.toInputName(field, formName)
   }
 
   formStore.clearOptions()
@@ -74,4 +74,4 @@ const toInputName = (field, formName) => {
   return `${scope}.${name.replaceAll(/_(\w)/g, (_, letter) => letter.toUpperCase())}`
 }
 
-export const formServiceInternal = { toInputName }
+export const internals = { toInputName }

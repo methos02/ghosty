@@ -4,6 +4,10 @@
       "one": "{count} réponse à vos commentaires sur « {title} » depuis votre dernière lecture",
       "many": "{count} réponses à vos commentaires sur « {title} » depuis votre dernière lecture"
     },
-    "last_author": "Dernière réponse : {author}"
+    "last_author": "Dernière réponse : {author}",
+    "cover_replies": {
+      "one": "{count} réponse à vos commentaires sur une illustration de « {title} » depuis votre dernière lecture",
+      "many": "{count} réponses à vos commentaires sur une illustration de « {title} » depuis votre dernière lecture"
+    }
   }
 }

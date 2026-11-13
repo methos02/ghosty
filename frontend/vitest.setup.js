@@ -13,6 +13,7 @@ import { windowMock } from '&/utils/mocks/window-mock.js'
 import { computedStyleMock } from '&/utils/mocks/computed-style-mock.js'
 import { popoverMock } from '&/utils/mocks/popover-mock.js'
 import { dialogMock } from '&/utils/mocks/dialog-mock.js'
+import { imageMock } from '&/utils/mocks/image-mock.js'
 import { logMock } from '&/utils/mocks/log-mock.js'
 import { ajaxMock } from '&/utils/mocks/ajax-mock.js'
 import { configureTestUtils } from '&/utils/test-utils-config.js'
@@ -22,6 +23,7 @@ windowMock()
 computedStyleMock()
 popoverMock()
 dialogMock()
+imageMock()
 logMock()
 
 // 2. Boot des services Ghosty (réplique ssr/app.js) — rend req / t / flash / form / ... disponibles.

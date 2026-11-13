@@ -69,11 +69,10 @@ const closeFromBackground = event => {
       >
         <slot name="title">{{ title }}</slot>
       </h2>
-      <div
-        v-if="closeCross === true"
-        class="d-flex j-end flex-1"
-      >
+      <div class="d-flex j-end a-center g-15 flex-1">
+        <slot name="actions"></slot>
         <button
+          v-if="closeCross === true"
           class="dialog-close"
           type="button"
           :title="t('dialog.close')"
@@ -89,7 +88,7 @@ const closeFromBackground = event => {
     </div>
   </dialog>
 </template>
-<style lang="scss">
+<style scoped lang="scss">
 .dialog {
   overflow: visible;
 

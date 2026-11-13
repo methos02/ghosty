@@ -67,6 +67,26 @@ describe('ModerationRestoreButton.vue', () => {
     })
   })
 
+  it('restores a cover through the cover route', async () => {
+    useAuthStore().setUser(userSeeder.getUser({ roles: ['moderator'] }))
+    const coverApi = moderationSeeder.getModeratedCoverApi()
+    vi.spyOn(ModerationRepository, 'restoreCover').mockResolvedValue(controllerSuccess())
+    wrapper = mount(ModerationRestoreButton, {
+      props: {
+        contentType: REPORTED_CONTENT_TYPES.COVER,
+        contentId: coverApi.id,
+      },
+    })
+
+    await wrapper.find('.moderation-restore-button').trigger('click')
+    await wrapper.find('.confirm-button__valid').trigger('click')
+    await flushPromises()
+
+    expect(ModerationRepository.restoreCover).toHaveBeenCalledWith({
+      params: ModerationDto.toCoverParams(coverApi.id),
+    })
+  })
+
   it('stays on the case when the restoration is refused', async () => {
     useAuthStore().setUser(userSeeder.getUser({ roles: ['moderator'] }))
     vi.spyOn(ModerationRepository, 'restoreChapter').mockResolvedValue(

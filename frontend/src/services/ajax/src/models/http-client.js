@@ -13,7 +13,7 @@ const deleteRequest = async requestId => {
   if (responseType) {
     config.responseType = responseType
   }
-  return await httpClientInternal.executeFetch(url, 'DELETE', config)
+  return await internals.executeFetch(url, 'DELETE', config)
 }
 
 const get = async requestId => {
@@ -23,7 +23,7 @@ const get = async requestId => {
   if (responseType) {
     config.responseType = responseType
   }
-  return await httpClientInternal.executeFetch(url, 'GET', config)
+  return await internals.executeFetch(url, 'GET', config)
 }
 
 const patch = async requestId => {
@@ -37,7 +37,7 @@ const patch = async requestId => {
   if (responseType) {
     config.responseType = responseType
   }
-  return await httpClientInternal.executeFetch(url, 'PATCH', config)
+  return await internals.executeFetch(url, 'PATCH', config)
 }
 
 const post = async requestId => {
@@ -51,7 +51,7 @@ const post = async requestId => {
   if (responseType) {
     config.responseType = responseType
   }
-  return await httpClientInternal.executeFetch(url, 'POST', config)
+  return await internals.executeFetch(url, 'POST', config)
 }
 
 const put = async requestId => {
@@ -65,7 +65,7 @@ const put = async requestId => {
   if (responseType) {
     config.responseType = responseType
   }
-  return await httpClientInternal.executeFetch(url, 'PUT', config)
+  return await internals.executeFetch(url, 'PUT', config)
 }
 
 const rawRequest = async requestConfig => {
@@ -76,20 +76,17 @@ const rawRequest = async requestConfig => {
   }
 
   if (requestConfig.data && !['GET', 'HEAD'].includes(requestConfig.method)) {
-    if (!options.headers['Content-Type']) {
-      options.headers['Content-Type'] = 'application/json'
-    }
-    options.body = JSON.stringify(requestConfig.data)
+    internals.applyBody(options, requestConfig.data)
   }
 
   const fetchResponse = await fetch(requestConfig.url, options)
-  const response = await httpClientInternal.normalizeResponse(
+  const response = await internals.normalizeResponse(
     fetchResponse,
     requestConfig.responseType,
   )
 
   if (!fetchResponse.ok) {
-    throw httpClientInternal.createHttpError(
+    throw internals.createHttpError(
       `Request failed with status ${response.status}`,
       requestConfig,
       { response, code: 'ERR_UNKNOWN' },
@@ -108,11 +105,25 @@ export const httpClient = {
   rawRequest,
 }
 
+const applyBody = (fetchOptions, body) => {
+  if (body instanceof globalThis.FormData) {
+    fetchOptions.body = body
+    return
+  }
+
+  if (body === undefined || body === null || Object.keys(body).length === 0) {
+    return
+  }
+
+  fetchOptions.headers['Content-Type'] ??= 'application/json'
+  fetchOptions.body = JSON.stringify(body)
+}
+
 const buildUrl = (url, params) => {
   if (!params || Object.keys(params).length === 0) {
     return url
   }
-  return `${url}?${httpClientInternal.customParamsSerializer(params)}`
+  return `${url}?${internals.customParamsSerializer(params)}`
 }
 
 const createHttpError = (message, requestConfig, options = {}) => {
@@ -145,20 +156,20 @@ const customParamsSerializer = params => {
 }
 
 const executeFetch = async (url, method, config) => {
-  const preparedRequest = httpClientInternal.prepareFetchRequest(config, method, url)
-  const fetchResponse = await httpClientInternal.sendFetch(preparedRequest)
-  return await httpClientInternal.handleFetchResponse(fetchResponse, preparedRequest)
+  const preparedRequest = internals.prepareFetchRequest(config, method, url)
+  const fetchResponse = await internals.sendFetch(preparedRequest)
+  return await internals.handleFetchResponse(fetchResponse, preparedRequest)
 }
 
 const handleFetchResponse = async (fetchResponse, preparedRequest) => {
-  const response = await httpClientInternal.normalizeResponse(
+  const response = await internals.normalizeResponse(
     fetchResponse,
     preparedRequest.config.responseType,
   )
 
   if (!fetchResponse.ok) {
     return await responseErrorInterceptor(
-      httpClientInternal.createHttpError(
+      internals.createHttpError(
         `Request failed with status ${response.status}`,
         preparedRequest.config,
         { response, code: 'ERR_UNKNOWN' },
@@ -170,7 +181,7 @@ const handleFetchResponse = async (fetchResponse, preparedRequest) => {
 }
 
 const prepareFetchRequest = (config, method, url) => {
-  const fullUrl = httpClientInternal.buildUrl(url, config.params)
+  const fullUrl = internals.buildUrl(url, config.params)
   const body = config.body
   const interceptedConfig = requestInterceptor({ ...config })
   const headers = { ...interceptedConfig.headers }
@@ -183,10 +194,7 @@ const prepareFetchRequest = (config, method, url) => {
     fetchOptions.signal = interceptedConfig.signal
   }
 
-  if (body !== undefined && body !== null && Object.keys(body).length > 0) {
-    headers['Content-Type'] = 'application/json'
-    fetchOptions.body = JSON.stringify(body)
-  }
+  internals.applyBody(fetchOptions, body)
 
   const requestConfig = {
     url: fullUrl,
@@ -213,12 +221,12 @@ const sendFetch = async preparedRequest => {
     return await fetch(preparedRequest.url, preparedRequest.fetchOptions)
   } catch (error) {
     if (error.name === 'AbortError') {
-      throw httpClientInternal.createHttpError('Request aborted', preparedRequest.config, {
+      throw internals.createHttpError('Request aborted', preparedRequest.config, {
         code: 'ERR_CANCELED',
       })
     }
 
-    throw httpClientInternal.createHttpError('Network error', preparedRequest.config)
+    throw internals.createHttpError('Network error', preparedRequest.config)
   }
 }
 
@@ -227,7 +235,7 @@ const normalizeHeaders = fetchHeaders => {
 }
 
 const normalizeResponse = async (fetchResponse, responseType) => {
-  const headers = httpClientInternal.normalizeHeaders(fetchResponse.headers)
+  const headers = internals.normalizeHeaders(fetchResponse.headers)
 
   if (responseType === 'blob') {
     const data = await fetchResponse.blob()
@@ -254,7 +262,8 @@ const normalizeResponse = async (fetchResponse, responseType) => {
   }
 }
 
-export const httpClientInternal = {
+export const internals = {
+  applyBody,
   buildUrl,
   createHttpError,
   customParamsSerializer,

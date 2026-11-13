@@ -11,7 +11,7 @@ const t = (textKey, params = {}) => {
   }
 
   const [key, rawParams] = textKey.split(':', MAX_PARTS)
-  return localeFunctions.vueTranslate(key, localeServiceInternal.extractParams(rawParams))
+  return localeFunctions.vueTranslate(key, internals.extractParams(rawParams))
 }
 
 const getCurrentLocale = () => {
@@ -51,4 +51,4 @@ const extractParams = params => {
   return Object.fromEntries(parameterEntries)
 }
 
-export const localeServiceInternal = { extractParams }
+export const internals = { extractParams }

@@ -1,6 +1,7 @@
 export const REPORTED_CONTENT_TYPES = {
   CHAPTER: 'chapter',
   COMMENT: 'comment',
+  COVER: 'novel_cover',
 }
 
 export const RESOLUTIONS = {

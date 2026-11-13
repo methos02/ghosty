@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { t } from '@/services/shortcuts/services-shortcut.js'
 import LikeReceivedNotification from '@/views/layout/notifications/LikeReceivedNotification.vue'
 import { notificationSeeder } from '&/utils/seeders/notification-seeder.js'
+import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 
 describe('LikeReceivedNotification.vue', () => {
   let wrapper
@@ -39,6 +40,43 @@ describe('LikeReceivedNotification.vue', () => {
       t('like_received_notification.many', {
         count: notification.payload.count,
         title: notification.chapter.title,
+      }),
+    )
+  })
+
+  it('thanks the illustrator for a support on their cover, leading to the covers page', () => {
+    const notification = notificationSeeder.getCoverNotification(
+      NOTIFICATION_TYPES.LIKE_RECEIVED,
+      1,
+    )
+
+    wrapper = mount(LikeReceivedNotification, { props: { notification } })
+
+    const message = wrapper.find('.notification-base__message')
+    expect(message.text()).toBe(
+      t('like_received_notification.cover.one', {
+        author: notification.payload.lastActorUsername,
+        title: notification.novel.title,
+      }),
+    )
+    expect(message.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
+      name: 'novel-covers',
+      params: { slug: notification.novel.slug },
+    })
+  })
+
+  it('counts the readers who supported the cover once supports have gathered', () => {
+    const notification = notificationSeeder.getCoverNotification(
+      NOTIFICATION_TYPES.LIKE_RECEIVED,
+      4,
+    )
+
+    wrapper = mount(LikeReceivedNotification, { props: { notification } })
+
+    expect(wrapper.find('.notification-base__message').text()).toBe(
+      t('like_received_notification.cover.many', {
+        count: notification.payload.count,
+        title: notification.novel.title,
       }),
     )
   })

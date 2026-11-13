@@ -8,6 +8,7 @@ export const NOTIFICATION_TYPES = {
   COMMENT_REPLIED: 'comment_replied',
   CONTENT_MODERATED: 'content_moderated',
   REPORT_PROCESSED: 'report_processed',
+  COVER_SELECTED: 'cover_selected',
 }
 
 export const NOTIFICATION_BELL_LIMIT = 6

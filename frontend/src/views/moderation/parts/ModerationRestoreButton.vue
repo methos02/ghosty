@@ -15,6 +15,10 @@ const sendRestore = () => {
     return ModerationController.restoreChapter(props.contentId)
   }
 
+  if (props.contentType === REPORTED_CONTENT_TYPES.COVER) {
+    return ModerationController.restoreCover(props.contentId)
+  }
+
   return ModerationController.restoreComment(props.contentId)
 }
 

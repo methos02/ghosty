@@ -23,6 +23,9 @@ return new class extends Migration
             $table->timestamp('branch_recomputed_at')->nullable();
             $table->unsignedBigInteger('main_branch_last_chapter_id')->nullable();
 
+            /* @see memory-bank/decisions/ADR-16-illustrations-du-roman.md */
+            $table->unsignedBigInteger('official_cover_id')->nullable();
+
             $table->timestamps();
 
             $table->index('author_id');

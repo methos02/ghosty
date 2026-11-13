@@ -102,6 +102,12 @@ const getChapterTarget = (overrides = {}) => ({
   ...overrides,
 })
 
+const getCoverTarget = (overrides = {}) => ({
+  type: COMMENT_TARGETS.COVER,
+  coverId: 5,
+  ...overrides,
+})
+
 const getNovelTarget = (overrides = {}) => ({
   type: COMMENT_TARGETS.NOVEL,
   novelSlug: 'la-maree-noire',
@@ -135,6 +141,7 @@ const getReply = (overrides = {}) => ({ ...CommentDto.fromShow(getReplyApi()), .
 
 export const commentSeeder = {
   getChapterTarget,
+  getCoverTarget,
   getComment,
   getCommentApi,
   getCommentWithReply,

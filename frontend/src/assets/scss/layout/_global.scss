@@ -162,6 +162,10 @@
   }
 }
 
+.overflow-clip {
+  overflow: hidden;
+}
+
 .truncate-line {
   text-overflow: ellipsis;
   white-space: nowrap;

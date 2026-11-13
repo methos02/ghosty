@@ -5,7 +5,9 @@ namespace Tests\Feature\Services\Notifications;
 use App\Enums\NotificationType;
 use App\Models\Chapter;
 use App\Models\Notification;
+use App\Models\NovelCover;
 use App\Models\User;
+use App\Services\CoverLikeService;
 use App\Services\LikeService;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -24,6 +26,23 @@ class LikeReceivedNotificationServiceTest extends TestCase
         $notification = $this->notificationsOf($chapter->author, NotificationType::LikeReceived)->sole();
 
         $this->assertSame($chapter->id, data_get($notification->data, 'chapter.id'));
+        $this->assertSame('lectrice', $notification->data['last_actor_username']);
+        $this->assertSame(1, $notification->data['count']);
+    }
+
+    #[Test]
+    public function a_like_on_a_cover_notifies_the_illustrator_with_the_cover(): void
+    {
+        $cover = NovelCover::factory()->create();
+
+        app(CoverLikeService::class)->like(User::factory()->create(['username' => 'lectrice']), $cover, null);
+
+        $notification = $this->notificationsOf($cover->author, NotificationType::LikeReceived)->sole();
+
+        $this->assertSame($cover->id, data_get($notification->data, 'cover.id'));
+        $this->assertSame($cover->imageUrl(), data_get($notification->data, 'cover.image_url'));
+        $this->assertNull($notification->data['chapter']);
+        $this->assertSame($cover->novel->slug, data_get($notification->data, 'novel.slug'));
         $this->assertSame('lectrice', $notification->data['last_actor_username']);
         $this->assertSame(1, $notification->data['count']);
     }

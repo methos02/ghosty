@@ -12,14 +12,14 @@ const allowanceFor = text => {
 }
 
 const changedWords = (published, corrected, allowance) => {
-  return correctionHelperInternal.distanceWithin(
-    correctionHelperInternal.split(published),
-    correctionHelperInternal.split(corrected),
+  return internals.distanceWithin(
+    internals.split(published),
+    internals.split(corrected),
     allowance,
   )
 }
 
-const countWords = text => correctionHelperInternal.split(text).length
+const countWords = text => internals.split(text).length
 
 const isCorrectableBy = (chapter, userId) => {
   // see ADR-11-chapitre-publie-non-reecrivable
@@ -34,7 +34,7 @@ export const correctionHelper = {
 }
 
 const distanceWithin = (publishedWords, correctedWords, allowance) => {
-  const [published, corrected] = correctionHelperInternal.trimCommonEnds(
+  const [published, corrected] = internals.trimCommonEnds(
     publishedWords,
     correctedWords,
   )
@@ -49,9 +49,9 @@ const distanceWithin = (publishedWords, correctedWords, allowance) => {
     corrected,
     allowance,
   }
-  let previous = correctionHelperInternal.firstRow(corrected.length, allowance)
+  let previous = internals.firstRow(corrected.length, allowance)
   for (let row = 1; row <= published.length; row++) {
-    previous = correctionHelperInternal.nextRow(previous, texts, row)
+    previous = internals.nextRow(previous, texts, row)
   }
 
   return previous[corrected.length] ?? unreachable
@@ -118,7 +118,7 @@ const trimCommonEnds = (published, corrected) => {
   ]
 }
 
-export const correctionHelperInternal = {
+export const internals = {
   distanceWithin,
   firstRow,
   nextRow,

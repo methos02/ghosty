@@ -63,4 +63,29 @@ describe('ReportProcessedNotification.vue', () => {
       t(keypath, { title: notification.chapter.title }),
     )
   })
+
+  it.each([
+    [RESOLUTIONS.DISMISSED, 'report_processed_notification.cover.dismissed'],
+    [RESOLUTIONS.HIDDEN, 'report_processed_notification.cover.hidden'],
+  ])('tells about the cover of the novel when the decision is %s', (resolution, keypath) => {
+    const notification = notificationSeeder.getModerationNotification(
+      NOTIFICATION_TYPES.REPORT_PROCESSED,
+      {
+        content_type: REPORTED_CONTENT_TYPES.COVER,
+        chapter: null,
+        cover: notificationSeeder.getCoverNotificationApi(NOTIFICATION_TYPES.REPORT_PROCESSED, 1)
+          .cover,
+        resolution,
+      },
+    )
+
+    wrapper = mount(ReportProcessedNotification, { props: { notification } })
+
+    const message = wrapper.find('.notification-base__message')
+    expect(message.text()).toBe(t(keypath, { title: notification.novel.title }))
+    expect(message.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
+      name: 'novel-covers',
+      params: { slug: notification.novel.slug },
+    })
+  })
 })

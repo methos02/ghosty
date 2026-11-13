@@ -62,6 +62,8 @@ class User extends Authenticatable
 
     const ROLE_ADMIN = 'admin';
 
+    const ROLE_ILLUSTRATOR = 'illustrator';
+
     public function hasRole(string $role): bool
     {
         return in_array($role, $this->roles ?? []);

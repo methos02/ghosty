@@ -24,21 +24,27 @@ const props = defineProps({
 const resolution = defineModel('resolution', { type: String, default: undefined })
 const contentAfterRemoval = defineModel('contentAfterRemoval', { type: String, default: '' })
 
+const SANCTIONED_WHEN_HIDDEN = new Set([
+  REPORTED_CONTENT_TYPES.COMMENT,
+  REPORTED_CONTENT_TYPES.COVER,
+])
+
 const formData = ref({
   sanction: {},
 })
 
 const isSanctionRequired = computed(
-  () =>
-    props.contentType === REPORTED_CONTENT_TYPES.COMMENT && resolution.value === RESOLUTIONS.HIDDEN,
+  () => SANCTIONED_WHEN_HIDDEN.has(props.contentType) && resolution.value === RESOLUTIONS.HIDDEN,
 )
 
-const decision = () => ({
-  ...formData.value,
-  resolution: resolution.value,
-  content: contentAfterRemoval.value,
-  isSanctionRequired: isSanctionRequired.value,
-})
+const decision = () => {
+  return {
+    ...formData.value,
+    resolution: resolution.value,
+    content: contentAfterRemoval.value,
+    isSanctionRequired: isSanctionRequired.value,
+  }
+}
 
 const suggestWarning = isRequired => {
   if (!isRequired || formData.value.sanction.type !== undefined) {
@@ -62,6 +68,10 @@ const isBan = computed(() => {
 const sendDecision = () => {
   if (props.contentType === REPORTED_CONTENT_TYPES.CHAPTER) {
     return ModerationController.moderateChapter(props.contentId, decision())
+  }
+
+  if (props.contentType === REPORTED_CONTENT_TYPES.COVER) {
+    return ModerationController.moderateCover(props.contentId, decision())
   }
 
   return ModerationController.moderateComment(props.contentId, decision())

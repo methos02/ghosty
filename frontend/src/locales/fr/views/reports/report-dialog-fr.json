@@ -14,6 +14,9 @@
     "error_send": "Le signalement n'a pas pu être envoyé.",
     "error_gone": "Ce contenu n'existe plus ou a déjà été retiré.",
     "error_reason_required": "Choisissez un motif de signalement.",
-    "error_description_size_max": "Les précisions sont trop longues."
+    "error_description_size_max": "Les précisions sont trop longues.",
+    "title_cover": "Signaler l'illustration de {author}",
+    "intro_cover": "Un modérateur relira cette illustration. Le signalement reste anonyme pour son auteur.",
+    "already_cover": "Vous avez déjà signalé cette illustration. Un modérateur examine votre signalement, inutile d'en envoyer un second."
   }
 }

@@ -2,7 +2,7 @@ const split = (content, usernames) => {
   const mention =
     usernames
       .map(username => `@${username}`)
-      .filter(candidate => mentionHelperInternal.opensWith(content, candidate))
+      .filter(candidate => internals.opensWith(content, candidate))
       .toSorted((first, second) => second.length - first.length)[0] ?? ''
 
   return {
@@ -23,6 +23,6 @@ const opensWith = (content, mention) => {
   return content.length === mention.length || /\s/u.test(content[mention.length])
 }
 
-export const mentionHelperInternal = {
+export const internals = {
   opensWith,
 }

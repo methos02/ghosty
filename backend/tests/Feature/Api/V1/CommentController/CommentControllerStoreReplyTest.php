@@ -50,14 +50,15 @@ class CommentControllerStoreReplyTest extends TestCase
     public function replies_to_the_comment_on_the_same_content(): void
     {
         $reader = User::factory()->create();
-        $comment = Comment::factory()->create();
+        $chapter = Chapter::factory()->create();
+        $comment = Comment::factory()->on($chapter)->create();
 
         $this->actingAs($reader)
             ->postJson("/api/v1/comments/{$comment->id}/replies", $this->getDatas())
             ->assertCreated()
             ->assertJsonPath('comment.parent_id', $comment->id)
             ->assertJsonPath('comment.author.username', $reader->username)
-            ->assertJsonPath('comment_count', $comment->target()->refresh()->comment_count);
+            ->assertJsonPath('comment_count', $chapter->refresh()->comment_count);
 
         $this->assertDatabaseHas('comments', [
             'parent_id' => $comment->id,

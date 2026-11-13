@@ -7,7 +7,7 @@ use App\Enums\ReportStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class ReportFilterRequest extends FormRequest
+final class ReportFilterRequest extends FormRequest
 {
     public function authorize(): bool
     {

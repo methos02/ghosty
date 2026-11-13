@@ -2,15 +2,24 @@
 
 namespace App\Http\Requests;
 
-class StoreCommentReplyRequest extends StoreCommentRequest
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Config;
+
+final class StoreCommentReplyRequest extends FormRequest
 {
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     /**
      * @return array<string, array<int, string>>
      */
     public function rules(): array
     {
         return [
-            ...parent::rules(),
+            'content' => ['required', 'string', 'max:'.Config::integer('ghosty.comments.content_max_length')],
+            'is_spoiler' => ['sometimes', 'boolean'],
             'mentioned_user_id' => ['sometimes', 'nullable', 'integer'],
         ];
     }
@@ -21,7 +30,10 @@ class StoreCommentReplyRequest extends StoreCommentRequest
     public function messages(): array
     {
         return [
-            ...parent::messages(),
+            'content.required' => __('validation.comment.content.required'),
+            'content.string' => __('validation.comment.content.string'),
+            'content.max' => __('validation.comment.content.max'),
+            'is_spoiler.boolean' => __('validation.comment.is_spoiler.boolean'),
             'mentioned_user_id.integer' => __('validation.comment.mentioned_user_id.integer'),
         ];
     }

@@ -1,0 +1,9 @@
+{
+  "cover_cropper": {
+    "image_alt": "Image à recadrer",
+    "hint": "Faites glisser l'image pour choisir la partie visible.",
+    "zoom": "Zoom",
+    "cancel": "Annuler",
+    "apply": "Appliquer"
+  }
+}

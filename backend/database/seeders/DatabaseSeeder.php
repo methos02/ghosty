@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             ChapterSeeder::class,
             NotificationSeeder::class,
             CommentSeeder::class,
+            CoverSeeder::class,
             ReportSeeder::class,
         ]);
     }

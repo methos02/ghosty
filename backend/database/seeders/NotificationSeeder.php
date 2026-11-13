@@ -51,6 +51,7 @@ class NotificationSeeder extends Seeder
             NotificationType::MainBranchGained, NotificationType::MainBranchLost, NotificationType::FollowedBranchExtended => $chapter->novel,
             NotificationType::LikeReceived, NotificationType::ChapterContinued, NotificationType::CommentReceived, NotificationType::CommentReplied => $chapter,
             NotificationType::ContentModerated, NotificationType::ReportProcessed => throw new LogicException("{$type->value} is only produced by ModerationService."),
+            NotificationType::CoverSelected => throw new LogicException("{$type->value} is only produced by OfficialCoverService."),
         };
     }
 
@@ -68,6 +69,7 @@ class NotificationSeeder extends Seeder
             ),
             NotificationType::CommentReceived, NotificationType::CommentReplied => $this->commentDetails($notification['actors'] ?? []),
             NotificationType::ContentModerated, NotificationType::ReportProcessed => throw new LogicException("{$type->value} is only produced by ModerationService."),
+            NotificationType::CoverSelected => throw new LogicException("{$type->value} is only produced by OfficialCoverService."),
         };
     }
 

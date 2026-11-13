@@ -67,6 +67,19 @@ const getNovelCommentNotificationApi = (type, count, overrides = {}) =>
     ...overrides,
   })
 
+const getCoverNotificationApi = (type, count, overrides = {}) =>
+  getNotificationApi({
+    type,
+    chapter: null,
+    cover: {
+      id: 7,
+      image_url: 'https://api.ghosty.local/storage/covers/3/lanterne.webp',
+    },
+    last_actor_username: 'Lectrice',
+    count,
+    ...overrides,
+  })
+
 const getSanctionApi = (overrides = {}) => ({
   type: 'write_ban',
   until: '2026-12-01T10:00:00+00:00',
@@ -101,6 +114,9 @@ const getCommentNotification = (type, count) =>
 const getNovelCommentNotification = (type, count) =>
   NotificationDto.fromNotification(getNovelCommentNotificationApi(type, count))
 
+const getCoverNotification = (type, count, overrides = {}) =>
+  NotificationDto.fromNotification(getCoverNotificationApi(type, count, overrides))
+
 const getModerationNotification = (type, overrides = {}) =>
   NotificationDto.fromNotification(getModerationNotificationApi(type, overrides))
 
@@ -130,6 +146,8 @@ export const notificationSeeder = {
   getChaptersPayloadApi,
   getCommentNotification,
   getCommentNotificationApi,
+  getCoverNotification,
+  getCoverNotificationApi,
   getInbox,
   getLikeReceived,
   getLikeReceivedApi,

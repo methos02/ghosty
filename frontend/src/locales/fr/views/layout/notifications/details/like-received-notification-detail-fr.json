@@ -4,6 +4,10 @@
       "one": "« {title} » a reçu {count} soutien depuis votre dernière lecture",
       "many": "« {title} » a reçu {count} soutiens depuis votre dernière lecture"
     },
-    "last_reader": "Dernier soutien : {author}"
+    "last_reader": "Dernier soutien : {author}",
+    "cover_supports": {
+      "one": "Votre illustration de « {title} » a reçu {count} soutien depuis votre dernière lecture",
+      "many": "Votre illustration de « {title} » a reçu {count} soutiens depuis votre dernière lecture"
+    }
   }
 }

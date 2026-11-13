@@ -8,6 +8,8 @@ use App\Enums\ReportResolution;
 use App\Enums\SanctionType;
 use App\Models\Chapter;
 use App\Models\Comment;
+use App\Models\Contracts\Reportable;
+use App\Models\NovelCover;
 use App\Models\Report;
 use App\Models\Sanction;
 use App\Models\User;
@@ -32,6 +34,7 @@ class ModerationService
         private readonly UserRepository $usersR,
         private readonly ChapterService $chapterService,
         private readonly CommentService $commentService,
+        private readonly CoverService $coverService,
         private readonly ContentModeratedNotificationService $contentModeratedNotificationService,
         private readonly ReportProcessedNotificationService $reportProcessedNotificationService
     ) {}
@@ -64,6 +67,29 @@ class ModerationService
         });
 
         $this->notify($moderator, $comment, $pendingReports, $decisionDTO->resolution, $sanction);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-16-illustrations-du-roman.md
+     *
+     * @param  Collection<int, Report>  $pendingReports
+     */
+    public function moderateCover(User $moderator, NovelCover $cover, Collection $pendingReports, ModerationDecisionDTO $decisionDTO): void
+    {
+        $sanction = DB::transaction(function () use ($moderator, $cover, $pendingReports, $decisionDTO): ?Sanction {
+            if ($decisionDTO->resolution === ReportResolution::Hidden) {
+                $this->coverService->hide($cover);
+            }
+
+            return $this->close($moderator, $cover->author_id, $pendingReports, $decisionDTO);
+        });
+
+        $this->notify($moderator, $cover, $pendingReports, $decisionDTO->resolution, $sanction);
+    }
+
+    public function restoreCover(NovelCover $cover): void
+    {
+        $this->coverService->restore($cover);
     }
 
     public function restoreChapter(Chapter $chapter): void
@@ -139,7 +165,7 @@ class ModerationService
     /**
      * @param  Collection<int, Report>  $pendingReports
      */
-    private function notify(User $moderator, Chapter|Comment $content, Collection $pendingReports, ReportResolution $resolution, ?Sanction $sanction): void
+    private function notify(User $moderator, Reportable $content, Collection $pendingReports, ReportResolution $resolution, ?Sanction $sanction): void
     {
         $this->contentModeratedNotificationService->create($moderator, $content, $resolution, $sanction);
         $this->reportProcessedNotificationService->create($moderator, $content, $resolution, $pendingReports);

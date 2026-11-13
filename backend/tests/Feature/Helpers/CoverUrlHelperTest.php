@@ -4,6 +4,8 @@ namespace Tests\Feature\Helpers;
 
 use App\Models\Genre;
 use App\Models\Novel;
+use App\Models\NovelCover;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -18,6 +20,16 @@ class CoverUrlHelperTest extends TestCase
         ]);
 
         $this->assertStringEndsWith('/images/covers/cover_default_horreur.jpg', $novel->coverUrl());
+    }
+
+    #[Test]
+    public function serves_the_official_cover_before_any_other(): void
+    {
+        $novel = Novel::factory()->create(['cover_url' => 'https://images.example/nuit.jpg']);
+        $official = NovelCover::factory()->on($novel)->create(['image_path' => 'covers/1/officielle.jpg']);
+        $novel->forceFill(['official_cover_id' => $official->id])->save();
+
+        $this->assertSame(Storage::disk('public')->url('covers/1/officielle.jpg'), $novel->refresh()->coverUrl());
     }
 
     #[Test]

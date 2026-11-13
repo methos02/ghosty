@@ -44,4 +44,41 @@ describe('CommentReceivedNotification.vue', () => {
       }),
     )
   })
+
+  it('names the cover of the novel the comment was posted on, leading to the covers page', () => {
+    const notification = notificationSeeder.getCoverNotification(
+      NOTIFICATION_TYPES.COMMENT_RECEIVED,
+      1,
+    )
+
+    wrapper = mount(CommentReceivedNotification, { props: { notification } })
+
+    const message = wrapper.find('.notification-base__message')
+    expect(message.text()).toBe(
+      t('comment_received_notification.cover.one', {
+        author: notification.payload.lastActorUsername,
+        title: notification.novel.title,
+      }),
+    )
+    expect(message.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
+      name: 'novel-covers',
+      params: { slug: notification.novel.slug },
+    })
+  })
+
+  it('counts the comments gathered on the cover', () => {
+    const notification = notificationSeeder.getCoverNotification(
+      NOTIFICATION_TYPES.COMMENT_RECEIVED,
+      3,
+    )
+
+    wrapper = mount(CommentReceivedNotification, { props: { notification } })
+
+    expect(wrapper.find('.notification-base__message').text()).toBe(
+      t('comment_received_notification.cover.many', {
+        count: notification.payload.count,
+        title: notification.novel.title,
+      }),
+    )
+  })
 })

@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Chapter;
+use App\Models\Contracts\Likeable;
+use App\Models\NovelCover;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Config;
@@ -15,7 +16,7 @@ class LikeAuthorizationService
     /**
      * @throws AuthorizationException
      */
-    public function authorize(User $user, Chapter $chapter): void
+    public function authorize(User $user, Likeable $likeable): void
     {
         if ($user->isBanned()) {
             throw new AuthorizationException(__('likes.denied.banned'));
@@ -29,12 +30,34 @@ class LikeAuthorizationService
             throw new AuthorizationException(__('likes.denied.account_too_young'));
         }
 
-        if ($user->id === $chapter->author_id) {
+        if ($likeable instanceof NovelCover) {
+            $this->authorizeCover($user, $likeable);
+
+            return;
+        }
+
+        if ($user->id === $likeable->author_id) {
             throw new AuthorizationException(__('likes.denied.own_chapter'));
         }
 
-        if (! $chapter->isPublished()) {
+        if (! $likeable->isPublished()) {
             throw new AuthorizationException(__('likes.denied.not_published'));
+        }
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-16-illustrations-du-roman.md
+     *
+     * @throws AuthorizationException
+     */
+    private function authorizeCover(User $user, NovelCover $cover): void
+    {
+        if ($user->id === $cover->author_id) {
+            throw new AuthorizationException(__('likes.denied.own_cover'));
+        }
+
+        if (! $cover->isPublished()) {
+            throw new AuthorizationException(__('likes.denied.cover_hidden'));
         }
     }
 

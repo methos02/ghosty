@@ -45,7 +45,7 @@ Trois difficultés restaient ouvertes :
 
 **6. Deux notifications** ([ADR-10](ADR-10-notifications-in-app-agregees.md)) : `content_moderated` à l'auteur du contenu (issue + sanction éventuelle ; rien si le signalement est rejeté sans sanction) et `report_processed` à chaque signaleur. Elles sont groupées par contenu modéré.
 
-**7. Périmètre du signalement** : chapitres et commentaires. Les illustrations arrivent au lot 7, le signalement d'un utilisateur avec son profil (lot 8).
+**7. Périmètre du signalement** : chapitres, commentaires et, depuis le lot 7, illustrations (`dismissed` ou `hidden` avec sanction obligatoire, [ADR-16](ADR-16-illustrations-du-roman.md)). Le signalement d'un utilisateur arrive avec son profil (lot 8).
 
 ## Alternatives Considered
 

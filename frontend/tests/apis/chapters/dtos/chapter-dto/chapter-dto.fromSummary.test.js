@@ -12,5 +12,9 @@ describe('chapter-dto', () => {
         title: chapterApi.title,
       })
     })
+
+    it('returns undefined when the comment targets the novel itself', () => {
+      expect(ChapterDto.fromSummary(null)).toBeUndefined()
+    })
   })
 })

@@ -28,6 +28,7 @@ Les décisions structurantes sont dans les ADR :
 | [ADR-12](memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md) | Suivre une branche = suivre son **chapitre-tête** ; lecture unique par session/compte ; historique et reprise réservés aux comptes, aucune progression invitée |
 | [ADR-13](memory-bank/decisions/ADR-13-commentaires.md) | Commentaires sur roman et chapitre (branche = chapitre-tête) ; réponses à un niveau ; pas d'édition ; suppression = texte effacé, trace seulement s'il y a des réponses |
 | [ADR-15](memory-bank/decisions/ADR-15-traitement-de-la-moderation.md) | Décision par contenu signalé ; une feuille s'archive ou se masque, un chapitre poursuivi perd seulement le **passage retiré** ; table `sanctions` (remplace `banned_until`, ADR-01) |
+| [ADR-16](memory-bank/decisions/ADR-16-illustrations-du-roman.md) | Illustration officielle **automatique** (la plus soutenue) ; une proposition par contributeur et par roman, remplaçable en perdant ses soutiens ; un soutien par lecteur et par roman |
 
 Plan de livraison par lots : [ghosty-mvp-plan.md](../ghosty-mvp-plan.md).
 
@@ -185,7 +186,8 @@ id BIGINT PRIMARY KEY
 title VARCHAR
 genre_id BIGINT → genres.id
 author_id BIGINT → users.id
-cover_url VARCHAR NULLABLE          -- déprécié : remplacé par la cover officielle
+cover_url VARCHAR NULLABLE          -- repli du jeu de démo seulement (ADR-16)
+official_cover_id BIGINT NULLABLE → novel_covers.id   -- la plus soutenue (ADR-16)
 is_favorite BOOLEAN DEFAULT false
 chapter_count INT DEFAULT 0         -- toutes réalités confondues
 created_at TIMESTAMP
@@ -230,11 +232,22 @@ INDEX chapters_active_branches_index (novel_id, continuations_count, status, bra
 2. **Il compte les suites publiées** : décrémenter aussi quand la modération archive ou masque une suite, sinon un parent reste affiché comme branche active (interdit par §9).
 3. **`path` est encadré de séparateurs** (`/1/12/45/`) pour qu'un préfixe `LIKE '/1/12/%'` ne capture jamais le chapitre 120.
 
-#### novel_covers — à venir (lot 7)
+#### novel_covers ✅ implémenté (lot 7)
 ```sql
-id, novel_id → novels.id, author_id → users.id, image_path,
-status ENUM('proposed', 'official', 'archived'), like_count, comment_count, timestamps
+id, novel_id → novels.id, author_id → users.id, image_path (disque public, covers/{novel_id}/),
+status TINYINT DEFAULT 1                  -- 1 published, 3 hidden (modération)
+like_count, comment_count, timestamps
+UNIQUE (novel_id, author_id)              -- une proposition par contributeur et par roman
 ```
+
+- `CoverService` est le seul écrivain (proposition, remplacement d'image, masquage, rétablissement) ;
+  `OfficialCoverService::update()` réélit `novels.official_cover_id` après **chaque** événement :
+  la plus soutenue, détrônée seulement par un nombre de soutiens strictement supérieur.
+  `cover_selected` notifie le nouvel élu, jamais le détrôné.
+- `CoverLikeService` : un soutien par lecteur et par roman, déplacé d'une illustration à l'autre.
+  Remplacer l'image supprime les soutiens de la proposition.
+- L'URL servie (`NovelResource.cover_url`) : officielle → `cover_url` → image du genre (`CoverUrlHelper`).
+  Le déploiement exige `php artisan storage:link`.
 
 #### likes — à venir (lot 3)
 ```sql
@@ -247,7 +260,7 @@ UNIQUE (user_id, likeable_type, likeable_id)
 
 #### comments ✅ implémenté (lot 5)
 ```sql
-id, author_id → users.id, commentable_type (novel|chapter, cover au lot 7), commentable_id,
+id, author_id → users.id, commentable_type (novel|chapter|novel_cover), commentable_id,
 parent_id NULLABLE → comments.id, reply_count, content NULLABLE, is_spoiler BOOLEAN,
 status TINYINT DEFAULT 1                  -- 1 visible, 2 deleted (par l'auteur), 3 hidden (modération, lot 6)
 timestamps
@@ -264,7 +277,7 @@ INDEX (commentable_type, commentable_id, parent_id, status)
 
 #### reports / sanctions / chapter_versions ✅ implémenté (lots 3 et 6)
 ```sql
-reports    : reporter_id, reportable_type (chapter|comment, cover au lot 7), reportable_id,
+reports    : reporter_id, reportable_type (chapter|comment|novel_cover), reportable_id,
              reason ENUM('poor_quality','off_topic','plagiarism','unauthorized_illustration',
                          'spam','hate_speech','insult','harassment','personal_attack',
                          'like_manipulation','illegal'),
@@ -823,9 +836,9 @@ Un soutien n'écrit **qu'une ligne** — `like_count` sur le chapitre, le chiffr
 voit revenir de son clic :
 
 ```php
-public function applyLike(Chapter $chapter, int $delta = 1): void
+public function incrementLikeCount(Likeable $likeable): void
 {
-    $chapter->increment('like_count', $delta);
+    $likeable->increment('like_count');
 }
 ```
 

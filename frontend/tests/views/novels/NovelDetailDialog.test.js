@@ -288,4 +288,30 @@ describe('NovelDetailDialog.vue', () => {
 
     expect(wrapper.find('.novel-detail-dialog__comment-count').text()).toBe(String(newTotal))
   })
+
+  it('leads to the covers proposed for the novel', async () => {
+    vi.spyOn(ChapterRepository, 'mainBranch').mockResolvedValue(
+      controllerSuccess({ data: chapterSeeder.getListApi() }),
+    )
+    const novel = novelSeeder.getNovel()
+    const novelStore = createNovelStore()
+    novelStore.setSelectedNovel(novel)
+    await router.push({ name: 'novel-detail', params: { slug: novel.slug } })
+    await router.isReady()
+    const wrapper = mount(NovelDetailDialog, {
+      global: {
+        plugins: [router, createHead()],
+        provide: {
+          [NOVEL_STORE_KEY]: novelStore,
+          [CHAPTER_STORE_KEY]: createChapterStore(),
+        },
+      },
+    })
+    await flushPromises()
+
+    expect(wrapper.findComponent('.novel-detail-dialog__covers').props('to')).toEqual({
+      name: 'novel-covers',
+      params: { slug: novel.slug },
+    })
+  })
 })

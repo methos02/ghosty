@@ -36,6 +36,15 @@ return [
         'reason_max_length' => 1000,
     ],
 
+    /* @see memory-bank/decisions/ADR-16-illustrations-du-roman.md */
+    'covers' => [
+        'max_size_kb' => 5120,
+        'min_width' => 800,
+        'min_height' => 450,
+        'max_width' => 6000,
+        'max_height' => 4000,
+    ],
+
     /* @see memory-bank/decisions/ADR-10-notifications-in-app-agregees.md */
     'notifications' => [
         'per_page' => 20,

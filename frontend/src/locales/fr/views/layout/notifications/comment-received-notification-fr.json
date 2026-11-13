@@ -1,6 +1,10 @@
 {
   "comment_received_notification": {
     "one": "{author} a commenté « {title} »",
-    "many": "{count} nouveaux commentaires sur « {title} »"
+    "many": "{count} nouveaux commentaires sur « {title} »",
+    "cover": {
+      "one": "{author} a commenté votre illustration de « {title} »",
+      "many": "{count} nouveaux commentaires sur votre illustration de « {title} »"
+    }
   }
 }

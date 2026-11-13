@@ -4,10 +4,9 @@ namespace App\Services\Notifications;
 
 use App\Enums\NotificationType;
 use App\Helpers\NotificationDataHelper;
-use App\Models\Chapter;
 use App\Models\Comment;
+use App\Models\Contracts\Commentable;
 use App\Models\Notification;
-use App\Models\Novel;
 use App\Models\User;
 use App\Services\NotificationService;
 
@@ -20,7 +19,7 @@ class CommentRepliedNotificationService
         private readonly NotificationService $notificationService
     ) {}
 
-    public function create(Comment $reply, Comment $parent, Chapter|Novel $commentable, ?User $mentionedUser = null): void
+    public function create(Comment $reply, Comment $parent, Commentable $commentable, ?User $mentionedUser = null): void
     {
         $this->notify($parent->author, $reply, $commentable);
 
@@ -31,7 +30,7 @@ class CommentRepliedNotificationService
         $this->notify($mentionedUser, $reply, $commentable);
     }
 
-    private function notify(User $recipient, Comment $reply, Chapter|Novel $commentable): void
+    private function notify(User $recipient, Comment $reply, Commentable $commentable): void
     {
         $this->notificationService->push(
             $recipient,

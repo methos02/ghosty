@@ -8,7 +8,7 @@ const state = {
 
 export const localePlugin = async () => {
   if (state.translaterPromise === undefined) {
-    state.translaterPromise = localePluginInternal.setupTranslater()
+    state.translaterPromise = internals.setupTranslater()
   }
   const translater = await state.translaterPromise
 
@@ -26,6 +26,6 @@ const setupTranslater = async () => {
   return localeFunctions.getTranslater()
 }
 
-export const localePluginInternal = {
+export const internals = {
   setupTranslater,
 }

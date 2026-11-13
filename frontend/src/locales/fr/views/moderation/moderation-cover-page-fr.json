@@ -1,0 +1,9 @@
+{
+  "moderation_cover_page": {
+    "title": "Illustration de {author}",
+    "on_novel": "Proposée pour le roman {novel}",
+    "image_alt": "Illustration proposée par {author} pour « {novel} »",
+    "like_count": "Aucun soutien | 1 soutien | {count} soutiens",
+    "hidden": "Cette illustration est masquée par la modération."
+  }
+}

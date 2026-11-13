@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ChapterController;
 use App\Http\Controllers\Api\V1\ChapterReadController;
 use App\Http\Controllers\Api\V1\CommentController;
+use App\Http\Controllers\Api\V1\CoverController;
 use App\Http\Controllers\Api\V1\FollowController;
 use App\Http\Controllers\Api\V1\GenreController;
 use App\Http\Controllers\Api\V1\LikeController;
@@ -13,12 +14,14 @@ use App\Http\Controllers\Api\V1\NovelController;
 use App\Http\Controllers\Api\V1\ReadingProgressController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Models\Comment;
+use App\Models\NovelCover;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::pattern('chapter', '[0-9]+');
 Route::pattern('comment', '[0-9]+');
+Route::pattern('cover', '[0-9]+');
 Route::pattern('notification', '[0-9a-fA-F-]{36}');
 
 Route::prefix('v1')->group(function () {
@@ -36,6 +39,8 @@ Route::prefix('v1')->group(function () {
     Route::post('/chapters/{chapter}/read', [ChapterReadController::class, 'store'])->middleware('throttle:chapter-read')->can('view', 'chapter')->name('chapters.read');
     Route::get('/chapters/{chapter}/comments', [CommentController::class, 'indexForChapter'])->can('view', 'chapter')->name('chapters.comments.index');
     Route::get('/novels/{novel}/comments', [CommentController::class, 'indexForNovel'])->name('novels.comments.index');
+    Route::get('/novels/{novel}/covers', [CoverController::class, 'index'])->name('novels.covers.index');
+    Route::get('/covers/{cover}/comments', [CommentController::class, 'indexForCover'])->can('view', 'cover')->name('covers.comments.index');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
@@ -50,8 +55,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/me/drafts', [ChapterController::class, 'drafts'])->name('chapters.drafts');
         Route::get('/me/chapters', [ChapterController::class, 'published'])->name('chapters.published');
 
-        Route::post('/chapters/{chapter}/like', [LikeController::class, 'store'])->middleware('throttle:like')->name('chapters.like');
-        Route::delete('/chapters/{chapter}/like', [LikeController::class, 'destroy'])->middleware('throttle:like')->name('chapters.unlike');
+        Route::post('/chapters/{chapter}/like', [LikeController::class, 'storeForChapter'])->middleware('throttle:like')->name('chapters.like');
+        Route::delete('/chapters/{chapter}/like', [LikeController::class, 'destroyForChapter'])->middleware('throttle:like')->name('chapters.unlike');
         Route::post('/chapters/{chapter}/report', [ReportController::class, 'storeForChapter'])->name('chapters.report');
 
         Route::get('/me/notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -71,6 +76,13 @@ Route::prefix('v1')->group(function () {
         Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->can('delete', 'comment')->name('comments.destroy');
         Route::post('/comments/{comment}/report', [ReportController::class, 'storeForComment'])->name('comments.report');
 
+        Route::post('/novels/{novel}/covers', [CoverController::class, 'store'])->can('create', [NovelCover::class, 'novel'])->name('novels.covers.store');
+        Route::post('/covers/{cover}/image', [CoverController::class, 'replaceImage'])->can('update', 'cover')->name('covers.image');
+        Route::post('/covers/{cover}/like', [LikeController::class, 'storeForCover'])->middleware('throttle:like')->name('covers.like');
+        Route::delete('/covers/{cover}/like', [LikeController::class, 'destroyForCover'])->middleware('throttle:like')->name('covers.unlike');
+        Route::post('/covers/{cover}/report', [ReportController::class, 'storeForCover'])->can('view', 'cover')->name('covers.report');
+        Route::post('/covers/{cover}/comments', [CommentController::class, 'storeForCover'])->middleware('throttle:comment')->can('create', [Comment::class, 'cover'])->name('covers.comments.store');
+
         Route::prefix('moderation')->middleware('can:moderate,'.Report::class)->group(function () {
             Route::get('/reports', [ModerationController::class, 'index'])->name('moderation.reports.index');
             Route::get('/chapters/{chapter}', [ModerationController::class, 'showChapter'])->name('moderation.chapters.show');
@@ -79,6 +91,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/comments/{comment}', [ModerationController::class, 'showComment'])->name('moderation.comments.show');
             Route::post('/comments/{comment}/decision', [ModerationController::class, 'moderateComment'])->can('moderate', 'comment')->name('moderation.comments.moderate');
             Route::post('/comments/{comment}/restore', [ModerationController::class, 'restoreComment'])->can('restore', 'comment')->name('moderation.comments.restore');
+            Route::get('/covers/{cover}', [ModerationController::class, 'showCover'])->name('moderation.covers.show');
+            Route::post('/covers/{cover}/decision', [ModerationController::class, 'moderateCover'])->can('moderate', 'cover')->name('moderation.covers.moderate');
+            Route::post('/covers/{cover}/restore', [ModerationController::class, 'restoreCover'])->can('restore', 'cover')->name('moderation.covers.restore');
         });
     });
 });

@@ -1,3 +1,6 @@
+import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
+import { CoverDto } from '@/apis/covers/dtos/cover-dto.js'
+import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
 import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 import { ChapterContinuedDto } from '@/apis/notifications/dtos/types/chapter-continued-dto.js'
@@ -6,32 +9,41 @@ import { CommentPayloadDto } from '@/apis/notifications/dtos/types/comment-paylo
 import { LikeReceivedDto } from '@/apis/notifications/dtos/types/like-received-dto.js'
 import { ModerationPayloadDto } from '@/apis/notifications/dtos/types/moderation-payload-dto.js'
 
-const fromList = data => ({
-  notifications: NotificationDto.fromNotifications(data.notifications ?? []),
-  unreadCount: data.unread_count,
-})
+const fromList = data => {
+  return {
+    notifications: NotificationDto.fromNotifications(data.notifications ?? []),
+    unreadCount: data.unread_count,
+  }
+}
 
-const fromNotification = notification => ({
-  id: notification.id,
-  type: notification.type,
-  isRead: notification.is_read,
-  chapter: NotificationDtoInternal.mapChapter(notification),
-  novel: {
-    slug: notification.novel.slug,
-    title: notification.novel.title,
-  },
-  payload: NotificationDtoInternal.mapPayload(notification),
-  updatedAtFormat: dateHelper.formatDateLocal(notification.updated_at, 'DD/MM/YYYY HH:mm'),
-})
+const fromNotification = notification => {
+  return {
+    id: notification.id,
+    type: notification.type,
+    isRead: notification.is_read,
+    chapter: ChapterDto.fromSummary(notification.chapter),
+    cover: CoverDto.fromSummary(notification.cover),
+    novel: NovelDto.fromSummary(notification.novel),
+    payload: internals.mapPayload(notification),
+    updatedAtFormat: dateHelper.formatDateLocal(notification.updated_at, 'DD/MM/YYYY HH:mm'),
+  }
+}
 
-const fromNotifications = notifications =>
-  notifications.map(notification => NotificationDto.fromNotification(notification))
+const fromNotifications = notifications => {
+  return notifications.map(notification => NotificationDto.fromNotification(notification))
+}
 
-const fromUnreadCount = data => data.unread_count
+const fromUnreadCount = data => {
+  return data.unread_count
+}
 
-const toListParams = page => ({ page })
+const toListParams = page => {
+  return { page }
+}
 
-const toReadParams = notificationId => ({ notification: notificationId })
+const toReadParams = notificationId => {
+  return { notification: notificationId }
+}
 
 export const NotificationDto = {
   fromList,
@@ -58,18 +70,12 @@ const MODERATION_PAYLOAD_TYPES = new Set([
   NOTIFICATION_TYPES.REPORT_PROCESSED,
 ])
 
-const isKnownType = notification => Object.values(NOTIFICATION_TYPES).includes(notification.type)
-
-const mapChapter = notification =>
-  notification.chapter === null
-    ? undefined
-    : {
-        id: notification.chapter.id,
-        title: notification.chapter.title,
-      }
+const isKnownType = notification => {
+  return Object.values(NOTIFICATION_TYPES).includes(notification.type)
+}
 
 const mapPayload = notification => {
-  if (!NotificationDtoInternal.isKnownType(notification)) {
+  if (!internals.isKnownType(notification)) {
     throw new Error(`[NotificationDto] Unknown notification type "${notification.type}"`)
   }
 
@@ -96,8 +102,7 @@ const mapPayload = notification => {
   return {}
 }
 
-export const NotificationDtoInternal = {
+export const internals = {
   isKnownType,
-  mapChapter,
   mapPayload,
 }

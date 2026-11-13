@@ -11,7 +11,7 @@ Le MVP §11 demande des commentaires « simples », attachés au roman, à une b
 
 ## Decision
 
-**1. Deux cibles aujourd'hui : roman et chapitre.** `comments` est polymorphe (`commentable_type`, `commentable_id`). Commenter une branche, c'est commenter son chapitre-tête, comme la suivre ([ADR-12](ADR-12-suivi-de-branche-et-parcours-de-lecture.md)). `NovelCover` rejoindra la morph map au lot 7, sans changer la table.
+**1. Deux cibles aujourd'hui : roman et chapitre.** `comments` est polymorphe (`commentable_type`, `commentable_id`). Commenter une branche, c'est commenter son chapitre-tête, comme la suivre ([ADR-12](ADR-12-suivi-de-branche-et-parcours-de-lecture.md)). `NovelCover` a rejoint la morph map au lot 7, sans changer la table ([ADR-16](ADR-16-illustrations-du-roman.md)).
 
 **2. Réponses à un niveau.** Une réponse porte le `parent_id` d'un commentaire principal et la même cible. On ne répond pas à une réponse : un fil reste lisible sans arborescence.
 

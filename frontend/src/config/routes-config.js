@@ -104,6 +104,20 @@ export const routes = [
     meta: { asyncData: multiverseAsyncData },
   },
   {
+    path: '/novels/:slug/covers',
+    name: 'novel-covers',
+    component: () => import('@/views/covers/NovelCoversPage.vue'),
+  },
+  {
+    path: '/moderation/covers/:id',
+    name: 'moderation-cover',
+    component: () => import('@/views/moderation/ModerationCoverPage.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: ['moderator', 'admin'],
+    },
+  },
+  {
     path: '/novels/:slug',
     name: 'novel-detail',
     component: () => import('@/views/HomePage.vue'),

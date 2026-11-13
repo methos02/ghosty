@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  *
  * @mixin Model
  */
-trait Reportable
+trait HasReports
 {
     /**
      * @return MorphMany<Report, $this>

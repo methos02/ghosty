@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Chapter;
+use App\Models\Contracts\Likeable;
 use App\Models\User;
 use App\Repositories\LikeRepository;
 use App\Services\Notifications\LikeReceivedNotificationService;
@@ -18,33 +18,33 @@ class LikeService
         private readonly LikeReceivedNotificationService $likeReceivedNotificationService
     ) {}
 
-    public function like(User $user, Chapter $chapter, ?string $ip): bool
+    public function like(User $user, Likeable $likeable, ?string $ip): bool
     {
-        $isNewLike = DB::transaction(function () use ($user, $chapter, $ip): bool {
-            if (! $this->likesR->createIfAbsent($user->id, $chapter, $ip)) {
+        $isNewLike = DB::transaction(function () use ($user, $likeable, $ip): bool {
+            if (! $this->likesR->createIfAbsent($user->id, $likeable, $ip)) {
                 return false;
             }
 
-            $chapter->increment('like_count');
+            $this->likesR->incrementLikeCount($likeable);
 
             return true;
         });
 
         if ($isNewLike) {
-            $this->likeReceivedNotificationService->create($chapter, $user);
+            $this->likeReceivedNotificationService->create($likeable, $user);
         }
 
         return $isNewLike;
     }
 
-    public function unlike(User $user, Chapter $chapter): bool
+    public function unlike(User $user, Likeable $likeable): bool
     {
-        return DB::transaction(function () use ($user, $chapter): bool {
-            if (! $this->likesR->delete($user->id, $chapter)) {
+        return DB::transaction(function () use ($user, $likeable): bool {
+            if (! $this->likesR->delete($user->id, $likeable)) {
                 return false;
             }
 
-            $chapter->decrement('like_count');
+            $this->likesR->decrementLikeCount($likeable);
 
             return true;
         });

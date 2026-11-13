@@ -25,7 +25,7 @@ const bootServicesOnce = () => {
     return
   }
 
-  servicesBootInternal.registerServices()
+  internals.registerServices()
   state.booted = true
 }
 
@@ -50,6 +50,6 @@ const registerServices = () => {
   registerServiceRoutes('utils', utilsRoutes)
 }
 
-export const servicesBootInternal = {
+export const internals = {
   registerServices,
 }

@@ -17,6 +17,9 @@
     "error_description_size_max": "Les précisions sont trop longues.",
     "title_cover": "Signaler l'illustration de {author}",
     "intro_cover": "Un modérateur relira cette illustration. Le signalement reste anonyme pour son auteur.",
-    "already_cover": "Vous avez déjà signalé cette illustration. Un modérateur examine votre signalement, inutile d'en envoyer un second."
+    "already_cover": "Vous avez déjà signalé cette illustration. Un modérateur examine votre signalement, inutile d'en envoyer un second.",
+    "title_user": "Signaler {username}",
+    "intro_user": "Un modérateur examinera le comportement de ce compte. Le signalement reste anonyme pour la personne signalée.",
+    "already_user": "Vous avez déjà signalé ce compte. Un modérateur examine votre signalement, inutile d'en envoyer un second."
   }
 }

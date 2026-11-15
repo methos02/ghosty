@@ -21,7 +21,6 @@ use App\Repositories\ChapterRepository;
 use App\Repositories\NovelRepository;
 use App\Services\ChapterService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class ChapterController extends Controller
@@ -161,17 +160,6 @@ class ChapterController extends Controller
 
         return response()->json([
             'chapters' => ChapterListResource::collection($drafts),
-        ]);
-    }
-
-    public function published(Request $request): JsonResponse
-    {
-        /** @var User $author */
-        $author = $request->user();
-        $novels = $this->novelsR->containingChaptersPublishedByAuthor($author->id);
-
-        return response()->json([
-            'novels' => NovelResource::collection($novels),
         ]);
     }
 

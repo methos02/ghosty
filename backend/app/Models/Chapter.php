@@ -80,6 +80,11 @@ class Chapter extends Model implements Commentable, Likeable, Reportable
         return $this->belongsTo(User::class, 'author_id');
     }
 
+    public function reportedUser(): User
+    {
+        return $this->author;
+    }
+
     /**
      * @return BelongsTo<Chapter, $this>
      */
@@ -142,6 +147,16 @@ class Chapter extends Model implements Commentable, Likeable, Reportable
     public function scopeByAuthor(Builder $query, int $authorId): void
     {
         $query->where('author_id', $authorId);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
+     * @param  Builder<Chapter>  $query
+     */
+    public function scopeVisibleOnProfile(Builder $query): void
+    {
+        $query->whereIn('status', [self::STATUS_PUBLISHED, self::STATUS_ARCHIVED]);
     }
 
     /**
@@ -234,6 +249,20 @@ class Chapter extends Model implements Commentable, Likeable, Reportable
         $ids = array_filter(explode(self::PATH_SEPARATOR, (string) $this->path));
 
         return array_values(array_map('intval', $ids));
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     */
+    public function isInMainBranch(): bool
+    {
+        $lastChapterOfMainBranch = $this->novel->mainBranchLastChapter;
+
+        if ($lastChapterOfMainBranch === null) {
+            return false;
+        }
+
+        return in_array($this->id, $lastChapterOfMainBranch->pathChapterIds(), true);
     }
 
     /**

@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Enums\SanctionType;
+use App\Models\Concerns\HasReports;
+use App\Models\Concerns\IsNotificationSubject;
+use App\Models\Contracts\Reportable;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,15 +15,17 @@ use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 
 /**
+ * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+ *
  * @mixin IdeHelperUser
  */
-class User extends Authenticatable
+class User extends Authenticatable implements Reportable
 {
     /**
      * @use HasApiTokens<PersonalAccessToken>
      * @use HasFactory<UserFactory>
      */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasReports, IsNotificationSubject, Notifiable;
 
     protected $fillable = [
         'username',
@@ -103,6 +108,11 @@ class User extends Authenticatable
             ->activeBans()
             ->orderByRaw('until is null desc')
             ->orderByDesc('until');
+    }
+
+    public function reportedUser(): User
+    {
+        return $this;
     }
 
     public function canModerate(): bool

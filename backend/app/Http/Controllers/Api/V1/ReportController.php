@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReportRequest;
+use App\Http\Requests\StoreUserReportRequest;
 use App\Models\Chapter;
 use App\Models\Comment;
 use App\Models\Contracts\Reportable;
@@ -54,9 +55,23 @@ class ReportController extends Controller
     }
 
     /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
      * @throws AuthorizationException
      */
-    private function store(StoreReportRequest $request, Reportable $reportable): JsonResponse
+    public function storeForUser(StoreUserReportRequest $request, User $user): JsonResponse
+    {
+        if ($request->user()?->id === $user->id) {
+            throw new AuthorizationException(__('reports.denied.self'));
+        }
+
+        return $this->store($request, $user);
+    }
+
+    /**
+     * @throws AuthorizationException
+     */
+    private function store(StoreReportRequest|StoreUserReportRequest $request, Reportable $reportable): JsonResponse
     {
         /** @var User $reporter */
         $reporter = $request->user();
@@ -65,7 +80,7 @@ class ReportController extends Controller
             throw new AuthorizationException(__('reports.denied.banned'));
         }
 
-        if ($reporter->id === $reportable->author_id) {
+        if ($reporter->id === $reportable->reportedUser()->id) {
             throw new AuthorizationException(__('reports.denied.own_content'));
         }
 

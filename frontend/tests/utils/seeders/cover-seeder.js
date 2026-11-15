@@ -43,8 +43,16 @@ const getLikeApi = (overrides = {}) => {
   const [official, alternative] = getCoversApi()
 
   return {
-    cover: { ...alternative, is_liked: true, like_count: 2 },
-    moved_from: { ...official, is_liked: false, like_count: 3 },
+    cover: {
+      ...alternative,
+      is_liked: true,
+      like_count: 2,
+    },
+    moved_from: {
+      ...official,
+      is_liked: false,
+      like_count: 3,
+    },
     official_cover_id: 5,
     ...overrides,
   }
@@ -72,11 +80,27 @@ const getRefusalApi = (overrides = {}) => ({
 })
 
 const getImageFile = ({ width = 1600, height = 900 } = {}) =>
-  new File([JSON.stringify({ width, height })], 'brume.webp', { type: 'image/webp' })
+  new globalThis.File([JSON.stringify({ width, height })], 'brume.webp', { type: 'image/webp' })
 
-const getUnreadableFile = () => new File(['notes'], 'notes.txt', { type: 'text/plain' })
+const getUnreadableFile = () => new globalThis.File(['notes'], 'notes.txt', { type: 'text/plain' })
 
 const getCreateForm = () => ({ image: getImageFile() })
+
+const getProfileCoverApi = (overrides = {}) =>
+  getCoverApi({
+    is_official: true,
+    novel: {
+      id: 1,
+      slug: 'nuit-virage',
+      title: 'Nuit virage',
+    },
+    ...overrides,
+  })
+
+const getProfileCover = (overrides = {}) => ({
+  ...CoverDto.fromProfileCover(getProfileCoverApi()),
+  ...overrides,
+})
 
 const getCover = (overrides = {}) => ({ ...CoverDto.fromCover(getCoverApi()), ...overrides })
 
@@ -87,6 +111,8 @@ const getNovelCovers = (overrides = {}) => ({ ...CoverDto.fromList(getListApi())
 const getLike = (overrides = {}) => ({ ...CoverDto.fromLike(getLikeApi()), ...overrides })
 
 export const coverSeeder = {
+  getProfileCover,
+  getProfileCoverApi,
   getCover,
   getCoverApi,
   getCovers,

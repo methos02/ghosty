@@ -77,8 +77,10 @@ return [
             'nothing_removed' => 'Sélectionnez au moins un passage à retirer',
         ],
         'sanction' => [
+            'prohibited_for_dismissed_user' => 'Un signalement rejeté ne peut pas s\'accompagner d\'une sanction',
             'type' => [
                 'required' => 'Le type de sanction est obligatoire',
+                'required_for_sanctioned_user' => 'Choisissez la sanction à appliquer à ce compte',
                 'required_for_hidden_comment' => 'Masquer un commentaire entraîne au minimum un avertissement de son auteur',
                 'required_for_hidden_cover' => 'Masquer une illustration entraîne au minimum un avertissement de son auteur',
                 'enum' => 'Le type de sanction est invalide',

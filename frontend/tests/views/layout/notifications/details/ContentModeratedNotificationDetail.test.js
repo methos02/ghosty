@@ -44,4 +44,16 @@ describe('ContentModeratedNotificationDetail.vue', () => {
       }),
     )
   })
+
+  it('explains that a sanction of the account leaves its contents online', () => {
+    const notification = notificationSeeder.getAccountModerationNotification(
+      NOTIFICATION_TYPES.CONTENT_MODERATED,
+      { sanction: notificationSeeder.getSanctionApi() },
+    )
+
+    wrapper = mount(ContentModeratedNotificationDetail, { props: { notification } })
+
+    expect(wrapper.text()).toContain(t('content_moderated_notification_detail.sanctioned'))
+    expect(wrapper.find('.notification-sanction').exists()).toBe(true)
+  })
 })

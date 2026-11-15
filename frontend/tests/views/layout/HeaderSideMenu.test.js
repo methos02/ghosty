@@ -104,6 +104,24 @@ describe('HeaderSideMenu.vue', () => {
     expect(wrapper.find('.header-moderation').exists()).toBe(true)
   })
 
+  it('leads the connected user to their own profile', () => {
+    const user = userSeeder.getUser()
+    useAuthStore().setUser(user)
+
+    wrapper = mount(HeaderSideMenu)
+
+    expect(wrapper.findComponent('.header-profile').props('to')).toEqual({
+      name: 'profile',
+      params: { username: user.username },
+    })
+  })
+
+  it('hides the profile entry while no user is connected', () => {
+    wrapper = mount(HeaderSideMenu)
+
+    expect(wrapper.find('.header-profile').exists()).toBe(false)
+  })
+
   it('hides the moderation queue from a reader', () => {
     useAuthStore().setUser(userSeeder.getUser())
 

@@ -45,9 +45,13 @@ onMounted(loadDrafts)
     </div>
 
     <div class="d-flex f-column g-5">
-      <span class="user-summary__username | color-neutral-100 fs-700 fw-400">
-        {{ user?.username }}
-      </span>
+      <router-link
+        v-if="user"
+        :to="{ name: 'profile', params: { username: user.username } }"
+        class="user-summary__username | color-neutral-100 color-primary-hover fs-700 fw-400"
+      >
+        {{ user.username }}
+      </router-link>
 
       <router-link
         :to="draftsRoute"
@@ -72,6 +76,10 @@ onMounted(loadDrafts)
       background-color: rgba(0, 0, 0, 0.45);
       font-size: 36px;
     }
+  }
+
+  &__username {
+    transition: color 300ms;
   }
 
   &__drafts {

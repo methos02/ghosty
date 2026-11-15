@@ -10,6 +10,7 @@ use App\Models\Comment;
 use App\Models\Contracts\Reportable;
 use App\Models\NovelCover;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -60,6 +61,7 @@ class ReportRepository
             Chapter::class => ['author', 'novel'],
             Comment::class => ['author', 'commentable'],
             NovelCover::class => ['author', 'novel'],
+            User::class => [],
         ]);
 
         return $reportedContents;

@@ -58,5 +58,11 @@
     },
     "reason": "like_manipulation",
     "description": "Les likes sont arrivés tous en même temps juste après la publication."
+  },
+  {
+    "reporter": "auteur1",
+    "user": "auteur2",
+    "reason": "harassment",
+    "description": "Commentaires insistants et moqueurs sous chacun de mes chapitres depuis une semaine."
   }
 ]

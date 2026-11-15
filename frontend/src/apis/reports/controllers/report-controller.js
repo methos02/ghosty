@@ -32,8 +32,19 @@ const reportCover = async (coverId, formData) => {
   return controllerResponseHelper.buildResponse(response)
 }
 
+const reportUser = async (username, formData) => {
+  const response = await ReportRepository.reportUser({
+    params: ReportDto.toUserParams(username),
+    body: ReportDto.toCreate(formData),
+    form: 'report',
+  })
+
+  return controllerResponseHelper.buildResponse(response)
+}
+
 export const ReportController = {
   reportChapter,
   reportComment,
   reportCover,
+  reportUser,
 }

@@ -201,7 +201,8 @@ POST   /chapters/{chapter}/read             lecture unique (session navigateur o
 GET    /me/reading-progress                 reprise de lecture (compte uniquement)
 GET    /me/reading-history
 
-GET    /users/{pseudo}                      profil public + contributions + stats (§13)
+GET    /users/{pseudo}                      profil public + stats (§13) ; /novels, /chapters, /branches, /covers paginés
+POST   /users/{pseudo}/report               signalement d'un compte (ADR-17)
 GET    /metrics                             indicateurs MVP (§16, réservé admin)
 ```
 
@@ -311,10 +312,11 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 - Front : `NovelCoversPage`, `CoverProposeDialog`, remplacement de `cover_url` par la cover officielle.
 - Arbitrages ([ADR-16](backend/memory-bank/decisions/ADR-16-illustrations-du-roman.md)) : l'officielle n'est **pas choisie par l'auteur** mais **élue automatiquement** (la plus soutenue, égalité au profit de l'officielle en place, comme la branche principale) ; **aucun archivage** des autres propositions, qui restent des alternatives classées ; **une proposition par contributeur et par roman**, remplaçable en perdant ses soutiens ; **un soutien par lecteur et par roman**, déplaçable ; tout compte connecté propose (rôle `illustrator` ajouté) ; image validée (jpg/png/webp, 5 Mo, paysage) sans transformation ; soutiens, commentaires, signalement + modération (`hidden` avec sanction) et notification `cover_selected` inclus.
 
-### Lot 8 — Profils et statistiques · S/M
+### Lot 8 — Profils et statistiques · M ✅
 
 - `GET /users/{pseudo}` : romans, chapitres, propositions, branches auxquelles l'utilisateur participe, illustrations, stats simples (§13).
 - Front : `ProfilePage` + onglets.
+- Arbitrages ([ADR-17](backend/memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md)) : un seul onglet **Chapitres** (publiés et archivés), chacun marqué s'il est sur la branche principale, au lieu d'une frontière chapitres / propositions qui bougerait à chaque soutien ; **Branches** = ses chapitres poursuivis par d'autres ; **Illustrations** proposées, marquées officielles ; statistiques (lectures, soutiens, suites reçues, contributions) **calculées à la lecture**, pas dénormalisées ; rôle `author` posé à la première publication ; **signalement d'un utilisateur** inclus (motifs visant une personne, décision `dismissed` ou `sanctioned` sans effet sur les contenus) ; noms d'auteur liés au profil (lecture, illustrations, commentaires, en-tête).
 
 ### Lot 9 — Indicateurs · S
 

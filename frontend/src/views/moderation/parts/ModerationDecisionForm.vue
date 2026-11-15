@@ -33,13 +33,23 @@ const formData = ref({
   sanction: {},
 })
 
-const isSanctionRequired = computed(
-  () => SANCTIONED_WHEN_HIDDEN.has(props.contentType) && resolution.value === RESOLUTIONS.HIDDEN,
+const isUser = computed(() => props.contentType === REPORTED_CONTENT_TYPES.USER)
+
+const isSanctionRequired = computed(() => {
+  if (isUser.value) {
+    return resolution.value === RESOLUTIONS.SANCTIONED
+  }
+
+  return SANCTIONED_WHEN_HIDDEN.has(props.contentType) && resolution.value === RESOLUTIONS.HIDDEN
+})
+
+const isSanctionAllowed = computed(
+  () => !isUser.value || resolution.value !== RESOLUTIONS.DISMISSED,
 )
 
 const decision = () => {
   return {
-    ...formData.value,
+    sanction: isSanctionAllowed.value ? formData.value.sanction : {},
     resolution: resolution.value,
     content: contentAfterRemoval.value,
     isSanctionRequired: isSanctionRequired.value,
@@ -72,6 +82,10 @@ const sendDecision = () => {
 
   if (props.contentType === REPORTED_CONTENT_TYPES.COVER) {
     return ModerationController.moderateCover(props.contentId, decision())
+  }
+
+  if (isUser.value) {
+    return ModerationController.moderateUser(props.contentId, decision())
   }
 
   return ModerationController.moderateComment(props.contentId, decision())
@@ -123,7 +137,10 @@ const decide = async () => {
       <ErrorFormComponent name="moderation.resolution" />
     </fieldset>
 
-    <fieldset class="moderation-decision__sanction | d-flex f-column g-15">
+    <fieldset
+      v-if="isSanctionAllowed"
+      class="moderation-decision__sanction | d-flex f-column g-15"
+    >
       <legend class="fs-500 fw-700 mb-10">{{ t('moderation_decision.sanction') }}</legend>
 
       <SelectComponent

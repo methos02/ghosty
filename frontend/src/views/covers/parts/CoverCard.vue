@@ -1,6 +1,7 @@
 <script setup>
 import { t } from '@/services/shortcuts/services-shortcut.js'
 import CoverLikeButton from '@/views/covers/parts/CoverLikeButton.vue'
+import UserLink from '@/views/parts/UserLink.vue'
 import { useCoverComments } from '@/core-vue/composables/comments/use-cover-comments.js'
 import { useReport } from '@/core-vue/composables/reports/use-report.js'
 
@@ -33,7 +34,10 @@ const { report } = useReport()
     </div>
 
     <p class="cover-card__author | fs-300 color-neutral-700">
-      {{ t('common.by_author', { author: cover.author.username }) }}
+      <UserLink
+        :username="cover.author.username"
+        byline
+      />
     </p>
 
     <div class="cover-card__actions | d-flex a-center j-between g-5">

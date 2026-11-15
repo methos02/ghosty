@@ -3,6 +3,7 @@ import Translate from '@/services/locale/views/TranslateComponent.vue'
 import NotificationBase from '@/views/layout/notifications/NotificationBase.vue'
 import NotificationCommentableLink from '@/views/layout/notifications/NotificationCommentableLink.vue'
 import NotificationCoverLink from '@/views/layout/notifications/NotificationCoverLink.vue'
+import UserLink from '@/views/parts/UserLink.vue'
 import { REPORTED_CONTENT_TYPES, RESOLUTIONS } from '@/constants/moderation-constants.js'
 
 defineProps({
@@ -79,6 +80,24 @@ defineProps({
       >
         <template #title>
           <NotificationCoverLink :notification="notification" />
+        </template>
+      </Translate>
+    </template>
+    <template v-if="notification.payload.contentType === REPORTED_CONTENT_TYPES.USER">
+      <Translate
+        v-if="notification.payload.resolution === RESOLUTIONS.DISMISSED"
+        keypath="report_processed_notification.user.dismissed"
+      >
+        <template #username>
+          <UserLink :username="notification.payload.user.username" />
+        </template>
+      </Translate>
+      <Translate
+        v-if="notification.payload.resolution === RESOLUTIONS.SANCTIONED"
+        keypath="report_processed_notification.user.sanctioned"
+      >
+        <template #username>
+          <UserLink :username="notification.payload.user.username" />
         </template>
       </Translate>
     </template>

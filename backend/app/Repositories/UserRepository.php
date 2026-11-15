@@ -2,8 +2,12 @@
 
 namespace App\Repositories;
 
+use App\Models\Chapter;
 use App\Models\Follow;
+use App\Models\Novel;
+use App\Models\NovelCover;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -26,6 +30,113 @@ class UserRepository
             ->where('tokenable_type', (new User)->getMorphClass())
             ->where('tokenable_id', $userId)
             ->delete();
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     */
+    public function findProfile(int $userId, ?int $viewerId = null): User
+    {
+        return User::query()
+            ->addSelect([
+                'novel_count' => $this->publishedNovelCount(),
+                'chapter_count' => $this->profileChapterCount(),
+                'chapter_read_count' => $this->profileChapterSum('read_count'),
+                'chapter_like_count' => $this->profileChapterSum('like_count'),
+                'received_continuation_count' => $this->continuationsByOthersCount(),
+                'cover_count' => $this->publishedCoverCount(),
+                'cover_like_count' => $this->publishedCoverLikeSum(),
+                'official_cover_count' => $this->officialCoverCount(),
+            ])
+            ->withUserReport($viewerId)
+            ->findOrFail($userId);
+    }
+
+    /**
+     * @return Builder<Novel>
+     */
+    private function publishedNovelCount(): Builder
+    {
+        return Novel::query()
+            ->selectRaw('count(*)')
+            ->published()
+            ->whereColumn('author_id', 'users.id');
+    }
+
+    /**
+     * @return Builder<Chapter>
+     */
+    private function profileChapterCount(): Builder
+    {
+        return Chapter::query()
+            ->selectRaw('count(*)')
+            ->visibleOnProfile()
+            ->whereColumn('author_id', 'users.id');
+    }
+
+    /**
+     * @param  'read_count'|'like_count'  $column
+     * @return Builder<Chapter>
+     */
+    private function profileChapterSum(string $column): Builder
+    {
+        return Chapter::query()
+            ->selectRaw('coalesce(sum('.$column.'), 0)')
+            ->visibleOnProfile()
+            ->whereColumn('author_id', 'users.id');
+    }
+
+    /**
+     * @return Builder<Chapter>
+     */
+    private function continuationsByOthersCount(): Builder
+    {
+        return Chapter::query()
+            ->selectRaw('count(*)')
+            ->published()
+            ->whereColumn('author_id', '!=', 'users.id')
+            ->whereIn(
+                'parent_id',
+                Chapter::query()
+                    ->select('id')
+                    ->whereColumn('author_id', 'users.id')
+            );
+    }
+
+    /**
+     * @return Builder<NovelCover>
+     */
+    private function publishedCoverCount(): Builder
+    {
+        return NovelCover::query()
+            ->selectRaw('count(*)')
+            ->published()
+            ->whereColumn('author_id', 'users.id');
+    }
+
+    /**
+     * @return Builder<NovelCover>
+     */
+    private function publishedCoverLikeSum(): Builder
+    {
+        return NovelCover::query()
+            ->selectRaw('coalesce(sum(like_count), 0)')
+            ->published()
+            ->whereColumn('author_id', 'users.id');
+    }
+
+    /**
+     * @return Builder<NovelCover>
+     */
+    private function officialCoverCount(): Builder
+    {
+        return $this->publishedCoverCount()
+            ->whereIn(
+                'id',
+                Novel::query()
+                    ->select('official_cover_id')
+                    ->whereNotNull('official_cover_id')
+            );
     }
 
     public function addRole(User $user, string $role): void

@@ -11,6 +11,7 @@ use App\Models\Contracts\Reportable;
 use App\Models\Notification;
 use App\Models\Novel;
 use App\Models\NovelCover;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use LogicException;
 
@@ -102,10 +103,43 @@ final class NotificationDataHelper
     public static function moderatedContentData(Reportable $content, ReportResolution $resolution): array
     {
         return [
-            ...self::contentSubject($content),
+            ...self::reportedSubject($content),
             'content_type' => $content->getMorphClass(),
             'resolution' => $resolution->value,
         ];
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
+     * @return array{chapter: null, novel: null, user: array{id: int, username: string}}
+     */
+    public static function userSubject(User $user): array
+    {
+        return [
+            'chapter' => null,
+            'novel' => null,
+            'user' => [
+                'id' => $user->id,
+                'username' => $user->username,
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function reportedSubject(Reportable $content): array
+    {
+        if ($content instanceof AuthoredContent) {
+            return self::contentSubject($content);
+        }
+
+        if ($content instanceof User) {
+            return self::userSubject($content);
+        }
+
+        throw new LogicException(sprintf('%s is not a supported reported subject.', $content::class));
     }
 
     /**

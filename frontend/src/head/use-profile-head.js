@@ -2,11 +2,10 @@ import { computed } from 'vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
 import { headService } from '@/head/head-service.js'
 
-export const useWrittenChaptersHead = () => {
+export const useProfileHead = username => {
   headService.set(
     computed(() => ({
-      title: t('written_chapters.title'),
-      meta: [{ name: 'robots', content: 'noindex' }],
+      title: t('profile_page.head_title', { username: username.value }),
     })),
   )
 }

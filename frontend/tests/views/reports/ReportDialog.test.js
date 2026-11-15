@@ -287,4 +287,61 @@ describe('ReportDialog.vue', () => {
     expect(wrapper.find('.report-dialog__already').text()).toBe(t('report_dialog.already_cover'))
     expect(wrapper.find('form').exists()).toBe(false)
   })
+
+  it('offers the motives an account can be reported for', async () => {
+    const wrapper = mount(ReportDialog)
+
+    useReport().report.openUserReport(userSeeder.getProfile())
+    await flushPromises()
+
+    const motives = wrapper
+      .find('select[name="report.reason"]')
+      .findAll('option')
+      .map(option => option.element.value)
+      .filter(Boolean)
+    expect(motives).toEqual(ConfigLoader.get('report.userReasons'))
+  })
+
+  it('names the account being reported', async () => {
+    const profile = userSeeder.getProfile()
+    const wrapper = mount(ReportDialog)
+
+    useReport().report.openUserReport(profile)
+    await flushPromises()
+
+    expect(wrapper.find('.dialog-header').text()).toContain(
+      t('report_dialog.title_user', { username: profile.username }),
+    )
+  })
+
+  it('sends the report to the account, then confirms and closes', async () => {
+    const profile = userSeeder.getProfile()
+    const datas = reportSeeder.getReportData({ reason: 'harassment' })
+    vi.spyOn(ReportRepository, 'reportUser').mockResolvedValue(controllerSuccess())
+    const wrapper = mount(ReportDialog)
+    useReport().report.openUserReport(profile)
+    await flushPromises()
+
+    await wrapper.find('select[name="report.reason"]').setValue(datas.reason)
+    await wrapper.find('textarea[name="report.description"]').setValue(datas.description)
+    await wrapper.find('form').trigger('submit')
+    await flushPromises()
+
+    expect(ReportRepository.reportUser).toHaveBeenCalledWith({
+      params: ReportDto.toUserParams(profile.username),
+      body: ReportDto.toCreate(datas),
+      form: 'report',
+    })
+    expect(useReport().reportedContent.value).toBeUndefined()
+  })
+
+  it('offers no form on an account the api already knows the reader reported', async () => {
+    const wrapper = mount(ReportDialog)
+
+    useReport().report.openUserReport(userSeeder.getProfile({ isReported: true }))
+    await flushPromises()
+
+    expect(wrapper.find('.report-dialog__already').text()).toBe(t('report_dialog.already_user'))
+    expect(wrapper.find('form').exists()).toBe(false)
+  })
 })

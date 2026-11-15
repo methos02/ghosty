@@ -78,4 +78,17 @@ describe('ContentModeratedNotification.vue', () => {
       params: { slug: notification.novel.slug },
     })
   })
+
+  it('tells the user their account was sanctioned', () => {
+    const notification = notificationSeeder.getAccountModerationNotification(
+      NOTIFICATION_TYPES.CONTENT_MODERATED,
+      { sanction: notificationSeeder.getSanctionApi() },
+    )
+
+    wrapper = mount(ContentModeratedNotification, { props: { notification } })
+
+    expect(wrapper.find('.notification-base__message').text()).toBe(
+      t('content_moderated_notification.user.sanctioned'),
+    )
+  })
 })

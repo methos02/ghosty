@@ -29,6 +29,7 @@ Les décisions structurantes sont dans les ADR :
 | [ADR-13](memory-bank/decisions/ADR-13-commentaires.md) | Commentaires sur roman et chapitre (branche = chapitre-tête) ; réponses à un niveau ; pas d'édition ; suppression = texte effacé, trace seulement s'il y a des réponses |
 | [ADR-15](memory-bank/decisions/ADR-15-traitement-de-la-moderation.md) | Décision par contenu signalé ; une feuille s'archive ou se masque, un chapitre poursuivi perd seulement le **passage retiré** ; table `sanctions` (remplace `banned_until`, ADR-01) |
 | [ADR-16](memory-bank/decisions/ADR-16-illustrations-du-roman.md) | Illustration officielle **automatique** (la plus soutenue) ; une proposition par contributeur et par roman, remplaçable en perdant ses soutiens ; un soutien par lecteur et par roman |
+| [ADR-17](memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md) | Profil public `/users/{username}` ; statistiques **calculées à la lecture**, jamais dénormalisées ; rôle `author` posé à la première publication ; un utilisateur se signale, la décision (`dismissed` / `sanctioned`) ne touche aucun contenu |
 
 Plan de livraison par lots : [ghosty-mvp-plan.md](../ghosty-mvp-plan.md).
 
@@ -169,7 +170,7 @@ username VARCHAR UNIQUE
 email VARCHAR UNIQUE
 password VARCHAR                    -- Bcrypt (pas SHA1!)
 email_verified_at TIMESTAMP
-roles JSON                          -- cumulables : reader, author, moderator, admin
+roles JSON                          -- cumulables : reader, author, illustrator, moderator, admin
 photo VARCHAR
 notifications_enabled BOOLEAN
 firstname VARCHAR
@@ -277,12 +278,12 @@ INDEX (commentable_type, commentable_id, parent_id, status)
 
 #### reports / sanctions / chapter_versions ✅ implémenté (lots 3 et 6)
 ```sql
-reports    : reporter_id, reportable_type (chapter|comment|novel_cover), reportable_id,
+reports    : reporter_id, reportable_type (chapter|comment|novel_cover|user), reportable_id,
              reason ENUM('poor_quality','off_topic','plagiarism','unauthorized_illustration',
                          'spam','hate_speech','insult','harassment','personal_attack',
                          'like_manipulation','illegal'),
              description, status (1 pending, 2 processed), moderator_id,
-             resolution ENUM('dismissed','archived','hidden','passage_removed'), processed_at, timestamps
+             resolution ENUM('dismissed','archived','hidden','passage_removed','sanctioned'), processed_at, timestamps
              UNIQUE (reporter_id, reportable_type, reportable_id)
 
 sanctions  : user_id, moderator_id, report_id NULLABLE, type ENUM('warning','write_ban',
@@ -325,6 +326,25 @@ MySQL n'ayant pas d'index partiel, c'est la colonne générée qui porte le « W
   une publication ne change jamais la branche principale). Groupés par auteur **et par roman**
   (`group_key` sur le `Novel`), avec la liste des chapitres concernés.
 - Marquer lu ne touche pas `updated_at` : la liste est triée par dernière activité du groupe.
+
+#### Profils ✅ implémenté (lot 8)
+
+Aucune table : un profil se lit dans les tables de contenu
+([ADR-17](memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md)).
+
+- `GET /users/{username}` (`UserRepository::findProfile`) : identité, rôles et statistiques
+  calculées en sous-requêtes sur `author_id` (lectures, soutiens chapitres + illustrations, suites
+  publiées par d'autres, nombre de romans / chapitres / illustrations / officielles).
+  ⛔ Ne pas les dénormaliser sur `users` : sept compteurs à tenir sur tous les événements.
+- Listes paginées `novels`, `chapters` (publiés **et** archivés, scope `visibleOnProfile`, marque
+  `is_in_main_branch` lue dans le `path` de `novels.main_branch_last_chapter_id`), `branches`
+  (chapitres publiés avec `continuations_count > 0`), `covers` (publiées, `is_official`).
+  Masqué et brouillon n'y figurent jamais.
+- `Reportable` désigne un **responsable** (`reportedUser()`), plus un auteur : `User` est
+  signalable (`POST /users/{username}/report`, motifs `ReportReason::allowedForUser()`), décidé par
+  `ModerationService::moderateUser` (`dismissed` sans sanction, `sanctioned` avec).
+- Le rôle `author` est ajouté par `ChapterService` à la première publication, comme `illustrator`
+  à la première proposition : affichage seulement, jamais une autorisation.
 
 #### follows / reading_progress / chapter_reads ✅ implémenté (lot 4)
 

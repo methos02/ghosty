@@ -88,4 +88,27 @@ describe('ReportProcessedNotification.vue', () => {
       params: { slug: notification.novel.slug },
     })
   })
+
+  it.each([
+    [RESOLUTIONS.DISMISSED, 'report_processed_notification.user.dismissed'],
+    [RESOLUTIONS.SANCTIONED, 'report_processed_notification.user.sanctioned'],
+  ])('tells the reporter the reported account was %s, linking to it', (resolution, keypath) => {
+    const notificationApi = notificationSeeder.getAccountModerationNotificationApi(
+      NOTIFICATION_TYPES.REPORT_PROCESSED,
+      { resolution },
+    )
+    const notification = notificationSeeder.getAccountModerationNotification(
+      NOTIFICATION_TYPES.REPORT_PROCESSED,
+      { resolution },
+    )
+
+    wrapper = mount(ReportProcessedNotification, { props: { notification } })
+
+    const message = wrapper.find('.notification-base__message')
+    expect(message.text()).toBe(t(keypath, { username: notificationApi.user.username }))
+    expect(message.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
+      name: 'profile',
+      params: { username: notificationApi.user.username },
+    })
+  })
 })

@@ -1,0 +1,20 @@
+{
+  "profile_page": {
+    "head_title": "Profil de {username}",
+    "not_found": "Ce profil n'existe pas.",
+    "member_since": "Membre depuis le {date}",
+    "report": "Signaler ce compte",
+    "roles": {
+      "author": "Auteur",
+      "illustrator": "Illustrateur",
+      "moderator": "Modérateur",
+      "admin": "Administrateur"
+    },
+    "tabs": {
+      "novels": "Romans",
+      "chapters": "Chapitres",
+      "branches": "Branches",
+      "covers": "Illustrations"
+    }
+  }
+}

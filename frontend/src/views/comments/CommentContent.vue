@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { flash, t } from '@/services/shortcuts/services-shortcut.js'
 import ConfirmButtonComponent from '@/components/ConfirmButtonComponent.vue'
+import UserLink from '@/views/parts/UserLink.vue'
 import { CommentController } from '@/apis/comments/controllers/comment-controller.js'
 import { useCommentStore } from '@/core-vue/stores/comments/comment-store.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
@@ -61,9 +62,10 @@ const deleteComment = async comment => {
 
     <template v-else>
       <header class="comment-content__header | d-flex a-center g-10">
-        <span class="comment-content__author | fw-700">
-          {{ comment.author.username }}
-        </span>
+        <UserLink
+          :username="comment.author.username"
+          class="comment-content__author"
+        />
         <span class="comment-content__date | fs-300 color-neutral-600">
           {{ comment.createdAtFormat }}
         </span>

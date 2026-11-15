@@ -1,0 +1,6 @@
+{
+  "moderation_user_page": {
+    "title": "Compte de {username}",
+    "member_since": "Membre depuis le {date}"
+  }
+}

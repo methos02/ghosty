@@ -66,6 +66,11 @@ class NovelCover extends Model implements Commentable, Likeable, Reportable
         return $this->belongsTo(User::class, 'author_id');
     }
 
+    public function reportedUser(): User
+    {
+        return $this->author;
+    }
+
     /**
      * @param  Builder<NovelCover>  $query
      */

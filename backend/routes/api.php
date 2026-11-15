@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\NovelController;
 use App\Http\Controllers\Api\V1\ReadingProgressController;
 use App\Http\Controllers\Api\V1\ReportController;
+use App\Http\Controllers\Api\V1\UserController;
 use App\Models\Comment;
 use App\Models\NovelCover;
 use App\Models\Report;
@@ -41,6 +42,11 @@ Route::prefix('v1')->group(function () {
     Route::get('/novels/{novel}/comments', [CommentController::class, 'indexForNovel'])->name('novels.comments.index');
     Route::get('/novels/{novel}/covers', [CoverController::class, 'index'])->name('novels.covers.index');
     Route::get('/covers/{cover}/comments', [CommentController::class, 'indexForCover'])->can('view', 'cover')->name('covers.comments.index');
+    Route::get('/users/{user:username}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{user:username}/novels', [UserController::class, 'novels'])->name('users.novels.index');
+    Route::get('/users/{user:username}/chapters', [UserController::class, 'chapters'])->name('users.chapters.index');
+    Route::get('/users/{user:username}/branches', [UserController::class, 'branches'])->name('users.branches.index');
+    Route::get('/users/{user:username}/covers', [UserController::class, 'covers'])->name('users.covers.index');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
@@ -53,7 +59,6 @@ Route::prefix('v1')->group(function () {
         Route::post('/chapters/{chapter}/publish', [ChapterController::class, 'publish'])->can('publish', 'chapter')->name('chapters.publish');
         Route::delete('/chapters/{chapter}', [ChapterController::class, 'destroy'])->can('delete', 'chapter')->name('chapters.destroy');
         Route::get('/me/drafts', [ChapterController::class, 'drafts'])->name('chapters.drafts');
-        Route::get('/me/chapters', [ChapterController::class, 'published'])->name('chapters.published');
 
         Route::post('/chapters/{chapter}/like', [LikeController::class, 'storeForChapter'])->middleware('throttle:like')->name('chapters.like');
         Route::delete('/chapters/{chapter}/like', [LikeController::class, 'destroyForChapter'])->middleware('throttle:like')->name('chapters.unlike');
@@ -83,6 +88,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/covers/{cover}/report', [ReportController::class, 'storeForCover'])->can('view', 'cover')->name('covers.report');
         Route::post('/covers/{cover}/comments', [CommentController::class, 'storeForCover'])->middleware('throttle:comment')->can('create', [Comment::class, 'cover'])->name('covers.comments.store');
 
+        Route::post('/users/{user:username}/report', [ReportController::class, 'storeForUser'])->name('users.report');
+
         Route::prefix('moderation')->middleware('can:moderate,'.Report::class)->group(function () {
             Route::get('/reports', [ModerationController::class, 'index'])->name('moderation.reports.index');
             Route::get('/chapters/{chapter}', [ModerationController::class, 'showChapter'])->name('moderation.chapters.show');
@@ -94,6 +101,8 @@ Route::prefix('v1')->group(function () {
             Route::get('/covers/{cover}', [ModerationController::class, 'showCover'])->name('moderation.covers.show');
             Route::post('/covers/{cover}/decision', [ModerationController::class, 'moderateCover'])->can('moderate', 'cover')->name('moderation.covers.moderate');
             Route::post('/covers/{cover}/restore', [ModerationController::class, 'restoreCover'])->can('restore', 'cover')->name('moderation.covers.restore');
+            Route::get('/users/{user}', [ModerationController::class, 'showUser'])->name('moderation.users.show');
+            Route::post('/users/{user}/decision', [ModerationController::class, 'moderateUser'])->can('moderate', 'user')->name('moderation.users.moderate');
         });
     });
 });

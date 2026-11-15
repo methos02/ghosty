@@ -32,6 +32,23 @@ describe('UserSummary.vue', () => {
     expect(wrapper.find('.user-summary__username').text()).toBe(user.username)
   })
 
+  it('leads the connected author to their profile', async () => {
+    vi.spyOn(ChapterRepository, 'drafts').mockResolvedValue(
+      controllerSuccess({
+        data: chapterSeeder.getListApi({ chapters: chapterSeeder.getMainBranchApi(0) }),
+      }),
+    )
+    const user = userSeeder.getUser()
+    useAuthStore().setUser(user)
+    wrapper = mount(UserSummary)
+    await flushPromises()
+
+    expect(wrapper.findComponent('.user-summary__username').props('to')).toEqual({
+      name: 'profile',
+      params: { username: user.username },
+    })
+  })
+
   it('falls back to an icon when the author has no avatar', async () => {
     vi.spyOn(ChapterRepository, 'drafts').mockResolvedValue(
       controllerSuccess({

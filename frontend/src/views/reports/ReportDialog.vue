@@ -24,9 +24,15 @@ const isComment = computed(() => reportedContent.value?.type === REPORTED_CONTEN
 
 const isCover = computed(() => reportedContent.value?.type === REPORTED_CONTENT_TYPES.COVER)
 
+const isUser = computed(() => reportedContent.value?.type === REPORTED_CONTENT_TYPES.USER)
+
 const reasonsKey = computed(() => {
   if (isComment.value) {
     return 'report.commentReasons'
+  }
+
+  if (isUser.value) {
+    return 'report.userReasons'
   }
 
   return isCover.value ? 'report.coverReasons' : 'report.chapterReasons'
@@ -61,6 +67,10 @@ const sendReport = reported => {
 
   if (reported.type === REPORTED_CONTENT_TYPES.COVER) {
     return ReportController.reportCover(reported.content.id, datas.value)
+  }
+
+  if (reported.type === REPORTED_CONTENT_TYPES.USER) {
+    return ReportController.reportUser(reported.content.username, datas.value)
   }
 
   return ReportController.reportChapter(reported.content.id, datas.value)
@@ -120,6 +130,9 @@ const send = async () => {
             })
           }}
         </template>
+        <template v-else-if="isUser">
+          {{ t('report_dialog.title_user', { username: reportedContent.content.username }) }}
+        </template>
         <template v-else>
           {{ t('report_dialog.title_chapter', { chapter: reportedContent.content.title }) }}
         </template>
@@ -141,6 +154,12 @@ const send = async () => {
         class="report-dialog__already | bg-info-300 p-10 radius-5"
       >
         {{ t('report_dialog.already_cover') }}
+      </p>
+      <p
+        v-else-if="isUser"
+        class="report-dialog__already | bg-info-300 p-10 radius-5"
+      >
+        {{ t('report_dialog.already_user') }}
       </p>
       <p
         v-else
@@ -174,6 +193,12 @@ const send = async () => {
         class="report-dialog__intro | fs-300 color-neutral-700"
       >
         {{ t('report_dialog.intro_cover') }}
+      </p>
+      <p
+        v-else-if="isUser"
+        class="report-dialog__intro | fs-300 color-neutral-700"
+      >
+        {{ t('report_dialog.intro_user') }}
       </p>
       <p
         v-else

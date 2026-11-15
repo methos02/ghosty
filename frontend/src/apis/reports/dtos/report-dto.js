@@ -37,6 +37,10 @@ const toCreate = formData => {
   }
 }
 
+const toUserParams = username => {
+  return { username }
+}
+
 export const ReportDto = {
   fromList,
   fromShow,
@@ -44,4 +48,5 @@ export const ReportDto = {
   toCommentParams,
   toCoverParams,
   toCreate,
+  toUserParams,
 }

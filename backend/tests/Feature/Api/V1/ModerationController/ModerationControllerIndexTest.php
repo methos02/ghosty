@@ -118,7 +118,7 @@ class ModerationControllerIndexTest extends TestCase
             ->assertJsonPath('reported_contents.0.id', $chapter->id)
             ->assertJsonPath('reported_contents.0.report_count', 3)
             ->assertJsonPath('reported_contents.0.chapter.title', 'La nuit du virage')
-            ->assertJsonPath('reported_contents.0.comment', null);
+            ->assertJsonMissingPath('reported_contents.0.comment');
         $this->assertEqualsCanonicalizing(
             [ReportReason::Plagiarism->value, ReportReason::Spam->value],
             $response->json('reported_contents.0.reasons')
@@ -140,7 +140,7 @@ class ModerationControllerIndexTest extends TestCase
             ->assertOk()
             ->assertJsonPath('reported_contents.0.type', 'comment')
             ->assertJsonPath('reported_contents.0.id', $comment->id)
-            ->assertJsonPath('reported_contents.0.chapter', null)
+            ->assertJsonMissingPath('reported_contents.0.chapter')
             ->assertJsonPath('reported_contents.0.comment.content', 'Propos injurieux')
             ->assertJsonPath('reported_contents.0.comment.chapter.title', 'Le virage');
     }
@@ -157,10 +157,26 @@ class ModerationControllerIndexTest extends TestCase
             ->assertOk()
             ->assertJsonPath('reported_contents.0.type', 'novel_cover')
             ->assertJsonPath('reported_contents.0.id', $cover->id)
-            ->assertJsonPath('reported_contents.0.chapter', null)
-            ->assertJsonPath('reported_contents.0.comment', null)
+            ->assertJsonMissingPath('reported_contents.0.chapter')
+            ->assertJsonMissingPath('reported_contents.0.comment')
             ->assertJsonPath('reported_contents.0.cover.id', $cover->id)
             ->assertJsonPath('reported_contents.0.cover.novel.title', 'Nuit virage');
+    }
+
+    #[Test]
+    public function serves_a_reported_user_with_their_summary(): void
+    {
+        $reportedUser = User::factory()->create(['username' => 'importun']);
+        Report::factory()->on($reportedUser)->create();
+
+        $this->actingAs(User::factory()->moderator()->create())
+            ->getJson($this->route)
+            ->assertOk()
+            ->assertJsonPath('reported_contents.0.type', 'user')
+            ->assertJsonPath('reported_contents.0.id', $reportedUser->id)
+            ->assertJsonMissingPath('reported_contents.0.cover')
+            ->assertJsonPath('reported_contents.0.user.username', 'importun')
+            ->assertJsonMissingPath('reported_contents.0.user.statistics');
     }
 
     #[Test]

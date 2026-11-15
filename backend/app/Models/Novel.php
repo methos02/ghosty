@@ -8,6 +8,7 @@ use App\Models\Concerns\HasSlug;
 use App\Models\Concerns\IsNotificationSubject;
 use App\Models\Contracts\Commentable;
 use Database\Factories\NovelFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -108,10 +109,34 @@ class Novel extends Model implements Commentable
     }
 
     /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
+     * @return BelongsTo<Chapter, $this>
+     */
+    public function mainBranchLastChapter(): BelongsTo
+    {
+        return $this->belongsTo(Chapter::class, 'main_branch_last_chapter_id');
+    }
+
+    /**
      * @return HasOne<Chapter, $this>
      */
     public function rootChapter(): HasOne
     {
         return $this->hasOne(Chapter::class)->whereNull('parent_id');
+    }
+
+    /**
+     * @param  Builder<Novel>  $query
+     */
+    public function scopePublished(Builder $query): void
+    {
+        $query->whereNotIn(
+            'id',
+            Chapter::query()
+                ->drafts()
+                ->roots()
+                ->select('novel_id')
+        );
     }
 }

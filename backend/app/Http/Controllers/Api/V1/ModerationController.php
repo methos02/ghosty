@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ModerateChapterRequest;
 use App\Http\Requests\ModerateCommentRequest;
 use App\Http\Requests\ModerateCoverRequest;
+use App\Http\Requests\ModerateUserRequest;
 use App\Http\Requests\ReportFilterRequest;
 use App\Http\Resources\ChapterResource;
 use App\Http\Resources\CoverResource;
@@ -15,6 +16,7 @@ use App\Http\Resources\ModeratedCommentResource;
 use App\Http\Resources\ReportedContentResource;
 use App\Http\Resources\ReportResource;
 use App\Http\Resources\SanctionResource;
+use App\Http\Resources\UserProfileResource;
 use App\Models\Chapter;
 use App\Models\Comment;
 use App\Models\Contracts\Reportable;
@@ -25,6 +27,7 @@ use App\Repositories\CommentRepository;
 use App\Repositories\NovelCoverRepository;
 use App\Repositories\ReportRepository;
 use App\Repositories\SanctionRepository;
+use App\Repositories\UserRepository;
 use App\Services\ModerationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Config;
@@ -40,6 +43,7 @@ class ModerationController extends Controller
         private readonly CommentRepository $commentsR,
         private readonly NovelCoverRepository $novelCoversR,
         private readonly SanctionRepository $sanctionsR,
+        private readonly UserRepository $usersR,
         private readonly ModerationService $moderationService
     ) {}
 
@@ -107,6 +111,33 @@ class ModerationController extends Controller
         return response()->json(['message' => __('moderation.decided')]);
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     */
+    public function showUser(User $user): JsonResponse
+    {
+        $profile = $this->usersR->findProfile($user->id);
+
+        return response()->json($this->moderationCase($profile, [
+            'user' => new UserProfileResource($profile),
+        ]));
+    }
+
+    public function moderateUser(ModerateUserRequest $request, User $user): JsonResponse
+    {
+        /** @var User $moderator */
+        $moderator = $request->user();
+        $pendingReports = $this->reportsR->listPending($user);
+
+        if ($pendingReports->isEmpty()) {
+            return response()->json(['message' => __('moderation.already_processed')], 409);
+        }
+
+        $this->moderationService->moderateUser($moderator, $user, $pendingReports, ModerationDecisionDTO::fromRequest($request));
+
+        return response()->json(['message' => __('moderation.decided')]);
+    }
+
     public function restoreCover(NovelCover $cover): JsonResponse
     {
         $this->moderationService->restoreCover($cover);
@@ -165,7 +196,7 @@ class ModerationController extends Controller
     private function moderationCase(Reportable $reportable, array $content): array
     {
         $reports = $this->reportsR->listByReportable($reportable);
-        $authorSanctions = $this->sanctionsR->listByUser($reportable->author);
+        $authorSanctions = $this->sanctionsR->listByUser($reportable->reportedUser());
 
         return [
             ...$content,

@@ -26,6 +26,13 @@ const moderateCover = async options => {
   })
 }
 
+const moderateUser = async options => {
+  return await req('moderation.moderateUser', {
+    ...options,
+    errors: MODERATION_DECISION_ERRORS,
+  })
+}
+
 const restoreChapter = async options => {
   return await req('moderation.restoreChapter', options)
 }
@@ -50,15 +57,21 @@ const showCover = async options => {
   return await req('moderation.showCover', options)
 }
 
+const showUser = async options => {
+  return await req('moderation.showUser', options)
+}
+
 export const ModerationRepository = {
   listReportedContents,
   moderateChapter,
   moderateComment,
   moderateCover,
+  moderateUser,
   restoreChapter,
   restoreComment,
   restoreCover,
   showChapter,
   showComment,
   showCover,
+  showUser,
 }

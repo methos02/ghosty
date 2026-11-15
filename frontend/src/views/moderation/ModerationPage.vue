@@ -17,6 +17,7 @@ const REASONS = [
     ...ConfigLoader.get('report.chapterReasons'),
     ...ConfigLoader.get('report.commentReasons'),
     ...ConfigLoader.get('report.coverReasons'),
+    ...ConfigLoader.get('report.userReasons'),
   ]),
 ]
 
@@ -62,6 +63,13 @@ const caseRoute = reportedContent => {
   if (reportedContent.type === REPORTED_CONTENT_TYPES.COVER) {
     return {
       name: 'moderation-cover',
+      params: { id: reportedContent.id },
+    }
+  }
+
+  if (reportedContent.type === REPORTED_CONTENT_TYPES.USER) {
+    return {
+      name: 'moderation-user',
       params: { id: reportedContent.id },
     }
   }
@@ -160,6 +168,9 @@ onMounted(() => load())
                 />
                 {{ t('moderation_page.cover_title', { novel: reportedContent.cover.novel.title }) }}
               </span>
+              <template v-else-if="reportedContent.user">
+                {{ reportedContent.user.username }}
+              </template>
               <span
                 v-else
                 class="moderation-page__excerpt"
@@ -188,6 +199,14 @@ onMounted(() => load())
                   novel: reportedContent.cover.novel.title,
                   author: reportedContent.cover.author.username,
                 })
+              }}
+            </span>
+            <span
+              v-else-if="reportedContent.user"
+              class="moderation-page__context | fs-300 color-neutral-700"
+            >
+              {{
+                t('moderation_page.user_context', { date: reportedContent.user.createdAtFormat })
               }}
             </span>
             <span

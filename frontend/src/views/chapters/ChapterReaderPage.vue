@@ -4,6 +4,7 @@ import Header from '@/views/layout/HeaderComponent.vue'
 import ChapterCommentsDialog from '@/views/chapters/parts/ChapterCommentsDialog.vue'
 import ChapterFooter from '@/views/chapters/parts/ChapterFooter.vue'
 import ReadingToolbar from '@/views/chapters/parts/ReadingToolbar.vue'
+import UserLink from '@/views/parts/UserLink.vue'
 import { route, t } from '@/services/shortcuts/services-shortcut.js'
 import { useReadingStore } from '@/core-vue/stores/chapters/reading-store.js'
 import { useReadingSettingsStore } from '@/core-vue/stores/chapters/reading-settings-store.js'
@@ -139,9 +140,11 @@ onUnmounted(readingStore.clear)
             <h1 class="fs-700 fw-700">
               {{ chapter.title }}
             </h1>
-            <span class="chapter-reader-page__author | fs-400 color-neutral-700">
-              {{ t('common.by_author', { author: chapter.author.username }) }}
-            </span>
+            <UserLink
+              :username="chapter.author.username"
+              byline
+              class="chapter-reader-page__author | fs-400 color-neutral-700"
+            />
             <span
               v-if="chapter.isDraft"
               class="chapter-reader-page__draft | badge badge-warning"

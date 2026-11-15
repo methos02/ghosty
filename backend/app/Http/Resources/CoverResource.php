@@ -36,6 +36,7 @@ class CoverResource extends JsonResource
                 'slug' => $this->novel->slug,
                 'title' => $this->novel->title,
             ]),
+            'is_official' => $this->whenLoaded('novel', fn () => $this->novel->official_cover_id === $this->id),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

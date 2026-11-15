@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Repositories\ChapterRepository;
 use App\Repositories\ChapterVersionRepository;
 use App\Repositories\NovelRepository;
+use App\Repositories\UserRepository;
 use App\Services\Notifications\ChapterContinuedNotificationService;
 use App\Services\Notifications\FollowedBranchExtendedNotificationService;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,7 @@ class ChapterService
         private readonly ChapterRepository $chaptersR,
         private readonly NovelRepository $novelsR,
         private readonly ChapterVersionRepository $chapterVersionsR,
+        private readonly UserRepository $usersR,
         private readonly ChapterContinuedNotificationService $chapterContinuedNotificationService,
         private readonly FollowedBranchExtendedNotificationService $followedBranchExtendedNotificationService
     ) {}
@@ -180,6 +182,7 @@ class ChapterService
     private function registerPublication(Chapter $chapter, ?Chapter $parent): void
     {
         $this->novelsR->incrementChapterCount($chapter->novel_id);
+        $this->usersR->addRole($chapter->author, User::ROLE_AUTHOR);
 
         if ($parent === null) {
             $this->novelsR->setLastChapterOfMainBranch($chapter->novel_id, $chapter->id);

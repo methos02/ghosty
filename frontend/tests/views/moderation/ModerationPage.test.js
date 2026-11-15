@@ -162,4 +162,23 @@ describe('ModerationPage.vue', () => {
 
     expect(wrapper.find('.moderation-page__empty').text()).toBe(t('moderation_page.empty'))
   })
+
+  it('lists a reported account by its username, leading to its decision page', async () => {
+    const reportedUserApi = moderationSeeder.getReportedUserApi()
+    vi.spyOn(ModerationRepository, 'listReportedContents').mockResolvedValue(
+      controllerSuccess({
+        data: moderationSeeder.getListApi({ reported_contents: [reportedUserApi] }),
+      }),
+    )
+    wrapper = mount(ModerationPage)
+    await flushPromises()
+
+    const link = wrapper.findComponent('.moderation-page__link')
+    expect(link.text()).toBe(reportedUserApi.user.username)
+    expect(link.props('to')).toEqual({
+      name: 'moderation-user',
+      params: { id: reportedUserApi.id },
+    })
+    expect(wrapper.find('.moderation-page__type').text()).toBe(t('moderation_page.types.user'))
+  })
 })

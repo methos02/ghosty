@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Helpers\AggregateHelper;
 use App\Models\Chapter;
 use App\Models\Comment;
 use App\Models\NovelCover;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
@@ -26,7 +28,7 @@ class ReportedContentResource extends JsonResource
         return [
             'type' => $this->reportable_type,
             'id' => $this->reportable_id,
-            'report_count' => $this->reportCount(),
+            'report_count' => AggregateHelper::toInteger($this->getAttribute('report_count')),
             'reasons' => $this->reasons(),
             'first_reported_at' => $this->firstReportedAt(),
             ...$this->reportedContent(),
@@ -40,38 +42,13 @@ class ReportedContentResource extends JsonResource
     {
         $reportable = $this->reportable;
 
-        if ($reportable instanceof Chapter) {
-            return [
-                'chapter' => new ChapterListResource($reportable),
-                'comment' => null,
-                'cover' => null,
-            ];
-        }
-
-        if ($reportable instanceof Comment) {
-            return [
-                'chapter' => null,
-                'comment' => new ModeratedCommentResource($reportable),
-                'cover' => null,
-            ];
-        }
-
-        if ($reportable instanceof NovelCover) {
-            return [
-                'chapter' => null,
-                'comment' => null,
-                'cover' => new CoverResource($reportable),
-            ];
-        }
-
-        throw new LogicException(sprintf('Report on %s %d targets an unsupported content.', $this->reportable_type, $this->reportable_id));
-    }
-
-    private function reportCount(): int
-    {
-        $reportCount = $this->getAttribute('report_count');
-
-        return is_numeric($reportCount) ? (int) $reportCount : 0;
+        return match (true) {
+            $reportable instanceof Chapter => ['chapter' => new ChapterListResource($reportable)],
+            $reportable instanceof Comment => ['comment' => new ModeratedCommentResource($reportable)],
+            $reportable instanceof NovelCover => ['cover' => new CoverResource($reportable)],
+            $reportable instanceof User => ['user' => new UserSummaryResource($reportable)],
+            default => throw new LogicException(sprintf('Report on %s %d targets an unsupported content.', $this->reportable_type, $this->reportable_id)),
+        };
     }
 
     /**

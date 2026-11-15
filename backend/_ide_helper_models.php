@@ -55,6 +55,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter published()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter roots()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter visibleOnProfile()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereBranchLikeCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Chapter whereCommentCount($value)
@@ -313,11 +314,13 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\NovelCover> $covers
  * @property-read int|null $covers_count
  * @property-read \App\Models\Genre $genre
+ * @property-read \App\Models\Chapter|null $mainBranchLastChapter
  * @property-read \App\Models\NovelCover|null $officialCover
  * @property-read \App\Models\Chapter|null $rootChapter
  * @method static \Database\Factories\NovelFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel published()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereAuthorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Novel whereBranchRecomputedAt($value)
@@ -482,6 +485,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
  * @property int $id
  * @property string $username
  * @property string $email
@@ -501,6 +505,8 @@ namespace App\Models{
  * @property-read int|null $active_bans_count
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Report> $reports
+ * @property-read int|null $reports_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Sanction> $sanctions
  * @property-read int|null $sanctions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
@@ -524,6 +530,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRoles($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUsername($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User withUserReport(?int $userId)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

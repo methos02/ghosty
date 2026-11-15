@@ -1,0 +1,12 @@
+{
+  "profile_statistics": {
+    "reads": "Lectures reçues",
+    "likes": "Soutiens reçus",
+    "received_continuations": "Suites écrites par d'autres",
+    "contributions": "Contributions",
+    "novels": "Aucun roman | 1 roman | {count} romans",
+    "chapters": "Aucun chapitre | 1 chapitre | {count} chapitres",
+    "covers": "Aucune illustration | 1 illustration | {count} illustrations",
+    "official_covers": "Aucune officielle | dont 1 officielle | dont {count} officielles"
+  }
+}

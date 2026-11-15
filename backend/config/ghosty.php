@@ -63,4 +63,9 @@ return [
         'per_minute' => 5,
     ],
 
+    /* @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md */
+    'profiles' => [
+        'per_page' => 20,
+    ],
+
 ];

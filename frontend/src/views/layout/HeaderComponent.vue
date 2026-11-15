@@ -48,7 +48,12 @@ const isMenuOpen = ref(false)
         class="header-menu | d-flex a-center g-15 color-neutral-100"
       >
         <NotificationBell />
-        <span class="header-username | fs-500">{{ authStore.user.value?.username }}</span>
+        <router-link
+          :to="{ name: 'profile', params: { username: authStore.user.value.username } }"
+          class="header-username | fs-500 color-neutral-100 color-primary-hover"
+        >
+          {{ authStore.user.value.username }}
+        </router-link>
         <HeaderSideMenu v-model:open="isMenuOpen" />
       </div>
 
@@ -117,6 +122,7 @@ const isMenuOpen = ref(false)
 
   &-username {
     font-weight: 500;
+    transition: color 300ms;
   }
 }
 </style>

@@ -2,8 +2,12 @@
 import { computed, watch } from 'vue'
 import { onKeyStroke } from '@vueuse/core'
 import { auth, route, t } from '@/services/shortcuts/services-shortcut.js'
+import { useAuthStore } from '@/services/auth/src/auth-store.js'
 
 const currentRoute = route.current()
+const authStore = useAuthStore()
+
+const username = computed(() => authStore.user.value?.username)
 
 const isOpen = defineModel('open', { type: Boolean, default: false })
 
@@ -59,6 +63,17 @@ const handleLogout = async () => {
       :aria-hidden="!isOpen"
     >
       <ul class="header-side__items | d-flex f-column">
+        <li v-if="username">
+          <router-link
+            :to="{ name: 'profile', params: { username } }"
+            @click="close"
+            class="header-profile | header-side__link | d-flex a-center g-25"
+          >
+            <span class="header-side__label | flex-1">{{ t('header.profile') }}</span>
+            <i class="header-side__icon | fa-regular fa-user"></i>
+          </router-link>
+        </li>
+
         <li>
           <router-link
             :to="{ name: 'novel-create' }"
@@ -78,17 +93,6 @@ const handleLogout = async () => {
           >
             <span class="header-side__label | flex-1">{{ t('header.drafts') }}</span>
             <i class="header-side__icon | fa-regular fa-file-lines"></i>
-          </router-link>
-        </li>
-
-        <li>
-          <router-link
-            :to="{ name: 'written-chapters' }"
-            @click="close"
-            class="header-written-chapters | header-side__link | d-flex a-center g-25"
-          >
-            <span class="header-side__label | flex-1">{{ t('header.written_chapters') }}</span>
-            <i class="header-side__icon | fa-solid fa-feather"></i>
           </router-link>
         </li>
 

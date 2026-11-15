@@ -73,14 +73,6 @@ const publish = async id => {
   }))
 }
 
-const published = async () => {
-  const response = await ChapterRepository.published()
-
-  return controllerResponseHelper.buildResponse(response, data => ({
-    novels: ChapterDto.fromPublished(data.novels),
-  }))
-}
-
 const reading = async (novelSlug, chapterId, options = {}) => {
   const response = await ChapterRepository.reading({
     params: ChapterDto.toReadingParams(novelSlug, chapterId),
@@ -119,7 +111,6 @@ export const ChapterController = {
   drafts,
   getById,
   publish,
-  published,
   reading,
   tree,
   update,

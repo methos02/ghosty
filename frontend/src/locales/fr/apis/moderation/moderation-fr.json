@@ -6,7 +6,8 @@
       "dismissed": "Rejeter les signalements",
       "archived": "Archiver",
       "hidden": "Masquer",
-      "passage_removed": "Retirer un passage"
+      "passage_removed": "Retirer un passage",
+      "sanctioned": "Sanctionner le compte"
     },
     "sanction_types": {
       "warning": "Avertissement",

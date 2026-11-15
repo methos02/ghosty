@@ -76,11 +76,6 @@ export const routesApi = {
     method: 'get',
     api: 'ghosty',
   },
-  'chapter.published': {
-    url: 'v1/me/chapters',
-    method: 'get',
-    api: 'ghosty',
-  },
   'chapter.like': {
     url: 'v1/chapters/{chapter}/like',
     method: 'post',
@@ -254,6 +249,47 @@ export const routesApi = {
   },
   'moderation.restoreCover': {
     url: 'v1/moderation/covers/{cover}/restore',
+    method: 'post',
+    api: 'ghosty',
+  },
+
+  'user.show': {
+    url: 'v1/users/{username}',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'user.novels': {
+    url: 'v1/users/{username}/novels',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'user.chapters': {
+    url: 'v1/users/{username}/chapters',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'user.branches': {
+    url: 'v1/users/{username}/branches',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'user.covers': {
+    url: 'v1/users/{username}/covers',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'user.report': {
+    url: 'v1/users/{username}/report',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'moderation.showUser': {
+    url: 'v1/moderation/users/{user}',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'moderation.moderateUser': {
+    url: 'v1/moderation/users/{user}/decision',
     method: 'post',
     api: 'ghosty',
   },

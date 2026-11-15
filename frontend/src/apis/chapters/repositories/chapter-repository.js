@@ -20,10 +20,6 @@ const drafts = async options => {
   return await req('chapter.drafts', options)
 }
 
-const published = async options => {
-  return await req('chapter.published', options)
-}
-
 const getById = async options => {
   return await req('chapter.show', options)
 }
@@ -52,7 +48,6 @@ export const ChapterRepository = {
   drafts,
   getById,
   publish,
-  published,
   reading,
   tree,
   update,

@@ -26,7 +26,7 @@ class ContentModeratedNotificationService
         }
 
         $this->notificationService->push(
-            $content->author,
+            $content->reportedUser(),
             $moderator->id,
             NotificationType::ContentModerated,
             $content,

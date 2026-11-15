@@ -53,6 +53,10 @@ export const useReport = () => {
     openReport(REPORTED_CONTENT_TYPES.COVER, cover)
   }
 
+  const openUserReport = user => {
+    openReport(REPORTED_CONTENT_TYPES.USER, user)
+  }
+
   return {
     reportedContent: readonly(reportedContent),
     report: {
@@ -63,6 +67,7 @@ export const useReport = () => {
       openChapterReport,
       openCommentReport,
       openCoverReport,
+      openUserReport,
     },
   }
 }

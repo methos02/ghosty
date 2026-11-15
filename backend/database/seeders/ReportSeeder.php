@@ -17,12 +17,12 @@ class ReportSeeder extends Seeder
 {
     public function run(ReportRepository $reportsR): void
     {
-        /** @var list<array{reporter: string, chapter?: string, comment?: string, cover?: array{novel: string, author: string}, reason: string, description: string}> $reports */
+        /** @var list<array{reporter: string, chapter?: string, comment?: string, cover?: array{novel: string, author: string}, user?: string, reason: string, description: string}> $reports */
         $reports = File::json(database_path('data/reports.json'));
 
         foreach ($reports as $report) {
             $reportsR->create(
-                $this->reporter($report['reporter'])->id,
+                $this->user($report['reporter'])->id,
                 $this->reportable($report),
                 $report['reason'],
                 $report['description']
@@ -31,10 +31,14 @@ class ReportSeeder extends Seeder
     }
 
     /**
-     * @param  array{chapter?: string, comment?: string, cover?: array{novel: string, author: string}}  $report
+     * @param  array{chapter?: string, comment?: string, cover?: array{novel: string, author: string}, user?: string}  $report
      */
-    private function reportable(array $report): Chapter|Comment|NovelCover
+    private function reportable(array $report): Chapter|Comment|NovelCover|User
     {
+        if (isset($report['user'])) {
+            return $this->user($report['user']);
+        }
+
         if (isset($report['cover'])) {
             return $this->cover($report['cover']);
         }
@@ -61,7 +65,7 @@ class ReportSeeder extends Seeder
             ->firstOrFail();
     }
 
-    private function reporter(string $username): User
+    private function user(string $username): User
     {
         return User::query()
             ->where('username', $username)

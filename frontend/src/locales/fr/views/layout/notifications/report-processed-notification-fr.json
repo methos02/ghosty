@@ -13,6 +13,10 @@
     "cover": {
       "dismissed": "Votre signalement d'une illustration de « {title} » a été examiné : aucune infraction retenue",
       "hidden": "Votre signalement d'une illustration de « {title} » a été traité : l'illustration a été masquée"
+    },
+    "user": {
+      "dismissed": "Votre signalement du compte {username} a été examiné : aucune infraction retenue",
+      "sanctioned": "Votre signalement du compte {username} a été traité : le compte a été sanctionné"
     }
   }
 }

@@ -6,6 +6,7 @@ use App\DTO\DraftFilterDTO;
 use App\Helpers\ChapterChainHelper;
 use App\Models\Chapter;
 use App\Models\Novel;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -172,6 +173,40 @@ class ChapterRepository
             ->when($filters->isRoot === false, fn (Builder $query) => $query->whereNotNull('parent_id'))
             ->latest('updated_at')
             ->get();
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
+     * @return LengthAwarePaginator<int, Chapter>
+     */
+    public function paginateByAuthor(int $authorId, int $perPage): LengthAwarePaginator
+    {
+        return Chapter::query()
+            ->with('novel.mainBranchLastChapter')
+            ->visibleOnProfile()
+            ->byAuthor($authorId)
+            ->latest('published_at')
+            ->orderByDesc('id')
+            ->paginate($perPage);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
+     * @return LengthAwarePaginator<int, Chapter>
+     */
+    public function paginateContinuedByAuthor(int $authorId, int $perPage): LengthAwarePaginator
+    {
+        return Chapter::query()
+            ->with('novel.mainBranchLastChapter')
+            ->published()
+            ->hasChildren()
+            ->byAuthor($authorId)
+            ->orderByDesc('continuations_count')
+            ->latest('published_at')
+            ->orderByDesc('id')
+            ->paginate($perPage);
     }
 
     public function incrementChildrenCount(Chapter $parent): void

@@ -9,6 +9,7 @@ import {
 import { CHAPTER_STATUSES } from '@/constants/chapter-constants.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
 import { paginationSeeder } from '&/utils/seeders/pagination-seeder.js'
+import { userSeeder } from '&/utils/seeders/user-seeder.js'
 
 const getReportApi = (overrides = {}) => ({
   id: 3,
@@ -103,8 +104,6 @@ const getReportedChapterApi = (overrides = {}) => ({
   reasons: ['hate_speech', 'insult'],
   first_reported_at: '2026-11-02T09:30:00+00:00',
   chapter: getModeratedChapterApi(),
-  comment: null,
-  cover: null,
   ...overrides,
 })
 
@@ -114,9 +113,7 @@ const getReportedCommentApi = (overrides = {}) => ({
   report_count: 1,
   reasons: ['insult'],
   first_reported_at: '2026-11-01T19:00:00+00:00',
-  chapter: null,
   comment: getModeratedCommentApi(),
-  cover: null,
   ...overrides,
 })
 
@@ -126,9 +123,33 @@ const getReportedCoverApi = (overrides = {}) => ({
   report_count: 3,
   reasons: ['unauthorized_illustration'],
   first_reported_at: '2026-11-05T11:00:00+00:00',
-  chapter: null,
-  comment: null,
   cover: getModeratedCoverApi(),
+  ...overrides,
+})
+
+const getReportedUserApi = (overrides = {}) => ({
+  type: REPORTED_CONTENT_TYPES.USER,
+  id: 64,
+  report_count: 2,
+  reasons: ['harassment'],
+  first_reported_at: '2026-11-06T11:00:00+00:00',
+  user: {
+    id: 64,
+    username: 'Importun',
+    avatar: null,
+    roles: ['reader'],
+    created_at: '2026-01-15T08:00:00+00:00',
+  },
+  ...overrides,
+})
+
+const getUserCaseApi = (overrides = {}) => ({
+  user: userSeeder.getProfileApi({
+    id: 64,
+    username: 'Importun',
+  }),
+  reports: [getReportApi({ reason: 'harassment' })],
+  author_sanctions: [getSanctionApi()],
   ...overrides,
 })
 
@@ -177,6 +198,8 @@ const getCommentCase = (overrides = {}) =>
 
 const getCoverCase = (overrides = {}) => ModerationDto.fromCoverCase(getCoverCaseApi(overrides))
 
+const getUserCase = (overrides = {}) => ModerationDto.fromUserCase(getUserCaseApi(overrides))
+
 const getDecisionForm = (overrides = {}) => ({
   resolution: RESOLUTIONS.DISMISSED,
   content: getModeratedChapterApi().content,
@@ -189,8 +212,7 @@ const getSanctionReason = () => 'Propos insultants répétés envers un autre le
 const getRemovedPassage = () => 'Un passage injurieux ici.'
 
 const getContentAfterRemoval = () =>
-  getModeratedChapterApi().content.replace(
-    getRemovedPassage(),
+  getModeratedChapterApi().content.replace(getRemovedPassage(), () =>
     ConfigLoader.get('moderation.removedPassageMarker'),
   )
 
@@ -214,7 +236,10 @@ export const moderationSeeder = {
   getReportedChapterApi,
   getReportedCommentApi,
   getReportedCoverApi,
+  getReportedUserApi,
   getSanctionApi,
   getSanctionReason,
+  getUserCase,
+  getUserCaseApi,
   getValidationErrorsApi,
 }

@@ -1,5 +1,6 @@
 <script setup>
 import Translate from '@/services/locale/views/TranslateComponent.vue'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 import NotificationBase from '@/views/layout/notifications/NotificationBase.vue'
 import NotificationCommentableLink from '@/views/layout/notifications/NotificationCommentableLink.vue'
 import NotificationCoverLink from '@/views/layout/notifications/NotificationCoverLink.vue'
@@ -81,6 +82,9 @@ defineProps({
           <NotificationCoverLink :notification="notification" />
         </template>
       </Translate>
+    </template>
+    <template v-if="notification.payload.contentType === REPORTED_CONTENT_TYPES.USER">
+      {{ t('content_moderated_notification.user.sanctioned') }}
     </template>
   </NotificationBase>
 </template>

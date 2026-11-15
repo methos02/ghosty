@@ -29,12 +29,6 @@ export const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: '/me/chapters',
-    name: 'written-chapters',
-    component: () => import('@/views/chapters/WrittenChaptersPage.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
     path: '/me/notifications',
     name: 'notifications',
     component: () => import('@/views/notifications/NotificationsPage.vue'),
@@ -112,6 +106,20 @@ export const routes = [
     path: '/moderation/covers/:id',
     name: 'moderation-cover',
     component: () => import('@/views/moderation/ModerationCoverPage.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: ['moderator', 'admin'],
+    },
+  },
+  {
+    path: '/users/:username',
+    name: 'profile',
+    component: () => import('@/views/users/ProfilePage.vue'),
+  },
+  {
+    path: '/moderation/users/:id',
+    name: 'moderation-user',
+    component: () => import('@/views/moderation/ModerationUserPage.vue'),
     meta: {
       requiresAuth: true,
       roles: ['moderator', 'admin'],

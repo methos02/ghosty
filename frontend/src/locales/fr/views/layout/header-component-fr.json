@@ -2,9 +2,9 @@
   "header": {
     "menu_open": "Ouvrir le menu",
     "menu_close": "Fermer le menu",
+    "profile": "Mon profil",
     "create_novel": "Créer un roman",
     "drafts": "Mes brouillons",
-    "written_chapters": "Mes chapitres",
     "readings": "Mes lectures",
     "favorites": "Mes favoris",
     "login": "Connexion",

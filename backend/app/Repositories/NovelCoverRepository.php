@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Like;
 use App\Models\Novel;
 use App\Models\NovelCover;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -29,6 +30,22 @@ class NovelCoverRepository
             ->orderBy('id')
             ->get()
             ->each(fn (NovelCover $cover) => $cover->setRelation('novel', $novel));
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
+     * @return LengthAwarePaginator<int, NovelCover>
+     */
+    public function paginatePublishedByAuthor(int $authorId, int $perPage): LengthAwarePaginator
+    {
+        return NovelCover::query()
+            ->with('novel')
+            ->published()
+            ->where('author_id', $authorId)
+            ->latest()
+            ->orderByDesc('id')
+            ->paginate($perPage);
     }
 
     public function find(int $coverId, ?int $userId = null): NovelCover

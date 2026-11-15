@@ -1,0 +1,8 @@
+{
+  "profile_chapter_item": {
+    "archived": "Archivé",
+    "novel": "Dans « {novel} », publié le {date}",
+    "reads": "Aucune lecture | 1 lecture | {count} lectures",
+    "continuations": "Aucune suite | 1 suite | {count} suites"
+  }
+}

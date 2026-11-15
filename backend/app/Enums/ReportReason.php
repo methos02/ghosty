@@ -18,4 +18,22 @@ enum ReportReason: string
     case PersonalAttack = 'personal_attack';
     case LikeManipulation = 'like_manipulation';
     case Illegal = 'illegal';
+
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
+     * @return list<self>
+     */
+    public static function allowedForUser(): array
+    {
+        return [
+            self::Spam,
+            self::HateSpeech,
+            self::Insult,
+            self::Harassment,
+            self::PersonalAttack,
+            self::LikeManipulation,
+            self::Illegal,
+        ];
+    }
 }

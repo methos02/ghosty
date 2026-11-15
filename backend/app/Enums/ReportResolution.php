@@ -13,6 +13,7 @@ enum ReportResolution: string
     case Archived = 'archived';
     case Hidden = 'hidden';
     case PassageRemoved = 'passage_removed';
+    case Sanctioned = 'sanctioned';
 
     /**
      * @return list<self>
@@ -20,7 +21,11 @@ enum ReportResolution: string
     public static function allowedForChapter(Chapter $chapter): array
     {
         if ($chapter->isRemovableByModeration()) {
-            return self::cases();
+            return [
+                self::Dismissed, 
+                self::Archived, self::Hidden, 
+                self::PassageRemoved
+            ];
         }
 
         return [self::Dismissed, self::PassageRemoved];
@@ -42,5 +47,15 @@ enum ReportResolution: string
     public static function allowedForComment(): array
     {
         return [self::Dismissed, self::Hidden];
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
+     * @return list<self>
+     */
+    public static function allowedForUser(): array
+    {
+        return [self::Dismissed, self::Sanctioned];
     }
 }

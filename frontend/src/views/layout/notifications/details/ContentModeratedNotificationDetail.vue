@@ -19,6 +19,9 @@ defineProps({
     <p v-if="notification.payload.resolution === RESOLUTIONS.PASSAGE_REMOVED">
       {{ t('content_moderated_notification_detail.passage_removed') }}
     </p>
+    <p v-if="notification.payload.resolution === RESOLUTIONS.SANCTIONED">
+      {{ t('content_moderated_notification_detail.sanctioned') }}
+    </p>
     <p v-if="notification.payload.resolution === RESOLUTIONS.DISMISSED">
       {{ t('content_moderated_notification_detail.dismissed') }}
     </p>

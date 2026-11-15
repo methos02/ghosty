@@ -2,6 +2,7 @@ export const REPORTED_CONTENT_TYPES = {
   CHAPTER: 'chapter',
   COMMENT: 'comment',
   COVER: 'novel_cover',
+  USER: 'user',
 }
 
 export const RESOLUTIONS = {
@@ -9,6 +10,7 @@ export const RESOLUTIONS = {
   ARCHIVED: 'archived',
   HIDDEN: 'hidden',
   PASSAGE_REMOVED: 'passage_removed',
+  SANCTIONED: 'sanctioned',
 }
 
 export const SANCTION_TYPES = {

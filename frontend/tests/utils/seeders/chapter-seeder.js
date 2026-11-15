@@ -46,6 +46,18 @@ const getArchivedChapterApi = (overrides = {}) =>
     ...overrides,
   })
 
+const getProfileChapterApi = (overrides = {}) =>
+  getChapterApi({
+    read_count: 18,
+    is_in_main_branch: true,
+    ...overrides,
+  })
+
+const getProfileChapter = (overrides = {}) => ({
+  ...ChapterDto.fromProfileChapter(getProfileChapterApi()),
+  ...overrides,
+})
+
 const getMainBranchApi = (count = 3) => {
   return Array.from({ length: count }, (_, index) =>
     getChapterApi({
@@ -64,18 +76,6 @@ const getListApi = (overrides = {}) => ({
   chapters: getMainBranchApi(3),
   ...overrides,
 })
-
-const getPublishedApi = (overrides = {}) => ({
-  novels: [
-    {
-      ...novelSeeder.getNovelApi(),
-      chapters: getMainBranchApi(2),
-    },
-  ],
-  ...overrides,
-})
-
-const getPublished = () => ChapterDto.fromPublished(getPublishedApi().novels)
 
 const getChapter = (overrides = {}) => ({
   ...ChapterDto.fromShow(getChapterApi()),
@@ -191,13 +191,13 @@ const getWriteForm = (overrides = {}) => ({
 })
 
 export const chapterSeeder = {
+  getProfileChapter,
+  getProfileChapterApi,
   getArchivedChapterApi,
   getChapterApi,
   getChapterWithRemovedPassageApi,
   getMainBranchApi,
   getListApi,
-  getPublishedApi,
-  getPublished,
   getChapter,
   getMainBranch,
   getReadingApi,

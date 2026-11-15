@@ -6,8 +6,6 @@ use App\Models\Chapter;
 use App\Models\Novel;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class NovelRepository
 {
@@ -19,15 +17,24 @@ class NovelRepository
     public function paginate(string $search = '', ?int $genreId = null, int $perPage = 15): LengthAwarePaginator
     {
         return Novel::with(self::DETAIL_RELATIONS)
-            ->whereNotIn(
-                'id',
-                Chapter::query()
-                    ->drafts()
-                    ->roots()
-                    ->select('novel_id')
-            )
+            ->published()
             ->when($search !== '', fn (Builder $query) => $query->whereLike('title', "%{$search}%"))
             ->when($genreId !== null, fn (Builder $query) => $query->where('genre_id', $genreId))
+            ->paginate($perPage);
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
+     * @return LengthAwarePaginator<int, Novel>
+     */
+    public function paginateByAuthor(int $authorId, int $perPage): LengthAwarePaginator
+    {
+        return Novel::with(self::DETAIL_RELATIONS)
+            ->published()
+            ->where('author_id', $authorId)
+            ->latest()
+            ->orderByDesc('id')
             ->paginate($perPage);
     }
 
@@ -41,34 +48,6 @@ class NovelRepository
         return Novel::with(self::DETAIL_RELATIONS)
             ->where('slug', $slug)
             ->firstOrFail();
-    }
-
-    /**
-     * @return Collection<int, Novel>
-     */
-    public function containingChaptersPublishedByAuthor(int $authorId): Collection
-    {
-        return Novel::query()
-            ->whereIn(
-                'id',
-                Chapter::query()
-                    ->published()
-                    ->byAuthor($authorId)
-                    ->select('novel_id')
-            )
-            ->with(['chapters' => function (Relation $chapters) use ($authorId): void {
-                $chapters->whereIn(
-                    'id',
-                    Chapter::query()
-                        ->published()
-                        ->byAuthor($authorId)
-                        ->select('id')
-                );
-                $chapters->orderBy('published_at');
-                $chapters->orderBy('id');
-            }])
-            ->orderBy('title')
-            ->get();
     }
 
     /**

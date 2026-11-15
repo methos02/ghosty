@@ -42,6 +42,16 @@ const moderateCover = async (coverId, formData) => {
   return controllerResponseHelper.buildResponse(response)
 }
 
+const moderateUser = async (userId, formData) => {
+  const response = await ModerationRepository.moderateUser({
+    params: ModerationDto.toUserParams(userId),
+    body: ModerationDto.toDecision(formData),
+    form: MODERATION_FORM,
+  })
+
+  return controllerResponseHelper.buildResponse(response)
+}
+
 const restoreChapter = async chapterId => {
   const response = await ModerationRepository.restoreChapter({
     params: ModerationDto.toChapterParams(chapterId),
@@ -96,15 +106,27 @@ const showCover = async coverId => {
   }))
 }
 
+const showUser = async userId => {
+  const response = await ModerationRepository.showUser({
+    params: ModerationDto.toUserParams(userId),
+  })
+
+  return controllerResponseHelper.buildResponse(response, data => ({
+    moderationCase: ModerationDto.fromUserCase(data),
+  }))
+}
+
 export const ModerationController = {
   listReportedContents,
   moderateChapter,
   moderateComment,
   moderateCover,
+  moderateUser,
   restoreChapter,
   restoreComment,
   restoreCover,
   showChapter,
   showComment,
   showCover,
+  showUser,
 }

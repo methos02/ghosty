@@ -1,4 +1,5 @@
 import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
+import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
 
 const fromCover = cover => {
@@ -40,6 +41,18 @@ const fromOfficialCoverId = response => {
   return response.official_cover_id ?? undefined
 }
 
+const fromProfileCover = cover => {
+  return {
+    ...CoverDto.fromCover(cover),
+    isOfficial: cover.is_official,
+    novel: NovelDto.fromSummary(cover.novel),
+  }
+}
+
+const fromProfileCovers = covers => {
+  return covers.map(cover => CoverDto.fromProfileCover(cover))
+}
+
 const fromSummary = cover => {
   return cover ? { id: cover.id, imageUrl: cover.image_url } : undefined
 }
@@ -65,6 +78,8 @@ export const CoverDto = {
   fromLike,
   fromList,
   fromOfficialCoverId,
+  fromProfileCover,
+  fromProfileCovers,
   fromSummary,
   toCoverParams,
   toCreate,

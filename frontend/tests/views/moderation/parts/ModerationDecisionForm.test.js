@@ -251,4 +251,80 @@ describe('ModerationDecisionForm.vue', () => {
 
     expect(router.currentRoute.value.name).not.toBe('moderation')
   })
+
+  it('suggests at least a warning once an account is sanctioned', async () => {
+    wrapper = mount(ModerationDecisionForm, {
+      props: {
+        contentType: REPORTED_CONTENT_TYPES.USER,
+        contentId: moderationSeeder.getUserCaseApi().user.id,
+        resolutions: [RESOLUTIONS.DISMISSED, RESOLUTIONS.SANCTIONED],
+      },
+    })
+
+    await wrapper.find(`input[value="${RESOLUTIONS.SANCTIONED}"]`).setValue(true)
+
+    const sanctionSelect = wrapper.find('select[name="moderation.sanction.type"]')
+    expect(sanctionSelect.element.value).toBe(SANCTION_TYPES.WARNING)
+    expect(sanctionSelect.text()).not.toContain(t('moderation_decision.sanction_none'))
+  })
+
+  it('sends the sanction of the account once confirmed', async () => {
+    const userId = moderationSeeder.getUserCaseApi().user.id
+    vi.spyOn(ModerationRepository, 'moderateUser').mockResolvedValue(controllerSuccess())
+    wrapper = mount(ModerationDecisionForm, {
+      props: {
+        contentType: REPORTED_CONTENT_TYPES.USER,
+        contentId: userId,
+        resolutions: [RESOLUTIONS.DISMISSED, RESOLUTIONS.SANCTIONED],
+      },
+    })
+    await wrapper.find(`input[value="${RESOLUTIONS.SANCTIONED}"]`).setValue(true)
+    await wrapper
+      .find('textarea[name="moderation.sanction.reason"]')
+      .setValue(moderationSeeder.getSanctionReason())
+
+    await wrapper.find('.moderation-decision__submit').trigger('click')
+    await wrapper.find('.confirm-button__valid').trigger('click')
+    await flushPromises()
+
+    expect(ModerationRepository.moderateUser).toHaveBeenCalledWith({
+      params: ModerationDto.toUserParams(userId),
+      body: ModerationDto.toDecision(
+        moderationSeeder.getDecisionForm({
+          resolution: RESOLUTIONS.SANCTIONED,
+          sanction: {
+            type: SANCTION_TYPES.WARNING,
+            reason: moderationSeeder.getSanctionReason(),
+          },
+        }),
+      ),
+      form: 'moderation',
+    })
+  })
+
+  it('hides the sanction and sends none when the reports on an account are dismissed', async () => {
+    const userId = moderationSeeder.getUserCaseApi().user.id
+    vi.spyOn(ModerationRepository, 'moderateUser').mockResolvedValue(controllerSuccess())
+    wrapper = mount(ModerationDecisionForm, {
+      props: {
+        contentType: REPORTED_CONTENT_TYPES.USER,
+        contentId: userId,
+        resolutions: [RESOLUTIONS.DISMISSED, RESOLUTIONS.SANCTIONED],
+      },
+    })
+    await wrapper.find(`input[value="${RESOLUTIONS.SANCTIONED}"]`).setValue(true)
+    await wrapper.find(`input[value="${RESOLUTIONS.DISMISSED}"]`).setValue(true)
+
+    expect(wrapper.find('.moderation-decision__sanction').exists()).toBe(false)
+
+    await wrapper.find('.moderation-decision__submit').trigger('click')
+    await wrapper.find('.confirm-button__valid').trigger('click')
+    await flushPromises()
+
+    expect(ModerationRepository.moderateUser).toHaveBeenCalledWith({
+      params: ModerationDto.toUserParams(userId),
+      body: ModerationDto.toDecision(moderationSeeder.getDecisionForm()),
+      form: 'moderation',
+    })
+  })
 })

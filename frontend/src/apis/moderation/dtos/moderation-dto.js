@@ -5,6 +5,7 @@ import { CoverDto } from '@/apis/covers/dtos/cover-dto.js'
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 import { ReportDto } from '@/apis/reports/dtos/report-dto.js'
 import { SanctionDto } from '@/apis/sanctions/dtos/sanction-dto.js'
+import { UserDto } from '@/apis/users/dtos/user-dto.js'
 import { PaginationDto } from '@/apis/shared/dtos/pagination-dto.js'
 import { RESOLUTIONS } from '@/constants/moderation-constants.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
@@ -69,18 +70,23 @@ const fromReportedContent = reportedContent => {
       reportedContent.first_reported_at,
       'DD/MM/YYYY HH:mm',
     ),
-    chapter:
-      reportedContent.chapter === null ? undefined : ChapterDto.fromShow(reportedContent.chapter),
-    comment:
-      reportedContent.comment === null
-        ? undefined
-        : ModerationDto.fromComment(reportedContent.comment),
+    chapter: reportedContent.chapter ? ChapterDto.fromShow(reportedContent.chapter) : undefined,
+    comment: reportedContent.comment ? ModerationDto.fromComment(reportedContent.comment) : undefined,
     cover: reportedContent.cover ? ModerationDto.fromCover(reportedContent.cover) : undefined,
+    user: reportedContent.user ? UserDto.fromSummary(reportedContent.user) : undefined,
   }
 }
 
 const fromReportedContents = reportedContents => {
   return reportedContents.map(reportedContent => ModerationDto.fromReportedContent(reportedContent))
+}
+
+const fromUserCase = moderationCase => {
+  return {
+    user: UserDto.fromProfile(moderationCase.user),
+    reports: ReportDto.fromList(moderationCase.reports),
+    authorSanctions: SanctionDto.fromList(moderationCase.author_sanctions),
+  }
 }
 
 const toChapterParams = chapterId => {
@@ -111,6 +117,10 @@ const toListParams = (filters, page) => {
   }
 }
 
+const toUserParams = userId => {
+  return { user: userId }
+}
+
 export const ModerationDto = {
   fromChapterCase,
   fromComment,
@@ -120,9 +130,11 @@ export const ModerationDto = {
   fromList,
   fromReportedContent,
   fromReportedContents,
+  fromUserCase,
   toChapterParams,
   toCommentParams,
   toCoverParams,
   toDecision,
   toListParams,
+  toUserParams,
 }

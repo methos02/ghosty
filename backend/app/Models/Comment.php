@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\HasReports;
 use App\Models\Concerns\IsNotificationSubject;
+use App\Models\Contracts\AuthoredContent;
 use App\Models\Contracts\Commentable;
 use App\Models\Contracts\Reportable;
 use Database\Factories\CommentFactory;
@@ -20,7 +21,7 @@ use LogicException;
  *
  * @mixin IdeHelperComment
  */
-class Comment extends Model implements Reportable
+class Comment extends Model implements AuthoredContent, Reportable
 {
     /** @use HasFactory<CommentFactory> */
     use HasFactory, HasReports, IsNotificationSubject;
@@ -56,6 +57,11 @@ class Comment extends Model implements Reportable
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function reportedUser(): User
+    {
+        return $this->author;
     }
 
     /**

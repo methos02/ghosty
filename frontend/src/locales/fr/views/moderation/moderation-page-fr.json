@@ -9,13 +9,15 @@
     "types": {
       "chapter": "Chapitre",
       "comment": "Commentaire",
-      "novel_cover": "Illustration"
+      "novel_cover": "Illustration",
+      "user": "Compte"
     },
     "report_count": "Aucun signalement | 1 signalement | {count} signalements",
     "reported_at": "Signalé le {date}",
     "process": "Traiter",
     "view": "Voir la décision",
     "cover_title": "Illustration de « {novel} »",
-    "cover_alt": "Illustration proposée pour « {novel} »"
+    "cover_alt": "Illustration proposée pour « {novel} »",
+    "user_context": "Membre depuis le {date}"
   }
 }

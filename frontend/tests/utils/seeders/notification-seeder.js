@@ -96,6 +96,24 @@ const getModerationNotificationApi = (type, overrides = {}) =>
     ...overrides,
   })
 
+const getAccountModerationNotificationApi = (type, overrides = {}) =>
+  getNotificationApi({
+    type,
+    chapter: null,
+    novel: null,
+    content_type: 'user',
+    resolution: 'sanctioned',
+    sanction: null,
+    user: {
+      id: 64,
+      username: 'Importun',
+    },
+    ...overrides,
+  })
+
+const getAccountModerationNotification = (type, overrides = {}) =>
+  NotificationDto.fromNotification(getAccountModerationNotificationApi(type, overrides))
+
 const getNotification = (overrides = {}) => ({
   ...NotificationDto.fromNotification(getNotificationApi()),
   ...overrides,
@@ -140,6 +158,8 @@ const getUnreadCountApi = (overrides = {}) => ({
 const getInbox = (overrides = {}) => ({ ...NotificationDto.fromList(getListApi()), ...overrides })
 
 export const notificationSeeder = {
+  getAccountModerationNotification,
+  getAccountModerationNotificationApi,
   getChapterContinued,
   getChapterContinuedApi,
   getChaptersPayload,

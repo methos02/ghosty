@@ -87,6 +87,18 @@ class ModerationService
         $this->notify($moderator, $cover, $pendingReports, $decisionDTO->resolution, $sanction);
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+     *
+     * @param  Collection<int, Report>  $pendingReports
+     */
+    public function moderateUser(User $moderator, User $user, Collection $pendingReports, ModerationDecisionDTO $decisionDTO): void
+    {
+        $sanction = DB::transaction(fn (): ?Sanction => $this->close($moderator, $user->id, $pendingReports, $decisionDTO));
+
+        $this->notify($moderator, $user, $pendingReports, $decisionDTO->resolution, $sanction);
+    }
+
     public function restoreCover(NovelCover $cover): void
     {
         $this->coverService->restore($cover);

@@ -8,22 +8,29 @@ const fromList = (chapters = []) => {
   return chapters.map(chapter => ChapterDto.fromShow(chapter))
 }
 
-const fromPublished = novels => {
-  return novels.map(novel => ({
-    novel: NovelDto.fromShow(novel),
-    chapters: ChapterDto.fromList(novel.chapters),
-  }))
+const fromProfileChapter = chapter => {
+  return {
+    ...ChapterDto.fromShow(chapter),
+    readCount: chapter.read_count,
+    isInMainBranch: chapter.is_in_main_branch,
+  }
 }
 
-const fromReading = reading => ({
-  novel: NovelDto.fromShow(reading.novel),
-  chapter: ChapterDto.fromShow(reading.chapter),
-  ancestors: ChapterDto.fromList(reading.ancestors),
-  children: ChapterDto.fromList(reading.children),
-  branchChapterIds: reading.branch_chapter_ids ?? [],
-  isMainBranch: reading.is_main_branch === true,
-  nextChapterId: reading.next_chapter_id,
-})
+const fromProfileChapters = chapters => {
+  return chapters.map(chapter => ChapterDto.fromProfileChapter(chapter))
+}
+
+const fromReading = reading => {
+  return {
+    novel: NovelDto.fromShow(reading.novel),
+    chapter: ChapterDto.fromShow(reading.chapter),
+    ancestors: ChapterDto.fromList(reading.ancestors),
+    children: ChapterDto.fromList(reading.children),
+    branchChapterIds: reading.branch_chapter_ids ?? [],
+    isMainBranch: reading.is_main_branch === true,
+    nextChapterId: reading.next_chapter_id,
+  }
+}
 
 const fromShow = chapter => {
   return {
@@ -61,31 +68,37 @@ const fromSummary = chapter => {
   return chapter ? { id: chapter.id, title: chapter.title } : undefined
 }
 
-const fromTree = tree => ({
-  chapters: ChapterDto.fromList(tree.chapters),
-  mainBranchIds: tree.main_branch_ids ?? [],
-})
+const fromTree = tree => {
+  return {
+    chapters: ChapterDto.fromList(tree.chapters),
+    mainBranchIds: tree.main_branch_ids ?? [],
+  }
+}
 
 const toChapterParams = id => {
   return { chapter: id }
 }
 
-const toCreate = formData => ({
-  parent_id: formData.parentId,
-  title: formData.title,
-  content: formData.content,
-  summary: formData.summary,
-  is_draft: formData.isDraft,
-})
+const toCreate = formData => {
+  return {
+    parent_id: formData.parentId,
+    title: formData.title,
+    content: formData.content,
+    summary: formData.summary,
+    is_draft: formData.isDraft,
+  }
+}
 
 const toCreateParams = novelSlug => {
   return { slug: novelSlug }
 }
 
-const toDraftFilters = (filters = {}) => ({
-  parent_id: filters.parentId,
-  is_root: filters.isRoot,
-})
+const toDraftFilters = (filters = {}) => {
+  return {
+    parent_id: filters.parentId,
+    is_root: filters.isRoot,
+  }
+}
 
 const toMainBranchParams = novelSlug => {
   return { slug: novelSlug }
@@ -99,15 +112,18 @@ const toTreeParams = (novelSlug, fromChapterId) => {
   return { slug: novelSlug, from: fromChapterId }
 }
 
-const toUpdate = formData => ({
-  title: formData.title,
-  content: formData.content,
-  summary: formData.summary,
-})
+const toUpdate = formData => {
+  return {
+    title: formData.title,
+    content: formData.content,
+    summary: formData.summary,
+  }
+}
 
 export const ChapterDto = {
   fromList,
-  fromPublished,
+  fromProfileChapter,
+  fromProfileChapters,
   fromReading,
   fromShow,
   fromSummary,

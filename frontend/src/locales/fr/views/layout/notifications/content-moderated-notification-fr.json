@@ -13,6 +13,9 @@
     "cover": {
       "hidden": "Votre illustration de « {title} » a été masquée par la modération",
       "sanctioned": "La modération vous adresse une sanction à propos de votre illustration de « {title} »"
+    },
+    "user": {
+      "sanctioned": "La modération vous adresse une sanction à la suite de signalements visant votre compte"
     }
   }
 }

@@ -4,7 +4,6 @@
     "context": "{novel} · par {author}",
     "resolutions": {
       "dismissed": "Rejeter les signalements",
-      "archived": "Archiver",
       "hidden": "Masquer",
       "passage_removed": "Retirer un passage",
       "sanctioned": "Sanctionner le compte"

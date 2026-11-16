@@ -10,7 +10,6 @@ use App\Models\Chapter;
 enum ReportResolution: string
 {
     case Dismissed = 'dismissed';
-    case Archived = 'archived';
     case Hidden = 'hidden';
     case PassageRemoved = 'passage_removed';
     case Sanctioned = 'sanctioned';
@@ -21,11 +20,7 @@ enum ReportResolution: string
     public static function allowedForChapter(Chapter $chapter): array
     {
         if ($chapter->isRemovableByModeration()) {
-            return [
-                self::Dismissed, 
-                self::Archived, self::Hidden, 
-                self::PassageRemoved
-            ];
+            return [self::Dismissed, self::Hidden, self::PassageRemoved];
         }
 
         return [self::Dismissed, self::PassageRemoved];

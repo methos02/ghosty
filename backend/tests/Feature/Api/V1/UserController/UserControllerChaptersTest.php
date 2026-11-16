@@ -24,17 +24,15 @@ class UserControllerChaptersTest extends TestCase
     }
 
     #[Test]
-    public function lists_the_published_and_archived_chapters_most_recently_published_first(): void
+    public function lists_the_published_chapters_most_recently_published_first(): void
     {
         $older = Chapter::factory()->create(['author_id' => $this->user->id, 'published_at' => now()->subDays(2)]);
-        $archived = Chapter::factory()->archived()->create(['author_id' => $this->user->id, 'published_at' => now()->subDay()]);
         $newer = Chapter::factory()->create(['author_id' => $this->user->id]);
 
         $this->getJson($this->route('plume'))
             ->assertOk()
-            ->assertJsonPath('chapters.*.id', [$newer->id, $archived->id, $older->id])
-            ->assertJsonPath('chapters.*.status', [Chapter::STATUS_PUBLISHED, Chapter::STATUS_ARCHIVED, Chapter::STATUS_PUBLISHED])
-            ->assertJsonPath('meta.total', 3);
+            ->assertJsonPath('chapters.*.id', [$newer->id, $older->id])
+            ->assertJsonPath('meta.total', 2);
     }
 
     #[Test]

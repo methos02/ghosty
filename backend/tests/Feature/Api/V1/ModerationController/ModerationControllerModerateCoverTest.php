@@ -153,15 +153,6 @@ class ModerationControllerModerateCoverTest extends TestCase
     }
 
     #[Test]
-    public function refuses_to_archive_a_cover(): void
-    {
-        $this->actingAs($this->moderator)
-            ->postJson($this->route($this->cover), ['resolution' => ReportResolution::Archived->value])
-            ->assertUnprocessable()
-            ->assertJsonValidationErrors(['resolution' => __('validation.moderation.resolution.enum')]);
-    }
-
-    #[Test]
     public function dismissing_leaves_the_cover_official(): void
     {
         $this->actingAs($this->moderator)

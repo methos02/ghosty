@@ -2,6 +2,7 @@
 
 **Date**: 2026-11-13
 **Status**: Accepted
+**Amendé le**: 2026-11-16 — le profil ne liste et ne compte plus que les chapitres publiés, le statut archivé n'existant plus (voir [ADR-19](ADR-19-pas-de-statut-archive.md))
 
 ## Context
 

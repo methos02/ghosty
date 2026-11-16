@@ -33,7 +33,6 @@ describe('chapter-dto', () => {
         isFollowed: false,
         commentCount: 0,
         isDraft: false,
-        isArchived: false,
         isHidden: false,
         isCorrectable: true,
         isRoot: true,
@@ -98,17 +97,12 @@ describe('chapter-dto', () => {
       ])
     })
 
-    it('flags a chapter the moderation archived', () => {
-      expect(ChapterDto.fromShow(chapterSeeder.getArchivedChapterApi()).isArchived).toBe(true)
-    })
-
     it('flags a chapter the moderation hid', () => {
       const chapter = ChapterDto.fromShow(
         chapterSeeder.getChapterApi({ status: CHAPTER_STATUSES.HIDDEN }),
       )
 
       expect(chapter.isHidden).toBe(true)
-      expect(chapter.isArchived).toBe(false)
     })
 
     it('leaves the content undefined when the api omits it', () => {

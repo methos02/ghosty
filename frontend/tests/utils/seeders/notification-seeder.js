@@ -91,7 +91,7 @@ const getModerationNotificationApi = (type, overrides = {}) =>
   getNotificationApi({
     type,
     content_type: 'chapter',
-    resolution: 'archived',
+    resolution: 'hidden',
     sanction: null,
     ...overrides,
   })

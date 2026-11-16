@@ -120,6 +120,14 @@ class User extends Authenticatable implements Reportable
         return ($this->isModerator() || $this->isAdmin()) && ! $this->isBanned();
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-18-indicateurs-du-mvp.md
+     */
+    public function canViewMetrics(): bool
+    {
+        return $this->isAdmin() && ! $this->isBanned();
+    }
+
     public function isBanned(): bool
     {
         return $this->accountBan() !== null;

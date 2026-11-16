@@ -7,6 +7,5 @@ export const POPULARITY = {
 export const CHAPTER_STATUSES = {
   DRAFT: 0,
   PUBLISHED: 1,
-  ARCHIVED: 2,
   HIDDEN: 3,
 }

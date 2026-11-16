@@ -116,14 +116,8 @@ class ModerationService
 
     private function applyToChapter(User $moderator, Chapter $chapter, ModerationDecisionDTO $decisionDTO): void
     {
-        if ($decisionDTO->resolution === ReportResolution::Archived) {
-            $this->chapterService->removeFromReading($chapter, Chapter::STATUS_ARCHIVED);
-
-            return;
-        }
-
         if ($decisionDTO->resolution === ReportResolution::Hidden) {
-            $this->chapterService->removeFromReading($chapter, Chapter::STATUS_HIDDEN);
+            $this->chapterService->hide($chapter);
 
             return;
         }

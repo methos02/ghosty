@@ -121,20 +121,6 @@ class ChapterControllerPublishTest extends TestCase
     }
 
     #[Test]
-    public function refuses_to_publish_a_draft_whose_parent_was_archived(): void
-    {
-        $parent = Chapter::factory()->continuing($this->root)->create();
-        $draft = Chapter::factory()->draft()->continuing($parent)->create(['author_id' => $this->author->id]);
-        $parent->update(['status' => Chapter::STATUS_ARCHIVED]);
-
-        $this->actingAs($this->author)
-            ->postJson("/api/v1/chapters/{$draft->id}/publish")
-            ->assertForbidden();
-
-        $this->assertTrue($draft->refresh()->isDraft());
-    }
-
-    #[Test]
     public function refuses_to_publish_a_draft_whose_parent_was_hidden(): void
     {
         $parent = Chapter::factory()->continuing($this->root)->create();

@@ -1,0 +1,8 @@
+{
+  "metrics_page": {
+    "title": "Indicateurs",
+    "intro": "Ces mesures aident à décider si le fonctionnement multivers mérite d'être développé davantage. Elles sont calculées à la demande.",
+    "period": "{days} jours",
+    "range": "Du {from} au {to}"
+  }
+}

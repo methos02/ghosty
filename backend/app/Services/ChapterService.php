@@ -107,11 +107,11 @@ class ChapterService
     /**
      * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
      */
-    public function removeFromReading(Chapter $chapter, int $status): void
+    public function hide(Chapter $chapter): void
     {
-        DB::transaction(function () use ($chapter, $status) {
+        DB::transaction(function () use ($chapter) {
             $this->trimMainBranchAt($chapter);
-            $this->chaptersR->update($chapter, ['status' => $status]);
+            $this->chaptersR->update($chapter, ['status' => Chapter::STATUS_HIDDEN]);
             $this->novelsR->decrementChapterCount($chapter->novel_id);
 
             $parent = $this->chaptersR->findParent($chapter);

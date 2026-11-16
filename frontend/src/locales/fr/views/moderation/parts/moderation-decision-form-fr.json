@@ -3,8 +3,7 @@
     "resolution": "Décision",
     "resolution_help": {
       "dismissed": "Le contenu reste tel quel ; les signaleurs sont prévenus que leur signalement a été traité.",
-      "archived": "Problème de qualité ou hors-sujet : le texte reste consultable mais n'est plus mis en avant.",
-      "hidden": "Haine, insulte, harcèlement ou contenu illégal : le contenu est retiré de la lecture.",
+      "hidden": "Contenu contraire aux règles de Ghosty : il est retiré de la lecture publique et reste consultable par la modération.",
       "passage_removed": "Les passages sélectionnés sont remplacés par une mention ; le reste du texte est conservé.",
       "sanctioned": "Comportement contraire aux règles de Ghosty : une sanction s'applique au compte, sans toucher à ses contenus."
     },

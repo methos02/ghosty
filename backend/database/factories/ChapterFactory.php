@@ -67,11 +67,6 @@ class ChapterFactory extends Factory
         ]);
     }
 
-    public function archived(): static
-    {
-        return $this->state(fn () => ['status' => Chapter::STATUS_ARCHIVED]);
-    }
-
     public function hidden(): static
     {
         return $this->state(fn () => ['status' => Chapter::STATUS_HIDDEN]);

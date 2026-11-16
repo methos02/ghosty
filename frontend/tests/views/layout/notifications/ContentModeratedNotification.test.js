@@ -15,7 +15,6 @@ describe('ContentModeratedNotification.vue', () => {
   })
 
   it.each([
-    [RESOLUTIONS.ARCHIVED, 'content_moderated_notification.chapter.archived'],
     [RESOLUTIONS.HIDDEN, 'content_moderated_notification.chapter.hidden'],
     [RESOLUTIONS.PASSAGE_REMOVED, 'content_moderated_notification.chapter.passage_removed'],
     [RESOLUTIONS.DISMISSED, 'content_moderated_notification.chapter.sanctioned'],

@@ -70,7 +70,7 @@ class UserRepository
     {
         return Chapter::query()
             ->selectRaw('count(*)')
-            ->visibleOnProfile()
+            ->published()
             ->whereColumn('author_id', 'users.id');
     }
 
@@ -82,7 +82,7 @@ class UserRepository
     {
         return Chapter::query()
             ->selectRaw('coalesce(sum('.$column.'), 0)')
-            ->visibleOnProfile()
+            ->published()
             ->whereColumn('author_id', 'users.id');
     }
 

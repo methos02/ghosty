@@ -13,4 +13,12 @@ class UserPolicy
     {
         return $user->canModerate() && $user->id !== $reportedUser->id;
     }
+
+    /**
+     * @see memory-bank/decisions/ADR-18-indicateurs-du-mvp.md
+     */
+    public function viewMetrics(User $user): bool
+    {
+        return $user->canViewMetrics();
+    }
 }

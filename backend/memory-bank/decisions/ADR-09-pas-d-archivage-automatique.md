@@ -2,6 +2,7 @@
 
 **Date**: 2026-07-31
 **Status**: Accepted
+**Amendé le**: 2026-11-16 — l'issue de modération `archived` est supprimée, seul `hidden` retire un chapitre (voir [ADR-19](ADR-19-pas-de-statut-archive.md))
 
 ## Context
 

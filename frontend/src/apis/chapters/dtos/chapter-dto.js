@@ -51,7 +51,6 @@ const fromShow = chapter => {
     isFollowed: chapter.is_followed === true,
     commentCount: chapter.comment_count,
     isDraft: chapter.is_draft,
-    isArchived: chapter.status === CHAPTER_STATUSES.ARCHIVED,
     isHidden: chapter.status === CHAPTER_STATUSES.HIDDEN,
     isCorrectable: chapter.is_correctable,
     isRoot: chapter.is_root,

@@ -27,6 +27,8 @@ onKeyStroke('Escape', close)
 
 const canModerate = computed(() => auth.hasRole('moderator') || auth.hasRole('admin'))
 
+const canViewMetrics = computed(() => auth.hasRole('admin'))
+
 const handleLogout = async () => {
   close()
   await auth.logout()
@@ -126,6 +128,17 @@ const handleLogout = async () => {
           >
             <span class="header-side__label | flex-1">{{ t('header.moderation') }}</span>
             <i class="header-side__icon | fa-solid fa-shield-halved"></i>
+          </router-link>
+        </li>
+
+        <li v-if="canViewMetrics">
+          <router-link
+            :to="{ name: 'metrics' }"
+            @click="close"
+            class="header-metrics | header-side__link | d-flex a-center g-25"
+          >
+            <span class="header-side__label | flex-1">{{ t('header.metrics') }}</span>
+            <i class="header-side__icon | fa-solid fa-chart-line"></i>
           </router-link>
         </li>
 

@@ -96,6 +96,13 @@ return [
             ],
         ],
     ],
+    'metrics_filter' => [
+        'days' => [
+            'integer' => 'La période doit être un nombre de jours',
+            'min' => 'La période doit durer au moins :min jour',
+            'max' => 'La période ne peut pas dépasser :max jours',
+        ],
+    ],
     'report_filter' => [
         'status' => [
             'enum' => 'Le statut sélectionné est invalide',

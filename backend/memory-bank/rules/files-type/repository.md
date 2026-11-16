@@ -7,6 +7,7 @@ paths:
 Repositories are the **only** place for database access (query builder, Eloquent, `with`, `paginate`, `firstOrFail`, filters, `increment`).
 
 - MUST have one repository per entity: `App\Repositories\{Entity}Repository`.
+  - Exception: a cross-entity repository is allowed for **read-only reporting aggregates** (counts, sums) that join several tables, e.g. `MetricsRepository` ([ADR-18](../../decisions/ADR-18-indicateurs-du-mvp.md)). It MUST NOT read or write models for the application flows: those stay in their entity repository. A new reporting need gets its own repository instead of growing an existing one.
 - MUST NOT depend on `Request` or `FormRequest`. The controller extracts the params and passes typed arguments or a filter DTO.
 - MUST return models / collections / paginators, no HTTP concerns.
 - Queries only. A purely in-memory transformation of an already-loaded collection (grouping, ordering a chain) leaves the repository and goes in a static class under `App\Helpers`, testable without a database. Not in a DTO.

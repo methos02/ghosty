@@ -184,7 +184,7 @@ class ChapterRepository
     {
         return Chapter::query()
             ->with('novel.mainBranchLastChapter')
-            ->visibleOnProfile()
+            ->published()
             ->byAuthor($authorId)
             ->latest('published_at')
             ->orderByDesc('id')

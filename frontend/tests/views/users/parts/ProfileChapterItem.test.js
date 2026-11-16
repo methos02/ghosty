@@ -30,20 +30,13 @@ describe('ProfileChapterItem.vue', () => {
     wrapper = mount(ProfileChapterItem, { props: { chapter: chapterSeeder.getProfileChapter() } })
 
     expect(wrapper.find('.profile-chapter-item__main-branch').text()).toBe(t('common.main_branch'))
-    expect(wrapper.find('.profile-chapter-item__archived').exists()).toBe(false)
   })
 
-  it('marks an archived chapter outside the main branch', () => {
-    const chapter = chapterSeeder.getProfileChapter({
-      isArchived: true,
-      isInMainBranch: false,
-    })
+  it('leaves a chapter outside the main branch unmarked', () => {
+    const chapter = chapterSeeder.getProfileChapter({ isInMainBranch: false })
 
     wrapper = mount(ProfileChapterItem, { props: { chapter } })
 
-    expect(wrapper.find('.profile-chapter-item__archived').text()).toBe(
-      t('profile_chapter_item.archived'),
-    )
     expect(wrapper.find('.profile-chapter-item__main-branch').exists()).toBe(false)
   })
 })

@@ -135,15 +135,6 @@ class ModerationControllerModerateCommentTest extends TestCase
     }
 
     #[Test]
-    public function refuses_to_archive_a_comment(): void
-    {
-        $this->actingAs($this->moderator)
-            ->postJson($this->route($this->comment), ['resolution' => ReportResolution::Archived->value])
-            ->assertUnprocessable()
-            ->assertJsonValidationErrors(['resolution' => __('validation.moderation.resolution.enum')]);
-    }
-
-    #[Test]
     public function refuses_to_remove_a_passage_from_a_comment(): void
     {
         $this->actingAs($this->moderator)

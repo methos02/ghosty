@@ -22,9 +22,7 @@ const contentAfterRemoval = ref('')
 
 const isRemovingPassages = computed(() => resolution.value === RESOLUTIONS.PASSAGE_REMOVED)
 
-const isRemoved = computed(
-  () => moderationCase.value.chapter.isArchived || moderationCase.value.chapter.isHidden,
-)
+const isRemoved = computed(() => moderationCase.value.chapter.isHidden)
 
 const hasPendingReports = computed(() => moderationCase.value.reports.some(report => report.isPending))
 
@@ -81,8 +79,7 @@ onMounted(load)
         v-if="isRemoved"
         class="moderation-chapter-page__removed | d-flex a-center j-between g-20 f-wrap bg-warning-300 p-15 radius-10"
       >
-        <span v-if="moderationCase.chapter.isArchived">{{ t('moderation_chapter_page.archived') }}</span>
-        <span v-else>{{ t('moderation_chapter_page.hidden') }}</span>
+        <span>{{ t('moderation_chapter_page.hidden') }}</span>
         <ModerationRestoreButton
           :contentType="REPORTED_CONTENT_TYPES.CHAPTER"
           :contentId="moderationCase.chapter.id"

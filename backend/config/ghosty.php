@@ -68,4 +68,11 @@ return [
         'per_page' => 20,
     ],
 
+    /* @see memory-bank/decisions/ADR-18-indicateurs-du-mvp.md */
+    'metrics' => [
+        'default_days' => 30,
+        'max_days' => 365,
+        'inactive_after_days' => 30,
+    ],
+
 ];

@@ -21,12 +21,6 @@ defineProps({
       >
         {{ t('common.main_branch') }}
       </span>
-      <span
-        v-if="chapter.isArchived"
-        class="profile-chapter-item__archived | badge badge-warning"
-      >
-        {{ t('profile_chapter_item.archived') }}
-      </span>
     </div>
 
     <span class="profile-chapter-item__novel | fs-300 color-neutral-700">

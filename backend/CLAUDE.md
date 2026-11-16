@@ -22,14 +22,16 @@ Les décisions structurantes sont dans les ADR :
 |---|---|
 | [ADR-07](memory-bank/decisions/ADR-07-modele-multivers-arbre-de-chapitres.md) | Arbre `chapters` + chemin matérialisé ; `works` supprimée ; branche **dérivée**, sans table |
 | [ADR-08](memory-bank/decisions/ADR-08-soutien-positif-et-continuite-automatique.md) | Soutien **positif seul** (aucun downvote) ; signalement = unique voie négative ; branche principale **automatique** |
-| [ADR-09](memory-bank/decisions/ADR-09-pas-d-archivage-automatique.md) | **Aucun archivage automatique** : `archived` / `hidden` sont des issues de modération humaine |
+| [ADR-09](memory-bank/decisions/ADR-09-pas-d-archivage-automatique.md) | **Aucun archivage automatique** : seule la modération humaine retire un contenu |
 | [ADR-10](memory-bank/decisions/ADR-10-notifications-in-app-agregees.md) | Notifications in-app **agrégées**, canal `database` natif |
 | [ADR-11](memory-bank/decisions/ADR-11-chapitre-publie-non-reecrivable.md) | Un chapitre publié est **immuable** : corrigeable une seule fois, sous 48 h, et dans une part limitée du texte |
 | [ADR-12](memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md) | Suivre une branche = suivre son **chapitre-tête** ; lecture unique par session/compte ; historique et reprise réservés aux comptes, aucune progression invitée |
 | [ADR-13](memory-bank/decisions/ADR-13-commentaires.md) | Commentaires sur roman et chapitre (branche = chapitre-tête) ; réponses à un niveau ; pas d'édition ; suppression = texte effacé, trace seulement s'il y a des réponses |
-| [ADR-15](memory-bank/decisions/ADR-15-traitement-de-la-moderation.md) | Décision par contenu signalé ; une feuille s'archive ou se masque, un chapitre poursuivi perd seulement le **passage retiré** ; table `sanctions` (remplace `banned_until`, ADR-01) |
+| [ADR-15](memory-bank/decisions/ADR-15-traitement-de-la-moderation.md) | Décision par contenu signalé ; une feuille se masque, un chapitre poursuivi perd seulement le **passage retiré** ; table `sanctions` (remplace `banned_until`, ADR-01) |
 | [ADR-16](memory-bank/decisions/ADR-16-illustrations-du-roman.md) | Illustration officielle **automatique** (la plus soutenue) ; une proposition par contributeur et par roman, remplaçable en perdant ses soutiens ; un soutien par lecteur et par roman |
+| [ADR-18](memory-bank/decisions/ADR-18-indicateurs-du-mvp.md) | Indicateurs §16 **calculés à la demande** (`GET /metrics`, admin seul, période `?days=`), chacun en `count` / `total` |
 | [ADR-17](memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md) | Profil public `/users/{username}` ; statistiques **calculées à la lecture**, jamais dénormalisées ; rôle `author` posé à la première publication ; un utilisateur se signale, la décision (`dismissed` / `sanctioned`) ne touche aucun contenu |
+| [ADR-19](memory-bank/decisions/ADR-19-pas-de-statut-archive.md) | **Pas de statut « archivé »** : un chapitre retiré par la modération est masqué, visible des seuls modérateurs et de son auteur ; pas d'archives du roman |
 
 Plan de livraison par lots : [ghosty-mvp-plan.md](../ghosty-mvp-plan.md).
 
@@ -111,7 +113,7 @@ backend/
 │       ├── ChapterService.php             # seul écrivain de chapters (ADR-07)
 │       ├── BranchService.php         # branch_like_count propagé (ADR-08)
 │       ├── LikeAuthorizationService.php # anti-abus des soutiens
-│       ├── ModerationService.php         # seul chemin vers archived/hidden
+│       ├── ModerationService.php         # seul chemin vers hidden
 │       ├── NotificationService.php       # seul écrivain des notifications, agrégation par group_key
 │       ├── Notifications/                # un service par notification ({Type}NotificationService::create)
 │       └── ImageUploadService.php
@@ -218,7 +220,7 @@ branch_like_count INT DEFAULT 0           -- cumul des soutiens de la racine jus
 comment_count INT DEFAULT 0
 read_count INT DEFAULT 0
 status TINYINT DEFAULT 1                  -- 0 draft (auteur seul), 1 published,
-                                          -- 2 archived, 3 hidden
+                                          -- 3 hidden (2 inutilisé, ADR-19)
 published_at TIMESTAMP NULLABLE
 corrected_at TIMESTAMP NULLABLE            -- correction unique (ADR-11)
 created_at / updated_at TIMESTAMP
@@ -230,7 +232,7 @@ INDEX chapters_active_branches_index (novel_id, continuations_count, status, bra
 **Trois pièges à connaître avant d'y toucher** :
 
 1. **`continuations_count`, pas `children_count`** — Eloquent réserve `children_count` au résultat de `withCount('children')`, qui écraserait silencieusement le compteur dénormalisé.
-2. **Il compte les suites publiées** : décrémenter aussi quand la modération archive ou masque une suite, sinon un parent reste affiché comme branche active (interdit par §9).
+2. **Il compte les suites publiées** : décrémenter aussi quand la modération masque une suite, sinon un parent reste affiché comme branche active (interdit par §9).
 3. **`path` est encadré de séparateurs** (`/1/12/45/`) pour qu'un préfixe `LIKE '/1/12/%'` ne capture jamais le chapitre 120.
 
 #### novel_covers ✅ implémenté (lot 7)
@@ -283,7 +285,7 @@ reports    : reporter_id, reportable_type (chapter|comment|novel_cover|user), re
                          'spam','hate_speech','insult','harassment','personal_attack',
                          'like_manipulation','illegal'),
              description, status (1 pending, 2 processed), moderator_id,
-             resolution ENUM('dismissed','archived','hidden','passage_removed','sanctioned'), processed_at, timestamps
+             resolution ENUM('dismissed','hidden','passage_removed','sanctioned'), processed_at, timestamps
              UNIQUE (reporter_id, reportable_type, reportable_id)
 
 sanctions  : user_id, moderator_id, report_id NULLABLE, type ENUM('warning','write_ban',
@@ -293,8 +295,8 @@ chapter_versions : chapter_id, moderator_id, content, timestamps   -- texte avan
 ```
 
 - **Une décision vise un contenu** et clôt tous ses signalements en attente
-  (`ModerationService`, seul chemin vers `archived` / `hidden` / `passage_removed`).
-- **Seule une feuille** (publiée, non racine, sans suite publiée) s'archive ou se masque ;
+  (`ModerationService`, seul chemin vers `hidden` / `passage_removed`).
+- **Seule une feuille** (publiée, non racine, sans suite publiée) se masque ;
   un chapitre poursuivi perd seulement un **passage retiré** : `PassageRemovalOnly` n'accepte que
   des passages remplacés par `config('ghosty.moderation.removed_passage_marker')`.
 - Les bans se lisent dans `sanctions` : `User::isBanned()` (account_ban), `isWriteBanned()`,
@@ -336,7 +338,7 @@ Aucune table : un profil se lit dans les tables de contenu
   calculées en sous-requêtes sur `author_id` (lectures, soutiens chapitres + illustrations, suites
   publiées par d'autres, nombre de romans / chapitres / illustrations / officielles).
   ⛔ Ne pas les dénormaliser sur `users` : sept compteurs à tenir sur tous les événements.
-- Listes paginées `novels`, `chapters` (publiés **et** archivés, scope `visibleOnProfile`, marque
+- Listes paginées `novels`, `chapters` (publiés seulement, marque
   `is_in_main_branch` lue dans le `path` de `novels.main_branch_last_chapter_id`), `branches`
   (chapitres publiés avec `continuations_count > 0`), `covers` (publiées, `is_official`).
   Masqué et brouillon n'y figurent jamais.
@@ -345,6 +347,20 @@ Aucune table : un profil se lit dans les tables de contenu
   `ModerationService::moderateUser` (`dismissed` sans sanction, `sanctioned` avec).
 - Le rôle `author` est ajouté par `ChapterService` à la première publication, comme `illustrator`
   à la première proposition : affichage seulement, jamais une autorisation.
+
+#### Indicateurs ✅ implémenté (lot 9)
+
+Aucune table : `MetricsService` assemble une requête agrégée par indicateur, toutes dans
+`MetricsRepository` (exception à « un repository par entité ») ([ADR-18](memory-bank/decisions/ADR-18-indicateurs-du-mvp.md)).
+
+- `GET /metrics?days=` (`UserPolicy::viewMetrics`, rôle `admin` non banni) rend `period`,
+  `metrics.{clé}.count` / `.total` et `inactive_after_days`. Les définitions des dix clés sont
+  dans l'ADR : ne pas les changer sans l'amender, les périodes ne seraient plus comparables.
+- Un lecteur se lit `coalesce(cast(user_id as char), session_key)` dans `chapter_reads`.
+  « Hors de la branche principale » se teste par `substr` / `length` sur les `path`, seules
+  fonctions communes à MySQL et SQLite (`concat` et `||` divergent).
+- Pas de statut « archivé » ni d'archives du roman : un chapitre retiré par la modération est
+  masqué, visible des seuls modérateurs ([ADR-19](memory-bank/decisions/ADR-19-pas-de-statut-archive.md)).
 
 #### follows / reading_progress / chapter_reads ✅ implémenté (lot 4)
 
@@ -736,7 +752,7 @@ ou une `Response` quand le refus doit cacher la ressource : `Response::denyAsNot
 // app/Policies/ChapterPolicy.php
 public function view(?User $user, Chapter $chapter): Response
 {
-    if (in_array($chapter->status, [Chapter::STATUS_PUBLISHED, Chapter::STATUS_ARCHIVED], true)) {
+    if ($chapter->isPublished()) {
         return Response::allow();
     }
 
@@ -959,7 +975,7 @@ poser `path` et `depth` à la main :
 |---|---|
 | `continuing($parent)` | rattache au parent : `novel_id`, `depth`, `path`, et incrémente `continuations_count` du parent |
 | `liked($count)` | pose `like_count` et le cumul de branche correspondant |
-| `archived()` / `hidden()` | issues de modération |
+| `hidden()` | issue de modération |
 
 ```php
 <?php

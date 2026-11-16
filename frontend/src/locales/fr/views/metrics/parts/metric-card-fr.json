@@ -1,0 +1,48 @@
+{
+  "metric_card": {
+    "out_of": "sur {total}",
+    "rate": "{rate} %",
+    "metrics": {
+      "returning_readers": {
+        "label": "Lecteurs qui reviennent",
+        "description": "Lecteurs ayant découvert de nouveaux chapitres sur au moins deux jours distincts de la période, parmi les lecteurs actifs."
+      },
+      "returning_authors": {
+        "label": "Auteurs qui publient à nouveau",
+        "description": "Auteurs ayant publié pendant la période un chapitre qui n'était pas leur première contribution, parmi les auteurs ayant publié."
+      },
+      "continued_continuations": {
+        "label": "Suites poursuivies",
+        "description": "Suites publiées pendant la période qui ont déjà reçu une suite à leur tour."
+      },
+      "active_branches": {
+        "label": "Branches actives",
+        "description": "Branches ayant reçu une nouvelle suite pendant la période, parmi toutes les branches."
+      },
+      "alternate_branch_readers": {
+        "label": "Lecteurs qui explorent",
+        "description": "Lecteurs ayant lu au moins un chapitre hors de la branche principale, parmi les lecteurs actifs."
+      },
+      "branch_followers": {
+        "label": "Personnes qui suivent une branche",
+        "description": "Comptes qui suivent au moins une branche aujourd'hui."
+      },
+      "completed_readings": {
+        "label": "Lectures menées jusqu'à la fin",
+        "description": "Lectures d'un roman ayant atteint la fin d'une branche, parmi les romans commencés pendant la période."
+      },
+      "comments": {
+        "label": "Commentaires",
+        "description": "Commentaires écrits pendant la période."
+      },
+      "likes": {
+        "label": "Soutiens",
+        "description": "Soutiens donnés pendant la période et toujours en place."
+      },
+      "inactive_continuations": {
+        "label": "Suites sans interaction",
+        "description": "Suites publiées depuis plus de {days} jours sans soutien, commentaire ni suite. Elles restent publiées."
+      }
+    }
+  }
+}

@@ -10,6 +10,7 @@
     "login": "Connexion",
     "register": "Inscription",
     "logout": "Déconnexion",
-    "moderation": "Modération"
+    "moderation": "Modération",
+    "metrics": "Indicateurs"
   }
 }

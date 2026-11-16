@@ -102,9 +102,9 @@ describe('ModerationChapterPage.vue', () => {
     ])
   })
 
-  it('offers to restore an archived chapter instead of a new decision', async () => {
+  it('offers to restore a hidden chapter instead of a new decision', async () => {
     const moderationCaseApi = moderationSeeder.getChapterCaseApi({
-      chapter: moderationSeeder.getModeratedChapterApi({ status: CHAPTER_STATUSES.ARCHIVED }),
+      chapter: moderationSeeder.getModeratedChapterApi({ status: CHAPTER_STATUSES.HIDDEN }),
     })
     vi.spyOn(ModerationRepository, 'showChapter').mockResolvedValue(
       controllerSuccess({ data: moderationCaseApi }),

@@ -7,7 +7,6 @@ export const REPORTED_CONTENT_TYPES = {
 
 export const RESOLUTIONS = {
   DISMISSED: 'dismissed',
-  ARCHIVED: 'archived',
   HIDDEN: 'hidden',
   PASSAGE_REMOVED: 'passage_removed',
   SANCTIONED: 'sanctioned',

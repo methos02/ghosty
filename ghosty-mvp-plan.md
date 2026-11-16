@@ -290,7 +290,7 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 - Écarts au plan ([ADR-12](backend/memory-bank/decisions/ADR-12-suivi-de-branche-et-parcours-de-lecture.md)) : `follows` ne vise que le **chapitre-tête** (suivre un roman = suivre son chapitre d'origine), pas un polymorphe `Novel|Chapter` ; routes `POST|DELETE /chapters/{id}/follow` et `POST /chapters/{id}/read` au lieu de `/follows` ; table `reading_progress` (convention Laravel) ; **aucune progression invitée** : l'historique et la reprise sont réservés aux comptes, sans fusion à la connexion.
 - Front : `FollowButton` dans la barre de lecture, page « Mes lectures » (`/me/readings` : reprendre, branches suivies, historique), notification `followed_branch_extended`.
 
-### Lot 5 — Commentaires · M
+### Lot 5 — Commentaires · M ✅
 
 - `comments` polymorphe (roman / branche / chapitre / cover), réponses à un niveau, masquage divulgâcheur, suppression par l'auteur.
 - Front : `CommentThread`, `CommentForm`, masque spoiler cliquable, compteurs.
@@ -318,13 +318,16 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 - Front : `ProfilePage` + onglets.
 - Arbitrages ([ADR-17](backend/memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md)) : un seul onglet **Chapitres** (publiés et archivés), chacun marqué s'il est sur la branche principale, au lieu d'une frontière chapitres / propositions qui bougerait à chaque soutien ; **Branches** = ses chapitres poursuivis par d'autres ; **Illustrations** proposées, marquées officielles ; statistiques (lectures, soutiens, suites reçues, contributions) **calculées à la lecture**, pas dénormalisées ; rôle `author` posé à la première publication ; **signalement d'un utilisateur** inclus (motifs visant une personne, décision `dismissed` ou `sanctioned` sans effet sur les contenus) ; noms d'auteur liés au profil (lecture, illustrations, commentaires, en-tête).
 
-### Lot 9 — Indicateurs · S
+### Lot 9 — Indicateurs · S ✅
 
 - `MetricsService` + `GET /metrics` couvrant les 9 indicateurs de §16.
 - L'indicateur « propositions archivées sans interaction » (§16) devient une **mesure** et non plus la conséquence d'un mécanisme : on compte les propositions sans soutien ni commentaire ni suite après N jours, **sans changer leur état** (D5). Le chiffre reste observable, la sanction disparaît.
-- Page « archives du roman » alimentée par les seules décisions de modération, avec un discours non punitif (§9).
+- ~~Page « archives du roman » alimentée par les seules décisions de modération, avec un discours non punitif (§9).~~ Abandonnée ([ADR-19](backend/memory-bank/decisions/ADR-19-pas-de-statut-archive.md)).
 
 > Le lot a perdu sa commande planifiée d'archivage : plus rien n'est archivé par le temps qui passe.
+
+- Arbitrages ([ADR-18](backend/memory-bank/decisions/ADR-18-indicateurs-du-mvp.md)) : `GET /metrics` réservé au rôle `admin` (pas aux modérateurs) ; période glissante `?days=` (30 par défaut, 365 au plus) ; chaque indicateur est un couple `count` / `total`, le taux se calcule à l'affichage ; un lecteur = un compte, sinon une session navigateur ; « hors de la branche principale » = ni ancêtre ni descendant de son dernier chapitre ; « fin » = chapitre publié sans suite publiée ; « sans interaction » = aucune suite, aucun soutien, aucun commentaire après 30 jours ; tout est calculé à la demande, sans table ni commande. Front : page `/metrics` (lien du menu pour les admins).
+- Arbitrage ([ADR-19](backend/memory-bank/decisions/ADR-19-pas-de-statut-archive.md)) : le statut « archivé » est supprimé, et avec lui les archives du roman prévues au §9. Un chapitre retiré par la modération enfreint une règle : il est masqué, visible des seuls modérateurs (par les signalements traités) et de son auteur.
 
 ### Hors MVP (V2)
 

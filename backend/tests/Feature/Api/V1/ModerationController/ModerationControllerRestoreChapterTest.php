@@ -47,37 +47,23 @@ class ModerationControllerRestoreChapterTest extends TestCase
     #[Test]
     public function requires_authentication(): void
     {
-        $archived = Chapter::factory()->continuing($this->root)->archived()->create();
+        $hidden = Chapter::factory()->continuing($this->root)->hidden()->create();
 
-        $this->postJson($this->route($archived))->assertUnauthorized();
+        $this->postJson($this->route($hidden))->assertUnauthorized();
     }
 
     #[Test]
     public function refuses_a_reader(): void
     {
-        $archived = Chapter::factory()->continuing($this->root)->archived()->create();
+        $hidden = Chapter::factory()->continuing($this->root)->hidden()->create();
 
         $this->actingAs(User::factory()->create())
-            ->postJson($this->route($archived))
+            ->postJson($this->route($hidden))
             ->assertForbidden();
     }
 
     #[Test]
-    public function restores_an_archived_chapter_and_its_counters(): void
-    {
-        $archived = Chapter::factory()->continuing($this->root)->archived()->create();
-
-        $this->actingAs($this->moderator)
-            ->postJson($this->route($archived))
-            ->assertOk();
-
-        $this->assertDatabaseHas('chapters', ['id' => $archived->id, 'status' => Chapter::STATUS_PUBLISHED]);
-        $this->assertDatabaseHas('chapters', ['id' => $this->root->id, 'continuations_count' => 1]);
-        $this->assertDatabaseHas('novels', ['id' => $this->novel->id, 'chapter_count' => 2]);
-    }
-
-    #[Test]
-    public function restores_a_hidden_chapter(): void
+    public function restores_a_hidden_chapter_and_its_counters(): void
     {
         $hidden = Chapter::factory()->continuing($this->root)->hidden()->create();
 
@@ -86,6 +72,8 @@ class ModerationControllerRestoreChapterTest extends TestCase
             ->assertOk();
 
         $this->assertDatabaseHas('chapters', ['id' => $hidden->id, 'status' => Chapter::STATUS_PUBLISHED]);
+        $this->assertDatabaseHas('chapters', ['id' => $this->root->id, 'continuations_count' => 1]);
+        $this->assertDatabaseHas('novels', ['id' => $this->novel->id, 'chapter_count' => 2]);
     }
 
     #[Test]
@@ -99,13 +87,13 @@ class ModerationControllerRestoreChapterTest extends TestCase
     #[Test]
     public function refuses_a_chapter_whose_parent_is_not_published(): void
     {
-        $archivedParent = Chapter::factory()->continuing($this->root)->archived()->create();
-        $archivedChild = Chapter::factory()->continuing($archivedParent)->archived()->create();
+        $hiddenParent = Chapter::factory()->continuing($this->root)->hidden()->create();
+        $hiddenChild = Chapter::factory()->continuing($hiddenParent)->hidden()->create();
 
         $this->actingAs($this->moderator)
-            ->postJson($this->route($archivedChild))
+            ->postJson($this->route($hiddenChild))
             ->assertForbidden();
 
-        $this->assertDatabaseHas('chapters', ['id' => $archivedChild->id, 'status' => Chapter::STATUS_ARCHIVED]);
+        $this->assertDatabaseHas('chapters', ['id' => $hiddenChild->id, 'status' => Chapter::STATUS_HIDDEN]);
     }
 }

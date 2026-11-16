@@ -62,10 +62,10 @@ class UserControllerShowTest extends TestCase
     }
 
     #[Test]
-    public function counts_the_published_and_archived_chapters_with_their_reads_and_likes(): void
+    public function counts_the_published_chapters_with_their_reads_and_likes(): void
     {
         Chapter::factory()->liked(3)->create(['author_id' => $this->user->id, 'read_count' => 10]);
-        Chapter::factory()->archived()->liked(1)->create(['author_id' => $this->user->id, 'read_count' => 4]);
+        Chapter::factory()->liked(1)->create(['author_id' => $this->user->id, 'read_count' => 4]);
         Chapter::factory()->hidden()->liked(5)->create(['author_id' => $this->user->id, 'read_count' => 100]);
         Chapter::factory()->draft()->create(['author_id' => $this->user->id]);
 

@@ -93,11 +93,11 @@ class ModerationControllerModerateChapterTest extends TestCase
     #[Test]
     public function refuses_a_chapter_that_is_not_published(): void
     {
-        $archived = Chapter::factory()->continuing($this->root)->archived()->create();
-        Report::factory()->on($archived)->create();
+        $hidden = Chapter::factory()->continuing($this->root)->hidden()->create();
+        Report::factory()->on($hidden)->create();
 
         $this->actingAs($this->moderator)
-            ->postJson($this->route($archived), ['resolution' => ReportResolution::Dismissed->value])
+            ->postJson($this->route($hidden), ['resolution' => ReportResolution::Dismissed->value])
             ->assertForbidden();
     }
 
@@ -121,13 +121,13 @@ class ModerationControllerModerateChapterTest extends TestCase
     }
 
     #[Test]
-    public function archiving_takes_the_leaf_out_of_reading(): void
+    public function hiding_takes_the_leaf_out_of_reading(): void
     {
         $this->actingAs($this->moderator)
-            ->postJson($this->route($this->leaf), ['resolution' => ReportResolution::Archived->value])
+            ->postJson($this->route($this->leaf), ['resolution' => ReportResolution::Hidden->value])
             ->assertOk();
 
-        $this->assertDatabaseHas('chapters', ['id' => $this->leaf->id, 'status' => Chapter::STATUS_ARCHIVED]);
+        $this->assertDatabaseHas('chapters', ['id' => $this->leaf->id, 'status' => Chapter::STATUS_HIDDEN]);
         $this->assertDatabaseHas('chapters', ['id' => $this->root->id, 'continuations_count' => 0]);
         $this->assertDatabaseHas('novels', ['id' => $this->novel->id, 'chapter_count' => 1]);
     }
@@ -146,12 +146,12 @@ class ModerationControllerModerateChapterTest extends TestCase
     }
 
     #[Test]
-    public function refuses_to_archive_a_chapter_with_a_published_continuation(): void
+    public function refuses_to_hide_a_chapter_with_a_published_continuation(): void
     {
         Chapter::factory()->continuing($this->leaf)->create();
 
         $this->actingAs($this->moderator)
-            ->postJson($this->route($this->leaf), ['resolution' => ReportResolution::Archived->value])
+            ->postJson($this->route($this->leaf), ['resolution' => ReportResolution::Hidden->value])
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['resolution' => __('validation.moderation.resolution.enum')]);
 
@@ -259,7 +259,7 @@ class ModerationControllerModerateChapterTest extends TestCase
     public function processes_every_pending_report_of_the_chapter(): void
     {
         $this->actingAs($this->moderator)
-            ->postJson($this->route($this->leaf), ['resolution' => ReportResolution::Archived->value])
+            ->postJson($this->route($this->leaf), ['resolution' => ReportResolution::Hidden->value])
             ->assertOk();
 
         foreach ([$this->firstReport, $this->secondReport] as $report) {
@@ -267,7 +267,7 @@ class ModerationControllerModerateChapterTest extends TestCase
                 'id' => $report->id,
                 'status' => ReportStatus::Processed->value,
                 'moderator_id' => $this->moderator->id,
-                'resolution' => ReportResolution::Archived->value,
+                'resolution' => ReportResolution::Hidden->value,
             ]);
         }
     }
@@ -386,7 +386,7 @@ class ModerationControllerModerateChapterTest extends TestCase
     public function notifies_the_author_of_the_decision(): void
     {
         $this->actingAs($this->moderator)
-            ->postJson($this->route($this->leaf), ['resolution' => ReportResolution::Archived->value])
+            ->postJson($this->route($this->leaf), ['resolution' => ReportResolution::Hidden->value])
             ->assertOk();
 
         $this->assertDatabaseHas('notifications', [

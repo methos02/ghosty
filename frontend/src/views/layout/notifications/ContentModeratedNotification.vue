@@ -15,14 +15,6 @@ defineProps({
   <NotificationBase :notification="notification">
     <template v-if="notification.payload.contentType === REPORTED_CONTENT_TYPES.CHAPTER">
       <Translate
-        v-if="notification.payload.resolution === RESOLUTIONS.ARCHIVED"
-        keypath="content_moderated_notification.chapter.archived"
-      >
-        <template #title>
-          <NotificationCommentableLink :notification="notification" />
-        </template>
-      </Translate>
-      <Translate
         v-if="notification.payload.resolution === RESOLUTIONS.HIDDEN"
         keypath="content_moderated_notification.chapter.hidden"
       >

@@ -10,9 +10,6 @@ defineProps({
 
 <template>
   <div class="content-moderated-notification-detail | d-flex f-column g-10">
-    <p v-if="notification.payload.resolution === RESOLUTIONS.ARCHIVED">
-      {{ t('content_moderated_notification_detail.archived') }}
-    </p>
     <p v-if="notification.payload.resolution === RESOLUTIONS.HIDDEN">
       {{ t('content_moderated_notification_detail.hidden') }}
     </p>

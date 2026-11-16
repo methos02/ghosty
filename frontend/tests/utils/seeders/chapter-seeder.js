@@ -40,12 +40,6 @@ const getChapterWithRemovedPassageApi = (overrides = {}) =>
     ...overrides,
   })
 
-const getArchivedChapterApi = (overrides = {}) =>
-  getChapterApi({
-    status: CHAPTER_STATUSES.ARCHIVED,
-    ...overrides,
-  })
-
 const getProfileChapterApi = (overrides = {}) =>
   getChapterApi({
     read_count: 18,
@@ -193,7 +187,6 @@ const getWriteForm = (overrides = {}) => ({
 export const chapterSeeder = {
   getProfileChapter,
   getProfileChapterApi,
-  getArchivedChapterApi,
   getChapterApi,
   getChapterWithRemovedPassageApi,
   getMainBranchApi,

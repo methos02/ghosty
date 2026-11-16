@@ -2,6 +2,7 @@
 
 **Date**: 2026-11-06
 **Status**: Accepted
+**Amendé le**: 2026-11-16 — l'issue `archived` est supprimée ; une feuille se masque ou perd un passage (voir [ADR-19](ADR-19-pas-de-statut-archive.md))
 
 ## Context
 

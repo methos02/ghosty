@@ -10,7 +10,7 @@ class ChapterPolicy
 {
     public function view(?User $user, Chapter $chapter): Response
     {
-        if (in_array($chapter->status, [Chapter::STATUS_PUBLISHED, Chapter::STATUS_ARCHIVED], true)) {
+        if ($chapter->isPublished()) {
             return Response::allow();
         }
 
@@ -85,7 +85,7 @@ class ChapterPolicy
      */
     public function restore(User $user, Chapter $chapter): bool
     {
-        if (! $user->canModerate() || (! $chapter->isArchived() && ! $chapter->isHidden())) {
+        if (! $user->canModerate() || ! $chapter->isHidden()) {
             return false;
         }
 

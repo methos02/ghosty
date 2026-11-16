@@ -161,13 +161,6 @@ onUnmounted(readingStore.clear)
           </header>
 
           <p
-            v-if="chapter.isArchived"
-            class="chapter-reader-page__archived | bg-info-300 p-10 radius-5 fs-300 text-center"
-          >
-            {{ t('chapter_read.archived') }}
-          </p>
-
-          <p
             v-for="(paragraph, index) in chapter.paragraphs"
             :key="index"
             class="chapter-reader-page__paragraph"

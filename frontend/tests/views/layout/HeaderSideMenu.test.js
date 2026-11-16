@@ -129,4 +129,20 @@ describe('HeaderSideMenu.vue', () => {
 
     expect(wrapper.find('.header-moderation').exists()).toBe(false)
   })
+
+  it('leads an admin to the metrics', () => {
+    useAuthStore().setUser(userSeeder.getUser({ roles: ['admin'] }))
+
+    wrapper = mount(HeaderSideMenu)
+
+    expect(wrapper.findComponent('.header-metrics').props('to')).toEqual({ name: 'metrics' })
+  })
+
+  it('hides the metrics from a moderator', () => {
+    useAuthStore().setUser(userSeeder.getUser({ roles: ['moderator'] }))
+
+    wrapper = mount(HeaderSideMenu)
+
+    expect(wrapper.find('.header-metrics').exists()).toBe(false)
+  })
 })

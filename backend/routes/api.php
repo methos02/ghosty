@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\CoverController;
 use App\Http\Controllers\Api\V1\FollowController;
 use App\Http\Controllers\Api\V1\GenreController;
 use App\Http\Controllers\Api\V1\LikeController;
+use App\Http\Controllers\Api\V1\MetricsController;
 use App\Http\Controllers\Api\V1\ModerationController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\NovelController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Api\V1\UserController;
 use App\Models\Comment;
 use App\Models\NovelCover;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -89,6 +91,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/covers/{cover}/comments', [CommentController::class, 'storeForCover'])->middleware('throttle:comment')->can('create', [Comment::class, 'cover'])->name('covers.comments.store');
 
         Route::post('/users/{user:username}/report', [ReportController::class, 'storeForUser'])->name('users.report');
+
+        Route::get('/metrics', [MetricsController::class, 'index'])->middleware('can:viewMetrics,'.User::class)->name('metrics.index');
 
         Route::prefix('moderation')->middleware('can:moderate,'.Report::class)->group(function () {
             Route::get('/reports', [ModerationController::class, 'index'])->name('moderation.reports.index');

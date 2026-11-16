@@ -16,7 +16,6 @@ describe('ReportProcessedNotification.vue', () => {
 
   it.each([
     [RESOLUTIONS.DISMISSED, 'report_processed_notification.chapter.dismissed'],
-    [RESOLUTIONS.ARCHIVED, 'report_processed_notification.chapter.archived'],
     [RESOLUTIONS.PASSAGE_REMOVED, 'report_processed_notification.chapter.passage_removed'],
   ])('tells the reporter the reported chapter was %s', (resolution, keypath) => {
     const notification = notificationSeeder.getModerationNotification(

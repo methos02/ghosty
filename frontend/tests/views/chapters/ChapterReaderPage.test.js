@@ -328,27 +328,6 @@ describe('ChapterReaderPage.vue', () => {
     )
   })
 
-  it('warns the reader that a chapter opened by link was archived by the moderation', async () => {
-    const reading = chapterSeeder.getReading()
-    const provide = readerProvide()
-    provide[READING_STORE_KEY].setReading({
-      ...reading,
-      chapter: ChapterDto.fromShow(chapterSeeder.getArchivedChapterApi({ id: reading.chapter.id })),
-    })
-    provide[NOVEL_STORE_KEY].setSelectedNovel(novelSeeder.getNovel())
-    await router.push({
-      name: 'chapter-read',
-      params: { slug: reading.novel.slug, id: reading.chapter.id },
-    })
-
-    wrapper = mount(ChapterReaderPage, {
-      global: { plugins: [router, createHead()], provide },
-    })
-    await flushPromises()
-
-    expect(wrapper.find('.chapter-reader-page__archived').text()).toBe(t('chapter_read.archived'))
-  })
-
   it('opens the correction only to the author of the chapter', async () => {
     const reading = chapterSeeder.getReading()
     const provide = readerProvide()

@@ -330,4 +330,9 @@ export const routesApi = {
     method: 'get',
     api: 'ghosty',
   },
+  'metrics.show': {
+    url: 'v1/metrics',
+    method: 'get',
+    api: 'ghosty',
+  },
 }

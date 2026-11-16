@@ -29,8 +29,6 @@ class Chapter extends Model implements Commentable, Likeable, Reportable
 
     const STATUS_PUBLISHED = 1;
 
-    const STATUS_ARCHIVED = 2;
-
     const STATUS_HIDDEN = 3;
 
     const PATH_SEPARATOR = '/';
@@ -150,21 +148,19 @@ class Chapter extends Model implements Commentable, Likeable, Reportable
     }
 
     /**
-     * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
-     *
-     * @param  Builder<Chapter>  $query
-     */
-    public function scopeVisibleOnProfile(Builder $query): void
-    {
-        $query->whereIn('status', [self::STATUS_PUBLISHED, self::STATUS_ARCHIVED]);
-    }
-
-    /**
      * @param  Builder<Chapter>  $query
      */
     public function scopeRoots(Builder $query): void
     {
         $query->whereNull('parent_id');
+    }
+
+    /**
+     * @param  Builder<Chapter>  $query
+     */
+    public function scopeContinuations(Builder $query): void
+    {
+        $query->whereNotNull('parent_id');
     }
 
     /**
@@ -205,11 +201,6 @@ class Chapter extends Model implements Commentable, Likeable, Reportable
     public function isDraft(): bool
     {
         return $this->status === self::STATUS_DRAFT;
-    }
-
-    public function isArchived(): bool
-    {
-        return $this->status === self::STATUS_ARCHIVED;
     }
 
     public function isHidden(): bool

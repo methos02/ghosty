@@ -98,6 +98,15 @@ export const routes = [
     meta: { asyncData: multiverseAsyncData },
   },
   {
+    path: '/metrics',
+    name: 'metrics',
+    component: () => import('@/views/metrics/MetricsPage.vue'),
+    meta: {
+      requiresAuth: true,
+      roles: ['admin'],
+    },
+  },
+  {
     path: '/novels/:slug/covers',
     name: 'novel-covers',
     component: () => import('@/views/covers/NovelCoversPage.vue'),

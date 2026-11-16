@@ -23,14 +23,6 @@ defineProps({
         </template>
       </Translate>
       <Translate
-        v-if="notification.payload.resolution === RESOLUTIONS.ARCHIVED"
-        keypath="report_processed_notification.chapter.archived"
-      >
-        <template #title>
-          <NotificationCommentableLink :notification="notification" />
-        </template>
-      </Translate>
-      <Translate
         v-if="notification.payload.resolution === RESOLUTIONS.HIDDEN"
         keypath="report_processed_notification.chapter.hidden"
       >

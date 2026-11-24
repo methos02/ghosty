@@ -127,12 +127,7 @@ describe('AccountProfileSection.vue', () => {
 
     const { body, form: formName } = AccountRepository.updateProfile.mock.calls[0][0]
     expect(Object.fromEntries(body)).toEqual(
-      Object.fromEntries(
-        AccountDto.toUpdateProfile({
-          ...AccountDto.toFormProfile(userSeeder.getUser()),
-          username: userApi.username,
-        }),
-      ),
+      Object.fromEntries(AccountDto.toUpdateProfile({ username: userApi.username })),
     )
     expect(formName).toBe('accountProfile')
     expect(useAuthStore().user.value).toEqual(AuthDto.fromUser(userApi))

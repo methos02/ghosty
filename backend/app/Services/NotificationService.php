@@ -23,7 +23,7 @@ class NotificationService
      */
     public function push(User $recipient, ?int $actorId, NotificationType $type, NotificationSubject $subject, Closure $data): void
     {
-        if ($recipient->id === $actorId || ! $recipient->notifications_enabled) {
+        if ($recipient->id === $actorId || ! $recipient->wantsNotification($type)) {
             return;
         }
 

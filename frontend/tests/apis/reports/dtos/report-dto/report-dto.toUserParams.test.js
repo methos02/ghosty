@@ -4,10 +4,10 @@ import { userSeeder } from '&/utils/seeders/user-seeder.js'
 
 describe('report-dto', () => {
   describe('toUserParams', () => {
-    it('targets the reported account in the url', () => {
+    it('targets the reported account by its slug in the url', () => {
       const profile = userSeeder.getProfile()
 
-      expect(ReportDto.toUserParams(profile.username)).toEqual({ username: profile.username })
+      expect(ReportDto.toUserParams(profile)).toEqual({ slug: profile.slug })
     })
   })
 })

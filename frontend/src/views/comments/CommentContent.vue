@@ -3,17 +3,16 @@ import { computed, ref } from 'vue'
 import { flash, t } from '@/services/shortcuts/services-shortcut.js'
 import ConfirmButtonComponent from '@/components/ConfirmButtonComponent.vue'
 import UserLink from '@/views/parts/UserLink.vue'
+import CommentMention from '@/views/comments/CommentMention.vue'
 import { CommentController } from '@/apis/comments/controllers/comment-controller.js'
 import { useCommentStore } from '@/core-vue/stores/comments/comment-store.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
-import { mentionHelper } from '@/core/helpers/mention-helper.js'
 import { useAuthStore } from '@/services/auth/src/auth-store.js'
 import { useReport } from '@/core-vue/composables/reports/use-report.js'
 
 const props = defineProps({
   comment: { type: Object, required: true },
   isReplyable: { type: Boolean, default: false },
-  threadUsernames: { type: Array, default: () => [] },
 })
 
 const emit = defineEmits(['reply'])
@@ -25,10 +24,6 @@ const { report } = useReport()
 const isSpoilerRevealed = ref(false)
 
 const isOwnComment = computed(() => props.comment.author.id === authStore.user.value?.id)
-
-const contentParts = computed(() =>
-  mentionHelper.split(props.comment.content, props.threadUsernames),
-)
 
 const isContentMasked = computed(() => props.comment.isSpoiler && !isSpoilerRevealed.value)
 
@@ -63,7 +58,7 @@ const deleteComment = async comment => {
     <template v-else>
       <header class="comment-content__header | d-flex a-center g-10">
         <UserLink
-          :username="comment.author.username"
+          :user="comment.author"
           class="comment-content__author"
         />
         <span class="comment-content__date | fs-300 color-neutral-600">
@@ -84,13 +79,11 @@ const deleteComment = async comment => {
         v-else
         class="comment-content__text"
       >
-        <span
-          v-if="contentParts.mention"
-          class="comment-content__mention | fw-700 color-primary"
-        >
-          {{ contentParts.mention }}
-        </span>
-        {{ contentParts.rest }}
+        <CommentMention
+          v-if="comment.mentionedUser"
+          :user="comment.mentionedUser"
+        />
+        {{ comment.content }}
       </p>
 
       <footer class="comment-content__actions | d-flex a-center g-10">

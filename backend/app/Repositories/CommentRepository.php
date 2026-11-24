@@ -21,9 +21,10 @@ class CommentRepository
         return Comment::query()
             ->with([
                 'author',
+                'mentionedUser',
                 'visibleReplies' => function (Relation $replies) use ($userId): void {
                     $replies->addSelect(['is_reported' => Comment::userReportQuery($userId)]);
-                    $replies->with('author');
+                    $replies->with(['author', 'mentionedUser']);
                 },
             ])
             ->withUserReport($userId)
@@ -39,7 +40,7 @@ class CommentRepository
     public function find(int $commentId): Comment
     {
         return Comment::query()
-            ->with(['author', 'commentable'])
+            ->with(['author', 'commentable', 'mentionedUser'])
             ->findOrFail($commentId);
     }
 
@@ -60,7 +61,7 @@ class CommentRepository
     {
         return Comment::query()
             ->create($attributes)
-            ->load('author');
+            ->load(['author', 'mentionedUser']);
     }
 
     /**

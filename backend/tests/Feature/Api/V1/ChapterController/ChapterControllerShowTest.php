@@ -37,15 +37,32 @@ class ChapterControllerShowTest extends TestCase
     }
 
     #[Test]
-    public function exposes_the_author_username(): void
+    public function exposes_the_identity_of_the_author(): void
     {
-        $author = User::factory()->create(['username' => 'auteur2']);
+        $author = User::factory()->create(['username' => 'auteur2', 'slug' => 'aut123']);
         $chapter = Chapter::factory()->create(['author_id' => $author->id]);
 
         $response = $this->getJson("/api/v1/chapters/{$chapter->id}");
 
         $response->assertOk()
-            ->assertJsonPath('author.username', 'auteur2');
+            ->assertJsonPath('author', [
+                'id' => $author->id,
+                'username' => 'auteur2',
+                'slug' => 'aut123',
+                'profile_slug' => 'aut123-auteur2',
+                'is_deleted' => false,
+            ]);
+    }
+
+    #[Test]
+    public function marks_the_author_whose_account_was_deleted(): void
+    {
+        $chapter = Chapter::factory()->create(['author_id' => User::factory()->deleted()->create()->id]);
+
+        $this->getJson("/api/v1/chapters/{$chapter->id}")
+            ->assertOk()
+            ->assertJsonPath('author.is_deleted', true)
+            ->assertJsonPath('author.username', __('users.deleted'));
     }
 
     #[Test]

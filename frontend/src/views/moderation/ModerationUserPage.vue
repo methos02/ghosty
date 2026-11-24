@@ -57,7 +57,7 @@ onMounted(load)
             t('moderation_user_page.member_since', { date: moderationCase.user.createdAtFormat })
           }}
           ·
-          <UserLink :username="moderationCase.user.username" />
+          <UserLink :user="moderationCase.user" />
         </span>
       </div>
 

@@ -33,6 +33,7 @@ class CommentReceivedNotificationServiceTest extends TestCase
         $notification = $this->notificationsOf($chapter->author, NotificationType::CommentReceived)->sole();
         $this->assertSame(2, $notification->data['count']);
         $this->assertSame($lastCommenter->username, $notification->data['last_actor_username']);
+        $this->assertSame($lastCommenter->profileSlug(), $notification->data['last_actor_profile_slug']);
         $this->assertSame($chapter->id, data_get($notification->data, 'chapter.id'));
     }
 }

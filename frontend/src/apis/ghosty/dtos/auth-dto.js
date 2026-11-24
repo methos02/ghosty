@@ -1,32 +1,54 @@
-const toRegister = formData => ({
-  username: formData.username,
-  email: formData.email,
-  password: formData.password,
-  password_confirmation: formData.passwordConfirmation,
-})
+import { OPTIONAL_NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 
-const toLogin = formData => ({
-  identifier: formData.identifier,
-  password: formData.password,
-})
+const fromUser = user => {
+  return {
+    id: user.id,
+    username: user.username,
+    slug: user.slug,
+    profileSlug: user.profile_slug,
+    email: user.email,
+    roles: user.roles,
+    avatarUrl: user.avatar_url ?? undefined,
+    notificationPreferences: internals.mapNotificationPreferences(user),
+    newMessagesCount: user.new_messages_count,
+    emailVerifiedAt: user.email_verified_at,
+    createdAt: user.created_at,
+  }
+}
 
-const fromUser = data => ({
-  id: data.id,
-  username: data.username,
-  email: data.email,
-  roles: data.roles,
-  avatar: data.avatar,
-  firstname: data.firstname,
-  lastname: data.lastname,
-  birthDate: data.birth_date,
-  notificationsEnabled: data.notifications_enabled,
-  newMessagesCount: data.new_messages_count,
-  emailVerifiedAt: data.email_verified_at,
-  createdAt: data.created_at,
-})
+const toLogin = formData => {
+  return {
+    identifier: formData.identifier,
+    password: formData.password,
+  }
+}
+
+const toRegister = formData => {
+  return {
+    username: formData.username,
+    email: formData.email,
+    password: formData.password,
+    password_confirmation: formData.passwordConfirmation,
+  }
+}
 
 export const AuthDto = {
-  toRegister,
-  toLogin,
   fromUser,
+  toLogin,
+  toRegister,
+}
+
+const mapNotificationPreferences = user => {
+  const disabledTypes = user.disabled_notification_types ?? []
+
+  return Object.fromEntries(
+    OPTIONAL_NOTIFICATION_TYPES.map(type => [
+      type,
+      user.notifications_enabled && !disabledTypes.includes(type),
+    ]),
+  )
+}
+
+export const internals = {
+  mapNotificationPreferences,
 }

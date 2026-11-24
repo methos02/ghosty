@@ -61,7 +61,9 @@ onMounted(() => load())
             {{
               t('followed_branch_list.branch', {
                 title: follow.chapter.title,
-                author: follow.chapter.author.username,
+                author: follow.chapter.author.isDeleted
+                  ? t('common.deleted_account')
+                  : follow.chapter.author.username,
               })
             }}
           </router-link>

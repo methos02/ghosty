@@ -11,19 +11,29 @@ defineProps({
     <div
       class="profile-statistics__item | d-flex f-column a-center g-5 bg-neutral-200 radius-10 p-15"
     >
-      <dt class="fs-300 color-neutral-700">{{ t('profile_statistics.reads') }}</dt>
-      <dd class="profile-statistics__reads | fs-600 fw-700">{{ statistics.readCount }}</dd>
+      <dt class="fs-300 color-neutral-700">
+        {{ t('profile_statistics.reads') }}
+      </dt>
+      <dd class="profile-statistics__reads | fs-600 fw-700">
+        {{ statistics.readCount }}
+      </dd>
     </div>
     <div
       class="profile-statistics__item | d-flex f-column a-center g-5 bg-neutral-200 radius-10 p-15"
     >
-      <dt class="fs-300 color-neutral-700">{{ t('profile_statistics.likes') }}</dt>
-      <dd class="profile-statistics__likes | fs-600 fw-700">{{ statistics.likeCount }}</dd>
+      <dt class="fs-300 color-neutral-700">
+        {{ t('profile_statistics.likes') }}
+      </dt>
+      <dd class="profile-statistics__likes | fs-600 fw-700">
+        {{ statistics.likeCount }}
+      </dd>
     </div>
     <div
       class="profile-statistics__item | d-flex f-column a-center g-5 bg-neutral-200 radius-10 p-15"
     >
-      <dt class="fs-300 color-neutral-700">{{ t('profile_statistics.received_continuations') }}</dt>
+      <dt class="fs-300 color-neutral-700">
+        {{ t('profile_statistics.received_continuations') }}
+      </dt>
       <dd class="profile-statistics__continuations | fs-600 fw-700">
         {{ statistics.receivedContinuationCount }}
       </dd>
@@ -31,7 +41,9 @@ defineProps({
     <div
       class="profile-statistics__item | d-flex f-column a-center g-5 bg-neutral-200 radius-10 p-15"
     >
-      <dt class="fs-300 color-neutral-700">{{ t('profile_statistics.contributions') }}</dt>
+      <dt class="fs-300 color-neutral-700">
+        {{ t('profile_statistics.contributions') }}
+      </dt>
       <dd class="profile-statistics__contributions | fs-300 text-center">
         <span class="d-block">{{ t('profile_statistics.novels', statistics.novelCount) }}</span>
         <span class="d-block">{{ t('profile_statistics.chapters', statistics.chapterCount) }}</span>

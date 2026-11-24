@@ -31,7 +31,9 @@ defineExpose({ ask })
     <slot></slot>
     <template #details>
       <div class="publish-button__terms | d-flex f-column g-5">
-        <p class="fw-700">{{ t('publish_button.after') }}</p>
+        <p class="fw-700">
+          {{ t('publish_button.after') }}
+        </p>
         <ul class="list | pl-20">
           <li>{{ t('publish_button.corrections') }}</li>
           <li>{{ t('publish_button.delay') }}</li>

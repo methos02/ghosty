@@ -32,9 +32,9 @@ const reportCover = async (coverId, formData) => {
   return controllerResponseHelper.buildResponse(response)
 }
 
-const reportUser = async (username, formData) => {
+const reportUser = async (user, formData) => {
   const response = await ReportRepository.reportUser({
-    params: ReportDto.toUserParams(username),
+    params: ReportDto.toUserParams(user),
     body: ReportDto.toCreate(formData),
     form: 'report',
   })

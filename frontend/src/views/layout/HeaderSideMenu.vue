@@ -2,12 +2,8 @@
 import { computed, watch } from 'vue'
 import { onKeyStroke } from '@vueuse/core'
 import { auth, route, t } from '@/services/shortcuts/services-shortcut.js'
-import { useAuthStore } from '@/services/auth/src/auth-store.js'
 
 const currentRoute = route.current()
-const authStore = useAuthStore()
-
-const username = computed(() => authStore.user.value?.username)
 
 const isOpen = defineModel('open', { type: Boolean, default: false })
 
@@ -65,9 +61,9 @@ const handleLogout = async () => {
       :aria-hidden="!isOpen"
     >
       <ul class="header-side__items | d-flex f-column">
-        <li v-if="username">
+        <li>
           <router-link
-            :to="{ name: 'profile', params: { username } }"
+            :to="{ name: 'account-profile' }"
             @click="close"
             class="header-profile | header-side__link | d-flex a-center g-25"
           >

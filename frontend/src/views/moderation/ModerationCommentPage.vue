@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
+import CommentMention from '@/views/comments/CommentMention.vue'
 import ModerationDecisionForm from '@/views/moderation/parts/ModerationDecisionForm.vue'
 import ModerationReportList from '@/views/moderation/parts/ModerationReportList.vue'
 import ModerationRestoreButton from '@/views/moderation/parts/ModerationRestoreButton.vue'
@@ -53,7 +54,9 @@ onMounted(load)
           {{ t('moderation.back_to_queue') }}
         </router-link>
         <h1 class="fs-700 fw-700">
-          {{ t('moderation_comment_page.title', { author: moderationCase.comment.author.username }) }}
+          {{
+            t('moderation_comment_page.title', { author: moderationCase.comment.author.username })
+          }}
         </h1>
         <span
           v-if="moderationCase.comment.chapter"
@@ -93,6 +96,10 @@ onMounted(load)
       </p>
 
       <blockquote class="moderation-comment-page__content | bg-neutral-200 p-20 radius-10">
+        <CommentMention
+          v-if="moderationCase.comment.mentionedUser"
+          :user="moderationCase.comment.mentionedUser"
+        />
         {{ moderationCase.comment.content }}
       </blockquote>
 

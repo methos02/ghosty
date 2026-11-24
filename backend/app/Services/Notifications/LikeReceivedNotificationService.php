@@ -30,6 +30,7 @@ class LikeReceivedNotificationService
             fn (?Notification $pending): array => [
                 ...NotificationDataHelper::contentSubject($likeable),
                 'last_actor_username' => $liker->username,
+                'last_actor_profile_slug' => $liker->profileSlug(),
                 ...$this->likesSinceFirstUnreadLike($likeable, $liker, $pending),
             ]
         );

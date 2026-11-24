@@ -9,7 +9,9 @@ defineProps({
 
 <template>
   <section class="moderation-sanction-history | d-flex f-column g-10">
-    <h2 class="fs-500 fw-700">{{ t('moderation_sanction_history.title') }}</h2>
+    <h2 class="fs-500 fw-700">
+      {{ t('moderation_sanction_history.title') }}
+    </h2>
 
     <p
       v-if="sanctions.length === 0"

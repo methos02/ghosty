@@ -37,6 +37,7 @@ class Comment extends Model implements AuthoredContent, Reportable
         'commentable_type',
         'commentable_id',
         'parent_id',
+        'mentioned_user_id',
         'content',
         'is_spoiler',
         'status',
@@ -57,6 +58,16 @@ class Comment extends Model implements AuthoredContent, Reportable
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function mentionedUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'mentioned_user_id');
     }
 
     public function reportedUser(): User
@@ -123,13 +134,6 @@ class Comment extends Model implements AuthoredContent, Reportable
     public function isHidden(): bool
     {
         return $this->status === self::STATUS_HIDDEN;
-    }
-
-    public function startsWithMentionOf(User $user): bool
-    {
-        $mention = preg_quote('@'.$user->username, '/');
-
-        return preg_match('/^'.$mention.'(\s|$)/u', $this->content ?? '') === 1;
     }
 
     public function isReply(): bool

@@ -24,4 +24,23 @@ enum NotificationType: string
     {
         return $this->value.':'.$subject->notificationKey();
     }
+
+    /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
+    public function isOptional(): bool
+    {
+        return $this !== self::ContentModerated;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function optionalValues(): array
+    {
+        return array_values(array_map(
+            fn (self $type): string => $type->value,
+            array_filter(self::cases(), fn (self $type): bool => $type->isOptional())
+        ));
+    }
 }

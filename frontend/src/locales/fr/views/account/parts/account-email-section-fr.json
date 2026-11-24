@@ -1,0 +1,10 @@
+{
+  "account_email_section": {
+    "title": "Adresse email",
+    "email": "Nouvelle adresse email",
+    "save": "Changer d'adresse",
+    "saved": "Votre adresse email a été mise à jour.",
+    "error_email_required": "L'adresse email est requise.",
+    "error_email_invalid": "L'adresse email n'est pas valide."
+  }
+}

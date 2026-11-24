@@ -1,11 +1,47 @@
 <?php
 
 return [
+    'username' => [
+        'unique' => 'Ce pseudo est déjà utilisé',
+        'max' => 'Le pseudo ne peut pas dépasser :max caractères',
+        'reserved' => 'Ce pseudo est réservé',
+    ],
+    'account' => [
+        'username' => [
+            'required' => 'Le pseudo est obligatoire',
+            'min' => 'Le pseudo doit contenir au moins :min caractères',
+        ],
+        'notifications_enabled' => [
+            'boolean' => 'Le choix des notifications doit valoir vrai ou faux',
+        ],
+        'disabled_notification_types' => [
+            'array' => 'La liste des notifications désactivées est invalide',
+            'in' => 'Ce type de notification n\'existe pas ou ne peut pas être désactivé',
+        ],
+        'email' => [
+            'required' => 'L\'email est obligatoire',
+            'email' => 'L\'email doit être valide',
+            'unique' => 'Cet email est déjà utilisé',
+        ],
+        'current_password' => [
+            'required' => 'Saisissez votre mot de passe actuel',
+            'current_password' => 'Le mot de passe actuel est incorrect',
+        ],
+        'password' => [
+            'required' => 'Le nouveau mot de passe est obligatoire',
+            'min' => 'Le mot de passe doit contenir au moins :min caractères',
+            'confirmed' => 'Les mots de passe ne correspondent pas',
+        ],
+        'avatar' => [
+            'required' => 'Choisissez une image',
+            'mimes' => 'L\'image doit être au format JPG, PNG ou WebP',
+            'max' => 'L\'image ne peut pas dépasser :max Ko',
+        ],
+    ],
     'register' => [
         'username' => [
             'required' => 'Le pseudo est obligatoire',
             'min' => 'Le pseudo doit contenir au moins 3 caractères',
-            'unique' => 'Ce pseudo est déjà utilisé',
         ],
         'email' => [
             'required' => 'L\'email est obligatoire',

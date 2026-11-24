@@ -9,7 +9,13 @@ const getNovelApi = (overrides = {}) => ({
   is_favorite: false,
   chapters_count: 12,
   comment_count: 3,
-  author: { id: 7, username: 'GhostWriter' },
+  author: {
+    id: 7,
+    username: 'GhostWriter',
+    slug: 'usr007',
+    profile_slug: 'usr007-ghostwriter',
+    is_deleted: false,
+  },
   genre: { id: 3, name: 'Fantastique' },
   ...overrides,
 })

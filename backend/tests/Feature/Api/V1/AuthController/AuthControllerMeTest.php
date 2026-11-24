@@ -63,7 +63,7 @@ class AuthControllerMeTest extends TestCase
     #[Test]
     public function returns_authenticated_user(): void
     {
-        $user = User::factory()->create(['username' => 'JohnDoe', 'email' => 'john@example.com']);
+        $user = User::factory()->create(['username' => 'JohnDoe', 'slug' => 'joh123', 'email' => 'john@example.com']);
         Sanctum::actingAs($user);
 
         $response = $this->getJson($this->route);
@@ -71,6 +71,10 @@ class AuthControllerMeTest extends TestCase
         $response->assertOk();
         $response->assertJsonPath('user.id', $user->id);
         $response->assertJsonPath('user.username', 'JohnDoe');
+        $response->assertJsonPath('user.slug', 'joh123');
+        $response->assertJsonPath('user.profile_slug', 'joh123-johndoe');
+        $response->assertJsonPath('user.is_deleted', false);
+        $response->assertJsonPath('user.avatar_url', null);
         $response->assertJsonPath('user.email', 'john@example.com');
         $response->assertJsonMissingPath('user.password');
     }

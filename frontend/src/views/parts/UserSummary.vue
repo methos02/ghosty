@@ -32,13 +32,13 @@ onMounted(loadDrafts)
 <template>
   <div class="user-summary | d-flex a-center g-20">
     <img
-      v-if="user?.avatar"
-      :src="user?.avatar"
+      v-if="user?.avatarUrl"
+      :src="user?.avatarUrl"
       :alt="user?.username"
       class="user-summary__avatar"
     />
     <div
-      v-if="!user?.avatar"
+      v-if="!user?.avatarUrl"
       class="user-summary__avatar | user-summary__avatar--empty d-flex a-center j-center color-neutral-100"
     >
       <i class="fa-solid fa-user"></i>
@@ -47,7 +47,7 @@ onMounted(loadDrafts)
     <div class="d-flex f-column g-5">
       <router-link
         v-if="user"
-        :to="{ name: 'profile', params: { username: user.username } }"
+        :to="{ name: 'profile', params: { profileSlug: user.profileSlug } }"
         class="user-summary__username | color-neutral-100 color-primary-hover fs-700 fw-400"
       >
         {{ user.username }}
@@ -69,6 +69,7 @@ onMounted(loadDrafts)
     width: 96px;
     height: 96px;
     border-radius: 50%;
+    flex-shrink: 0;
     object-fit: cover;
     border: 3px solid var(--neutral-100);
 

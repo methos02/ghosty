@@ -9,12 +9,13 @@ import { paginationSeeder } from '&/utils/seeders/pagination-seeder.js'
 const getUserApi = (overrides = {}) => ({
   id: 42,
   username: 'GhostWriter',
+  slug: 'usr042',
+  profile_slug: 'usr042-ghostwriter',
+  is_deleted: false,
   email: 'ghost@ghosty.test',
   roles: ['user'],
-  avatar: null,
-  firstname: 'Jean',
-  lastname: 'Dupont',
-  birth_date: '1990-01-01',
+  avatar_url: null,
+  disabled_notification_types: [],
   notifications_enabled: true,
   new_messages_count: 2,
   email_verified_at: '2025-01-01T00:00:00Z',
@@ -23,7 +24,7 @@ const getUserApi = (overrides = {}) => ({
 })
 
 const getUserWithAvatarApi = (overrides = {}) =>
-  getUserApi({ avatar: 'https://example.test/avatars/42.png', ...overrides })
+  getUserApi({ avatar_url: 'https://example.test/avatars/42.png', ...overrides })
 
 const getUser = (overrides = {}) => ({ ...AuthDto.fromUser(getUserApi()), ...overrides })
 
@@ -57,7 +58,10 @@ const getStatisticsApi = (overrides = {}) => ({
 const getProfileApi = (overrides = {}) => ({
   id: 42,
   username: 'GhostWriter',
-  avatar: null,
+  slug: 'usr042',
+  profile_slug: 'usr042-ghostwriter',
+  is_deleted: false,
+  avatar_url: null,
   roles: [USER_ROLES.READER, USER_ROLES.AUTHOR, USER_ROLES.ILLUSTRATOR],
   created_at: '2024-01-01T00:00:00+00:00',
   is_reported: false,

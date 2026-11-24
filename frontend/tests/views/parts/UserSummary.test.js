@@ -45,7 +45,7 @@ describe('UserSummary.vue', () => {
 
     expect(wrapper.findComponent('.user-summary__username').props('to')).toEqual({
       name: 'profile',
-      params: { username: user.username },
+      params: { profileSlug: user.profileSlug },
     })
   })
 
@@ -55,7 +55,7 @@ describe('UserSummary.vue', () => {
         data: chapterSeeder.getListApi({ chapters: chapterSeeder.getMainBranchApi(0) }),
       }),
     )
-    useAuthStore().setUser(userSeeder.getUser({ avatar: undefined }))
+    useAuthStore().setUser(userSeeder.getUser({ avatarUrl: undefined }))
     wrapper = mount(UserSummary)
     await flushPromises()
 
@@ -74,7 +74,7 @@ describe('UserSummary.vue', () => {
     wrapper = mount(UserSummary)
     await flushPromises()
 
-    expect(wrapper.find('img.user-summary__avatar').attributes('src')).toBe(user.avatar)
+    expect(wrapper.find('img.user-summary__avatar').attributes('src')).toBe(user.avatarUrl)
   })
 
   it('links to the drafts and counts them', async () => {

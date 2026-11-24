@@ -107,7 +107,7 @@ describe('ReportProcessedNotification.vue', () => {
     expect(message.text()).toBe(t(keypath, { username: notificationApi.user.username }))
     expect(message.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
       name: 'profile',
-      params: { username: notificationApi.user.username },
+      params: { profileSlug: notificationApi.user.profile_slug },
     })
   })
 })

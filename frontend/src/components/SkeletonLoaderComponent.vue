@@ -21,7 +21,12 @@ defineProps({
 
 <style lang="scss" scoped>
 .skeleton-loader {
-  background: linear-gradient(90deg, var(--neutral-300) 25%, var(--neutral-400) 50%, var(--neutral-300) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--neutral-300) 25%,
+    var(--neutral-400) 50%,
+    var(--neutral-300) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
 

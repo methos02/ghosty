@@ -8,13 +8,13 @@ defineProps({
   formName: { type: String, required: true },
 })
 
-const datas = defineModel({ type: Object, required: true })
+const formDatas = defineModel({ type: Object, required: true })
 </script>
 
 <template>
   <div class="comment-fields | d-flex f-column g-5">
     <TextareaComponent
-      v-model="datas.content"
+      v-model="formDatas.content"
       name="content"
       :label="t('comment_fields.content')"
       :noLabel="true"
@@ -26,7 +26,7 @@ const datas = defineModel({ type: Object, required: true })
 
     <div class="comment-fields__footer | d-flex j-between a-center g-10">
       <SwitchComponent
-        v-model="datas.isSpoiler"
+        v-model="formDatas.isSpoiler"
         name="isSpoiler"
         :suffix="t('comment_fields.spoiler')"
         :form="formName"

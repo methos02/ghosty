@@ -49,7 +49,13 @@ const correct = async () => {
         </span>
         <span class="chapter-card__name">{{ chapter.title }}</span>
         <span class="chapter-card__author | fs-300 fw-400 color-neutral-700 ml-10">
-          {{ t('common.by_author', { author: chapter.author.username }) }}
+          {{
+            t('common.by_author', {
+              author: chapter.author.isDeleted
+                ? t('common.deleted_account')
+                : chapter.author.username,
+            })
+          }}
         </span>
       </h3>
 

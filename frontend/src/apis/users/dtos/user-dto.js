@@ -49,21 +49,24 @@ const fromSummary = user => {
   return {
     id: user.id,
     username: user.username,
-    avatar: user.avatar ?? undefined,
+    slug: user.slug,
+    profileSlug: user.profile_slug,
+    isDeleted: user.is_deleted,
+    avatarUrl: user.avatar_url ?? undefined,
     roles: user.roles,
     createdAtFormat: dateHelper.formatDateLocal(user.created_at, 'DD/MM/YYYY'),
   }
 }
 
-const toListParams = (username, page) => {
+const toListParams = (slug, page) => {
   return {
-    username,
+    slug,
     page,
   }
 }
 
-const toProfileParams = username => {
-  return { username }
+const toProfileParams = slug => {
+  return { slug }
 }
 
 export const UserDto = {

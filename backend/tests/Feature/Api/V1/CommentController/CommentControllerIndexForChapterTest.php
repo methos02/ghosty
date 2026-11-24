@@ -53,6 +53,27 @@ class CommentControllerIndexForChapterTest extends TestCase
     }
 
     #[Test]
+    public function serves_the_mentioned_reader_under_their_current_username(): void
+    {
+        $comment = Comment::factory()->create();
+        $mentioned = User::factory()->create(['username' => 'plume', 'slug' => 'plu123']);
+        $reply = Comment::factory()->replyingTo($comment)->create(['mentioned_user_id' => $mentioned->id]);
+        $mentioned->forceFill(['username' => 'Plume Noire'])->save();
+
+        $this->getJson("/api/v1/chapters/{$comment->commentable_id}/comments")
+            ->assertOk()
+            ->assertJsonPath('comments.0.mentioned_user', null)
+            ->assertJsonPath('comments.0.replies.0.id', $reply->id)
+            ->assertJsonPath('comments.0.replies.0.mentioned_user', [
+                'id' => $mentioned->id,
+                'username' => 'Plume Noire',
+                'slug' => 'plu123',
+                'profile_slug' => 'plu123-plume-noire',
+                'is_deleted' => false,
+            ]);
+    }
+
+    #[Test]
     public function keeps_a_deleted_comment_with_replies_as_an_anonymous_trace(): void
     {
         $deleted = Comment::factory()->deleted()->create();

@@ -49,7 +49,7 @@ const isMenuOpen = ref(false)
       >
         <NotificationBell />
         <router-link
-          :to="{ name: 'profile', params: { username: authStore.user.value.username } }"
+          :to="{ name: 'profile', params: { profileSlug: authStore.user.value.profileSlug } }"
           class="header-username | fs-500 color-neutral-100 color-primary-hover"
         >
           {{ authStore.user.value.username }}

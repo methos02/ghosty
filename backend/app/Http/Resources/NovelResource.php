@@ -24,10 +24,7 @@ class NovelResource extends JsonResource
             'is_favorite' => $this->is_favorite,
             'chapters_count' => $this->chapter_count,
             'comment_count' => $this->comment_count,
-            'author' => [
-                'id' => $this->author_id,
-                'username' => $this->whenLoaded('author', fn () => $this->author->username),
-            ],
+            'author' => $this->whenLoaded('author', fn () => new UserIdentityResource($this->author), ['id' => $this->author_id]),
             'genre' => [
                 'id' => $this->genre_id,
                 'name' => $this->whenLoaded('genre', fn () => $this->genre->name),

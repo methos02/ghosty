@@ -1,7 +1,8 @@
 <script setup>
 import { onBeforeUnmount, ref, watch } from 'vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
-import CoverCropper from '@/views/covers/parts/CoverCropper.vue'
+import ImageCropper from '@/views/parts/ImageCropper.vue'
+import { ConfigLoader } from '@/config/config-loader.js'
 import { validateCoverCropForm } from '@/apis/covers/formRequest/cover-crop-form-request.js'
 import { imageCropHelper } from '@/core/helpers/image-crop-helper.js'
 import { imageFileHelper } from '@/core/helpers/image-file-helper.js'
@@ -35,7 +36,11 @@ const release = () => {
 }
 
 const render = async () => {
-  const image = await imageFileHelper.renderCrop(source.value.bitmap, crop.value)
+  const image = await imageFileHelper.renderCrop(
+    source.value.bitmap,
+    crop.value,
+    source.value.format,
+  )
 
   if (previewUrl.value !== '') {
     URL.revokeObjectURL(previewUrl.value)
@@ -57,13 +62,16 @@ const load = async file => {
     return
   }
 
-  const size = { width: image.width, height: image.height }
   source.value = {
     url: URL.createObjectURL(file),
     bitmap: image.bitmap,
-    size,
+    size: {
+      width: image.width,
+      height: image.height,
+    },
+    format: ConfigLoader.get('cover'),
   }
-  crop.value = imageCropHelper.fullCrop(size)
+  crop.value = imageCropHelper.fullCrop(source.value)
   await render()
   isProcessing.value = false
 }
@@ -119,10 +127,10 @@ onBeforeUnmount(release)
       @change="pickFromInput"
     />
 
-    <CoverCropper
+    <ImageCropper
       v-if="isCropping"
       :imageUrl="source.url"
-      :size="source.size"
+      :source="source"
       :initialCrop="crop"
       @apply="applyCrop"
       @cancel="isCropping = false"

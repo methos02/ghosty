@@ -141,7 +141,7 @@ onUnmounted(readingStore.clear)
               {{ chapter.title }}
             </h1>
             <UserLink
-              :username="chapter.author.username"
+              :user="chapter.author"
               byline
               class="chapter-reader-page__author | fs-400 color-neutral-700"
             />

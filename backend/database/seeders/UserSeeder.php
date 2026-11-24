@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
 
     public function run(): void
     {
-        /** @var array<int, array{username: string, email: string, roles: list<string>, email_verified?: bool, registered_hours_ago?: int}> $users */
+        /** @var array<int, array{username: string, slug: string, email: string, roles: list<string>, email_verified?: bool, registered_hours_ago?: int}> $users */
         $users = File::json(database_path('data/users.json'));
 
         foreach ($users as $user) {
@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
             $hasVerifiedEmail = $user['email_verified'] ?? true;
 
             DB::table('users')->insert([
+                'slug' => $user['slug'],
                 'username' => $user['username'],
                 'email' => $user['email'],
                 'password' => Hash::make('password'),

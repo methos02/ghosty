@@ -11,18 +11,21 @@ describe('user-dto', () => {
       expect(UserDto.fromSummary(profileApi)).toEqual({
         id: profileApi.id,
         username: profileApi.username,
-        avatar: undefined,
+        slug: profileApi.slug,
+        profileSlug: profileApi.profile_slug,
+        isDeleted: profileApi.is_deleted,
+        avatarUrl: undefined,
         roles: profileApi.roles,
         createdAtFormat: dateHelper.formatDateLocal(profileApi.created_at, 'DD/MM/YYYY'),
       })
     })
 
-    it('keeps the avatar of the user when there is one', () => {
+    it('keeps the avatar url of the user when there is one', () => {
       const profileApi = userSeeder.getProfileApi({
-        avatar: userSeeder.getUserWithAvatarApi().avatar,
+        avatar_url: userSeeder.getUserWithAvatarApi().avatar_url,
       })
 
-      expect(UserDto.fromSummary(profileApi).avatar).toBe(profileApi.avatar)
+      expect(UserDto.fromSummary(profileApi).avatarUrl).toBe(profileApi.avatar_url)
     })
   })
 })

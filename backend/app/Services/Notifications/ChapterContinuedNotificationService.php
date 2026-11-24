@@ -30,6 +30,7 @@ class ChapterContinuedNotificationService
                     'id' => $continuation->id,
                     'title' => $continuation->title,
                     'author_username' => $continuation->author->username,
+                    'author_profile_slug' => $continuation->author->profileSlug(),
                 ],
                 'count' => NotificationDataHelper::pendingCount($pending) + 1,
             ]

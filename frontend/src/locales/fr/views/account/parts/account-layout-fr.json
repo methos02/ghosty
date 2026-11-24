@@ -1,0 +1,11 @@
+{
+  "account_layout": {
+    "title": "Mon profil",
+    "public_profile": "Voir mon profil public",
+    "tabs": {
+      "account-profile": "Profil",
+      "account-security": "Sécurité",
+      "account-statistics": "Statistiques"
+    }
+  }
+}

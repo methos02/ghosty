@@ -77,7 +77,7 @@ describe('HeaderComponent.vue', () => {
 
       expect(wrapper.findComponent('.header-username').props('to')).toEqual({
         name: 'profile',
-        params: { username: user.username },
+        params: { profileSlug: user.profileSlug },
       })
     })
 

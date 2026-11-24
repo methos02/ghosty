@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,7 +22,8 @@ class CommentResource extends JsonResource
         return [
             'id' => $this->id,
             'parent_id' => $this->parent_id,
-            'author' => $this->visibleAuthor(),
+            'author' => $this->isVisible() ? $this->whenLoaded('author', fn () => new UserIdentityResource($this->author), ['id' => $this->author_id]) : null,
+            'mentioned_user' => $this->visibleMentionedUser(),
             'content' => $this->isVisible() ? $this->content : null,
             'is_spoiler' => $this->is_spoiler,
             'is_deleted' => $this->isDeleted(),
@@ -34,17 +36,14 @@ class CommentResource extends JsonResource
     }
 
     /**
-     * @return array<string, mixed>|null
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
      */
-    private function visibleAuthor(): ?array
+    private function visibleMentionedUser(): ?UserIdentityResource
     {
-        if (! $this->isVisible()) {
+        if (! $this->isVisible() || ! $this->mentionedUser instanceof User) {
             return null;
         }
 
-        return [
-            'id' => $this->author_id,
-            'username' => $this->whenLoaded('author', fn () => $this->author->username),
-        ];
+        return new UserIdentityResource($this->mentionedUser);
     }
 }

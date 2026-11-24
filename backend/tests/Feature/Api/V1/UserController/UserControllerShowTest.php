@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\Api\V1\UserController;
 
+use App\Http\Controllers\Api\V1\UserController;
 use App\Models\Chapter;
 use App\Models\Novel;
 use App\Models\NovelCover;
 use App\Models\Report;
 use App\Models\User;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -18,37 +21,67 @@ class UserControllerShowTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create(['username' => 'plume', 'roles' => [User::ROLE_READER, User::ROLE_AUTHOR]]);
+        $this->user = User::factory()->create(['username' => 'plume', 'slug' => 'plu123', 'roles' => [User::ROLE_READER, User::ROLE_AUTHOR]]);
     }
 
-    private function route(string $username): string
+    private function route(string $slug): string
     {
-        return "/api/v1/users/{$username}";
+        return "/api/v1/users/{$slug}";
     }
 
     #[Test]
     public function serves_the_public_identity_of_the_user(): void
     {
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('id', $this->user->id)
             ->assertJsonPath('username', 'plume')
+            ->assertJsonPath('slug', 'plu123')
+            ->assertJsonPath('profile_slug', 'plu123-plume')
+            ->assertJsonPath('is_deleted', false)
+            ->assertJsonPath('avatar_url', null)
             ->assertJsonPath('roles', [User::ROLE_READER, User::ROLE_AUTHOR])
             ->assertJsonPath('created_at', $this->user->created_at->toIso8601String())
             ->assertJsonMissingPath('email');
     }
 
     #[Test]
-    public function answers_not_found_for_an_unknown_username(): void
+    public function serves_the_public_url_of_the_avatar(): void
     {
-        $this->getJson($this->route('inconnu'))
+        $this->user->forceFill(['avatar' => "avatars/{$this->user->id}/portrait.png"])->save();
+
+        $this->getJson($this->route('plu123'))
+            ->assertOk()
+            ->assertJsonPath('avatar_url', Storage::disk('public')->url("avatars/{$this->user->id}/portrait.png"));
+    }
+
+    #[Test]
+    public function answers_not_found_for_an_unknown_slug(): void
+    {
+        $this->getJson($this->route('zzz999'))
+            ->assertNotFound();
+    }
+
+    #[Test]
+    public function answers_not_found_for_the_username_in_place_of_the_slug(): void
+    {
+        $this->getJson($this->route('plume'))
+            ->assertNotFound();
+    }
+
+    #[Test]
+    public function answers_not_found_for_a_deleted_account(): void
+    {
+        User::factory()->deleted()->create(['slug' => 'del123']);
+
+        $this->getJson($this->route('del123'))
             ->assertNotFound();
     }
 
     #[Test]
     public function serves_zero_statistics_for_a_user_without_contribution(): void
     {
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('statistics', [
                 'read_count' => 0,
@@ -69,7 +102,7 @@ class UserControllerShowTest extends TestCase
         Chapter::factory()->hidden()->liked(5)->create(['author_id' => $this->user->id, 'read_count' => 100]);
         Chapter::factory()->draft()->create(['author_id' => $this->user->id]);
 
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('statistics.chapter_count', 2)
             ->assertJsonPath('statistics.read_count', 14)
@@ -83,7 +116,7 @@ class UserControllerShowTest extends TestCase
         NovelCover::factory()->by($this->user)->liked(5)->create();
         NovelCover::factory()->by($this->user)->hidden()->liked(7)->create();
 
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('statistics.like_count', 7)
             ->assertJsonPath('statistics.cover_count', 1);
@@ -97,7 +130,7 @@ class UserControllerShowTest extends TestCase
         $novel->forceFill(['official_cover_id' => $official->id])->save();
         NovelCover::factory()->by($this->user)->create();
 
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('statistics.cover_count', 2)
             ->assertJsonPath('statistics.official_cover_count', 1);
@@ -112,7 +145,7 @@ class UserControllerShowTest extends TestCase
         Chapter::factory()->continuing($chapter)->draft()->create();
         Chapter::factory()->continuing($chapter)->create(['author_id' => $this->user->id]);
 
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('statistics.received_continuation_count', 2);
     }
@@ -125,7 +158,7 @@ class UserControllerShowTest extends TestCase
         $unpublished = Novel::factory()->create(['author_id' => $this->user->id]);
         Chapter::factory()->draft()->create(['novel_id' => $unpublished->id, 'author_id' => $this->user->id]);
 
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('statistics.novel_count', 1);
     }
@@ -137,8 +170,17 @@ class UserControllerShowTest extends TestCase
         Report::factory()->on($this->user)->create(['reporter_id' => $reporter->id]);
 
         $this->actingAs($reporter)
-            ->getJson($this->route('plume'))
+            ->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('is_reported', true);
+    }
+
+    #[Test]
+    public function has_middleware(): void
+    {
+        $route = Route::getRoutes()->getByAction(UserController::class.'@show');
+        $this->assertNotNull($route);
+
+        $this->assertEqualsCanonicalizing(['api', 'can:view,user'], $route->gatherMiddleware());
     }
 }

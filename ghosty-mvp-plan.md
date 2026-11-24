@@ -329,6 +329,13 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 - Arbitrages ([ADR-18](backend/memory-bank/decisions/ADR-18-indicateurs-du-mvp.md)) : `GET /metrics` réservé au rôle `admin` (pas aux modérateurs) ; période glissante `?days=` (30 par défaut, 365 au plus) ; chaque indicateur est un couple `count` / `total`, le taux se calcule à l'affichage ; un lecteur = un compte, sinon une session navigateur ; « hors de la branche principale » = ni ancêtre ni descendant de son dernier chapitre ; « fin » = chapitre publié sans suite publiée ; « sans interaction » = aucune suite, aucun soutien, aucun commentaire après 30 jours ; tout est calculé à la demande, sans table ni commande. Front : page `/metrics` (lien du menu pour les admins).
 - Arbitrage ([ADR-19](backend/memory-bank/decisions/ADR-19-pas-de-statut-archive.md)) : le statut « archivé » est supprimé, et avec lui les archives du roman prévues au §9. Un chapitre retiré par la modération enfreint une règle : il est masqué, visible des seuls modérateurs (par les signalements traités) et de son auteur.
 
+### Lot 10 — Mon compte · M
+
+- Identité stable : `users.slug` aléatoire et fixe, profil à l'adresse `/users/{slug}-{pseudo}` (redirection 301 et encart « Le pseudo de ce compte a changé » quand le nom ne correspond plus) ; pseudo modifiable, unique sans tenir compte de la casse.
+- Mentions enregistrées par identifiant (`comments.mentioned_user_id`) : elles affichent toujours le pseudo actuel.
+- `/me/account` : données personnelles, email et mot de passe (mot de passe actuel exigé, pas d'envoi d'email au MVP), avatar recadré en carré, suppression du compte par **anonymisation** (les contenus restent, signés « Compte supprimé »).
+- Arbitrages : [ADR-20](backend/memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md).
+
 ### Hors MVP (V2)
 
 Forum par roman et espaces privés (§15), **notifications par email et temps réel** (le MVP s'arrête à l'in-app avec polling, D6), illustration par branche/chapitre, édition/export.

@@ -1,6 +1,7 @@
 {
   "comment_reply_form": {
     "send": "Répondre",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "remove_mention": "Retirer la mention"
   }
 }

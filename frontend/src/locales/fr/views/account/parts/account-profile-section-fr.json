@@ -1,0 +1,14 @@
+{
+  "account_profile_section": {
+    "title": "Profil",
+    "username": "Pseudo",
+    "username_checking": "Vérification de la disponibilité…",
+    "username_available": "Ce pseudo est disponible.",
+    "username_taken": "Ce pseudo est déjà pris.",
+    "save": "Enregistrer le profil",
+    "saved": "Votre profil a été mis à jour.",
+    "error_username_required": "Le pseudo est requis.",
+    "error_username_size_min": "Le pseudo doit contenir au moins 3 caractères.",
+    "error_username_size_max": "Le pseudo ne peut pas dépasser 50 caractères."
+  }
+}

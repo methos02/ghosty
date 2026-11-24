@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
 import { ModerationDto } from '@/apis/moderation/dtos/moderation-dto.js'
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 import { moderationSeeder } from '&/utils/seeders/moderation-seeder.js'
@@ -13,10 +14,7 @@ describe('moderation-dto', () => {
         imageUrl: coverApi.image_url,
         isHidden: false,
         likeCount: coverApi.like_count,
-        author: {
-          id: coverApi.author.id,
-          username: coverApi.author.username,
-        },
+        author: AuthorDto.fromShow(coverApi.author),
         novel: NovelDto.fromSummary(coverApi.novel),
       })
     })

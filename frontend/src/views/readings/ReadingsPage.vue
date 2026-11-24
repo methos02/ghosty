@@ -26,7 +26,9 @@ const tabClasses = tab => (openedTab.value === tab ? 'btn btn-primary' : 'btn bt
 
     <div class="readings-page__body | w-xl py-40 px-20">
       <div class="d-flex f-wrap j-between a-center g-15 mb-20">
-        <h1 class="fs-700 fw-700">{{ t('readings.title') }}</h1>
+        <h1 class="fs-700 fw-700">
+          {{ t('readings.title') }}
+        </h1>
 
         <div class="d-flex f-wrap g-10">
           <button

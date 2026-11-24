@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
 
@@ -17,7 +18,7 @@ describe('novel-dto', () => {
         isFavorite: api.is_favorite,
         chaptersCount: api.chapters_count,
         commentCount: api.comment_count,
-        author: { id: api.author.id, username: api.author.username },
+        author: AuthorDto.fromShow(api.author),
         genre: { id: api.genre.id, label: api.genre.name },
       })
     })

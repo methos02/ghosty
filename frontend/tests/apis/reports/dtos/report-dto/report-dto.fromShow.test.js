@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
 import { ReportDto } from '@/apis/reports/dtos/report-dto.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
 import { moderationSeeder } from '&/utils/seeders/moderation-seeder.js'
@@ -13,10 +14,7 @@ describe('report-dto', () => {
         reason: reportApi.reason,
         description: reportApi.description,
         isPending: true,
-        reporter: {
-          id: reportApi.reporter.id,
-          username: reportApi.reporter.username,
-        },
+        reporter: AuthorDto.fromShow(reportApi.reporter),
         resolution: undefined,
         createdAtFormat: dateHelper.formatDateLocal(reportApi.created_at, 'DD/MM/YYYY HH:mm'),
       })

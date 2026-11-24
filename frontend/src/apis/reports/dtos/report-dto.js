@@ -37,8 +37,8 @@ const toCreate = formData => {
   }
 }
 
-const toUserParams = username => {
-  return { username }
+const toUserParams = user => {
+  return { slug: user.slug }
 }
 
 export const ReportDto = {

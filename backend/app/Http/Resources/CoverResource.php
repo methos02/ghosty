@@ -27,10 +27,7 @@ class CoverResource extends JsonResource
             'is_liked' => (bool) $this->getAttribute('is_liked'),
             'is_reported' => (bool) $this->getAttribute('is_reported'),
             'is_hidden' => $this->isHidden(),
-            'author' => [
-                'id' => $this->author_id,
-                'username' => $this->whenLoaded('author', fn () => $this->author->username),
-            ],
+            'author' => $this->whenLoaded('author', fn () => new UserIdentityResource($this->author), ['id' => $this->author_id]),
             'novel' => $this->whenLoaded('novel', fn () => [
                 'id' => $this->novel->id,
                 'slug' => $this->novel->slug,

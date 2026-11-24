@@ -67,7 +67,9 @@ const closeFromBackground = event => {
         v-if="title !== '' || $slots.title"
         class="fs-700 fw-400"
       >
-        <slot name="title">{{ title }}</slot>
+        <slot name="title">
+          {{ title }}
+        </slot>
       </h2>
       <div class="d-flex j-end a-center g-15 flex-1">
         <slot name="actions"></slot>

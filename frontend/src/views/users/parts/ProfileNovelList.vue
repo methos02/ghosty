@@ -1,22 +1,25 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { route, t } from '@/services/shortcuts/services-shortcut.js'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 import LoaderComponent from '@/components/LoaderComponent.vue'
 import NovelCard from '@/views/parts/NovelCard.vue'
 import { UserController } from '@/apis/users/controllers/user-controller.js'
+import { useProfileStore } from '@/core-vue/stores/users/profile-store.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const novels = ref([])
 const pagination = ref()
 
-const username = computed(() => route.current().value.params.username)
+const profileStore = useProfileStore()
+
+const slug = computed(() => profileStore.profile.value.slug)
 
 const hasMore = computed(
   () => pagination.value !== undefined && pagination.value.page < pagination.value.lastPage,
 )
 
 const load = async (page = 1) => {
-  const response = await UserController.listNovels(username.value, page)
+  const response = await UserController.listNovels(slug.value, page)
   if (!ajaxHelper.isSuccess(response.status)) {
     return
   }

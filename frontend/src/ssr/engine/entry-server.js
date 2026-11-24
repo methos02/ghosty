@@ -8,7 +8,10 @@ import { STATUS } from '@/constants/ajax-constants.js'
 export const render = async (url, { cookie } = {}) => {
   const prepared = await serverApp.prepare(url, { cookie })
   if (prepared.redirect) {
-    return { redirect: prepared.redirect }
+    return {
+      redirect: prepared.redirect,
+      statusCode: prepared.statusCode,
+    }
   }
 
   const head = createHead()

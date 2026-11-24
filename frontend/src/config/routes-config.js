@@ -1,4 +1,5 @@
 import { novelDetailAsyncData } from '@/ssr/async-data/novel-async-data.js'
+import { profileAsyncData } from '@/ssr/async-data/user-async-data.js'
 import {
   chapterReadingAsyncData,
   multiverseAsyncData,
@@ -38,6 +39,28 @@ export const routes = [
     path: '/me/readings',
     name: 'readings',
     component: () => import('@/views/readings/ReadingsPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/me/account',
+    redirect: { name: 'account-profile' },
+  },
+  {
+    path: '/me/account/profile',
+    name: 'account-profile',
+    component: () => import('@/views/account/AccountProfilePage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/me/account/security',
+    name: 'account-security',
+    component: () => import('@/views/account/AccountSecurityPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/me/account/statistics',
+    name: 'account-statistics',
+    component: () => import('@/views/account/AccountStatisticsPage.vue'),
     meta: { requiresAuth: true },
   },
   {
@@ -121,9 +144,10 @@ export const routes = [
     },
   },
   {
-    path: '/users/:username',
+    path: '/users/:profileSlug',
     name: 'profile',
     component: () => import('@/views/users/ProfilePage.vue'),
+    meta: { asyncData: profileAsyncData },
   },
   {
     path: '/moderation/users/:id',

@@ -20,7 +20,7 @@ const isEditing = computed(() => chapterId.value !== undefined)
 
 useChapterManageHead(isEditing)
 
-const datas = ref({})
+const formDatas = ref({})
 const chapter = ref()
 const parentChapter = ref()
 const novelSlug = ref(route.get('slug'))
@@ -32,7 +32,7 @@ const isPublished = computed(() => chapter.value !== undefined && !chapter.value
 const allowance = computed(() => correctionHelper.allowanceFor(chapter.value?.content))
 
 const usedChanges = computed(() =>
-  correctionHelper.changedWords(chapter.value?.content, datas.value.content, allowance.value),
+  correctionHelper.changedWords(chapter.value?.content, formDatas.value.content, allowance.value),
 )
 
 const remainingChanges = computed(() => Math.max(0, allowance.value - usedChanges.value))
@@ -60,7 +60,7 @@ const loadChapter = async () => {
 
   chapter.value = response.chapter
   novelSlug.value = response.chapter.novel.slug
-  datas.value = {
+  formDatas.value = {
     title: response.chapter.title,
     content: response.chapter.content,
     summary: response.chapter.summary,
@@ -87,7 +87,7 @@ const resumeExistingDraft = async () => {
 }
 
 const create = async () => {
-  const payload = { ...datas.value, parentId }
+  const payload = { ...formDatas.value, parentId }
   const validation = validateChapterForm(payload)
   if (!validation.valid) {
     return
@@ -102,17 +102,17 @@ const create = async () => {
 }
 
 const update = async () => {
-  const validation = validateChapterForm(datas.value)
+  const validation = validateChapterForm(formDatas.value)
   if (!validation.valid) {
     return
   }
 
-  const saved = await ChapterController.update(chapterId.value, datas.value)
+  const saved = await ChapterController.update(chapterId.value, formDatas.value)
   if (!ajaxHelper.isSuccess(saved.status)) {
     return
   }
 
-  if (datas.value.isDraft || isPublished.value) {
+  if (formDatas.value.isDraft || isPublished.value) {
     await leaveForm(chapterId.value)
     return
   }
@@ -139,13 +139,13 @@ const submit = async () => {
 }
 
 const publish = () => {
-  datas.value.isDraft = false
+  formDatas.value.isDraft = false
 
   return submit()
 }
 
 const saveDraft = () => {
-  datas.value.isDraft = true
+  formDatas.value.isDraft = true
 
   return submit()
 }
@@ -192,7 +192,9 @@ onMounted(async () => {
         v-if="isPublished"
         class="chapter-manage-page__warning | bg-neutral-200 radius-10 p-15 mb-20 d-flex f-column g-10"
       >
-        <p class="color-neutral-700">{{ t('chapter_manage.published_warning') }}</p>
+        <p class="color-neutral-700">
+          {{ t('chapter_manage.published_warning') }}
+        </p>
 
         <p
           v-if="chapter.isCorrectable"
@@ -229,7 +231,7 @@ onMounted(async () => {
       >
         <div class="form-row">
           <InputComponent
-            v-model="datas.title"
+            v-model="formDatas.title"
             name="title"
             :label="t('chapter_manage.chapter_title')"
             :required="true"
@@ -238,8 +240,8 @@ onMounted(async () => {
         </div>
 
         <ChapterBodyFields
-          v-model:content="datas.content"
-          v-model:summary="datas.summary"
+          v-model:content="formDatas.content"
+          v-model:summary="formDatas.summary"
         />
 
         <div class="form-row | d-flex j-center g-20">
@@ -266,7 +268,7 @@ onMounted(async () => {
             v-if="!isPublished"
             ref="publishButton"
             :cb="publish"
-            :content="datas.content"
+            :content="formDatas.content"
             buttonClasses="chapter-manage-page__publish | btn btn-primary"
           >
             {{ t('chapter_manage.submit') }}

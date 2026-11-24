@@ -32,6 +32,7 @@ Les décisions structurantes sont dans les ADR :
 | [ADR-18](memory-bank/decisions/ADR-18-indicateurs-du-mvp.md) | Indicateurs §16 **calculés à la demande** (`GET /metrics`, admin seul, période `?days=`), chacun en `count` / `total` |
 | [ADR-17](memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md) | Profil public `/users/{username}` ; statistiques **calculées à la lecture**, jamais dénormalisées ; rôle `author` posé à la première publication ; un utilisateur se signale, la décision (`dismissed` / `sanctioned`) ne touche aucun contenu |
 | [ADR-19](memory-bank/decisions/ADR-19-pas-de-statut-archive.md) | **Pas de statut « archivé »** : un chapitre retiré par la modération est masqué, visible des seuls modérateurs et de son auteur ; pas d'archives du roman |
+| [ADR-20](memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md) | Identifiant fixe `users.slug` (profil `/users/{slug}`, `profile_slug` calculé) ; pseudo modifiable, unique sans la casse ; mentions par `mentioned_user_id` ; supprimer un compte = l'**anonymiser** |
 
 Plan de livraison par lots : [ghosty-mvp-plan.md](../ghosty-mvp-plan.md).
 
@@ -168,17 +169,17 @@ backend/
 #### users
 ```sql
 id BIGINT PRIMARY KEY
-username VARCHAR UNIQUE
+slug VARCHAR(6) UNIQUE              -- [a-z0-9] aléatoire, posé à la création, jamais modifié (ADR-20)
+username VARCHAR UNIQUE             -- modifiable, unique sans tenir compte de la casse (validé en lower())
 email VARCHAR UNIQUE
 password VARCHAR                    -- Bcrypt (pas SHA1!)
 email_verified_at TIMESTAMP
 roles JSON                          -- cumulables : reader, author, illustrator, moderator, admin
-photo VARCHAR
-notifications_enabled BOOLEAN
-firstname VARCHAR
-lastname VARCHAR
-birth_date DATE
+avatar VARCHAR NULLABLE             -- disque public, avatars/{user_id}/
+notifications_enabled BOOLEAN           -- interrupteur général (ADR-20)
+disabled_notification_types JSON NULLABLE  -- types coupés un à un ; content_moderated jamais coupable
 new_messages_count INT DEFAULT 0
+deleted_at TIMESTAMP NULLABLE       -- compte anonymisé (pas de SoftDeletes : les contenus gardent leur auteur)
 created_at TIMESTAMP
 updated_at TIMESTAMP
 ```
@@ -264,7 +265,8 @@ UNIQUE (user_id, likeable_type, likeable_id)
 #### comments ✅ implémenté (lot 5)
 ```sql
 id, author_id → users.id, commentable_type (novel|chapter|novel_cover), commentable_id,
-parent_id NULLABLE → comments.id, reply_count, content NULLABLE, is_spoiler BOOLEAN,
+parent_id NULLABLE → comments.id, mentioned_user_id NULLABLE → users.id (ADR-20),
+reply_count, content NULLABLE, is_spoiler BOOLEAN,
 status TINYINT DEFAULT 1                  -- 1 visible, 2 deleted (par l'auteur), 3 hidden (modération, lot 6)
 timestamps
 
@@ -315,7 +317,7 @@ Table **native Laravel** (canal `database`, modèle `App\Models\Notification` qu
 MySQL n'ayant pas d'index partiel, c'est la colonne générée qui porte le « WHERE read_at IS NULL ».
 
 - `NotificationService` est le **seul** écrivain : il refuse de notifier l'acteur lui-même et
-  respecte `users.notifications_enabled`, puis `updateOrCreate` sur le groupe non lu.
+  respecte `User::wantsNotification()` (interrupteur général + types coupés ; `content_moderated` passe toujours), puis `updateOrCreate` sur le groupe non lu.
 - **Une notification = un fichier** : `Services/Notifications/{Type}NotificationService` construit
   le `data` de son type et passe par `NotificationService::push()`. Les morceaux de `data`
   partagés (sujet chapitre / roman, listes de chapitres, compteur) sont dans
@@ -334,7 +336,7 @@ MySQL n'ayant pas d'index partiel, c'est la colonne générée qui porte le « W
 Aucune table : un profil se lit dans les tables de contenu
 ([ADR-17](memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md)).
 
-- `GET /users/{username}` (`UserRepository::findProfile`) : identité, rôles et statistiques
+- `GET /users/{slug}` (`{user:slug}`, `UserPolicy::view` : compte supprimé → 404 ; `UserRepository::findProfile`) : identité, rôles et statistiques
   calculées en sous-requêtes sur `author_id` (lectures, soutiens chapitres + illustrations, suites
   publiées par d'autres, nombre de romans / chapitres / illustrations / officielles).
   ⛔ Ne pas les dénormaliser sur `users` : sept compteurs à tenir sur tous les événements.
@@ -343,10 +345,29 @@ Aucune table : un profil se lit dans les tables de contenu
   (chapitres publiés avec `continuations_count > 0`), `covers` (publiées, `is_official`).
   Masqué et brouillon n'y figurent jamais.
 - `Reportable` désigne un **responsable** (`reportedUser()`), plus un auteur : `User` est
-  signalable (`POST /users/{username}/report`, motifs `ReportReason::allowedForUser()`), décidé par
+  signalable (`POST /users/{slug}/report`, motifs `ReportReason::allowedForUser()`), décidé par
   `ModerationService::moderateUser` (`dismissed` sans sanction, `sanctioned` avec).
 - Le rôle `author` est ajouté par `ChapterService` à la première publication, comme `illustrator`
   à la première proposition : affichage seulement, jamais une autorisation.
+
+#### Compte ✅ implémenté (lot 10)
+
+Identité et gestion du compte ([ADR-20](memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md)).
+
+- `User::profileSlug()` = `{slug}-{Str::slug(username)}`, jamais stocké. Tout utilisateur sérialisé expose
+  `slug`, `profile_slug`, `is_deleted` (`UserIdentityResource` pour les auteurs, signaleurs et mentions) ;
+  `UserResource` / `UserProfileResource` ajoutent `avatar_url`. Les notifications stockent `*_profile_slug`
+  à côté du pseudo.
+- Pseudo unique sans la casse : règle `AvailableUsername` (`UserRepository::isUsernameTaken`, `lower()`),
+  préfixe `deleted-` réservé. La connexion par pseudo ignore la casse et refuse un compte supprimé.
+- Mention : `CommentService` ne retient `mentioned_user_id` que si l'utilisateur participe au fil
+  (auteur du commentaire ou d'une réponse visible, compte non supprimé) ; le `content` n'a plus de `@pseudo`.
+- `/me/account` (`AccountController` → `AccountService`) : `username-availability`, `profile` (POST multipart partiel : `username`, `image` facultative = nouvel avatar), `notifications` (PUT : `notifications_enabled` + `disabled_notification_types`),
+  `email`, `password` (garde le jeton courant, révoque les autres), `avatar` (DELETE),
+  `DELETE /me/account`. `current_password` exigé pour email, mot de passe et suppression ; `throttle:account`.
+- Supprimer = anonymiser : `username` `deleted-{slug}`, email `deleted-{slug}@ghosty.invalid`, mot de passe
+  aléatoire, avatar effacé, `follows` / `reading_progress` / notifications supprimés,
+  `chapter_reads.user_id` mis à null, jetons révoqués. Contenus et soutiens restent.
 
 #### Indicateurs ✅ implémenté (lot 9)
 

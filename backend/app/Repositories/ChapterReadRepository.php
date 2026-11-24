@@ -22,6 +22,17 @@ class ChapterReadRepository
     }
 
     /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
+    public function detachUser(int $userId): void
+    {
+        ChapterRead::query()
+            ->where('user_id', $userId)
+            ->toBase()
+            ->update(['user_id' => null]);
+    }
+
+    /**
      * @return LengthAwarePaginator<int, ChapterRead>
      */
     public function paginate(User $reader, int $perPage): LengthAwarePaginator

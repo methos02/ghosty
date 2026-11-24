@@ -4,11 +4,11 @@ import { userSeeder } from '&/utils/seeders/user-seeder.js'
 
 describe('user-dto', () => {
   describe('toListParams', () => {
-    it('targets the user in the url and asks the page in the query', () => {
+    it('targets the user by its slug in the url and asks the page in the query', () => {
       const profile = userSeeder.getProfile()
 
-      expect(UserDto.toListParams(profile.username, 3)).toEqual({
-        username: profile.username,
+      expect(UserDto.toListParams(profile.slug, 3)).toEqual({
+        slug: profile.slug,
         page: 3,
       })
     })

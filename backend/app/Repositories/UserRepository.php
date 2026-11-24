@@ -9,6 +9,7 @@ use App\Models\NovelCover;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class UserRepository
@@ -22,14 +23,37 @@ class UserRepository
     }
 
     /**
-     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     * @param  array<string, mixed>  $attributes
      */
-    public function deleteTokens(int $userId): void
+    public function update(User $user, array $attributes): User
+    {
+        $user->forceFill($attributes)->save();
+
+        return $user;
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-15-traitement-de-la-moderation.md
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
+    public function deleteTokens(int $userId, ?int $keptTokenId = null): void
     {
         PersonalAccessToken::query()
             ->where('tokenable_type', (new User)->getMorphClass())
             ->where('tokenable_id', $userId)
+            ->when($keptTokenId !== null, fn (Builder $tokens): Builder => $tokens->whereKeyNot($keptTokenId))
             ->delete();
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
+    public function isUsernameTaken(string $username, ?int $ownerId = null): bool
+    {
+        return User::query()
+            ->whereRaw('lower(username) = ?', [Str::lower($username)])
+            ->when($ownerId !== null, fn (Builder $users): Builder => $users->whereKeyNot($ownerId))
+            ->exists();
     }
 
     /**
@@ -148,14 +172,19 @@ class UserRepository
         $user->forceFill(['roles' => [...$user->roles, $role]])->save();
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
     public function findByEmailOrUsername(string $identifier): ?User
     {
         $userByEmail = User::query()
             ->where('email', $identifier)
+            ->whereNull('deleted_at')
             ->first();
 
         return $userByEmail ?? User::query()
-            ->where('username', $identifier)
+            ->whereRaw('lower(username) = ?', [Str::lower($identifier)])
+            ->whereNull('deleted_at')
             ->first();
     }
 

@@ -28,6 +28,16 @@ class ReadingProgressRepository
     }
 
     /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
+    public function deleteAllOfUser(int $userId): void
+    {
+        ReadingProgress::query()
+            ->where('user_id', $userId)
+            ->delete();
+    }
+
+    /**
      * @return LengthAwarePaginator<int, ReadingProgress>
      */
     public function paginate(User $reader, int $perPage): LengthAwarePaginator

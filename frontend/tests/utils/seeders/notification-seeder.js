@@ -12,6 +12,7 @@ const getNotificationApi = (overrides = {}) => ({
     title: 'La marée noire',
   },
   last_actor_username: 'Lectrice',
+  last_actor_profile_slug: 'usr051-lectrice',
   count: 1,
   is_read: false,
   created_at: '2026-09-20T08:00:00+00:00',
@@ -23,6 +24,7 @@ const getLikeReceivedApi = (count, overrides = {}) =>
   getNotificationApi({
     type: 'like_received',
     last_actor_username: 'Lectrice',
+    last_actor_profile_slug: 'usr051-lectrice',
     count,
     ...overrides,
   })
@@ -34,6 +36,7 @@ const getChapterContinuedApi = (count, overrides = {}) =>
       id: 31,
       title: 'La lanterne',
       author_username: 'Plume',
+      author_profile_slug: 'usr009-plume',
     },
     count,
     ...overrides,
@@ -54,6 +57,7 @@ const getCommentNotificationApi = (type, count, overrides = {}) =>
   getNotificationApi({
     type,
     last_actor_username: 'Lectrice',
+    last_actor_profile_slug: 'usr051-lectrice',
     count,
     ...overrides,
   })
@@ -63,6 +67,7 @@ const getNovelCommentNotificationApi = (type, count, overrides = {}) =>
     type,
     chapter: null,
     last_actor_username: 'Lectrice',
+    last_actor_profile_slug: 'usr051-lectrice',
     count,
     ...overrides,
   })
@@ -76,6 +81,7 @@ const getCoverNotificationApi = (type, count, overrides = {}) =>
       image_url: 'https://api.ghosty.local/storage/covers/3/lanterne.webp',
     },
     last_actor_username: 'Lectrice',
+    last_actor_profile_slug: 'usr051-lectrice',
     count,
     ...overrides,
   })
@@ -107,6 +113,9 @@ const getAccountModerationNotificationApi = (type, overrides = {}) =>
     user: {
       id: 64,
       username: 'Importun',
+      slug: 'usr064',
+      profile_slug: 'usr064-importun',
+      is_deleted: false,
     },
     ...overrides,
   })

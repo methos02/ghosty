@@ -51,7 +51,9 @@ onMounted(load)
     <Header />
 
     <div class="metrics-page__body | w-xl py-40 px-20 d-flex f-column g-20">
-      <h1 class="fs-700 fw-700">{{ t('metrics_page.title') }}</h1>
+      <h1 class="fs-700 fw-700">
+        {{ t('metrics_page.title') }}
+      </h1>
 
       <p class="metrics-page__intro | fs-300 color-neutral-700">
         {{ t('metrics_page.intro') }}

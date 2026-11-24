@@ -14,10 +14,10 @@ const create = async (target, formData) => {
   return internals.createdComment(response)
 }
 
-const createReply = async (parentComment, formData, mentionedAuthor) => {
+const createReply = async (parentComment, formData) => {
   const response = await CommentRepository.createReply({
     params: CommentDto.toCommentParams(parentComment.id),
-    body: CommentDto.toCreateReply(formData, mentionedAuthor),
+    body: CommentDto.toCreateReply(formData),
     form: 'reply',
   })
 

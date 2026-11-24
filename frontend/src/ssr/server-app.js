@@ -16,20 +16,24 @@ const runAsyncData = async context => {
   let statusCode = route.meta?.statusCode ?? STATUS.SUCCESS
 
   for (const record of route.matched) {
-    const { statusCode: recordStatus } = await runRecordAsyncData(record, context)
-    if (!recordStatus) {
+    const recordResult = await runRecordAsyncData(record, context)
+    if (recordResult.redirect) {
+      return recordResult
+    }
+
+    if (!recordResult.statusCode) {
       continue
     }
 
-    if (recordStatus >= STATUS.ERROR_SERVER) {
-      log.error('[SSR] asyncData', route.fullPath, recordStatus)
+    if (recordResult.statusCode >= STATUS.ERROR_SERVER) {
+      log.error('[SSR] asyncData', route.fullPath, recordResult.statusCode)
       continue
     }
 
-    statusCode = recordStatus
+    statusCode = recordResult.statusCode
   }
 
-  return statusCode
+  return { statusCode }
 }
 
 const runRecordAsyncData = async (record, context) => {
@@ -63,11 +67,17 @@ const prepare = async (url, { cookie } = {}) => {
     return { redirect: route.fullPath }
   }
 
-  const statusCode = await runAsyncData({
+  const { statusCode, redirect } = await runAsyncData({
     stores,
     route,
     cookie,
   })
+  if (redirect) {
+    return {
+      redirect: router.resolve(redirect).fullPath,
+      statusCode,
+    }
+  }
 
   return {
     app,

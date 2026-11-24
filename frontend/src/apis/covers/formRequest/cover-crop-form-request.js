@@ -1,4 +1,5 @@
 import { form } from '@/services/shortcuts/services-shortcut.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 import { imageCropHelper } from '@/core/helpers/image-crop-helper.js'
 
 const coverCropFormRules = {
@@ -6,7 +7,13 @@ const coverCropFormRules = {
     rules: 'readable|largeEnough',
     tests: {
       readable: image => (image.width > 0 ? '' : 'readable'),
-      largeEnough: image => (imageCropHelper.isLargeEnough(image) ? '' : 'largeEnough'),
+      largeEnough: image => {
+        const source = {
+          size: image,
+          format: ConfigLoader.get('cover'),
+        }
+        return imageCropHelper.isLargeEnough(source) ? '' : 'largeEnough'
+      },
     },
     errors: {
       readable: 'cover_image_field.error_unreadable',

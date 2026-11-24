@@ -90,7 +90,9 @@ onMounted(() => load())
     <Header />
 
     <div class="moderation-page__body | w-xl py-40 px-20 d-flex f-column g-20">
-      <h1 class="fs-700 fw-700">{{ t('moderation_page.title') }}</h1>
+      <h1 class="fs-700 fw-700">
+        {{ t('moderation_page.title') }}
+      </h1>
 
       <div class="moderation-page__filters | d-flex a-end j-between g-20 f-wrap">
         <div class="d-flex g-10">
@@ -119,7 +121,9 @@ onMounted(() => load())
           :fixedLabel="true"
           containerClass="moderation-page__reason"
         >
-          <option :value="undefined">{{ t('moderation_page.all_reasons') }}</option>
+          <option :value="undefined">
+            {{ t('moderation_page.all_reasons') }}
+          </option>
           <option
             v-for="reason in REASONS"
             :key="reason"

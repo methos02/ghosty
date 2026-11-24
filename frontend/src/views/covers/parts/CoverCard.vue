@@ -35,7 +35,7 @@ const { report } = useReport()
 
     <p class="cover-card__author | fs-300 color-neutral-700">
       <UserLink
-        :username="cover.author.username"
+        :user="cover.author"
         byline
       />
     </p>

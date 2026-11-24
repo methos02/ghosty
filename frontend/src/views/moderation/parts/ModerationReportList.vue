@@ -8,7 +8,9 @@ defineProps({
 
 <template>
   <section class="moderation-report-list | d-flex f-column g-10">
-    <h2 class="fs-500 fw-700">{{ t('moderation_report_list.title', reports.length) }}</h2>
+    <h2 class="fs-500 fw-700">
+      {{ t('moderation_report_list.title', reports.length) }}
+    </h2>
 
     <ul class="d-flex f-column g-10">
       <li

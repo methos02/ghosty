@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AccountController;
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ChapterController;
 use App\Http\Controllers\Api\V1\ChapterReadController;
@@ -44,11 +45,11 @@ Route::prefix('v1')->group(function () {
     Route::get('/novels/{novel}/comments', [CommentController::class, 'indexForNovel'])->name('novels.comments.index');
     Route::get('/novels/{novel}/covers', [CoverController::class, 'index'])->name('novels.covers.index');
     Route::get('/covers/{cover}/comments', [CommentController::class, 'indexForCover'])->can('view', 'cover')->name('covers.comments.index');
-    Route::get('/users/{user:username}', [UserController::class, 'show'])->name('users.show');
-    Route::get('/users/{user:username}/novels', [UserController::class, 'novels'])->name('users.novels.index');
-    Route::get('/users/{user:username}/chapters', [UserController::class, 'chapters'])->name('users.chapters.index');
-    Route::get('/users/{user:username}/branches', [UserController::class, 'branches'])->name('users.branches.index');
-    Route::get('/users/{user:username}/covers', [UserController::class, 'covers'])->name('users.covers.index');
+    Route::get('/users/{user:slug}', [UserController::class, 'show'])->can('view', 'user')->name('users.show');
+    Route::get('/users/{user:slug}/novels', [UserController::class, 'novels'])->can('view', 'user')->name('users.novels.index');
+    Route::get('/users/{user:slug}/chapters', [UserController::class, 'chapters'])->can('view', 'user')->name('users.chapters.index');
+    Route::get('/users/{user:slug}/branches', [UserController::class, 'branches'])->can('view', 'user')->name('users.branches.index');
+    Route::get('/users/{user:slug}/covers', [UserController::class, 'covers'])->can('view', 'user')->name('users.covers.index');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
@@ -90,7 +91,15 @@ Route::prefix('v1')->group(function () {
         Route::post('/covers/{cover}/report', [ReportController::class, 'storeForCover'])->can('view', 'cover')->name('covers.report');
         Route::post('/covers/{cover}/comments', [CommentController::class, 'storeForCover'])->middleware('throttle:comment')->can('create', [Comment::class, 'cover'])->name('covers.comments.store');
 
-        Route::post('/users/{user:username}/report', [ReportController::class, 'storeForUser'])->name('users.report');
+        Route::post('/users/{user:slug}/report', [ReportController::class, 'storeForUser'])->can('view', 'user')->name('users.report');
+
+        Route::get('/me/account/username-availability', [AccountController::class, 'usernameAvailability'])->middleware('throttle:username-availability')->name('account.username-availability');
+        Route::post('/me/account/profile', [AccountController::class, 'updateProfile'])->middleware('throttle:account')->name('account.profile.update');
+        Route::put('/me/account/notifications', [AccountController::class, 'updateNotifications'])->middleware('throttle:account')->name('account.notifications.update');
+        Route::put('/me/account/email', [AccountController::class, 'updateEmail'])->middleware('throttle:account')->name('account.email.update');
+        Route::put('/me/account/password', [AccountController::class, 'updatePassword'])->middleware('throttle:account')->name('account.password.update');
+        Route::delete('/me/account/avatar', [AccountController::class, 'destroyAvatar'])->middleware('throttle:account')->name('account.avatar.destroy');
+        Route::delete('/me/account', [AccountController::class, 'destroy'])->middleware('throttle:account')->name('account.destroy');
 
         Route::get('/metrics', [MetricsController::class, 'index'])->middleware('can:viewMetrics,'.User::class)->name('metrics.index');
 

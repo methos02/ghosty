@@ -38,26 +38,44 @@ describe('CommentContent.vue', () => {
     expect(wrapper.find('.comment-content__text').text()).toBe(comment.content)
   })
 
-  it('highlights the mention of a reader of the thread that opens the text', () => {
-    const mention = `@${commentSeeder.getComment().author.username}`
-    const comment = commentSeeder.getReply({ content: `${mention} Bien vu.` })
+  it('leads the mention to the current profile of the mentioned reader', () => {
+    const reply = commentSeeder.getReply()
 
-    wrapper = mount(CommentContent, {
-      props: { comment, threadUsernames: [comment.author.username, mention.slice(1)] },
+    wrapper = mount(CommentContent, { props: { comment: reply } })
+
+    const mention = wrapper.find('.comment-content__text').findComponent({ name: 'RouterLink' })
+    expect(wrapper.find('.comment-mention').text()).toBe(`@${reply.mentionedUser.username}`)
+    expect(mention.props('to')).toEqual({
+      name: 'profile',
+      params: { profileSlug: reply.mentionedUser.profileSlug },
     })
-
-    expect(wrapper.find('.comment-content__mention').text()).toBe(mention)
-    expect(wrapper.find('.comment-content__text').text()).toBe(comment.content)
+    expect(wrapper.find('.comment-content__text').text()).toBe(
+      `@${reply.mentionedUser.username} ${reply.content}`,
+    )
   })
 
-  it('highlights nothing when the mention names no reader of the thread', () => {
-    const comment = commentSeeder.getReply({ content: '@Inconnu Bien vu.' })
+  it('names a deleted mentioned account without a link to its profile', () => {
+    const reply = commentSeeder.getReply()
+    const comment = {
+      ...reply,
+      mentionedUser: {
+        ...reply.mentionedUser,
+        isDeleted: true,
+      },
+    }
 
-    wrapper = mount(CommentContent, {
-      props: { comment, threadUsernames: [comment.author.username] },
-    })
+    wrapper = mount(CommentContent, { props: { comment } })
 
-    expect(wrapper.find('.comment-content__mention').exists()).toBe(false)
+    expect(wrapper.find('.comment-mention').text()).toBe(`@${t('common.deleted_account')}`)
+    expect(
+      wrapper.find('.comment-content__text').findComponent({ name: 'RouterLink' }).exists(),
+    ).toBe(false)
+  })
+
+  it('shows no mention on a comment that mentions nobody', () => {
+    wrapper = mount(CommentContent, { props: { comment: commentSeeder.getComment() } })
+
+    expect(wrapper.find('.comment-mention').exists()).toBe(false)
   })
 
   it('hides the text of a spoiler until the reader asks to reveal it', async () => {

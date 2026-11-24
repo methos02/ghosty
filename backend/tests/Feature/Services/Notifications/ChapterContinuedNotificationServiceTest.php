@@ -17,13 +17,14 @@ class ChapterContinuedNotificationServiceTest extends TestCase
     public function a_published_continuation_notifies_the_author_of_the_parent(): void
     {
         $parent = Chapter::factory()->create();
-        $continuation = $this->continueWith($parent, User::factory()->create(['username' => 'plume']));
+        $continuation = $this->continueWith($parent, User::factory()->create(['username' => 'plume', 'slug' => 'plu123']));
 
         $notification = $this->notificationsOf($parent->author, NotificationType::ChapterContinued)->sole();
 
         $this->assertSame($parent->id, data_get($notification->data, 'chapter.id'));
         $this->assertSame($continuation->id, data_get($notification->data, 'continuation.id'));
         $this->assertSame('plume', data_get($notification->data, 'continuation.author_username'));
+        $this->assertSame('plu123-plume', data_get($notification->data, 'continuation.author_profile_slug'));
         $this->assertSame(1, $notification->data['count']);
     }
 

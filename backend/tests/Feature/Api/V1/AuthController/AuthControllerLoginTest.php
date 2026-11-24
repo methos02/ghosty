@@ -112,6 +112,31 @@ class AuthControllerLoginTest extends TestCase
     }
 
     #[Test]
+    public function accepts_the_username_whatever_the_case(): void
+    {
+        $user = User::factory()->create(['username' => 'Methos', 'password' => 'password123']);
+
+        $response = $this->postJson($this->route, $this->getDatas(['identifier' => 'mETHOS']));
+
+        $response->assertOk();
+        $response->assertJsonPath('user.id', $user->id);
+    }
+
+    #[Test]
+    public function rejects_a_deleted_account(): void
+    {
+        User::factory()->deleted()->create(['username' => 'methos', 'email' => 'john@example.com', 'password' => 'password123']);
+
+        $this->postJson($this->route, $this->getDatas())
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['identifier']);
+
+        $this->postJson($this->route, $this->getDatas(['identifier' => 'methos']))
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['identifier']);
+    }
+
+    #[Test]
     public function rejects_a_wrong_password_given_with_the_username(): void
     {
         User::factory()->create(['username' => 'methos', 'password' => 'password123']);

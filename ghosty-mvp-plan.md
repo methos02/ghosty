@@ -214,7 +214,7 @@ Chaque lot est **vertical** (migration → model → repository → service → 
 
 Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom} -b feature/{nom}`), jamais de dev direct sur la branche principale ; agent `test-rule-checker` après chaque test écrit.
 
-### Lot 0 — Fondations (bloquant) · S
+### Lot 0 — Fondations (bloquant) · S ✅
 
 1. Réécrire [backend/CLAUDE.md](backend/CLAUDE.md) : schéma multivers, suppression de `VoteCalculationService`/`closeVotingSession`, des statuts `voting|writing` et des `accepted|rejected`.
 2. **ADR-07** — modèle multivers : arbre `chapters` + chemin matérialisé, disparition de `works`, **branche dérivée sans table** (D1, D4). Consigner l'argument décisif : une branche n'a pas de propriétaire légitime pour porter un nom ou une description, elle emprunte l'identité de son chapitre-tête.
@@ -227,7 +227,7 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 
 > Sortie : la base porte le multivers, la documentation ne contredit plus le MVP.
 
-### Lot 1 — Écriture et arbre · L
+### Lot 1 — Écriture et arbre · L ✅
 
 - `Chapter` model + `ChapterRepository` + `ChapterTreeService` + `ChapterPolicy`.
 - `POST /novels` (roman + chapitre racine en transaction), `POST /novels/{slug}/chapters` (suite depuis **n'importe quel** chapitre, y compris le sien — MVP §6), `PUT /chapters/{id}`.
@@ -236,7 +236,7 @@ Rappel process : worktree par feature (`git worktree add ../ghosty-feature-{nom}
 
 > Valide : « un auteur peut créer, poursuivre, bifurquer ».
 
-### Lot 2 — Lecture et navigation · L
+### Lot 2 — Lecture et navigation · L ✅
 
 - `GET /novels/{slug}/chapters/{id}` (ancêtres, suites triées, continuité courante), `GET /novels/{slug}/tree`.
 - Front : `ChapterReaderPage` (lecture linéaire par défaut = continuité courante), `ContinuationSwitcher` (« ce chapitre a N suites »), `MultiversePage` (arbre repliable, vue d'exploration séparée — §8).
@@ -329,7 +329,7 @@ Placé ici parce que les deux événements qui portent la rétention — « votr
 - Arbitrages ([ADR-18](backend/memory-bank/decisions/ADR-18-indicateurs-du-mvp.md)) : `GET /metrics` réservé au rôle `admin` (pas aux modérateurs) ; période glissante `?days=` (30 par défaut, 365 au plus) ; chaque indicateur est un couple `count` / `total`, le taux se calcule à l'affichage ; un lecteur = un compte, sinon une session navigateur ; « hors de la branche principale » = ni ancêtre ni descendant de son dernier chapitre ; « fin » = chapitre publié sans suite publiée ; « sans interaction » = aucune suite, aucun soutien, aucun commentaire après 30 jours ; tout est calculé à la demande, sans table ni commande. Front : page `/metrics` (lien du menu pour les admins).
 - Arbitrage ([ADR-19](backend/memory-bank/decisions/ADR-19-pas-de-statut-archive.md)) : le statut « archivé » est supprimé, et avec lui les archives du roman prévues au §9. Un chapitre retiré par la modération enfreint une règle : il est masqué, visible des seuls modérateurs (par les signalements traités) et de son auteur.
 
-### Lot 10 — Mon compte · M
+### Lot 10 — Mon compte · M ✅
 
 - Identité stable : `users.slug` aléatoire et fixe, profil à l'adresse `/users/{slug}-{pseudo}` (redirection 301 et encart « Le pseudo de ce compte a changé » quand le nom ne correspond plus) ; pseudo modifiable, unique sans tenir compte de la casse.
 - Mentions enregistrées par identifiant (`comments.mentioned_user_id`) : elles affichent toujours le pseudo actuel.

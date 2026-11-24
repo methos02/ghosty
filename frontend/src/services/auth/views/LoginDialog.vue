@@ -11,7 +11,7 @@ import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const authDialogs = useAuth()
 
-const datas = ref({})
+const formDatas = ref({})
 const dialog = ref()
 const loginButton = ref()
 
@@ -28,12 +28,12 @@ watch(
 const handleLogin = async () => {
   form.clearErrors()
 
-  const validation = validateLoginForm(datas.value)
+  const validation = validateLoginForm(formDatas.value)
   if (!validation.valid) {
     return
   }
 
-  const response = await auth.login(datas.value)
+  const response = await auth.login(formDatas.value)
   if (!ajaxHelper.isSuccess(response.status)) {
     form.addError('login.unauthorize', 'auth.login_error_token')
     return
@@ -64,7 +64,7 @@ const close = () => {
       >
         <div class="form-row">
           <InputComponent
-            v-model="datas.identifier"
+            v-model="formDatas.identifier"
             name="identifier"
             type="text"
             :label="t('auth.login_identifier')"
@@ -76,7 +76,7 @@ const close = () => {
 
         <div class="form-row">
           <InputComponent
-            v-model="datas.password"
+            v-model="formDatas.password"
             name="password"
             type="password"
             :label="t('auth.login_password')"

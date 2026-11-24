@@ -17,23 +17,19 @@ const emit = defineEmits(['sent', 'cancel'])
 
 const { commentStore } = useCommentStore()
 
-const datas = ref({
-  content: `@${props.mentionedAuthor.username} `,
+const formDatas = ref({
   isSpoiler: false,
+  mentionedUser: props.mentionedAuthor.isDeleted ? undefined : props.mentionedAuthor,
 })
 const sendButton = ref()
 
 const publish = async () => {
-  const validation = validateCommentForm(datas.value, 'reply')
+  const validation = validateCommentForm(formDatas.value, 'reply')
   if (!validation.valid) {
     return
   }
 
-  const response = await CommentController.createReply(
-    props.parentComment,
-    datas.value,
-    props.mentionedAuthor,
-  )
+  const response = await CommentController.createReply(props.parentComment, formDatas.value)
   if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
@@ -49,8 +45,26 @@ const publish = async () => {
     class="comment-reply-form"
     @submit.prevent="sendButton?.runCallback()"
   >
+    <p
+      v-if="formDatas.mentionedUser"
+      class="comment-reply-form__mention | d-flex a-center g-5 mb-5"
+    >
+      <span class="badge d-flex a-center g-5">
+        @{{ formDatas.mentionedUser.username }}
+        <button
+          type="button"
+          class="comment-reply-form__mention-remove | pointer"
+          :aria-label="t('comment_reply_form.remove_mention')"
+          :title="t('comment_reply_form.remove_mention')"
+          @click="formDatas.mentionedUser = undefined"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </span>
+    </p>
+
     <CommentFields
-      v-model="datas"
+      v-model="formDatas"
       formName="reply"
     >
       <div class="d-flex g-10">
@@ -73,3 +87,11 @@ const publish = async () => {
     </CommentFields>
   </form>
 </template>
+
+<style lang="scss" scoped>
+.comment-reply-form__mention-remove {
+  border: none;
+  background: transparent;
+  color: inherit;
+}
+</style>

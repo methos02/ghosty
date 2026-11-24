@@ -22,10 +22,8 @@ class ModeratedCommentResource extends JsonResource
         return [
             'id' => $this->id,
             'parent_id' => $this->parent_id,
-            'author' => [
-                'id' => $this->author_id,
-                'username' => $this->whenLoaded('author', fn () => $this->author->username),
-            ],
+            'author' => $this->whenLoaded('author', fn () => new UserIdentityResource($this->author), ['id' => $this->author_id]),
+            'mentioned_user' => $this->whenLoaded('mentionedUser', fn () => $this->mentionedUser === null ? null : new UserIdentityResource($this->mentionedUser)),
             'content' => $this->content,
             'is_spoiler' => $this->is_spoiler,
             'is_deleted' => $this->isDeleted(),

@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+ * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
  *
  * @mixin User
  */
@@ -22,7 +23,11 @@ class UserProfileResource extends JsonResource
         return [
             'id' => $this->id,
             'username' => $this->username,
+            'slug' => $this->slug,
+            'profile_slug' => $this->profileSlug(),
+            'is_deleted' => $this->isDeleted(),
             'avatar' => $this->avatar,
+            'avatar_url' => $this->avatarUrl(),
             'roles' => $this->roles,
             'created_at' => $this->created_at->toIso8601String(),
             ...$this->detailAttributes(),

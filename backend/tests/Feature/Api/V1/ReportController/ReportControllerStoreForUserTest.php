@@ -26,12 +26,12 @@ class ReportControllerStoreForUserTest extends TestCase
         parent::setUp();
 
         $this->reporter = User::factory()->create();
-        $this->reportedUser = User::factory()->create(['username' => 'importun']);
+        $this->reportedUser = User::factory()->create(['username' => 'importun', 'slug' => 'imp123']);
     }
 
-    private function route(string $username): string
+    private function route(string $slug): string
     {
-        return "/api/v1/users/{$username}/report";
+        return "/api/v1/users/{$slug}/report";
     }
 
     #[Test]
@@ -48,20 +48,20 @@ class ReportControllerStoreForUserTest extends TestCase
         $route = Route::getRoutes()->getByAction(ReportController::class.'@storeForUser');
         $this->assertNotNull($route);
 
-        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum'], $route->gatherMiddleware());
+        $this->assertEqualsCanonicalizing(['api', 'auth:sanctum', 'can:view,user'], $route->gatherMiddleware());
     }
 
     #[Test]
     public function requires_authentication(): void
     {
-        $this->postJson($this->route('importun'), $this->getDatas())->assertUnauthorized();
+        $this->postJson($this->route('imp123'), $this->getDatas())->assertUnauthorized();
     }
 
     #[Test]
     public function records_the_report_on_the_user(): void
     {
         $this->actingAs($this->reporter)
-            ->postJson($this->route('importun'), $this->getDatas())
+            ->postJson($this->route('imp123'), $this->getDatas())
             ->assertCreated();
 
         $this->assertDatabaseHas('reports', [
@@ -77,7 +77,7 @@ class ReportControllerStoreForUserTest extends TestCase
     public function refuses_a_reason_that_targets_a_content(): void
     {
         $this->actingAs($this->reporter)
-            ->postJson($this->route('importun'), $this->getDatas(['reason' => ReportReason::PoorQuality->value]))
+            ->postJson($this->route('imp123'), $this->getDatas(['reason' => ReportReason::PoorQuality->value]))
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['reason' => __('validation.report.reason.enum')]);
     }
@@ -88,7 +88,7 @@ class ReportControllerStoreForUserTest extends TestCase
         Report::factory()->on($this->reportedUser)->create(['reporter_id' => $this->reporter->id]);
 
         $this->actingAs($this->reporter)
-            ->postJson($this->route('importun'), $this->getDatas())
+            ->postJson($this->route('imp123'), $this->getDatas())
             ->assertConflict();
     }
 
@@ -96,7 +96,7 @@ class ReportControllerStoreForUserTest extends TestCase
     public function refuses_a_user_reporting_themselves(): void
     {
         $this->actingAs($this->reportedUser)
-            ->postJson($this->route('importun'), $this->getDatas())
+            ->postJson($this->route('imp123'), $this->getDatas())
             ->assertForbidden()
             ->assertJsonPath('message', __('reports.denied.self'));
     }
@@ -105,15 +105,27 @@ class ReportControllerStoreForUserTest extends TestCase
     public function refuses_a_banned_reporter(): void
     {
         $this->actingAs(User::factory()->banned(SanctionType::AccountBan)->create())
-            ->postJson($this->route('importun'), $this->getDatas())
+            ->postJson($this->route('imp123'), $this->getDatas())
             ->assertForbidden();
     }
 
     #[Test]
-    public function answers_not_found_for_an_unknown_username(): void
+    public function answers_not_found_for_an_unknown_slug(): void
     {
         $this->actingAs($this->reporter)
-            ->postJson($this->route('inconnu'), $this->getDatas())
+            ->postJson($this->route('zzz999'), $this->getDatas())
             ->assertNotFound();
+    }
+
+    #[Test]
+    public function answers_not_found_for_a_deleted_account(): void
+    {
+        User::factory()->deleted()->create(['slug' => 'del123']);
+
+        $this->actingAs($this->reporter)
+            ->postJson($this->route('del123'), $this->getDatas())
+            ->assertNotFound();
+
+        $this->assertDatabaseCount('reports', 0);
     }
 }

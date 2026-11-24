@@ -1,42 +1,50 @@
 [
   {
     "username": "admin",
+    "slug": "a7dm1n",
     "email": "admin@ghosty.fr",
     "roles": ["reader", "author", "moderator", "admin"]
   },
   {
     "username": "moderateur1",
+    "slug": "m0d3r1",
     "email": "moderateur@ghosty.fr",
     "roles": ["reader", "moderator"]
   },
   {
     "username": "auteur1",
+    "slug": "k4u7r1",
     "email": "auteur@ghosty.fr",
     "roles": ["reader", "author"]
   },
   {
     "username": "auteur2",
+    "slug": "k4u7r2",
     "email": "auteur2@ghosty.fr",
     "roles": ["reader", "author"]
   },
   {
     "username": "auteur3",
+    "slug": "k4u7r3",
     "email": "auteur3@ghosty.fr",
     "roles": ["reader", "author"]
   },
   {
     "username": "lecteur1",
+    "slug": "l3c7r1",
     "email": "lecteur@ghosty.fr",
     "roles": ["reader"]
   },
   {
     "username": "lecteur_unverified",
+    "slug": "l3c7nv",
     "email": "lecteur-unverified@ghosty.fr",
     "roles": ["reader"],
     "email_verified": false
   },
   {
     "username": "lecteur_today",
+    "slug": "l3c7td",
     "email": "lecteur-today@ghosty.fr",
     "roles": ["reader"],
     "registered_hours_ago": 1

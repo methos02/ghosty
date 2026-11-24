@@ -328,7 +328,7 @@ describe('ReportDialog.vue', () => {
     await flushPromises()
 
     expect(ReportRepository.reportUser).toHaveBeenCalledWith({
-      params: ReportDto.toUserParams(profile.username),
+      params: ReportDto.toUserParams(profile),
       body: ReportDto.toCreate(datas),
       form: 'report',
     })

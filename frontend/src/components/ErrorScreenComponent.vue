@@ -47,7 +47,9 @@ const logo = ConfigLoader.find('app.logo', {
     </header>
 
     <div class="error-screen | f-column f-center g-15 bg-neutral-200 color-neutral-800">
-      <p class="text-center">{{ t(messageKey) }}</p>
+      <p class="text-center">
+        {{ t(messageKey) }}
+      </p>
       <button
         v-if="action"
         class="btn btn-primary btn-primary-400-active"

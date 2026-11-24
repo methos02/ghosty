@@ -19,7 +19,13 @@ const getChapterApi = (overrides = {}) => ({
   is_reported: false,
   is_followed: false,
   comment_count: 0,
-  author: { id: 7, username: 'GhostWriter' },
+  author: {
+    id: 7,
+    username: 'GhostWriter',
+    slug: 'usr007',
+    profile_slug: 'usr007-ghostwriter',
+    is_deleted: false,
+  },
   novel: {
     id: 1,
     slug: 'nuit-virage',

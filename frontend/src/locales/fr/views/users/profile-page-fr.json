@@ -2,6 +2,7 @@
   "profile_page": {
     "head_title": "Profil de {username}",
     "not_found": "Ce profil n'existe pas.",
+    "renamed": "Le pseudo de ce compte a changé.",
     "member_since": "Membre depuis le {date}",
     "report": "Signaler ce compte",
     "roles": {

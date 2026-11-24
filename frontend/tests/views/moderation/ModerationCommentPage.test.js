@@ -57,6 +57,31 @@ describe('ModerationCommentPage.vue', () => {
     )
   })
 
+  it('shows to whom the reported reply answers', async () => {
+    const moderationCaseApi = moderationSeeder.getReplyCaseApi()
+    vi.spyOn(ModerationRepository, 'showComment').mockResolvedValue(
+      controllerSuccess({ data: moderationCaseApi }),
+    )
+    await router.push({ name: 'moderation-comment', params: { id: moderationCaseApi.comment.id } })
+
+    wrapper = mount(ModerationCommentPage)
+    await flushPromises()
+
+    const mentionedUser = moderationCaseApi.comment.mentioned_user
+    expect(wrapper.find('.moderation-comment-page__content .comment-mention').text()).toBe(
+      `@${mentionedUser.username}`,
+    )
+    expect(
+      wrapper
+        .find('.moderation-comment-page__content')
+        .findComponent({ name: 'RouterLink' })
+        .props('to'),
+    ).toEqual({
+      name: 'profile',
+      params: { profileSlug: mentionedUser.profile_slug },
+    })
+  })
+
   it('offers to dismiss the reports or to hide the comment', async () => {
     const moderationCaseApi = moderationSeeder.getCommentCaseApi()
     vi.spyOn(ModerationRepository, 'showComment').mockResolvedValue(

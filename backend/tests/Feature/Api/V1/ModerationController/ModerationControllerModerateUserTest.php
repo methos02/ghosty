@@ -177,6 +177,7 @@ class ModerationControllerModerateUserTest extends TestCase
             ->sole();
         $this->assertSame('user', $userNotification->data['content_type']);
         $this->assertSame('importun', data_get($userNotification->data, 'user.username'));
+        $this->assertSame($this->reportedUser->profileSlug(), data_get($userNotification->data, 'user.profile_slug'));
         $this->assertSame(SanctionType::Warning->value, data_get($userNotification->data, 'sanction.type'));
 
         $reporterNotification = Notification::query()

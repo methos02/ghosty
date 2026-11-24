@@ -10,7 +10,7 @@ import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const authDialogs = useAuth()
 
-const datas = ref({})
+const formDatas = ref({})
 const dialog = ref()
 const registerButton = ref()
 
@@ -27,12 +27,12 @@ watch(
 const handleRegister = async () => {
   form.clearErrors()
 
-  const validation = validateRegisterForm(datas.value)
+  const validation = validateRegisterForm(formDatas.value)
   if (!validation.valid) {
     return
   }
 
-  const response = await auth.register(datas.value)
+  const response = await auth.register(formDatas.value)
   if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
@@ -62,7 +62,7 @@ const close = () => {
       >
         <div class="form-row">
           <InputComponent
-            v-model="datas.username"
+            v-model="formDatas.username"
             name="username"
             type="text"
             :label="t('auth.register_username')"
@@ -74,7 +74,7 @@ const close = () => {
 
         <div class="form-row">
           <InputComponent
-            v-model="datas.email"
+            v-model="formDatas.email"
             name="email"
             type="email"
             :label="t('auth.register_email')"
@@ -86,7 +86,7 @@ const close = () => {
 
         <div class="form-row">
           <InputComponent
-            v-model="datas.password"
+            v-model="formDatas.password"
             name="password"
             type="password"
             :label="t('auth.register_password')"
@@ -98,7 +98,7 @@ const close = () => {
 
         <div class="form-row">
           <InputComponent
-            v-model="datas.passwordConfirmation"
+            v-model="formDatas.passwordConfirmation"
             name="passwordConfirmation"
             type="password"
             :label="t('auth.register_password_confirmation')"
@@ -112,7 +112,7 @@ const close = () => {
           <div class="register-dialog__terms">
             <label class="d-flex a-start g-10 pointer">
               <input
-                v-model="datas.acceptTerms"
+                v-model="formDatas.acceptTerms"
                 type="checkbox"
                 class="register-dialog__checkbox | pointer mt-5"
               />

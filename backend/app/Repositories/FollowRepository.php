@@ -29,6 +29,16 @@ class FollowRepository
     }
 
     /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
+    public function deleteAllOfUser(int $userId): void
+    {
+        Follow::query()
+            ->where('user_id', $userId)
+            ->delete();
+    }
+
+    /**
      * @return LengthAwarePaginator<int, Follow>
      */
     public function paginate(User $follower, int $perPage): LengthAwarePaginator

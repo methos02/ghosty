@@ -12,6 +12,9 @@ const getCoverApi = (overrides = {}) => ({
   author: {
     id: 7,
     username: 'Illustratrice',
+    slug: 'usr007',
+    profile_slug: 'usr007-illustratrice',
+    is_deleted: false,
   },
   created_at: '2026-11-01T10:00:00+00:00',
   updated_at: '2026-11-01T10:00:00+00:00',
@@ -28,6 +31,9 @@ const getCoversApi = () => [
     author: {
       id: 8,
       username: 'Crayonneur',
+      slug: 'usr008',
+      profile_slug: 'usr008-crayonneur',
+      is_deleted: false,
     },
   }),
 ]

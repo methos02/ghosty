@@ -14,6 +14,7 @@ describe('chapter-continued-dto', () => {
           id: notificationApi.continuation.id,
           title: notificationApi.continuation.title,
           authorUsername: notificationApi.continuation.author_username,
+          authorProfileSlug: notificationApi.continuation.author_profile_slug,
         },
         count: notificationApi.count,
       })

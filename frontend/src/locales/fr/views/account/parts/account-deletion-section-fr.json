@@ -1,0 +1,9 @@
+{
+  "account_deletion_section": {
+    "title": "Suppression de compte",
+    "warning": "La suppression de votre compte efface vos données personnelles et vous déconnecte. Vos romans, chapitres, illustrations et commentaires restent publiés sous la mention « Compte supprimé ».",
+    "delete": "Supprimer mon compte",
+    "confirm": "Supprimer définitivement votre compte ? Cette action est irréversible : vous ne pourrez plus vous connecter.",
+    "deleted": "Votre compte a été supprimé."
+  }
+}

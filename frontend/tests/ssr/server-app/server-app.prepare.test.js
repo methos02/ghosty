@@ -2,8 +2,10 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { serverApp } from '@/ssr/server-app.js'
 import { NovelRepository } from '@/apis/novels/repositories/novel-repository.js'
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
+import { UserRepository } from '@/apis/users/repositories/user-repository.js'
 import { STATUS } from '@/constants/ajax-constants.js'
 import { novelSeeder } from '&/utils/seeders/novel-seeder.js'
+import { userSeeder } from '&/utils/seeders/user-seeder.js'
 import { controllerSuccess, controllerError } from '&/utils/helpers/controller-response.js'
 
 describe('server-app', () => {
@@ -30,6 +32,18 @@ describe('server-app', () => {
       const prepared = await serverApp.prepare(`/novels/${novelSeeder.getNovelApi().slug}`)
 
       expect(prepared.statusCode).toBe(STATUS.NOT_FOUND)
+    })
+
+    it('redirects permanently a profile address holding an outdated name', async () => {
+      const profileApi = userSeeder.getProfileApi()
+      vi.spyOn(UserRepository, 'show').mockResolvedValue(controllerSuccess({ data: profileApi }))
+
+      const prepared = await serverApp.prepare(`/users/${profileApi.slug}-ancien?tab=covers`)
+
+      expect(prepared).toEqual({
+        redirect: `/users/${profileApi.profile_slug}?tab=covers&renamed=1`,
+        statusCode: STATUS.MOVED_PERMANENTLY,
+      })
     })
 
     it('answers 404 for an unknown address', async () => {

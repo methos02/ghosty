@@ -21,10 +21,7 @@ class ReportResource extends JsonResource
             'reason' => $this->reason->value,
             'description' => $this->description,
             'status' => $this->status->value,
-            'reporter' => [
-                'id' => $this->reporter_id,
-                'username' => $this->whenLoaded('reporter', fn () => $this->reporter->username),
-            ],
+            'reporter' => $this->whenLoaded('reporter', fn () => new UserIdentityResource($this->reporter), ['id' => $this->reporter_id]),
             'resolution' => $this->resolution?->value,
             'processed_at' => $this->processed_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),

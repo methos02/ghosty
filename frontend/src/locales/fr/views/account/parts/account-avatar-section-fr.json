@@ -1,0 +1,11 @@
+{
+  "account_avatar_section": {
+    "current": "Votre avatar",
+    "choose": "Changer d'avatar",
+    "delete": "Supprimer l'avatar",
+    "delete_confirm": "Supprimer votre avatar ? Votre profil affichera l'icône par défaut.",
+    "deleted": "Votre avatar a été supprimé.",
+    "error_unreadable": "Ce fichier n'est pas une image lisible.",
+    "error_too_small": "L'image est trop petite : elle doit faire au moins 200 pixels de côté une fois recadrée en carré."
+  }
+}

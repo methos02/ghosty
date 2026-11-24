@@ -26,7 +26,7 @@ const buildHtml = (template, rendered) => {
 
 const sendRendered = async (response, rendered) => {
   if (rendered.redirect) {
-    response.redirect(STATUS.FOUND, rendered.redirect)
+    response.redirect(rendered.statusCode ?? STATUS.FOUND, rendered.redirect)
     return
   }
 

@@ -16,7 +16,7 @@ import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 const { reportedContent, report } = useReport()
 
 const dialog = ref()
-const datas = ref({})
+const formDatas = ref({})
 const refusal = ref('')
 const sendButton = ref()
 
@@ -55,32 +55,32 @@ watch(reportedContent, reported => {
     return
   }
 
-  datas.value = {}
+  formDatas.value = {}
   refusal.value = ''
   form.clearErrors()
 })
 
 const sendReport = reported => {
   if (reported.type === REPORTED_CONTENT_TYPES.COMMENT) {
-    return ReportController.reportComment(reported.content.id, datas.value)
+    return ReportController.reportComment(reported.content.id, formDatas.value)
   }
 
   if (reported.type === REPORTED_CONTENT_TYPES.COVER) {
-    return ReportController.reportCover(reported.content.id, datas.value)
+    return ReportController.reportCover(reported.content.id, formDatas.value)
   }
 
   if (reported.type === REPORTED_CONTENT_TYPES.USER) {
-    return ReportController.reportUser(reported.content.username, datas.value)
+    return ReportController.reportUser(reported.content, formDatas.value)
   }
 
-  return ReportController.reportChapter(reported.content.id, datas.value)
+  return ReportController.reportChapter(reported.content.id, formDatas.value)
 }
 
 const send = async () => {
   form.clearErrors()
   refusal.value = ''
 
-  const validation = validateReportForm(datas.value)
+  const validation = validateReportForm(formDatas.value)
   if (!validation.valid) {
     return
   }
@@ -208,7 +208,7 @@ const send = async () => {
       </p>
 
       <SelectComponent
-        v-model="datas.reason"
+        v-model="formDatas.reason"
         name="reason"
         :label="t('report_dialog.reason')"
         :required="true"
@@ -224,7 +224,7 @@ const send = async () => {
       </SelectComponent>
 
       <TextareaComponent
-        v-model="datas.description"
+        v-model="formDatas.description"
         name="description"
         :label="t('report_dialog.description')"
         :maxLength="ConfigLoader.get('report.descriptionMaxLength')"

@@ -4,13 +4,21 @@ import { commentSeeder } from '&/utils/seeders/comment-seeder.js'
 
 describe('comment-dto', () => {
   describe('toCreateReply', () => {
-    it('sends the reply with the id of the mentioned author', () => {
-      const formData = commentSeeder.getCreateForm()
-      const mentionedAuthor = commentSeeder.getReply().author
+    it('sends the reply with the id of the mentioned user', () => {
+      const formData = commentSeeder.getReplyForm()
 
-      expect(CommentDto.toCreateReply(formData, mentionedAuthor)).toEqual({
+      expect(CommentDto.toCreateReply(formData)).toEqual({
         ...CommentDto.toCreate(formData),
-        mentioned_user_id: mentionedAuthor.id,
+        mentioned_user_id: formData.mentionedUser.id,
+      })
+    })
+
+    it('sends no mentioned user once the mention was removed', () => {
+      const formData = commentSeeder.getReplyForm({ mentionedUser: undefined })
+
+      expect(CommentDto.toCreateReply(formData)).toStrictEqual({
+        ...CommentDto.toCreate(formData),
+        mentioned_user_id: undefined,
       })
     })
   })

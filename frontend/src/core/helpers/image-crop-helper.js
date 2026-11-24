@@ -1,5 +1,3 @@
-import { ConfigLoader } from '@/config/config-loader.js'
-
 const HALF = 2
 const PERCENT = 100
 
@@ -15,44 +13,6 @@ const clampCrop = (crop, size) => {
   }
 }
 
-const fullCrop = size => {
-  const ratio = ConfigLoader.get('cover.ratio')
-  const width = Math.min(size.width, size.height * ratio)
-  const height = width / ratio
-
-  return {
-    x: (size.width - width) / HALF,
-    y: (size.height - height) / HALF,
-    width,
-    height,
-  }
-}
-
-const maxZoom = size => {
-  return fullCrop(size).width / ConfigLoader.get('cover.minWidth')
-}
-
-const isLargeEnough = size => {
-  return maxZoom(size) >= 1
-}
-
-const zoomOf = (crop, size) => {
-  return fullCrop(size).width / crop.width
-}
-
-const zoomCrop = (crop, size, zoom) => {
-  const width = fullCrop(size).width / clamp(zoom, 1, maxZoom(size))
-  const height = width / ConfigLoader.get('cover.ratio')
-  const centered = {
-    x: crop.x + (crop.width - width) / HALF,
-    y: crop.y + (crop.height - height) / HALF,
-    width,
-    height,
-  }
-
-  return clampCrop(centered, size)
-}
-
 const dragCrop = (crop, size, drag) => {
   const sourcePixelsPerFramePixel = crop.width / drag.frameWidth
   const moved = {
@@ -64,6 +24,33 @@ const dragCrop = (crop, size, drag) => {
   return clampCrop(moved, size)
 }
 
+const fullCrop = source => {
+  const { size, format } = source
+  const width = Math.min(size.width, size.height * format.ratio)
+  const height = width / format.ratio
+
+  return {
+    x: (size.width - width) / HALF,
+    y: (size.height - height) / HALF,
+    width,
+    height,
+  }
+}
+
+const isLargeEnough = source => {
+  return imageCropHelper.maxZoom(source) >= 1
+}
+
+const maxZoom = source => {
+  return imageCropHelper.fullCrop(source).width / source.format.minWidth
+}
+
+const outputSize = (crop, format) => {
+  const width = Math.round(Math.min(crop.width, format.maxWidth))
+
+  return { width, height: Math.round(width / format.ratio) }
+}
+
 const placement = (crop, size) => {
   return {
     width: (size.width / crop.width) * PERCENT,
@@ -72,10 +59,22 @@ const placement = (crop, size) => {
   }
 }
 
-const outputSize = crop => {
-  const width = Math.round(Math.min(crop.width, ConfigLoader.get('cover.maxWidth')))
+const zoomCrop = (crop, source, zoom) => {
+  const width =
+    imageCropHelper.fullCrop(source).width / clamp(zoom, 1, imageCropHelper.maxZoom(source))
+  const height = width / source.format.ratio
+  const centered = {
+    x: crop.x + (crop.width - width) / HALF,
+    y: crop.y + (crop.height - height) / HALF,
+    width,
+    height,
+  }
 
-  return { width, height: Math.round(width / ConfigLoader.get('cover.ratio')) }
+  return clampCrop(centered, source.size)
+}
+
+const zoomOf = (crop, source) => {
+  return imageCropHelper.fullCrop(source).width / crop.width
 }
 
 export const imageCropHelper = {

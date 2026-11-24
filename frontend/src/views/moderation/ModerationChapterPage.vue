@@ -24,7 +24,9 @@ const isRemovingPassages = computed(() => resolution.value === RESOLUTIONS.PASSA
 
 const isRemoved = computed(() => moderationCase.value.chapter.isHidden)
 
-const hasPendingReports = computed(() => moderationCase.value.reports.some(report => report.isPending))
+const hasPendingReports = computed(() =>
+  moderationCase.value.reports.some(report => report.isPending),
+)
 
 const resolutions = computed(() => {
   if (moderationCase.value.isRemovable) {

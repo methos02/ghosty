@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Api\V1\UserController;
 
+use App\Http\Controllers\Api\V1\UserController;
 use App\Models\Chapter;
 use App\Models\User;
+use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -15,12 +17,12 @@ class UserControllerChaptersTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = User::factory()->create(['username' => 'plume']);
+        $this->user = User::factory()->create(['username' => 'plume', 'slug' => 'plu123']);
     }
 
-    private function route(string $username): string
+    private function route(string $slug): string
     {
-        return "/api/v1/users/{$username}/chapters";
+        return "/api/v1/users/{$slug}/chapters";
     }
 
     #[Test]
@@ -29,7 +31,7 @@ class UserControllerChaptersTest extends TestCase
         $older = Chapter::factory()->create(['author_id' => $this->user->id, 'published_at' => now()->subDays(2)]);
         $newer = Chapter::factory()->create(['author_id' => $this->user->id]);
 
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('chapters.*.id', [$newer->id, $older->id])
             ->assertJsonPath('meta.total', 2);
@@ -42,7 +44,7 @@ class UserControllerChaptersTest extends TestCase
         Chapter::factory()->hidden()->create(['author_id' => $this->user->id]);
         Chapter::factory()->draft()->create(['author_id' => $this->user->id]);
 
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('chapters.*.id', [$published->id]);
     }
@@ -52,7 +54,7 @@ class UserControllerChaptersTest extends TestCase
     {
         $chapter = Chapter::factory()->create(['author_id' => $this->user->id, 'read_count' => 12]);
 
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('chapters.0.novel.slug', $chapter->novel->slug)
             ->assertJsonPath('chapters.0.read_count', 12)
@@ -66,16 +68,34 @@ class UserControllerChaptersTest extends TestCase
         $mainChapter = Chapter::factory()->continuing($root)->liked(3)->create(['author_id' => $this->user->id, 'published_at' => now()->subDay()]);
         $rivalChapter = Chapter::factory()->continuing($root)->create(['author_id' => $this->user->id]);
 
-        $this->getJson($this->route('plume'))
+        $this->getJson($this->route('plu123'))
             ->assertOk()
             ->assertJsonPath('chapters.*.id', [$rivalChapter->id, $mainChapter->id])
             ->assertJsonPath('chapters.*.is_in_main_branch', [false, true]);
     }
 
     #[Test]
-    public function answers_not_found_for_an_unknown_username(): void
+    public function answers_not_found_for_an_unknown_slug(): void
     {
-        $this->getJson($this->route('inconnu'))
+        $this->getJson($this->route('zzz999'))
+            ->assertNotFound();
+    }
+
+    #[Test]
+    public function has_middleware(): void
+    {
+        $route = Route::getRoutes()->getByAction(UserController::class.'@chapters');
+        $this->assertNotNull($route);
+
+        $this->assertEqualsCanonicalizing(['api', 'can:view,user'], $route->gatherMiddleware());
+    }
+
+    #[Test]
+    public function answers_not_found_for_a_deleted_account(): void
+    {
+        User::factory()->deleted()->create(['slug' => 'del123']);
+
+        $this->getJson($this->route('del123'))
             ->assertNotFound();
     }
 }

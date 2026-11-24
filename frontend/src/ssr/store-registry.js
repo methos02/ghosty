@@ -7,6 +7,7 @@ import {
   createReadingSettingsStore,
   READING_SETTINGS_STORE_KEY,
 } from '@/core-vue/stores/chapters/reading-settings-store.js'
+import { createProfileStore, PROFILE_STORE_KEY } from '@/core-vue/stores/users/profile-store.js'
 import {
   createNovelFilterStore,
   NOVEL_FILTER_STORE_KEY,
@@ -47,6 +48,11 @@ const STORE_ENTRIES = [
     name: 'filter',
     key: NOVEL_FILTER_STORE_KEY,
     create: createNovelFilterStore,
+  },
+  {
+    name: 'profile',
+    key: PROFILE_STORE_KEY,
+    create: createProfileStore,
   },
 ]
 

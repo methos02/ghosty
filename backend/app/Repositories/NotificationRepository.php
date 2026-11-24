@@ -92,6 +92,15 @@ class NotificationRepository
             ->update(['read_at' => now()]);
     }
 
+    /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
+    public function deleteAllOfRecipient(User $recipient): void
+    {
+        $this->notificationsByRecipient($recipient)
+            ->delete();
+    }
+
     public function markAllAsRead(User $recipient): void
     {
         $this->notificationsByRecipient($recipient)

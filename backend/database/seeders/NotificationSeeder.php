@@ -92,7 +92,7 @@ class NotificationSeeder extends Seeder
 
     /**
      * @param  list<string>  $actors
-     * @return array{last_actor_username: string|null, first_like_id: int|null, count: int}
+     * @return array{last_actor_username: string|null, last_actor_profile_slug: string|null, first_like_id: int|null, count: int}
      */
     private function likeDetails(Chapter $chapter, array $actors): array
     {
@@ -104,6 +104,7 @@ class NotificationSeeder extends Seeder
 
         return [
             'last_actor_username' => Arr::last($actors),
+            'last_actor_profile_slug' => $this->profileSlug(Arr::last($actors)),
             'first_like_id' => Arr::first($likeIds),
             'count' => count($likeIds),
         ];
@@ -111,19 +112,20 @@ class NotificationSeeder extends Seeder
 
     /**
      * @param  list<string>  $actors
-     * @return array{last_actor_username: string|null, count: int}
+     * @return array{last_actor_username: string|null, last_actor_profile_slug: string|null, count: int}
      */
     private function commentDetails(array $actors): array
     {
         return [
             'last_actor_username' => Arr::last($actors),
+            'last_actor_profile_slug' => $this->profileSlug(Arr::last($actors)),
             'count' => count($actors),
         ];
     }
 
     /**
      * @param  list<string>  $continuationTitles
-     * @return array{continuation: array{id: int, title: string, author_username: string}, count: int}
+     * @return array{continuation: array{id: int, title: string, author_username: string, author_profile_slug: string}, count: int}
      */
     private function continuationDetails(array $continuationTitles): array
     {
@@ -134,6 +136,7 @@ class NotificationSeeder extends Seeder
                 'id' => $continuation->id,
                 'title' => $continuation->title,
                 'author_username' => $continuation->author->username,
+                'author_profile_slug' => $continuation->author->profileSlug(),
             ],
             'count' => count($continuationTitles),
         ];
@@ -159,5 +162,17 @@ class NotificationSeeder extends Seeder
     private function chapter(string $title): Chapter
     {
         return Chapter::with(['author', 'novel'])->where('title', $title)->firstOrFail();
+    }
+
+    private function profileSlug(?string $username): ?string
+    {
+        if ($username === null) {
+            return null;
+        }
+
+        return User::query()
+            ->where('username', $username)
+            ->firstOrFail()
+            ->profileSlug();
     }
 }

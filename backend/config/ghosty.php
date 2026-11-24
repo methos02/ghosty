@@ -68,6 +68,17 @@ return [
         'per_page' => 20,
     ],
 
+    /* @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md */
+    'account' => [
+        'per_minute' => 5,
+        'username_checks_per_minute' => 30,
+    ],
+
+    /* @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md */
+    'avatars' => [
+        'max_size_kb' => 2048,
+    ],
+
     /* @see memory-bank/decisions/ADR-18-indicateurs-du-mvp.md */
     'metrics' => [
         'default_days' => 30,

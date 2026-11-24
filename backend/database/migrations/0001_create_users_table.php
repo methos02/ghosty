@@ -6,10 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('slug', 6)->unique();
             $table->string('username')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
@@ -17,11 +21,10 @@ return new class extends Migration
             $table->json('roles');
             $table->string('avatar')->nullable();
             $table->boolean('notifications_enabled')->default(true);
-            $table->string('firstname')->nullable();
-            $table->string('lastname')->nullable();
-            $table->date('birth_date')->nullable();
+            $table->json('disabled_notification_types')->nullable();
             $table->integer('new_messages_count')->default(0);
             $table->rememberToken();
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });

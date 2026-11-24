@@ -18,7 +18,9 @@ defineProps({
     </h2>
 
     <p class="d-flex a-end f-wrap g-10">
-      <SkeletonLoader class="fs-700 fw-700">{{ METRICS_SKELETON_VALUE }}</SkeletonLoader>
+      <SkeletonLoader class="fs-700 fw-700">
+        {{ METRICS_SKELETON_VALUE }}
+      </SkeletonLoader>
       <SkeletonLoader class="badge">
         {{ t('metric_card.rate', { rate: METRICS_SKELETON_VALUE }) }}
       </SkeletonLoader>

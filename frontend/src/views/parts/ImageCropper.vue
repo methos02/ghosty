@@ -1,25 +1,26 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { t } from '@/services/shortcuts/services-shortcut.js'
-import { ConfigLoader } from '@/config/config-loader.js'
 import { imageCropHelper } from '@/core/helpers/image-crop-helper.js'
 
 const props = defineProps({
   imageUrl: { type: String, required: true },
-  size: { type: Object, required: true },
+  source: { type: Object, required: true },
   initialCrop: { type: Object, required: true },
+  withHint: { type: Boolean, default: true },
+  withApply: { type: Boolean, default: true },
 })
 
-const emit = defineEmits(['apply', 'cancel'])
+const emit = defineEmits(['apply', 'cancel', 'change'])
 
 const crop = ref(props.initialCrop)
 const lastPointer = ref()
 
-const maxZoom = computed(() => imageCropHelper.maxZoom(props.size))
-const zoom = computed(() => imageCropHelper.zoomOf(crop.value, props.size))
+const maxZoom = computed(() => imageCropHelper.maxZoom(props.source))
+const zoom = computed(() => imageCropHelper.zoomOf(crop.value, props.source))
 
 const imageStyle = computed(() => {
-  const placement = imageCropHelper.placement(crop.value, props.size)
+  const placement = imageCropHelper.placement(crop.value, props.source.size)
 
   return {
     width: `${placement.width}%`,
@@ -29,11 +30,11 @@ const imageStyle = computed(() => {
 })
 
 const setZoom = value => {
-  crop.value = imageCropHelper.zoomCrop(crop.value, props.size, value)
+  crop.value = imageCropHelper.zoomCrop(crop.value, props.source, value)
 }
 
 const zoomWithWheel = event => {
-  setZoom(zoom.value * (1 - event.deltaY * ConfigLoader.get('cover.wheelZoomSpeed')))
+  setZoom(zoom.value * (1 - event.deltaY * props.source.format.wheelZoomSpeed))
 }
 
 const startDrag = event => {
@@ -51,20 +52,26 @@ const drag = event => {
     y: event.clientY - lastPointer.value.y,
     frameWidth: event.currentTarget.clientWidth,
   }
-  crop.value = imageCropHelper.dragCrop(crop.value, props.size, movement)
+  crop.value = imageCropHelper.dragCrop(crop.value, props.source.size, movement)
   lastPointer.value = { x: event.clientX, y: event.clientY }
 }
 
 const stopDrag = () => {
   lastPointer.value = undefined
 }
+
+watch(crop, value => emit('change', value))
 </script>
 
 <template>
-  <div class="cover-cropper | d-flex f-column g-10">
+  <div class="image-cropper | d-flex f-column g-10">
     <div
-      class="cover-cropper__frame | radius-5"
-      :class="{ 'cover-cropper__frame--dragging': lastPointer }"
+      class="image-cropper__frame | radius-5"
+      :class="{
+        'image-cropper__frame--dragging': lastPointer,
+        'image-cropper__frame--round': source.format.isRound,
+      }"
+      :style="{ aspectRatio: source.format.ratio }"
       @pointerdown.prevent="startDrag"
       @pointermove="drag"
       @pointerup="stopDrag"
@@ -73,65 +80,71 @@ const stopDrag = () => {
     >
       <img
         :src="imageUrl"
-        :alt="t('cover_cropper.image_alt')"
+        :alt="t('image_cropper.image_alt')"
         :style="imageStyle"
         draggable="false"
-        class="cover-cropper__image"
+        class="image-cropper__image"
       />
-      <div class="cover-cropper__grid"></div>
+      <div class="image-cropper__grid"></div>
     </div>
 
-    <p class="cover-cropper__hint | d-flex a-center g-5 fs-200 color-neutral-700">
+    <p
+      v-if="withHint"
+      class="image-cropper__hint | d-flex a-center g-5 fs-200 color-neutral-700"
+    >
       <i class="fa-solid fa-up-down-left-right"></i>
-      {{ t('cover_cropper.hint') }}
+      {{ t('image_cropper.hint') }}
     </p>
 
-    <label class="cover-cropper__zoom | d-flex a-center g-10 color-neutral-700">
+    <label class="image-cropper__zoom | d-flex a-center g-10 color-neutral-700">
       <i
         class="fa-solid fa-image fs-200"
-        :title="t('cover_cropper.zoom')"
+        :title="t('image_cropper.zoom')"
       ></i>
       <input
         type="range"
-        class="cover-cropper__zoom-input | flex-1"
+        class="image-cropper__zoom-input | flex-1"
         min="1"
         :max="maxZoom"
         step="0.01"
         :value="zoom"
-        :aria-label="t('cover_cropper.zoom')"
+        :aria-label="t('image_cropper.zoom')"
         :disabled="maxZoom <= 1"
         @input="setZoom(Number($event.target.value))"
       />
       <i class="fa-solid fa-image fs-500"></i>
     </label>
 
-    <div class="cover-cropper__actions | d-flex j-end g-10">
+    <div
+      class="image-cropper__actions | d-flex g-10"
+      :class="source.format.isRound ? 'j-center' : 'j-end'"
+    >
       <button
         type="button"
-        class="cover-cropper__cancel | btn btn-sm btn-primary-alt"
+        class="image-cropper__cancel | btn btn-sm btn-primary-alt"
         @click="emit('cancel')"
       >
-        {{ t('cover_cropper.cancel') }}
+        {{ t('image_cropper.cancel') }}
       </button>
       <button
+        v-if="withApply"
         type="button"
-        class="cover-cropper__apply | btn btn-sm btn-primary d-flex a-center g-5"
+        class="image-cropper__apply | btn btn-sm btn-primary d-flex a-center g-5"
         @click="emit('apply', crop)"
       >
         <i class="fa-solid fa-check"></i>
-        {{ t('cover_cropper.apply') }}
+        {{ t('image_cropper.apply') }}
       </button>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.cover-cropper {
+.image-cropper {
   &__frame {
     position: relative;
     overflow: hidden;
     width: 100%;
-    aspect-ratio: 16 / 9;
     background: var(--neutral-900);
     cursor: grab;
     touch-action: none;
@@ -139,6 +152,12 @@ const stopDrag = () => {
 
     &--dragging {
       cursor: grabbing;
+    }
+
+    &--round {
+      align-self: center;
+      width: var(--image-cropper-round-size, 100%);
+      border-radius: 50%;
     }
   }
 
@@ -153,6 +172,7 @@ const stopDrag = () => {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    border-radius: inherit;
     box-shadow: inset 0 0 0 2px var(--primary);
     background-image:
       linear-gradient(to right, rgb(255 255 255 / 0.35) 1px, transparent 1px),

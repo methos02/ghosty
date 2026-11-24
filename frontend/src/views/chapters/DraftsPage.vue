@@ -60,7 +60,9 @@ onMounted(load)
 
     <div class="drafts-page__body | w-xl py-40 px-20">
       <div class="d-flex j-between a-center mb-20">
-        <h1 class="fs-700 fw-700">{{ t('drafts.title') }}</h1>
+        <h1 class="fs-700 fw-700">
+          {{ t('drafts.title') }}
+        </h1>
 
         <div class="d-flex g-10">
           <button
@@ -86,7 +88,9 @@ onMounted(load)
         v-if="shown.length === 0"
         class="drafts-page__empty | d-flex f-column a-center text-center g-20 py-40"
       >
-        <p class="color-neutral-700">{{ t('drafts.empty') }}</p>
+        <p class="color-neutral-700">
+          {{ t('drafts.empty') }}
+        </p>
         <router-link
           :to="{ name: 'novel-create' }"
           class="drafts-page__create | btn btn-primary"

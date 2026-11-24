@@ -21,12 +21,13 @@ class LikeReceivedNotificationServiceTest extends TestCase
     {
         $chapter = Chapter::factory()->create();
 
-        app(LikeService::class)->like(User::factory()->create(['username' => 'lectrice']), $chapter, null);
+        app(LikeService::class)->like(User::factory()->create(['username' => 'lectrice', 'slug' => 'lec123']), $chapter, null);
 
         $notification = $this->notificationsOf($chapter->author, NotificationType::LikeReceived)->sole();
 
         $this->assertSame($chapter->id, data_get($notification->data, 'chapter.id'));
         $this->assertSame('lectrice', $notification->data['last_actor_username']);
+        $this->assertSame('lec123-lectrice', $notification->data['last_actor_profile_slug']);
         $this->assertSame(1, $notification->data['count']);
     }
 

@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationType;
 use App\Enums\SanctionType;
+use App\Models\Concerns\HasRandomSlug;
 use App\Models\Concerns\HasReports;
 use App\Models\Concerns\IsNotificationSubject;
 use App\Models\Contracts\Reportable;
@@ -11,11 +13,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 
 /**
  * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+ * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
  *
  * @mixin IdeHelperUser
  */
@@ -25,7 +30,7 @@ class User extends Authenticatable implements Reportable
      * @use HasApiTokens<PersonalAccessToken>
      * @use HasFactory<UserFactory>
      */
-    use HasApiTokens, HasFactory, HasReports, IsNotificationSubject, Notifiable;
+    use HasApiTokens, HasFactory, HasRandomSlug, HasReports, IsNotificationSubject, Notifiable;
 
     protected $fillable = [
         'username',
@@ -34,9 +39,7 @@ class User extends Authenticatable implements Reportable
         'roles',
         'avatar',
         'notifications_enabled',
-        'firstname',
-        'lastname',
-        'birth_date',
+        'disabled_notification_types',
     ];
 
     protected $hidden = [
@@ -48,12 +51,67 @@ class User extends Authenticatable implements Reportable
         'roles' => '["reader"]',
     ];
 
+    const AVATAR_DISK = 'public';
+
+    const DELETED_PREFIX = 'deleted-';
+
+    public function profileSlug(): string
+    {
+        $name = Str::slug($this->username);
+
+        if ($name === '') {
+            return $this->slug;
+        }
+
+        return $this->slug.'-'.$name;
+    }
+
+    public function isDeleted(): bool
+    {
+        return $this->deleted_at !== null;
+    }
+
+    /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
+    public function wantsNotification(NotificationType $type): bool
+    {
+        if (! $type->isOptional()) {
+            return true;
+        }
+
+        if (! $this->notifications_enabled) {
+            return false;
+        }
+
+        return ! in_array($type->value, $this->disabled_notification_types ?? [], true);
+    }
+
+    public function displayName(): string
+    {
+        if ($this->isDeleted()) {
+            return __('users.deleted');
+        }
+
+        return $this->username;
+    }
+
+    public function avatarUrl(): ?string
+    {
+        if ($this->avatar === null) {
+            return null;
+        }
+
+        return Storage::disk(self::AVATAR_DISK)->url($this->avatar);
+    }
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'birth_date' => 'date',
+            'deleted_at' => 'datetime',
             'notifications_enabled' => 'boolean',
+            'disabled_notification_types' => 'array',
             'password' => 'hashed',
             'roles' => 'array',
         ];

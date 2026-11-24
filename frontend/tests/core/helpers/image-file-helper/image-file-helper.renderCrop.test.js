@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { imageFileHelper } from '@/core/helpers/image-file-helper.js'
+import { ConfigLoader } from '@/config/config-loader.js'
 import { coverSeeder } from '&/utils/seeders/cover-seeder.js'
 
 describe('image-file-helper', () => {
@@ -9,12 +10,16 @@ describe('image-file-helper', () => {
         coverSeeder.getImageFile({ width: 4000, height: 3000 }),
       )
 
-      const image = await imageFileHelper.renderCrop(bitmap, {
-        x: 0,
-        y: 375,
-        width: 4000,
-        height: 2250,
-      })
+      const image = await imageFileHelper.renderCrop(
+        bitmap,
+        {
+          x: 0,
+          y: 375,
+          width: 4000,
+          height: 2250,
+        },
+        ConfigLoader.get('cover'),
+      )
 
       expect(image.name).toBe('illustration.jpg')
       expect(image.type).toBe('image/jpeg')

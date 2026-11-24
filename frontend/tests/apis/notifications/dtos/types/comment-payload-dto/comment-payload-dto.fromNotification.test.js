@@ -13,6 +13,7 @@ describe('comment-payload-dto', () => {
 
       expect(CommentPayloadDto.fromNotification(notificationApi)).toEqual({
         lastActorUsername: notificationApi.last_actor_username,
+        lastActorProfileSlug: notificationApi.last_actor_profile_slug,
         count: notificationApi.count,
       })
     })

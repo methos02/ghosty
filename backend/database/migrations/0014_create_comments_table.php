@@ -8,6 +8,7 @@ return new class extends Migration
 {
     /**
      * @see memory-bank/decisions/ADR-13-commentaires.md
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
      */
     public function up(): void
     {
@@ -16,6 +17,7 @@ return new class extends Migration
             $table->foreignId('author_id')->constrained('users')->cascadeOnDelete();
             $table->morphs('commentable');
             $table->foreignId('parent_id')->nullable()->constrained('comments')->cascadeOnDelete();
+            $table->foreignId('mentioned_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->unsignedInteger('reply_count')->default(0);
             $table->text('content')->nullable();
             $table->boolean('is_spoiler')->default(false);

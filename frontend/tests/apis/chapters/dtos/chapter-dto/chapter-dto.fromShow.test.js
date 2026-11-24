@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
 import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
 import { CHAPTER_STATUSES } from '@/constants/chapter-constants.js'
 import { chapterSeeder } from '&/utils/seeders/chapter-seeder.js'
@@ -37,7 +38,7 @@ describe('chapter-dto', () => {
         isCorrectable: true,
         isRoot: true,
         novel: { id: 1, slug: 'nuit-virage', title: 'Nuit virage', genreId: 3 },
-        author: { id: 7, username: 'GhostWriter' },
+        author: AuthorDto.fromShow(chapterSeeder.getChapterApi().author),
         publishedAt: '2026-07-31T10:00:00+00:00',
         publishedAtFormat: '31/07/2026',
       })

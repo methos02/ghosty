@@ -12,7 +12,7 @@ import { ChapterController } from '@/apis/chapters/controllers/chapter-controlle
 import { validateNovelForm } from '@/apis/novels/formRequest/novel-form-request.js'
 import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
-const datas = ref({ novel: {}, chapter: {} })
+const formDatas = ref({ novel: {}, chapter: {} })
 const genres = ref([])
 const publishButton = ref()
 const draftButton = ref()
@@ -20,7 +20,6 @@ const novelSlug = ref()
 const drafts = ref([])
 
 const draftId = computed(() => Number(route.get('id')) || undefined)
-
 
 const selectedDraft = computed({
   get: () => draftId.value,
@@ -56,7 +55,7 @@ const openDraft = async id => {
 
 const loadDraft = async () => {
   if (draftId.value === undefined) {
-    datas.value = { novel: {}, chapter: {} }
+    formDatas.value = { novel: {}, chapter: {} }
     novelSlug.value = undefined
     return
   }
@@ -67,7 +66,7 @@ const loadDraft = async () => {
   }
 
   novelSlug.value = response.chapter.novel.slug
-  datas.value = {
+  formDatas.value = {
     novel: {
       genreId: response.chapter.novel.genreId,
       title: response.chapter.novel.title,
@@ -81,7 +80,7 @@ const loadDraft = async () => {
 }
 
 const submit = async () => {
-  const validation = validateNovelForm(datas.value)
+  const validation = validateNovelForm(formDatas.value)
   if (!validation.valid) {
     return
   }
@@ -96,14 +95,14 @@ const submit = async () => {
 
 const createNovel = async () => {
   const response = await NovelController.create({
-    novel: datas.value.novel,
-    chapter: datas.value.chapter,
+    novel: formDatas.value.novel,
+    chapter: formDatas.value.chapter,
   })
   if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 
-  if (datas.value.chapter.isDraft) {
+  if (formDatas.value.chapter.isDraft) {
     await router.push({ name: 'drafts' })
     return
   }
@@ -112,17 +111,17 @@ const createNovel = async () => {
 }
 
 const saveExisting = async () => {
-  const novel = await NovelController.update(novelSlug.value, datas.value.novel)
+  const novel = await NovelController.update(novelSlug.value, formDatas.value.novel)
   if (!ajaxHelper.isSuccess(novel.status)) {
     return
   }
 
-  const chapter = await ChapterController.update(draftId.value, datas.value.chapter)
+  const chapter = await ChapterController.update(draftId.value, formDatas.value.chapter)
   if (!ajaxHelper.isSuccess(chapter.status)) {
     return
   }
 
-  if (datas.value.chapter.isDraft) {
+  if (formDatas.value.chapter.isDraft) {
     await router.push({ name: 'drafts' })
     return
   }
@@ -136,13 +135,13 @@ const saveExisting = async () => {
 }
 
 const publish = () => {
-  datas.value.chapter.isDraft = false
+  formDatas.value.chapter.isDraft = false
 
   return submit()
 }
 
 const saveDraft = () => {
-  datas.value.chapter.isDraft = true
+  formDatas.value.chapter.isDraft = true
 
   return submit()
 }
@@ -172,7 +171,9 @@ onMounted(async () => {
           :error="false"
           containerClass="novel-manage__draft-select no-flex"
         >
-          <option :value="undefined">{{ t('novel_manage.draft_new') }}</option>
+          <option :value="undefined">
+            {{ t('novel_manage.draft_new') }}
+          </option>
           <option
             v-for="item in drafts"
             :key="item.id"
@@ -183,7 +184,7 @@ onMounted(async () => {
         </SelectComponent>
 
         <SelectComponent
-          v-model="datas.novel.genreId"
+          v-model="formDatas.novel.genreId"
           name="genreId"
           :label="t('novel_manage.genre')"
           :required="true"
@@ -200,7 +201,7 @@ onMounted(async () => {
         </SelectComponent>
 
         <InputComponent
-          v-model="datas.novel.title"
+          v-model="formDatas.novel.title"
           name="title"
           :label="t('novel_manage.novel_title')"
           :required="true"
@@ -210,7 +211,7 @@ onMounted(async () => {
 
       <div class="form-row">
         <InputComponent
-          v-model="datas.chapter.title"
+          v-model="formDatas.chapter.title"
           name="title"
           :label="t('novel_manage.chapter_title')"
           :required="true"
@@ -219,8 +220,8 @@ onMounted(async () => {
       </div>
 
       <ChapterBodyFields
-        v-model:content="datas.chapter.content"
-        v-model:summary="datas.chapter.summary"
+        v-model:content="formDatas.chapter.content"
+        v-model:summary="formDatas.chapter.summary"
       />
 
       <div class="form-row | d-flex j-center g-20">
@@ -235,7 +236,7 @@ onMounted(async () => {
         <PublishButton
           ref="publishButton"
           :cb="publish"
-          :content="datas.chapter.content"
+          :content="formDatas.chapter.content"
           buttonClasses="novel-manage__publish | btn btn-primary"
         >
           {{ t('novel_manage.submit') }}

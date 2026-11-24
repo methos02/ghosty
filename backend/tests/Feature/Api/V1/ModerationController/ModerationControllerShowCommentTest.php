@@ -87,4 +87,17 @@ class ModerationControllerShowCommentTest extends TestCase
             ->assertJsonPath('comment.content', 'Texte masqué')
             ->assertJsonPath('comment.is_hidden', true);
     }
+
+    #[Test]
+    public function serves_the_member_a_reply_mentions(): void
+    {
+        $mentioned = User::factory()->create(['username' => 'plume']);
+        $reply = Comment::factory()->replyingTo($this->comment)->create(['mentioned_user_id' => $mentioned->id]);
+
+        $this->actingAs($this->moderator)
+            ->getJson("/api/v1/moderation/comments/{$reply->id}")
+            ->assertOk()
+            ->assertJsonPath('comment.mentioned_user.username', 'plume')
+            ->assertJsonPath('comment.mentioned_user.profile_slug', $mentioned->profileSlug());
+    }
 }

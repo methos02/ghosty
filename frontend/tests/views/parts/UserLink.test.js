@@ -12,15 +12,15 @@ describe('UserLink.vue', () => {
     wrapper = undefined
   })
 
-  it('leads to the profile of the named user', () => {
+  it('leads to the profile of the user by its profile slug', () => {
     const profile = userSeeder.getProfile()
 
-    wrapper = mount(UserLink, { props: { username: profile.username } })
+    wrapper = mount(UserLink, { props: { user: profile } })
 
     expect(wrapper.text()).toBe(profile.username)
     expect(wrapper.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
       name: 'profile',
-      params: { username: profile.username },
+      params: { profileSlug: profile.profileSlug },
     })
   })
 
@@ -29,7 +29,7 @@ describe('UserLink.vue', () => {
 
     wrapper = mount(UserLink, {
       props: {
-        username: profile.username,
+        user: profile,
         byline: true,
       },
     })
@@ -37,7 +37,26 @@ describe('UserLink.vue', () => {
     expect(wrapper.text()).toBe(t('common.by_author', { author: profile.username }))
     expect(wrapper.findComponent({ name: 'RouterLink' }).props('to')).toEqual({
       name: 'profile',
-      params: { username: profile.username },
+      params: { profileSlug: profile.profileSlug },
     })
+  })
+
+  it('names a deleted account without a link', () => {
+    wrapper = mount(UserLink, { props: { user: userSeeder.getProfile({ isDeleted: true }) } })
+
+    expect(wrapper.text()).toBe(t('common.deleted_account'))
+    expect(wrapper.findComponent({ name: 'RouterLink' }).exists()).toBe(false)
+  })
+
+  it('credits a deleted account in a byline without a link', () => {
+    wrapper = mount(UserLink, {
+      props: {
+        user: userSeeder.getProfile({ isDeleted: true }),
+        byline: true,
+      },
+    })
+
+    expect(wrapper.text()).toBe(t('common.by_author', { author: t('common.deleted_account') }))
+    expect(wrapper.findComponent({ name: 'RouterLink' }).exists()).toBe(false)
   })
 })

@@ -108,13 +108,13 @@ describe('CoverImageField.vue', () => {
     await vi.waitFor(() => expect(wrapper.find('.cover-image-field__crop').exists()).toBe(true))
 
     await wrapper.find('.cover-image-field__crop').trigger('click')
-    await wrapper.find('.cover-cropper__zoom-input').setValue('2')
-    await wrapper.find('.cover-cropper__apply').trigger('click')
+    await wrapper.find('.image-cropper__zoom-input').setValue('2')
+    await wrapper.find('.image-cropper__apply').trigger('click')
     await vi.waitFor(() => expect(wrapper.emitted('update:modelValue')).toHaveLength(3))
 
     const image = wrapper.emitted('update:modelValue').at(-1)[0]
     expect(JSON.parse(await image.text())).toEqual({ width: 800, height: 450 })
-    expect(wrapper.find('.cover-cropper').exists()).toBe(false)
+    expect(wrapper.find('.image-cropper').exists()).toBe(false)
   })
 
   it('goes back to the empty zone once the form forgets the image', async () => {

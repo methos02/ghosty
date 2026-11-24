@@ -1,0 +1,26 @@
+{
+  "account_notifications_section": {
+    "title": "Notifications",
+    "all": "Recevoir les notifications",
+    "groups": {
+      "CHAPTERS": "Mes chapitres",
+      "CONTRIBUTIONS": "Mes contributions",
+      "FOLLOWS": "Mes suivis",
+      "REPORTS": "Mes signalements"
+    },
+    "types": {
+      "chapter_continued": "Nouvelle suite",
+      "main_branch_gained": "Entrée dans la branche principale",
+      "main_branch_lost": "Sortie de la branche principale",
+      "like_received": "Soutiens reçus",
+      "comment_received": "Commentaires reçus",
+      "comment_replied": "Réponses à mes commentaires",
+      "cover_selected": "Illustration devenue officielle",
+      "followed_branch_extended": "Nouveaux chapitres dans une branche suivie",
+      "report_processed": "Signalement traité"
+    },
+    "always_sent": "Vous êtes toujours prévenu quand la modération retire l'un de vos contenus.",
+    "save": "Enregistrer les notifications",
+    "saved": "Vos préférences de notification ont été enregistrées."
+  }
+}

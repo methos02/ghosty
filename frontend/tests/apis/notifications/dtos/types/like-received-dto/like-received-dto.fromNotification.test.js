@@ -11,6 +11,7 @@ describe('like-received-dto', () => {
 
       expect(notification).toEqual({
         lastActorUsername: notificationApi.last_actor_username,
+        lastActorProfileSlug: notificationApi.last_actor_profile_slug,
         count: notificationApi.count,
       })
     })

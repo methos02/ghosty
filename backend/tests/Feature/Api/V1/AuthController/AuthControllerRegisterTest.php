@@ -60,6 +60,10 @@ class AuthControllerRegisterTest extends TestCase
         $response->assertJsonPath('user.email', 'john@example.com');
         $response->assertJsonPath('user.roles', [User::ROLE_READER]);
         $response->assertJsonMissingPath('token');
+        $slug = $response->json('user.slug');
+        $this->assertIsString($slug);
+        $this->assertMatchesRegularExpression('/^[a-z0-9]{6}$/', $slug);
+        $response->assertJsonPath('user.profile_slug', $slug.'-johndoe');
 
         $cookie = $response->getCookie('ghosty_token', false);
         $this->assertNotNull($cookie);
@@ -97,14 +101,23 @@ class AuthControllerRegisterTest extends TestCase
     }
 
     #[Test]
-    public function username_must_be_unique(): void
+    public function username_must_be_unique_whatever_the_case(): void
     {
-        User::factory()->create(['username' => 'JohnDoe']);
+        User::factory()->create(['username' => 'johndoe']);
 
         $response = $this->postJson($this->route, $this->getDatas());
 
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['username']);
+        $response->assertJsonValidationErrors(['username' => __('validation.username.unique')]);
+    }
+
+    #[Test]
+    public function username_cannot_take_the_prefix_of_deleted_accounts(): void
+    {
+        $response = $this->postJson($this->route, $this->getDatas(['username' => 'Deleted-abc123']));
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['username' => __('validation.username.reserved')]);
     }
 
     #[Test]

@@ -79,10 +79,14 @@ onMounted(load)
         <span class="multiverse-page__label | fs-300 color-neutral-700">
           {{ t('multiverse.label') }}
         </span>
-        <h1 class="fs-700 fw-700">{{ selectedNovel?.title ?? '' }}</h1>
+        <h1 class="fs-700 fw-700">
+          {{ selectedNovel?.title ?? '' }}
+        </h1>
       </header>
 
-      <p class="multiverse-page__intro | color-neutral-700">{{ t('multiverse.intro') }}</p>
+      <p class="multiverse-page__intro | color-neutral-700">
+        {{ t('multiverse.intro') }}
+      </p>
 
       <div
         v-if="isLoading"

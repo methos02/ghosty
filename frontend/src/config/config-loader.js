@@ -8,6 +8,7 @@ import { reportConfig } from '@/config/report-config.js'
 import { commentConfig } from '@/config/comment-config.js'
 import { moderationConfig } from '@/config/moderation-config.js'
 import { coverConfig } from '@/config/cover-config.js'
+import { accountConfig } from '@/config/account-config.js'
 
 const configUser = {
   locales,
@@ -20,6 +21,7 @@ const configUser = {
   comment: commentConfig,
   moderation: moderationConfig,
   cover: coverConfig,
+  account: accountConfig,
 }
 
 const init = configs => {

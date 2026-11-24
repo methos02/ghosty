@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
 import { CoverDto } from '@/apis/covers/dtos/cover-dto.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
 import { coverSeeder } from '&/utils/seeders/cover-seeder.js'
@@ -16,10 +17,7 @@ describe('cover-dto', () => {
         commentCount: coverApi.comment_count,
         isLiked: coverApi.is_liked,
         isReported: coverApi.is_reported,
-        author: {
-          id: coverApi.author.id,
-          username: coverApi.author.username,
-        },
+        author: AuthorDto.fromShow(coverApi.author),
         createdAtFormat: dateHelper.formatDateLocal(coverApi.created_at, 'DD/MM/YYYY'),
       })
     })

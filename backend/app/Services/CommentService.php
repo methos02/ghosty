@@ -46,10 +46,12 @@ class CommentService
     public function createReply(User $author, Comment $parent, CommentDTO $commentDTO): Comment
     {
         $commentable = $parent->target();
+        $mentionedUser = $this->findMentionedUser($parent, $commentDTO->mentionedUserId);
 
-        $reply = DB::transaction(function () use ($author, $parent, $commentable, $commentDTO): Comment {
+        $reply = DB::transaction(function () use ($author, $parent, $commentable, $commentDTO, $mentionedUser): Comment {
             $reply = $this->commentsR->create([
                 ...$commentDTO->attributes(),
+                'mentioned_user_id' => $mentionedUser?->id,
                 'author_id' => $author->id,
                 'commentable_type' => $parent->commentable_type,
                 'commentable_id' => $parent->commentable_id,
@@ -63,9 +65,7 @@ class CommentService
             return $reply;
         });
 
-        $mentionedUserToNotify = $this->findMentionedUser($parent, $reply, $commentDTO->mentionedUserId);
-
-        $this->commentRepliedNotificationService->create($reply, $parent, $commentable, $mentionedUserToNotify);
+        $this->commentRepliedNotificationService->create($reply, $parent, $commentable, $mentionedUser);
 
         return $reply;
     }
@@ -122,15 +122,18 @@ class CommentService
         });
     }
 
-    private function findMentionedUser(Comment $parent, Comment $reply, ?int $mentionedUserId): ?User
+    /**
+     * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
+    private function findMentionedUser(Comment $parent, ?int $mentionedUserId): ?User
     {
         if ($mentionedUserId === null) {
             return null;
         }
 
         return $this->commentsR->listVisibleReplies($parent)
-            ->reject(fn (Comment $sibling): bool => $sibling->is($reply))
             ->map(fn (Comment $sibling): User => $sibling->author)
-            ->first(fn (User $participant): bool => $participant->id === $mentionedUserId && $reply->startsWithMentionOf($participant));
+            ->prepend($parent->author)
+            ->first(fn (User $participant): bool => $participant->id === $mentionedUserId && ! $participant->isDeleted());
     }
 }

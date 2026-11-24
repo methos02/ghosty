@@ -6,22 +6,23 @@ const fromCommentCount = commentable => {
   return commentable.comment_count
 }
 
-const fromList = datas => {
-  return datas.map(data => CommentDto.fromShow(data))
+const fromList = comments => {
+  return comments.map(comment => CommentDto.fromShow(comment))
 }
 
-const fromShow = data => {
+const fromShow = comment => {
   return {
-    id: data.id,
-    parentId: data.parent_id,
-    author: data.author === null ? undefined : AuthorDto.fromShow(data.author),
-    content: data.content ?? '',
-    isSpoiler: data.is_spoiler,
-    isDeleted: data.is_deleted,
-    isHidden: data.is_hidden,
-    isReported: data.is_reported,
-    replies: CommentDto.fromList(data.replies ?? []),
-    createdAtFormat: dateHelper.formatDateLocal(data.created_at, 'DD/MM/YYYY HH:mm'),
+    id: comment.id,
+    parentId: comment.parent_id,
+    author: comment.author === null ? undefined : AuthorDto.fromShow(comment.author),
+    mentionedUser: comment.mentioned_user ? AuthorDto.fromShow(comment.mentioned_user) : undefined,
+    content: comment.content ?? '',
+    isSpoiler: comment.is_spoiler,
+    isDeleted: comment.is_deleted,
+    isHidden: comment.is_hidden,
+    isReported: comment.is_reported,
+    replies: CommentDto.fromList(comment.replies ?? []),
+    createdAtFormat: dateHelper.formatDateLocal(comment.created_at, 'DD/MM/YYYY HH:mm'),
   }
 }
 
@@ -36,10 +37,10 @@ const toCreate = formData => {
   }
 }
 
-const toCreateReply = (formData, mentionedAuthor) => {
+const toCreateReply = formData => {
   return {
     ...CommentDto.toCreate(formData),
-    mentioned_user_id: mentionedAuthor.id,
+    mentioned_user_id: formData.mentionedUser?.id,
   }
 }
 

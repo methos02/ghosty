@@ -35,10 +35,7 @@ class ChapterResource extends JsonResource
             'is_draft' => $this->isDraft(),
             'is_correctable' => $this->isCorrectable(),
             'is_root' => $this->isRoot(),
-            'author' => [
-                'id' => $this->author_id,
-                'username' => $this->whenLoaded('author', fn () => $this->author->username),
-            ],
+            'author' => $this->whenLoaded('author', fn () => new UserIdentityResource($this->author), ['id' => $this->author_id]),
             'novel' => $this->whenLoaded('novel', fn () => [
                 'id' => $this->novel->id,
                 'slug' => $this->novel->slug,

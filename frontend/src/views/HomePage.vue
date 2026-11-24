@@ -40,7 +40,9 @@ const changeMode = async nextMode => {
         <UserSummary v-if="authStore.isAuthenticated.value" />
 
         <div v-if="!authStore.isAuthenticated.value">
-          <h1 class="top-title | color-neutral-100 fw-400">{{ t('homepage.welcome_title') }}</h1>
+          <h1 class="top-title | color-neutral-100 fw-400">
+            {{ t('homepage.welcome_title') }}
+          </h1>
           <p class="top-subtitle | color-neutral-100 fw-400">
             {{ t('homepage.welcome_subtitle') }}
           </p>

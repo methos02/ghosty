@@ -112,7 +112,7 @@ final class NotificationDataHelper
     /**
      * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
      *
-     * @return array{chapter: null, novel: null, user: array{id: int, username: string}}
+     * @return array{chapter: null, novel: null, user: array{id: int, username: string, profile_slug: string}}
      */
     public static function userSubject(User $user): array
     {
@@ -122,6 +122,7 @@ final class NotificationDataHelper
             'user' => [
                 'id' => $user->id,
                 'username' => $user->username,
+                'profile_slug' => $user->profileSlug(),
             ],
         ];
     }
@@ -150,6 +151,7 @@ final class NotificationDataHelper
         return [
             ...self::contentSubject($commentable),
             'last_actor_username' => $comment->author->username,
+            'last_actor_profile_slug' => $comment->author->profileSlug(),
             'count' => self::pendingCount($pending) + 1,
         ];
     }

@@ -18,27 +18,25 @@ const authStore = useAuthStore()
 const { openLoginDialog } = useAuth()
 const { commentStore } = useCommentStore()
 
-const datas = ref({
-  content: '',
+const formDatas = ref({
   isSpoiler: false,
 })
 const sendButton = ref()
 
 const publish = async () => {
-  const validation = validateCommentForm(datas.value, 'comment')
+  const validation = validateCommentForm(formDatas.value, 'comment')
   if (!validation.valid) {
     return
   }
 
-  const response = await CommentController.create(props.target, datas.value)
+  const response = await CommentController.create(props.target, formDatas.value)
   if (!ajaxHelper.isSuccess(response.status)) {
     return
   }
 
   commentStore.addComment(response.comment)
   commentStore.setCommentCount(response.commentCount)
-  datas.value = {
-    content: '',
+  formDatas.value = {
     isSpoiler: false,
   }
 }
@@ -52,7 +50,7 @@ const publish = async () => {
       @submit.prevent="sendButton?.runCallback()"
     >
       <CommentFields
-        v-model="datas"
+        v-model="formDatas"
         formName="comment"
       >
         <LoaderComponent

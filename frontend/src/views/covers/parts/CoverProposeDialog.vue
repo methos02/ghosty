@@ -16,17 +16,17 @@ const { covers, myCoverId, coverStore } = useCoverStore()
 
 const dialog = ref()
 const sendButton = ref()
-const datas = ref({})
+const formDatas = ref({})
 const refusal = ref('')
 
 const myCover = computed(() => covers.value.find(cover => cover.id === myCoverId.value))
 
 const sendCover = async () => {
   if (myCover.value) {
-    return await CoverController.replaceImage(myCover.value.id, datas.value)
+    return await CoverController.replaceImage(myCover.value.id, formDatas.value)
   }
 
-  return await CoverController.create(currentRoute.value.params.slug, datas.value)
+  return await CoverController.create(currentRoute.value.params.slug, formDatas.value)
 }
 
 const storeCover = response => {
@@ -45,7 +45,7 @@ const storeCover = response => {
 const send = async () => {
   refusal.value = ''
 
-  const validation = validateCoverForm(datas.value)
+  const validation = validateCoverForm(formDatas.value)
   if (!validation.valid) {
     return
   }
@@ -66,7 +66,7 @@ const send = async () => {
 }
 
 const cleanup = () => {
-  datas.value = {}
+  formDatas.value = {}
   refusal.value = ''
 }
 
@@ -83,8 +83,12 @@ defineExpose({ show })
     @dialog-close="cleanup"
   >
     <template #title>
-      <template v-if="myCover">{{ t('cover_propose_dialog.title_replace') }}</template>
-      <template v-else>{{ t('cover_propose_dialog.title_propose') }}</template>
+      <template v-if="myCover">
+        {{ t('cover_propose_dialog.title_replace') }}
+      </template>
+      <template v-else>
+        {{ t('cover_propose_dialog.title_propose') }}
+      </template>
     </template>
 
     <form
@@ -102,7 +106,7 @@ defineExpose({ show })
         {{ t('cover_propose_dialog.rules') }}
       </p>
 
-      <CoverImageField v-model="datas.image" />
+      <CoverImageField v-model="formDatas.image" />
       <ErrorFormComponent name="cover.image" />
 
       <p
@@ -118,8 +122,12 @@ defineExpose({ show })
         buttonType="submit"
         buttonClasses="cover-propose-dialog__send | btn btn-primary"
       >
-        <template v-if="myCover">{{ t('cover_propose_dialog.send_replace') }}</template>
-        <template v-else>{{ t('cover_propose_dialog.send_propose') }}</template>
+        <template v-if="myCover">
+          {{ t('cover_propose_dialog.send_replace') }}
+        </template>
+        <template v-else>
+          {{ t('cover_propose_dialog.send_propose') }}
+        </template>
       </LoaderComponent>
     </form>
   </DialogComponent>

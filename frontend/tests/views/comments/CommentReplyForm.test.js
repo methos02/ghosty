@@ -19,21 +19,59 @@ describe('CommentReplyForm.vue', () => {
     vi.clearAllMocks()
   })
 
-  it('starts the reply with the mention of the answered reader', () => {
+  it('shows the mention of the answered reader as a label outside the text', () => {
     const mentionedAuthor = commentSeeder.getReply().author
 
     wrapper = mount(CommentReplyForm, {
       props: { parentComment: commentSeeder.getComment(), mentionedAuthor },
     })
 
-    expect(wrapper.find('textarea[name="reply.content"]').element.value).toBe(
-      `@${mentionedAuthor.username} `,
-    )
+    expect(wrapper.find('.comment-reply-form__mention').text()).toBe(`@${mentionedAuthor.username}`)
+    expect(wrapper.find('textarea[name="reply.content"]').element.value).toBe('')
+  })
+
+  it('mentions nobody when the answered account was deleted', () => {
+    const mentionedAuthor = {
+      ...commentSeeder.getReply().author,
+      isDeleted: true,
+    }
+
+    wrapper = mount(CommentReplyForm, {
+      props: { parentComment: commentSeeder.getComment(), mentionedAuthor },
+    })
+
+    expect(wrapper.find('.comment-reply-form__mention').exists()).toBe(false)
+  })
+
+  it('sends the reply without mention once the reader removed it', async () => {
+    const parentComment = commentSeeder.getComment()
+    const formData = commentSeeder.getReplyForm({ mentionedUser: undefined })
+    vi.spyOn(CommentRepository, 'createReply').mockResolvedValue({
+      status: STATUS.CREATED,
+      data: commentSeeder.getCreatedApi(commentSeeder.getReplyApi()),
+    })
+    wrapper = mount(CommentReplyForm, {
+      props: {
+        parentComment,
+        mentionedAuthor: parentComment.author,
+      },
+    })
+
+    await wrapper.find('.comment-reply-form__mention-remove').trigger('click')
+    await wrapper.find('textarea[name="reply.content"]').setValue(formData.content)
+    await wrapper.find('form').trigger('submit')
+    await flushPromises()
+
+    expect(wrapper.find('.comment-reply-form__mention').exists()).toBe(false)
+    expect(CommentRepository.createReply).toHaveBeenCalledWith({
+      params: CommentDto.toCommentParams(parentComment.id),
+      body: CommentDto.toCreateReply(formData),
+      form: 'reply',
+    })
   })
 
   it('publishes the reply under its parent and tells it was sent', async () => {
     const parentComment = commentSeeder.getCommentWithReply()
-    const formData = commentSeeder.getCreateForm()
     const createdApi = commentSeeder.getCreatedApi(commentSeeder.getReplyApi({ id: 71 }))
     vi.spyOn(CommentRepository, 'createReply').mockResolvedValue({
       status: STATUS.CREATED,
@@ -42,6 +80,7 @@ describe('CommentReplyForm.vue', () => {
     const { comments, commentCount, commentStore } = useCommentStore()
     commentStore.addComments([parentComment])
     const [{ author: mentionedAuthor }] = parentComment.replies
+    const formData = commentSeeder.getReplyForm({ mentionedUser: mentionedAuthor })
     wrapper = mount(CommentReplyForm, { props: { parentComment, mentionedAuthor } })
 
     await wrapper.find('textarea[name="reply.content"]').setValue(formData.content)
@@ -50,7 +89,7 @@ describe('CommentReplyForm.vue', () => {
 
     expect(CommentRepository.createReply).toHaveBeenCalledWith({
       params: CommentDto.toCommentParams(parentComment.id),
-      body: CommentDto.toCreateReply(formData, mentionedAuthor),
+      body: CommentDto.toCreateReply(formData),
       form: 'reply',
     })
     expect(comments.value[0].replies.at(-1)).toEqual(CommentDto.fromShow(createdApi.comment))

@@ -42,7 +42,13 @@ watch(
   >
     <template #title>
       <template v-if="commentedCover !== undefined">
-        {{ t('cover_comments_dialog.title', { author: commentedCover.author.username }) }}
+        {{
+          t('cover_comments_dialog.title', {
+            author: commentedCover.author.isDeleted
+              ? t('common.deleted_account')
+              : commentedCover.author.username,
+          })
+        }}
       </template>
     </template>
 

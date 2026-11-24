@@ -32,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         $this->defineAuthRateLimiters();
         $this->defineContentRateLimiters();
         $this->defineReadingRateLimiter();
+        $this->defineAccountRateLimiters();
     }
 
     private function enforceMorphMap(): void
@@ -86,6 +87,24 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('comment', function (Request $request): Limit {
             $perMinute = Config::integer('ghosty.comments.per_minute');
+
+            return Limit::perMinute($perMinute)->by((string) $request->user()?->id);
+        });
+    }
+
+    /**
+     * @see backend/memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
+     */
+    private function defineAccountRateLimiters(): void
+    {
+        RateLimiter::for('account', function (Request $request): Limit {
+            $perMinute = Config::integer('ghosty.account.per_minute');
+
+            return Limit::perMinute($perMinute)->by((string) $request->user()?->id);
+        });
+
+        RateLimiter::for('username-availability', function (Request $request): Limit {
+            $perMinute = Config::integer('ghosty.account.username_checks_per_minute');
 
             return Limit::perMinute($perMinute)->by((string) $request->user()?->id);
         });

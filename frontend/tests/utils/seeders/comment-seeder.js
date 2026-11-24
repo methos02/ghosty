@@ -8,7 +8,11 @@ const getCommentApi = (overrides = {}) => ({
   author: {
     id: 42,
     username: 'GhostWriter',
+    slug: 'usr042',
+    profile_slug: 'usr042-ghostwriter',
+    is_deleted: false,
   },
+  mentioned_user: null,
   content: 'Le phare qui s’éteint au dernier paragraphe, quelle image.',
   is_spoiler: false,
   is_deleted: false,
@@ -27,6 +31,16 @@ const getReplyApi = (overrides = {}) =>
     author: {
       id: 51,
       username: 'Lectrice',
+      slug: 'usr051',
+      profile_slug: 'usr051-lectrice',
+      is_deleted: false,
+    },
+    mentioned_user: {
+      id: 42,
+      username: 'GhostWriter',
+      slug: 'usr042',
+      profile_slug: 'usr042-ghostwriter',
+      is_deleted: false,
     },
     content: 'Et le gardien qui ne remonte jamais, on en reparle ?',
     ...overrides,
@@ -127,6 +141,12 @@ const getCreateForm = (overrides = {}) => ({
   ...overrides,
 })
 
+const getReplyForm = (overrides = {}) => ({
+  ...getCreateForm(),
+  mentionedUser: getComment().author,
+  ...overrides,
+})
+
 const getComment = (overrides = {}) => ({ ...CommentDto.fromShow(getCommentApi()), ...overrides })
 
 const getCommentWithReply = () => CommentDto.fromShow(getCommentWithReplyApi())
@@ -159,6 +179,7 @@ export const commentSeeder = {
   getNovelTarget,
   getReply,
   getReplyApi,
+  getReplyForm,
   getThreadApi,
   getValidationErrorsApi,
 }

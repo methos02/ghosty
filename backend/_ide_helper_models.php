@@ -141,6 +141,7 @@ namespace App\Models{
  * @property string $commentable_type
  * @property int $commentable_id
  * @property int|null $parent_id
+ * @property int|null $mentioned_user_id
  * @property int $reply_count
  * @property string|null $content
  * @property bool $is_spoiler
@@ -149,6 +150,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User $author
  * @property-read \Illuminate\Database\Eloquent\Model $commentable
+ * @property-read \App\Models\User|null $mentionedUser
  * @property-read Comment|null $parent
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Comment> $replies
  * @property-read int|null $replies_count
@@ -169,6 +171,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereIsSpoiler($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereMentionedUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereParentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereReplyCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereStatus($value)
@@ -486,7 +489,9 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @see memory-bank/decisions/ADR-17-profils-et-signalement-utilisateur.md
+ * @see memory-bank/decisions/ADR-20-identite-et-gestion-du-compte.md
  * @property int $id
+ * @property string $slug
  * @property string $username
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -494,11 +499,10 @@ namespace App\Models{
  * @property array<array-key, mixed> $roles
  * @property string|null $avatar
  * @property bool $notifications_enabled
- * @property string|null $firstname
- * @property string|null $lastname
- * @property \Illuminate\Support\Carbon|null $birth_date
+ * @property array<array-key, mixed>|null $disabled_notification_types
  * @property int $new_messages_count
  * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Sanction> $activeBans
@@ -516,18 +520,17 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAvatar($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereBirthDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereFirstname($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereLastname($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereNewMessagesCount($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereNotificationsEnabled($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRoles($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUsername($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withUserReport(?int $userId)

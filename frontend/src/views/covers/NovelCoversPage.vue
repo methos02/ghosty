@@ -87,7 +87,9 @@ onUnmounted(() => {
 
       <div class="novel-covers-page__heading | d-flex a-center j-between f-wrap g-15">
         <div class="d-flex f-column g-5">
-          <h1 class="fs-700 fw-700">{{ t('novel_covers_page.title') }}</h1>
+          <h1 class="fs-700 fw-700">
+            {{ t('novel_covers_page.title') }}
+          </h1>
           <p
             v-if="novel"
             class="novel-covers-page__novel | color-neutral-700"

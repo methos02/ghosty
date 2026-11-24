@@ -20,10 +20,10 @@ describe('report-controller', () => {
       const datas = reportSeeder.getReportData()
       vi.spyOn(ReportRepository, 'reportUser').mockResolvedValue({ status: STATUS.CREATED })
 
-      await ReportController.reportUser(profile.username, datas)
+      await ReportController.reportUser(profile, datas)
 
       expect(ReportRepository.reportUser).toHaveBeenCalledWith({
-        params: ReportDto.toUserParams(profile.username),
+        params: ReportDto.toUserParams(profile),
         body: ReportDto.toCreate(datas),
         form: 'report',
       })
@@ -33,7 +33,7 @@ describe('report-controller', () => {
       vi.spyOn(ReportRepository, 'reportUser').mockResolvedValue({ status: STATUS.CREATED })
 
       const result = await ReportController.reportUser(
-        userSeeder.getProfile().username,
+        userSeeder.getProfile(),
         reportSeeder.getReportData(),
       )
 
@@ -45,7 +45,7 @@ describe('report-controller', () => {
       vi.spyOn(ReportRepository, 'reportUser').mockResolvedValue(conflict)
 
       const result = await ReportController.reportUser(
-        userSeeder.getProfile().username,
+        userSeeder.getProfile(),
         reportSeeder.getReportData(),
       )
 

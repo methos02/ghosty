@@ -14,17 +14,17 @@ describe('comment-controller', () => {
   describe('createReply', () => {
     it('sends the reply under the answered comment', async () => {
       const parentComment = commentSeeder.getComment()
-      const formData = commentSeeder.getCreateForm()
+      const formData = commentSeeder.getReplyForm()
       vi.spyOn(CommentRepository, 'createReply').mockResolvedValue({
         status: STATUS.CREATED,
         data: commentSeeder.getCreatedApi(commentSeeder.getReplyApi()),
       })
 
-      await CommentController.createReply(parentComment, formData, parentComment.author)
+      await CommentController.createReply(parentComment, formData)
 
       expect(CommentRepository.createReply).toHaveBeenCalledWith({
         params: CommentDto.toCommentParams(parentComment.id),
-        body: CommentDto.toCreateReply(formData, parentComment.author),
+        body: CommentDto.toCreateReply(formData),
         form: 'reply',
       })
     })
@@ -38,8 +38,7 @@ describe('comment-controller', () => {
 
       const result = await CommentController.createReply(
         commentSeeder.getComment(),
-        commentSeeder.getCreateForm(),
-        commentSeeder.getComment().author,
+        commentSeeder.getReplyForm(),
       )
 
       expect(result).toEqual({
@@ -56,8 +55,7 @@ describe('comment-controller', () => {
       expect(
         await CommentController.createReply(
           commentSeeder.getComment(),
-          commentSeeder.getCreateForm(),
-          commentSeeder.getComment().author,
+          commentSeeder.getReplyForm(),
         ),
       ).toBe(refusal)
     })

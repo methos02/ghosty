@@ -254,32 +254,32 @@ export const routesApi = {
   },
 
   'user.show': {
-    url: 'v1/users/{username}',
+    url: 'v1/users/{slug}',
     method: 'get',
     api: 'ghosty',
   },
   'user.novels': {
-    url: 'v1/users/{username}/novels',
+    url: 'v1/users/{slug}/novels',
     method: 'get',
     api: 'ghosty',
   },
   'user.chapters': {
-    url: 'v1/users/{username}/chapters',
+    url: 'v1/users/{slug}/chapters',
     method: 'get',
     api: 'ghosty',
   },
   'user.branches': {
-    url: 'v1/users/{username}/branches',
+    url: 'v1/users/{slug}/branches',
     method: 'get',
     api: 'ghosty',
   },
   'user.covers': {
-    url: 'v1/users/{username}/covers',
+    url: 'v1/users/{slug}/covers',
     method: 'get',
     api: 'ghosty',
   },
   'user.report': {
-    url: 'v1/users/{username}/report',
+    url: 'v1/users/{slug}/report',
     method: 'post',
     api: 'ghosty',
   },
@@ -328,6 +328,41 @@ export const routesApi = {
   'auth.me': {
     url: 'v1/auth/me',
     method: 'get',
+    api: 'ghosty',
+  },
+  'account.usernameAvailability': {
+    url: 'v1/me/account/username-availability',
+    method: 'get',
+    api: 'ghosty',
+  },
+  'account.updateProfile': {
+    url: 'v1/me/account/profile',
+    method: 'post',
+    api: 'ghosty',
+  },
+  'account.updateNotifications': {
+    url: 'v1/me/account/notifications',
+    method: 'put',
+    api: 'ghosty',
+  },
+  'account.updateEmail': {
+    url: 'v1/me/account/email',
+    method: 'put',
+    api: 'ghosty',
+  },
+  'account.updatePassword': {
+    url: 'v1/me/account/password',
+    method: 'put',
+    api: 'ghosty',
+  },
+  'account.deleteAvatar': {
+    url: 'v1/me/account/avatar',
+    method: 'delete',
+    api: 'ghosty',
+  },
+  'account.destroy': {
+    url: 'v1/me/account',
+    method: 'delete',
     api: 'ghosty',
   },
   'metrics.show': {

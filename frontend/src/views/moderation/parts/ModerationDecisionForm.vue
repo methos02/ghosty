@@ -29,7 +29,7 @@ const SANCTIONED_WHEN_HIDDEN = new Set([
   REPORTED_CONTENT_TYPES.COVER,
 ])
 
-const formData = ref({
+const formDatas = ref({
   sanction: {},
 })
 
@@ -49,7 +49,7 @@ const isSanctionAllowed = computed(
 
 const decision = () => {
   return {
-    sanction: isSanctionAllowed.value ? formData.value.sanction : {},
+    sanction: isSanctionAllowed.value ? formDatas.value.sanction : {},
     resolution: resolution.value,
     content: contentAfterRemoval.value,
     isSanctionRequired: isSanctionRequired.value,
@@ -57,12 +57,12 @@ const decision = () => {
 }
 
 const suggestWarning = isRequired => {
-  if (!isRequired || formData.value.sanction.type !== undefined) {
+  if (!isRequired || formDatas.value.sanction.type !== undefined) {
     return
   }
 
-  formData.value.sanction = {
-    ...formData.value.sanction,
+  formDatas.value.sanction = {
+    ...formDatas.value.sanction,
     type: SANCTION_TYPES.WARNING,
   }
 }
@@ -70,7 +70,7 @@ const suggestWarning = isRequired => {
 watch(isSanctionRequired, suggestWarning)
 
 const isBan = computed(() => {
-  const sanctionType = formData.value.sanction.type
+  const sanctionType = formDatas.value.sanction.type
 
   return sanctionType !== undefined && sanctionType !== SANCTION_TYPES.WARNING
 })
@@ -113,7 +113,9 @@ const decide = async () => {
     @submit.prevent
   >
     <fieldset class="moderation-decision__resolutions | d-flex f-column g-10">
-      <legend class="fs-500 fw-700 mb-10">{{ t('moderation_decision.resolution') }}</legend>
+      <legend class="fs-500 fw-700 mb-10">
+        {{ t('moderation_decision.resolution') }}
+      </legend>
 
       <label
         v-for="choice in resolutions"
@@ -141,10 +143,12 @@ const decide = async () => {
       v-if="isSanctionAllowed"
       class="moderation-decision__sanction | d-flex f-column g-15"
     >
-      <legend class="fs-500 fw-700 mb-10">{{ t('moderation_decision.sanction') }}</legend>
+      <legend class="fs-500 fw-700 mb-10">
+        {{ t('moderation_decision.sanction') }}
+      </legend>
 
       <SelectComponent
-        v-model="formData.sanction.type"
+        v-model="formDatas.sanction.type"
         name="sanction.type"
         :label="t('moderation_decision.sanction_type')"
         :fixedLabel="true"
@@ -167,13 +171,15 @@ const decide = async () => {
 
       <SelectComponent
         v-if="isBan"
-        v-model="formData.sanction.days"
+        v-model="formDatas.sanction.days"
         name="sanction.days"
         :label="t('moderation_decision.sanction_duration')"
         :fixedLabel="true"
         form="moderation"
       >
-        <option :value="undefined">{{ t('moderation_decision.sanction_permanent') }}</option>
+        <option :value="undefined">
+          {{ t('moderation_decision.sanction_permanent') }}
+        </option>
         <option
           v-for="days in ConfigLoader.get('moderation.sanctionDays')"
           :key="days"
@@ -184,8 +190,8 @@ const decide = async () => {
       </SelectComponent>
 
       <TextareaComponent
-        v-if="formData.sanction.type !== undefined"
-        v-model="formData.sanction.reason"
+        v-if="formDatas.sanction.type !== undefined"
+        v-model="formDatas.sanction.reason"
         name="sanction.reason"
         :label="t('moderation_decision.sanction_reason')"
         :required="true"

@@ -81,7 +81,7 @@ defineProps({
         keypath="report_processed_notification.user.dismissed"
       >
         <template #username>
-          <UserLink :username="notification.payload.user.username" />
+          <UserLink :user="notification.payload.user" />
         </template>
       </Translate>
       <Translate
@@ -89,7 +89,7 @@ defineProps({
         keypath="report_processed_notification.user.sanctioned"
       >
         <template #username>
-          <UserLink :username="notification.payload.user.username" />
+          <UserLink :user="notification.payload.user" />
         </template>
       </Translate>
     </template>

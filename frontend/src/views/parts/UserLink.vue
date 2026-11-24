@@ -1,8 +1,9 @@
 <script setup>
 import Translate from '@/services/locale/views/TranslateComponent.vue'
+import { t } from '@/services/shortcuts/services-shortcut.js'
 
 defineProps({
-  username: { type: String, required: true },
+  user: { type: Object, required: true },
   byline: { type: Boolean, default: false },
 })
 </script>
@@ -13,20 +14,34 @@ defineProps({
     keypath="common.by_author"
   >
     <template #author>
+      <span
+        v-if="user.isDeleted"
+        class="user-link user-link--deleted"
+      >
+        {{ t('common.deleted_account') }}
+      </span>
       <router-link
-        :to="{ name: 'profile', params: { username } }"
+        v-else
+        :to="{ name: 'profile', params: { profileSlug: user.profileSlug } }"
         class="user-link | link-inline"
       >
-        {{ username }}
+        {{ user.username }}
       </router-link>
     </template>
   </Translate>
 
+  <span
+    v-else-if="user.isDeleted"
+    class="user-link user-link--deleted"
+  >
+    {{ t('common.deleted_account') }}
+  </span>
+
   <router-link
     v-else
-    :to="{ name: 'profile', params: { username } }"
+    :to="{ name: 'profile', params: { profileSlug: user.profileSlug } }"
     class="user-link | link-inline"
   >
-    {{ username }}
+    {{ user.username }}
   </router-link>
 </template>

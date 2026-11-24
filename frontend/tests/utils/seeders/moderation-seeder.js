@@ -19,6 +19,9 @@ const getReportApi = (overrides = {}) => ({
   reporter: {
     id: 51,
     username: 'Lectrice',
+    slug: 'usr051',
+    profile_slug: 'usr051-lectrice',
+    is_deleted: false,
   },
   resolution: null,
   processed_at: null,
@@ -60,7 +63,11 @@ const getModeratedCommentApi = (overrides = {}) => ({
   author: {
     id: 42,
     username: 'GhostWriter',
+    slug: 'usr042',
+    profile_slug: 'usr042-ghostwriter',
+    is_deleted: false,
   },
+  mentioned_user: null,
   content: 'Ce chapitre est une insulte à tous les lecteurs.',
   is_spoiler: false,
   is_deleted: false,
@@ -87,6 +94,9 @@ const getModeratedCoverApi = (overrides = {}) => ({
   author: {
     id: 64,
     username: 'Pinceau',
+    slug: 'usr064',
+    profile_slug: 'usr064-pinceau',
+    is_deleted: false,
   },
   novel: {
     id: 3,
@@ -136,7 +146,10 @@ const getReportedUserApi = (overrides = {}) => ({
   user: {
     id: 64,
     username: 'Importun',
-    avatar: null,
+    slug: 'usr064',
+    profile_slug: 'usr064-importun',
+    is_deleted: false,
+    avatar_url: null,
     roles: ['reader'],
     created_at: '2026-01-15T08:00:00+00:00',
   },
@@ -173,6 +186,21 @@ const getCommentCaseApi = (overrides = {}) => ({
   author_sanctions: [],
   ...overrides,
 })
+
+const getReplyCaseApi = (overrides = {}) =>
+  getCommentCaseApi({
+    comment: getModeratedCommentApi({
+      parent_id: 20,
+      mentioned_user: {
+        id: 51,
+        username: 'Lectrice',
+        slug: 'usr051',
+        profile_slug: 'usr051-lectrice',
+        is_deleted: false,
+      },
+    }),
+    ...overrides,
+  })
 
 const getCoverCaseApi = (overrides = {}) => ({
   cover: getModeratedCoverApi(),
@@ -237,6 +265,7 @@ export const moderationSeeder = {
   getReportedCommentApi,
   getReportedCoverApi,
   getReportedUserApi,
+  getReplyCaseApi,
   getSanctionApi,
   getSanctionReason,
   getUserCase,

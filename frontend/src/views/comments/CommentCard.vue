@@ -16,12 +16,6 @@ const mentionedAuthor = ref()
 
 const isReplyable = computed(() => !props.comment.isDeleted && !props.comment.isHidden)
 
-const threadUsernames = computed(() =>
-  [props.comment, ...props.comment.replies]
-    .filter(threadComment => threadComment.author !== undefined)
-    .map(threadComment => threadComment.author.username),
-)
-
 const openReplyForm = author => {
   if (!authStore.isAuthenticated.value) {
     openLoginDialog()
@@ -40,7 +34,6 @@ const closeReplyForm = () => {
   <div class="comment-card | d-flex f-column g-10 bg-neutral-200 radius-10 p-15">
     <CommentContent
       :comment="comment"
-      :threadUsernames="threadUsernames"
       :isReplyable="isReplyable"
       @reply="openReplyForm(comment.author)"
     />
@@ -56,7 +49,6 @@ const closeReplyForm = () => {
       >
         <CommentContent
           :comment="reply"
-          :threadUsernames="threadUsernames"
           :isReplyable="isReplyable"
           @reply="openReplyForm(reply.author)"
         />

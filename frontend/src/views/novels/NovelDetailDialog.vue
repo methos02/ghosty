@@ -171,7 +171,7 @@ watch(() => route.get('slug'), openForSlug)
 
       <div
         v-if="selectedNovel && currentView === NOVEL_DETAIL_VIEWS.NOVEL"
-        class="novel-detail-dialog__content | d-flex g-20"
+        class="novel-detail-dialog__content | d-flex f-column-md g-20"
       >
         <div class="novel-detail-dialog__left">
           <div class="novel-detail-dialog__cover | overflow-clip radius-4">
@@ -276,7 +276,7 @@ watch(() => route.get('slug'), openForSlug)
 @use '@/assets/scss/variables' as *;
 
 .novel-detail-dialog {
-  width: 100vw;
+  width: calc(100vw - 50px);
   max-width: 700px;
 
   &__content {
@@ -306,6 +306,22 @@ watch(() => route.get('slug'), openForSlug)
   &__right {
     flex: 1;
     min-height: 200px;
+  }
+
+  @media (max-width: $md) {
+    &__left,
+    &__cover {
+      width: 100%;
+    }
+
+    &__cover {
+      height: auto;
+      aspect-ratio: 270 / 152;
+    }
+
+    &__right {
+      min-height: 0;
+    }
   }
 
   &__chapter {

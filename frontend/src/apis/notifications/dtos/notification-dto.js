@@ -1,6 +1,7 @@
 import { ChapterDto } from '@/apis/chapters/dtos/chapter-dto.js'
 import { CoverDto } from '@/apis/covers/dtos/cover-dto.js'
 import { NovelDto } from '@/apis/novels/dtos/novel-dto.js'
+import { DATETIME_FORMAT } from '@/constants/utils-constants.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
 import { NOTIFICATION_TYPES } from '@/constants/notification-constants.js'
 import { ChapterContinuedDto } from '@/apis/notifications/dtos/types/chapter-continued-dto.js'
@@ -25,7 +26,7 @@ const fromNotification = notification => {
     cover: CoverDto.fromSummary(notification.cover),
     novel: NovelDto.fromSummary(notification.novel),
     payload: internals.mapPayload(notification),
-    updatedAtFormat: dateHelper.formatDateLocal(notification.updated_at, 'DD/MM/YYYY HH:mm'),
+    updatedAtFormat: dateHelper.formatDateLocal(notification.updated_at, DATETIME_FORMAT),
   }
 }
 

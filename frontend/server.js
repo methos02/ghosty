@@ -10,7 +10,9 @@ import { stateScript } from './src/ssr/engine/state-script.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const isProduction = process.env.NODE_ENV === 'production' || process.argv.includes('--prod')
-const port = Number(process.env.PORT) || 5173
+const DEFAULT_PORT = 5173
+
+const port = Number(process.env.PORT) || DEFAULT_PORT
 
 // eslint-disable-next-line unicorn/no-global-object-property-assignment
 globalThis.__SSR_ORIGIN__ = process.env.SSR_ORIGIN || `http://localhost:${port}`
@@ -32,7 +34,7 @@ const sendRendered = async (response, rendered) => {
 
   const html = await transformHtmlTemplate(rendered.head, rendered.template)
   response
-    .status(rendered.statusCode ?? 200)
+    .status(rendered.statusCode ?? STATUS.SUCCESS)
     .set({ 'Content-Type': 'text/html' })
     .send(html)
 }

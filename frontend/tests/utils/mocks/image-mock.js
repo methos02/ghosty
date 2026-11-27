@@ -11,7 +11,9 @@ class OffscreenCanvasMock {
   }
 
   async convertToBlob({ type }) {
-    return new Blob([JSON.stringify({ width: this.width, height: this.height })], { type })
+    return new globalThis.Blob([JSON.stringify({ width: this.width, height: this.height })], {
+      type,
+    })
   }
 }
 
@@ -19,7 +21,11 @@ export const imageMock = () => {
   globalThis.createImageBitmap = async blob => {
     const size = await readSize(blob)
 
-    return { width: size.width, height: size.height, close: () => {} }
+    return {
+      width: size.width,
+      height: size.height,
+      close: () => {},
+    }
   }
   globalThis.OffscreenCanvas = OffscreenCanvasMock
 }

@@ -56,7 +56,7 @@ const handleInputChange = () => {
 </script>
 
 <template>
-  <div class="paginator-chapter | d-flex a-center g-8">
+  <div class="paginator-chapter | d-flex a-center">
     <button
       type="button"
       class="paginator-chapter__button | d-flex a-center j-center pointer"
@@ -68,17 +68,17 @@ const handleInputChange = () => {
       <i class="fa-solid fa-chevron-left"></i>
     </button>
 
-    <div class="paginator-chapter__input-group | d-flex a-center">
+    <div class="paginator-chapter__position | d-flex a-center j-center">
       <input
         v-model="inputChapter"
         type="number"
         min="1"
         :max="totalChapters"
-        class="paginator-chapter__input | text-center"
+        class="paginator-chapter__input"
         @blur="handleInputChange"
         @keyup.enter="handleInputChange"
       />
-      <span class="paginator-chapter__total | fs-400">/ {{ totalChapters }}</span>
+      <span class="paginator-chapter__total">/ {{ totalChapters }}</span>
     </div>
 
     <button
@@ -95,46 +95,61 @@ const handleInputChange = () => {
 </template>
 
 <style lang="scss">
-@use '@/assets/scss/variables' as *;
-
 .paginator-chapter {
+  height: 38px;
+  padding: 2px;
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  background-color: var(--neutral-100);
+
   &__button {
     width: 32px;
     height: 32px;
-    border: 1px solid $neutral-300;
-    border-radius: 4px;
-    background-color: $neutral-100;
-    color: $neutral-900;
+    border: none;
+    border-radius: 50%;
+    background-color: transparent;
+    color: var(--primary-700);
     transition: background-color 0.2s ease;
 
-    &:hover:not(&--disabled) {
-      background-color: $neutral-200;
+    &:hover:not(&--disabled),
+    &:focus-visible {
+      background-color: var(--primary-100);
     }
 
     &--disabled {
-      opacity: 0.5;
+      color: var(--neutral-400);
       cursor: not-allowed;
     }
 
     i {
-      font-size: 12px;
+      font-size: 13px;
     }
   }
 
-  &__input-group {
-    border: 1px solid $neutral-300;
-    border-radius: 4px;
-    padding: 4px 8px;
-    background-color: $neutral-100;
+  &__position {
+    min-width: 64px;
+    padding-inline: 4px;
+    color: var(--primary-700);
+    font-size: var(--fs-500);
+    font-weight: 700;
+    line-height: 1;
   }
 
   &__input {
-    width: 35px;
+    width: 2.2ch;
+    height: 26px;
+    padding: 0;
     border: none;
+    border-radius: 4px;
     outline: none;
     background-color: transparent;
-    font-size: 16px;
-    color: $neutral-900;
+    color: inherit;
+    font: inherit;
+    text-align: right;
+
+    &:focus {
+      background-color: var(--primary-100);
+    }
 
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
@@ -149,7 +164,8 @@ const handleInputChange = () => {
 
   &__total {
     margin-left: 4px;
-    color: $neutral-900;
+    color: var(--neutral-600);
+    font-weight: 600;
   }
 }
 </style>

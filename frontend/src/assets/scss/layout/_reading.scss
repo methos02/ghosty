@@ -90,16 +90,16 @@
 }
 
 .reading-night {
-  background-color: var(--neutral-900);
-  color: var(--neutral-100);
+  background-color: var(--night-900);
+  color: var(--night-100);
 
   .color-neutral-700,
   .color-neutral-900 {
-    color: var(--neutral-300) !important;
+    color: var(--neutral-400) !important;
   }
 
   .bg-neutral-200 {
-    background-color: color-mix(in oklch, var(--neutral-900) 80%, white) !important;
+    background-color: var(--night-700) !important;
   }
 }
 

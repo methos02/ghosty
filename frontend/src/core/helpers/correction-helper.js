@@ -12,11 +12,7 @@ const allowanceFor = text => {
 }
 
 const changedWords = (published, corrected, allowance) => {
-  return internals.distanceWithin(
-    internals.split(published),
-    internals.split(corrected),
-    allowance,
-  )
+  return internals.distanceWithin(internals.split(published), internals.split(corrected), allowance)
 }
 
 const countWords = text => internals.split(text).length
@@ -34,10 +30,7 @@ export const correctionHelper = {
 }
 
 const distanceWithin = (publishedWords, correctedWords, allowance) => {
-  const [published, corrected] = internals.trimCommonEnds(
-    publishedWords,
-    correctedWords,
-  )
+  const [published, corrected] = internals.trimCommonEnds(publishedWords, correctedWords)
   const unreachable = allowance + 1
 
   if (Math.abs(published.length - corrected.length) > allowance) {

@@ -37,31 +37,51 @@ export const routes = [
   },
   {
     path: '/me/readings',
-    name: 'readings',
     component: () => import('@/views/readings/ReadingsPage.vue'),
     meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'readings',
+        component: () => import('@/views/readings/parts/ResumeReadingList.vue'),
+      },
+      {
+        path: 'followed',
+        name: 'readings-followed',
+        component: () => import('@/views/readings/parts/FollowedBranchList.vue'),
+      },
+      {
+        path: 'history',
+        name: 'readings-history',
+        component: () => import('@/views/readings/parts/ReadingHistoryList.vue'),
+      },
+    ],
   },
   {
     path: '/me/account',
-    redirect: { name: 'account-profile' },
-  },
-  {
-    path: '/me/account/profile',
-    name: 'account-profile',
-    component: () => import('@/views/account/AccountProfilePage.vue'),
+    component: () => import('@/views/account/AccountPage.vue'),
     meta: { requiresAuth: true },
-  },
-  {
-    path: '/me/account/security',
-    name: 'account-security',
-    component: () => import('@/views/account/AccountSecurityPage.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/me/account/statistics',
-    name: 'account-statistics',
-    component: () => import('@/views/account/AccountStatisticsPage.vue'),
-    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        redirect: { name: 'account-profile' },
+      },
+      {
+        path: 'profile',
+        name: 'account-profile',
+        component: () => import('@/views/account/AccountProfilePage.vue'),
+      },
+      {
+        path: 'security',
+        name: 'account-security',
+        component: () => import('@/views/account/AccountSecurityPage.vue'),
+      },
+      {
+        path: 'statistics',
+        name: 'account-statistics',
+        component: () => import('@/views/account/AccountStatisticsPage.vue'),
+      },
+    ],
   },
   {
     path: '/me/favorites',
@@ -145,9 +165,30 @@ export const routes = [
   },
   {
     path: '/users/:profileSlug',
-    name: 'profile',
     component: () => import('@/views/users/ProfilePage.vue'),
     meta: { asyncData: profileAsyncData },
+    children: [
+      {
+        path: '',
+        name: 'profile',
+        component: () => import('@/views/users/parts/ProfileNovelList.vue'),
+      },
+      {
+        path: 'chapters',
+        name: 'profile-chapters',
+        component: () => import('@/views/users/parts/ProfileChapterList.vue'),
+      },
+      {
+        path: 'branches',
+        name: 'profile-branches',
+        component: () => import('@/views/users/parts/ProfileBranchList.vue'),
+      },
+      {
+        path: 'covers',
+        name: 'profile-covers',
+        component: () => import('@/views/users/parts/ProfileCoverList.vue'),
+      },
+    ],
   },
   {
     path: '/moderation/users/:id',

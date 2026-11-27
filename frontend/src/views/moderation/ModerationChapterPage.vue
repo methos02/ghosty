@@ -6,6 +6,7 @@ import PassageRemovalEditor from '@/views/moderation/parts/PassageRemovalEditor.
 import ModerationReportList from '@/views/moderation/parts/ModerationReportList.vue'
 import ModerationRestoreButton from '@/views/moderation/parts/ModerationRestoreButton.vue'
 import ModerationSanctionHistory from '@/views/moderation/parts/ModerationSanctionHistory.vue'
+import ModerationDesktopOnly from '@/views/moderation/parts/ModerationDesktopOnly.vue'
 import { route, t } from '@/services/shortcuts/services-shortcut.js'
 import { ModerationController } from '@/apis/moderation/controllers/moderation-controller.js'
 import { REPORTED_CONTENT_TYPES, RESOLUTIONS } from '@/constants/moderation-constants.js'
@@ -53,77 +54,79 @@ onMounted(load)
   <div class="moderation-chapter-page | f-column">
     <Header />
 
-    <div
-      v-if="moderationCase"
-      class="moderation-chapter-page__body | w-xl py-40 px-20 d-flex f-column g-30"
-    >
-      <div class="d-flex f-column g-5">
-        <router-link
-          :to="{ name: 'moderation' }"
-          class="moderation-chapter-page__back | link-inline fs-300"
-        >
-          {{ t('moderation.back_to_queue') }}
-        </router-link>
-        <h1 class="moderation-chapter-page__title | fs-700 fw-700">
-          {{ moderationCase.chapter.title }}
-        </h1>
-        <span class="fs-300 color-neutral-700">
-          {{
-            t('moderation.context', {
-              novel: moderationCase.chapter.novel.title,
-              author: moderationCase.chapter.author.username,
-            })
-          }}
-        </span>
-      </div>
-
+    <ModerationDesktopOnly>
       <div
-        v-if="isRemoved"
-        class="moderation-chapter-page__removed | d-flex a-center j-between g-20 f-wrap bg-warning-300 p-15 radius-10"
+        v-if="moderationCase"
+        class="moderation-chapter-page__body | w-xl py-40 px-20 d-flex f-column g-30"
       >
-        <span>{{ t('moderation_chapter_page.hidden') }}</span>
-        <ModerationRestoreButton
-          :contentType="REPORTED_CONTENT_TYPES.CHAPTER"
-          :contentId="moderationCase.chapter.id"
-        />
-      </div>
+        <div class="d-flex f-column g-5">
+          <router-link
+            :to="{ name: 'moderation' }"
+            class="moderation-chapter-page__back | link-inline fs-300"
+          >
+            {{ t('moderation.back_to_queue') }}
+          </router-link>
+          <h1 class="moderation-chapter-page__title | fs-700 fw-700">
+            {{ moderationCase.chapter.title }}
+          </h1>
+          <span class="fs-300 color-neutral-700">
+            {{
+              t('moderation.context', {
+                novel: moderationCase.chapter.novel.title,
+                author: moderationCase.chapter.author.username,
+              })
+            }}
+          </span>
+        </div>
 
-      <p
-        v-if="!isRemoved && !moderationCase.isRemovable"
-        class="moderation-chapter-page__continued | bg-info-300 p-15 radius-10"
-      >
-        {{ t('moderation_chapter_page.continued') }}
-      </p>
-
-      <div class="moderation-chapter-page__layout">
-        <PassageRemovalEditor
-          v-if="isRemovingPassages"
-          v-model="contentAfterRemoval"
-          :original="moderationCase.chapter.content"
-        />
-        <article
-          v-else
-          class="moderation-chapter-page__content | bg-neutral-200 p-20 radius-10"
+        <div
+          v-if="isRemoved"
+          class="moderation-chapter-page__removed | d-flex a-center j-between g-20 f-wrap bg-warning-300 p-15 radius-10"
         >
-          {{ moderationCase.chapter.content }}
-        </article>
-
-        <aside class="moderation-chapter-page__panel | d-flex f-column g-30">
-          <ModerationReportList :reports="moderationCase.reports" />
-
-          <ModerationSanctionHistory :sanctions="moderationCase.authorSanctions" />
-
-          <ModerationDecisionForm
-            v-if="!isRemoved && hasPendingReports"
+          <span>{{ t('moderation_chapter_page.hidden') }}</span>
+          <ModerationRestoreButton
             :contentType="REPORTED_CONTENT_TYPES.CHAPTER"
             :contentId="moderationCase.chapter.id"
-            v-model:resolution="resolution"
-            v-model:contentAfterRemoval="contentAfterRemoval"
-            :resolutions="resolutions"
           />
-        </aside>
+        </div>
+
+        <p
+          v-if="!isRemoved && !moderationCase.isRemovable"
+          class="moderation-chapter-page__continued | bg-info-300 p-15 radius-10"
+        >
+          {{ t('moderation_chapter_page.continued') }}
+        </p>
+
+        <div class="moderation-chapter-page__layout">
+          <PassageRemovalEditor
+            v-if="isRemovingPassages"
+            v-model="contentAfterRemoval"
+            :original="moderationCase.chapter.content"
+          />
+          <article
+            v-else
+            class="moderation-chapter-page__content | bg-neutral-200 p-20 radius-10"
+          >
+            {{ moderationCase.chapter.content }}
+          </article>
+
+          <aside class="moderation-chapter-page__panel | d-flex f-column g-30">
+            <ModerationReportList :reports="moderationCase.reports" />
+
+            <ModerationSanctionHistory :sanctions="moderationCase.authorSanctions" />
+
+            <ModerationDecisionForm
+              v-if="!isRemoved && hasPendingReports"
+              :contentType="REPORTED_CONTENT_TYPES.CHAPTER"
+              :contentId="moderationCase.chapter.id"
+              v-model:resolution="resolution"
+              v-model:contentAfterRemoval="contentAfterRemoval"
+              :resolutions="resolutions"
+            />
+          </aside>
+        </div>
       </div>
-    </div>
+    </ModerationDesktopOnly>
   </div>
 </template>
 

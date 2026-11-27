@@ -12,10 +12,10 @@
       "admin": "Administrateur"
     },
     "tabs": {
-      "novels": "Romans",
-      "chapters": "Chapitres",
-      "branches": "Branches",
-      "covers": "Illustrations"
+      "profile": "Romans",
+      "profile-chapters": "Chapitres",
+      "profile-branches": "Branches",
+      "profile-covers": "Illustrations"
     }
   }
 }

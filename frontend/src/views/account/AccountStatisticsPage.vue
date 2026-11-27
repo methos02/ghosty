@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
-import AccountLayout from '@/views/account/parts/AccountLayout.vue'
 import ProfileStatistics from '@/views/users/parts/ProfileStatistics.vue'
 import { useUserProfile } from '@/core-vue/composables/users/use-user-profile.js'
 import { useProfileStore } from '@/core-vue/stores/users/profile-store.js'
@@ -18,10 +17,8 @@ onUnmounted(() => profileStore.clear())
 </script>
 
 <template>
-  <AccountLayout>
-    <ProfileStatistics
-      v-if="profile"
-      :statistics="profile.statistics"
-    />
-  </AccountLayout>
+  <ProfileStatistics
+    v-if="profile"
+    :statistics="profile.statistics"
+  />
 </template>

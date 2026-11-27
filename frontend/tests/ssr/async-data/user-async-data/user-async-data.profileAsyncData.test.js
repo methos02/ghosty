@@ -4,6 +4,7 @@ import { createProfileStore } from '@/core-vue/stores/users/profile-store.js'
 import { UserRepository } from '@/apis/users/repositories/user-repository.js'
 import { UserDto } from '@/apis/users/dtos/user-dto.js'
 import { STATUS } from '@/constants/ajax-constants.js'
+import { PROFILE_TABS } from '@/constants/user-constants.js'
 import { controllerError, controllerSuccess } from '&/utils/helpers/controller-response.js'
 import { userSeeder } from '&/utils/seeders/user-seeder.js'
 
@@ -33,12 +34,16 @@ describe('user-async-data', () => {
 
       const result = await profileAsyncData({
         stores: { profile: createProfileStore() },
-        route: { params: { profileSlug: `${profileApi.slug}-ancien` }, query: {} },
+        route: {
+          name: PROFILE_TABS.COVERS,
+          params: { profileSlug: `${profileApi.slug}-ancien` },
+          query: {},
+        },
       })
 
       expect(result).toEqual({
         redirect: {
-          name: 'profile',
+          name: PROFILE_TABS.COVERS,
           params: { profileSlug: profileApi.profile_slug },
           query: { renamed: '1' },
         },

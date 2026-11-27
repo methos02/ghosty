@@ -188,7 +188,6 @@ onMounted(async () => {
           name="genreId"
           :label="t('novel_manage.genre')"
           :required="true"
-          containerClass="novel-manage__genre no-flex"
           form="novel"
         >
           <option
@@ -253,14 +252,6 @@ onMounted(async () => {
 
   &__draft-select {
     width: 200px;
-  }
-
-  &__genre {
-    width: 180px;
-  }
-
-  &__section {
-    min-width: 180px;
   }
 
   &__form :deep(textarea) {

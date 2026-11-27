@@ -4,6 +4,8 @@ import Header from '@/views/layout/HeaderComponent.vue'
 import ChapterCommentsDialog from '@/views/chapters/parts/ChapterCommentsDialog.vue'
 import ChapterFooter from '@/views/chapters/parts/ChapterFooter.vue'
 import ReadingToolbar from '@/views/chapters/parts/ReadingToolbar.vue'
+import ReadingActionBar from '@/views/chapters/parts/ReadingActionBar.vue'
+import ReadingBranchBadge from '@/views/chapters/parts/ReadingBranchBadge.vue'
 import UserLink from '@/views/parts/UserLink.vue'
 import { route, t } from '@/services/shortcuts/services-shortcut.js'
 import { useReadingStore } from '@/core-vue/stores/chapters/reading-store.js'
@@ -145,6 +147,7 @@ onUnmounted(readingStore.clear)
               byline
               class="chapter-reader-page__author | fs-400 color-neutral-700"
             />
+            <ReadingBranchBadge class="chapter-reader-page__badge | mt-5" />
             <span
               v-if="chapter.isDraft"
               class="chapter-reader-page__draft | badge badge-warning"
@@ -192,10 +195,14 @@ onUnmounted(readingStore.clear)
         </div>
       </template>
     </div>
+
+    <ReadingActionBar />
   </div>
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
 .chapter-reader-page {
   min-height: 100vh;
 
@@ -203,6 +210,10 @@ onUnmounted(readingStore.clear)
     margin: 0 auto;
     width: 100%;
     max-width: 90vw;
+
+    @media (max-width: variables.$lg) {
+      max-width: 100%;
+    }
   }
 
   &__body {
@@ -210,6 +221,19 @@ onUnmounted(readingStore.clear)
     width: 100%;
     max-width: 90vw;
     padding-top: 20px;
+
+    @media (max-width: variables.$lg) {
+      max-width: 100%;
+      padding-bottom: 90px;
+    }
+  }
+
+  &__badge {
+    display: none;
+
+    @media (max-width: variables.$lg) {
+      display: inline-flex;
+    }
   }
 
   &__chapter {
@@ -221,6 +245,11 @@ onUnmounted(readingStore.clear)
     line-height: 1.8;
     margin: 0;
     text-align: justify;
+    hyphens: auto;
+
+    @media (max-width: variables.$sm) {
+      text-align: start;
+    }
   }
 
   &__removed-passage {

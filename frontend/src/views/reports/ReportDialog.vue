@@ -253,7 +253,7 @@ const send = async () => {
 
 <style lang="scss" scoped>
 .report-dialog {
-  width: 100vw;
+  width: calc(100vw - 50px);
   max-width: 480px;
 }
 </style>

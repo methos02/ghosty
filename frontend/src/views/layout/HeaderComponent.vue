@@ -35,7 +35,7 @@ const isMenuOpen = ref(false)
           alt="Logo"
           class="header-logo"
         />
-        <p>
+        <p class="header-title">
           <span class="title-left">Ghos</span>
           <span class="title-right">TY</span>
         </p>
@@ -81,6 +81,8 @@ const isMenuOpen = ref(false)
 </template>
 
 <style lang="scss">
+@use '@/assets/scss/variables';
+
 .header {
   height: 60px;
   padding-inline: 5%;
@@ -118,6 +120,23 @@ const isMenuOpen = ref(false)
   .btn-auth {
     width: 130px;
     min-height: 38px;
+
+    @media (max-width: variables.$sm) {
+      width: auto;
+      padding-inline: 15px;
+    }
+  }
+
+  &-left {
+    @media (max-width: variables.$sm) {
+      gap: 10px;
+    }
+  }
+
+  &-title {
+    @media (max-width: variables.$sm) {
+      display: none;
+    }
   }
 
   &-username {

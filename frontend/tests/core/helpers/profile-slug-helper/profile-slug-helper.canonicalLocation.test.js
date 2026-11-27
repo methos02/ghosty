@@ -15,23 +15,20 @@ describe('profile-slug-helper', () => {
     it('replaces an outdated name and flags the renaming', () => {
       expect(
         profileSlugHelper.canonicalLocation(
-          { params: { profileSlug: 'd4sfq7-ancien' }, query: { tab: 'covers' } },
+          { name: 'profile-covers', params: { profileSlug: 'd4sfq7-ancien' }, query: {} },
           { profileSlug: 'd4sfq7-plume' },
         ),
       ).toEqual({
-        name: 'profile',
+        name: 'profile-covers',
         params: { profileSlug: 'd4sfq7-plume' },
-        query: {
-          tab: 'covers',
-          renamed: '1',
-        },
+        query: { renamed: '1' },
       })
     })
 
     it('completes an address holding the slug alone without flagging a renaming', () => {
       expect(
         profileSlugHelper.canonicalLocation(
-          { params: { profileSlug: 'd4sfq7' }, query: {} },
+          { name: 'profile', params: { profileSlug: 'd4sfq7' }, query: {} },
           { profileSlug: 'd4sfq7-plume' },
         ),
       ).toEqual({
@@ -44,7 +41,7 @@ describe('profile-slug-helper', () => {
     it('flags the renaming when the name now gives an empty name part', () => {
       expect(
         profileSlugHelper.canonicalLocation(
-          { params: { profileSlug: 'd4sfq7-ancien' }, query: {} },
+          { name: 'profile', params: { profileSlug: 'd4sfq7-ancien' }, query: {} },
           { profileSlug: 'd4sfq7' },
         ),
       ).toEqual({

@@ -8,6 +8,7 @@ import { SanctionDto } from '@/apis/sanctions/dtos/sanction-dto.js'
 import { UserDto } from '@/apis/users/dtos/user-dto.js'
 import { PaginationDto } from '@/apis/shared/dtos/pagination-dto.js'
 import { RESOLUTIONS } from '@/constants/moderation-constants.js'
+import { DATETIME_FORMAT } from '@/constants/utils-constants.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
 
 const fromChapterCase = moderationCase => {
@@ -60,20 +61,17 @@ const fromList = list => {
   }
 }
 
-const fromReportedContent = reportedContent => {
+const fromReportedContent = content => {
   return {
-    type: reportedContent.type,
-    id: reportedContent.id,
-    reportCount: reportedContent.report_count,
-    reasons: reportedContent.reasons,
-    firstReportedAtFormat: dateHelper.formatDateLocal(
-      reportedContent.first_reported_at,
-      'DD/MM/YYYY HH:mm',
-    ),
-    chapter: reportedContent.chapter ? ChapterDto.fromShow(reportedContent.chapter) : undefined,
-    comment: reportedContent.comment ? ModerationDto.fromComment(reportedContent.comment) : undefined,
-    cover: reportedContent.cover ? ModerationDto.fromCover(reportedContent.cover) : undefined,
-    user: reportedContent.user ? UserDto.fromSummary(reportedContent.user) : undefined,
+    type: content.type,
+    id: content.id,
+    reportCount: content.report_count,
+    reasons: content.reasons,
+    firstReportedAtFormat: dateHelper.formatDateLocal(content.first_reported_at, DATETIME_FORMAT),
+    chapter: content.chapter ? ChapterDto.fromShow(content.chapter) : undefined,
+    comment: content.comment ? ModerationDto.fromComment(content.comment) : undefined,
+    cover: content.cover ? ModerationDto.fromCover(content.cover) : undefined,
+    user: content.user ? UserDto.fromSummary(content.user) : undefined,
   }
 }
 

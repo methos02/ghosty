@@ -7,6 +7,7 @@ const props = defineProps({
   closeCross: { type: Boolean, default: true },
   closeBg: { type: Boolean, default: true },
   noPadding: { type: Boolean, default: false },
+  fullscreenOnPhone: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['dialog-show', 'dialog-close'])
@@ -60,6 +61,7 @@ const closeFromBackground = event => {
   <dialog
     ref="dialog"
     class="dialog | bg-neutral-100 radius-5"
+    :class="{ 'dialog--fullscreen-on-phone': fullscreenOnPhone }"
     @click="closeFromBackground"
   >
     <div class="dialog-header | d-flex g-25 color-neutral-100 bg-primary">
@@ -91,8 +93,26 @@ const closeFromBackground = event => {
   </dialog>
 </template>
 <style scoped lang="scss">
+@use '@/assets/scss/variables';
+
 .dialog {
   overflow: visible;
+  max-width: calc(100vw - 20px);
+
+  &--fullscreen-on-phone {
+    @media (max-width: variables.$sm) {
+      width: 100vw;
+      max-width: 100vw;
+      height: 100dvh;
+      max-height: 100dvh;
+      margin: 0;
+      border-radius: 0;
+
+      .dialog-header {
+        border-radius: 0;
+      }
+    }
+  }
 
   &-header {
     padding: 10px 15px;

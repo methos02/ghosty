@@ -36,7 +36,7 @@ const changeMode = async nextMode => {
   <div class="home-page | f-column">
     <div class="top-container | f-column">
       <Header :transparent="true" />
-      <div class="w-xl | f-column j-center g-35 flex-1 a-start">
+      <div class="w-xl | f-column j-center g-35 flex-1 a-start px-20">
         <UserSummary v-if="authStore.isAuthenticated.value" />
 
         <div v-if="!authStore.isAuthenticated.value">
@@ -120,7 +120,7 @@ const changeMode = async nextMode => {
 
   &-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(306px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(306px, 100%), 1fr));
     gap: 24px;
   }
 }

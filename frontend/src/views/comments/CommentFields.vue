@@ -24,7 +24,7 @@ const formDatas = defineModel({ type: Object, required: true })
       :form="formName"
     />
 
-    <div class="comment-fields__footer | d-flex j-between a-center g-10">
+    <div class="comment-fields__footer | d-flex f-wrap j-between a-center g-10">
       <SwitchComponent
         v-model="formDatas.isSpoiler"
         name="isSpoiler"
@@ -32,7 +32,15 @@ const formDatas = defineModel({ type: Object, required: true })
         :form="formName"
       />
 
-      <slot></slot>
+      <div class="comment-fields__actions | d-flex g-10">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.comment-fields__actions {
+  margin-left: auto;
+}
+</style>

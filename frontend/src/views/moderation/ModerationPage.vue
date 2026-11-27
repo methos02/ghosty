@@ -95,7 +95,7 @@ onMounted(() => load())
       </h1>
 
       <div class="moderation-page__filters | d-flex a-end j-between g-20 f-wrap">
-        <div class="d-flex g-10">
+        <div class="moderation-page__statuses | d-flex g-10">
           <button
             type="button"
             @click="showStatus(REPORT_STATUSES.PENDING)"
@@ -236,7 +236,9 @@ onMounted(() => load())
             </span>
           </div>
 
-          <div class="d-flex f-column a-end fs-300 color-neutral-700 text-end">
+          <div
+            class="moderation-page__meta | d-flex f-column a-end fs-300 color-neutral-700 text-end"
+          >
             <span class="moderation-page__count | fw-700">
               {{ t('moderation_page.report_count', reportedContent.reportCount) }}
             </span>
@@ -269,6 +271,8 @@ onMounted(() => load())
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
 .moderation-page {
   min-height: 100vh;
 
@@ -277,7 +281,44 @@ onMounted(() => load())
     max-width: 1200px;
   }
 
+  @media (max-width: variables.$md) {
+    &__open {
+      display: none;
+    }
+
+    &__link {
+      pointer-events: none;
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+
+  @media (max-width: variables.$sm) {
+    &__statuses {
+      display: grid;
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+      width: 100%;
+    }
+
+    &__reason {
+      width: 100%;
+    }
+
+    &__content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__meta {
+      align-items: flex-start;
+      text-align: start;
+    }
+  }
+
   &__thumbnail {
+    flex-shrink: 0;
+    overflow: hidden;
     width: 40px;
     aspect-ratio: 16 / 9;
     object-fit: cover;

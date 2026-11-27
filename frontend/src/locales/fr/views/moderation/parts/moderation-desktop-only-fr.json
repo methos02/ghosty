@@ -1,0 +1,6 @@
+{
+  "moderation_desktop_only": {
+    "title": "Écran trop petit pour modérer",
+    "message": "Modérer demande de bonnes conditions pour bien juger un contenu. Merci de passer sur un écran plus grand, comme un ordinateur."
+  }
+}

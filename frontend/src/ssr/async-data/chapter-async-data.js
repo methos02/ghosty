@@ -1,5 +1,6 @@
 export const chapterReadingAsyncData = async ({ stores, route, cookie }) => {
-  const { useChapterReading } = await import('@/core-vue/composables/chapters/use-chapter-reading.js')
+  const { useChapterReading } =
+    await import('@/core-vue/composables/chapters/use-chapter-reading.js')
   const { chapterReading } = useChapterReading({
     readingStore: stores.reading,
     novelStore: stores.novel,

@@ -123,6 +123,8 @@ onMounted(async () => {
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
 .toolbar {
   &__side {
     height: 40px;
@@ -177,6 +179,50 @@ onMounted(async () => {
     height: 56px;
     border-radius: 10px 10px 0 0;
     overflow: hidden;
+  }
+
+  @media (max-width: variables.$md) {
+    flex-wrap: wrap;
+
+    &__center {
+      order: -1;
+      width: 100%;
+    }
+
+    &__modes {
+      border-radius: 0;
+    }
+
+    &__side {
+      width: 50%;
+      padding-inline: 10px;
+
+      &.left,
+      &.right {
+        border-radius: 0;
+        justify-content: space-between;
+      }
+    }
+
+    &__side > .dropdown,
+    &__dropdown {
+      flex: 1;
+      min-width: 0;
+    }
+
+    &__side > .dropdown &__dropdown {
+      width: 100%;
+    }
+
+    &__dropdown-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &__label {
+      font-size: var(--fs-400);
+    }
   }
 
   &__mode {

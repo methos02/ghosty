@@ -48,6 +48,19 @@ describe('CommentThread.vue', () => {
     expect(wrapper.find('.comment-thread__empty').text()).toBe(t('comment_thread.empty'))
   })
 
+  it('titles the thread unless its container already does', async () => {
+    vi.spyOn(CommentRepository, 'listForNovel').mockResolvedValue(
+      controllerSuccess({ data: commentSeeder.getEmptyThreadApi() }),
+    )
+
+    wrapper = mount(CommentThread, { props: { target: commentSeeder.getNovelTarget() } })
+    await flushPromises()
+    expect(wrapper.find('.comment-thread__title').text()).toBe(t('comment_thread.title'))
+
+    await wrapper.setProps({ showTitle: false })
+    expect(wrapper.find('.comment-thread__title').exists()).toBe(false)
+  })
+
   it('appends the next page of comments on demand and hides the button on the last page', async () => {
     const target = commentSeeder.getChapterTarget()
     const firstPage = commentSeeder.getThreadApi({

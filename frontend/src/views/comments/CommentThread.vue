@@ -10,6 +10,7 @@ import { ajaxHelper } from '@/core/helpers/ajax-helper.js'
 
 const props = defineProps({
   target: { type: Object, required: true },
+  showTitle: { type: Boolean, default: true },
 })
 
 const { comments, pagination, commentStore } = useCommentStore()
@@ -41,7 +42,10 @@ onUnmounted(() => {
     id="comments"
     class="comment-thread | d-flex f-column g-15"
   >
-    <h2 class="comment-thread__title | fs-600 fw-700">
+    <h2
+      v-if="showTitle"
+      class="comment-thread__title | fs-600 fw-700"
+    >
       {{ t('comment_thread.title') }}
     </h2>
 

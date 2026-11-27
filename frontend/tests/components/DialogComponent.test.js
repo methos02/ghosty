@@ -22,6 +22,14 @@ describe('DialogComponent.vue', () => {
     expect(wrapper.find('.dialog-content').text()).toBe('Formulaire')
   })
 
+  it('takes the whole screen on a phone only when asked to', async () => {
+    wrapper = mount(DialogComponent, { attachTo: document.body })
+    expect(wrapper.find('dialog').classes()).not.toContain('dialog--fullscreen-on-phone')
+
+    await wrapper.setProps({ fullscreenOnPhone: true })
+    expect(wrapper.find('dialog').classes()).toContain('dialog--fullscreen-on-phone')
+  })
+
   it('renders the title slot in place of the title prop', () => {
     wrapper = mount(DialogComponent, {
       slots: { default: 'Formulaire', title: 'Signaler' },

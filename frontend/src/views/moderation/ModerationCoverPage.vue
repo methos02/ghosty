@@ -5,6 +5,7 @@ import ModerationDecisionForm from '@/views/moderation/parts/ModerationDecisionF
 import ModerationReportList from '@/views/moderation/parts/ModerationReportList.vue'
 import ModerationRestoreButton from '@/views/moderation/parts/ModerationRestoreButton.vue'
 import ModerationSanctionHistory from '@/views/moderation/parts/ModerationSanctionHistory.vue'
+import ModerationDesktopOnly from '@/views/moderation/parts/ModerationDesktopOnly.vue'
 import { route, t } from '@/services/shortcuts/services-shortcut.js'
 import { ModerationController } from '@/apis/moderation/controllers/moderation-controller.js'
 import { REPORTED_CONTENT_TYPES, RESOLUTIONS } from '@/constants/moderation-constants.js'
@@ -41,63 +42,65 @@ onMounted(load)
   <div class="moderation-cover-page | f-column">
     <Header />
 
-    <div
-      v-if="moderationCase"
-      class="moderation-cover-page__body | w-xl py-40 px-20 d-flex f-column g-30"
-    >
-      <div class="d-flex f-column g-5">
-        <router-link
-          :to="{ name: 'moderation' }"
-          class="moderation-cover-page__back | link-inline fs-300"
-        >
-          {{ t('moderation.back_to_queue') }}
-        </router-link>
-        <h1 class="fs-700 fw-700">
-          {{ t('moderation_cover_page.title', { author: moderationCase.cover.author.username }) }}
-        </h1>
-        <span class="moderation-cover-page__target | fs-300 color-neutral-700">
-          {{ t('moderation_cover_page.on_novel', { novel: moderationCase.cover.novel.title }) }}
-        </span>
-      </div>
-
+    <ModerationDesktopOnly>
       <div
-        v-if="moderationCase.cover.isHidden"
-        class="moderation-cover-page__removed | d-flex a-center j-between g-20 f-wrap bg-warning-300 p-15 radius-10"
+        v-if="moderationCase"
+        class="moderation-cover-page__body | w-xl py-40 px-20 d-flex f-column g-30"
       >
-        <span>{{ t('moderation_cover_page.hidden') }}</span>
-        <ModerationRestoreButton
+        <div class="d-flex f-column g-5">
+          <router-link
+            :to="{ name: 'moderation' }"
+            class="moderation-cover-page__back | link-inline fs-300"
+          >
+            {{ t('moderation.back_to_queue') }}
+          </router-link>
+          <h1 class="fs-700 fw-700">
+            {{ t('moderation_cover_page.title', { author: moderationCase.cover.author.username }) }}
+          </h1>
+          <span class="moderation-cover-page__target | fs-300 color-neutral-700">
+            {{ t('moderation_cover_page.on_novel', { novel: moderationCase.cover.novel.title }) }}
+          </span>
+        </div>
+
+        <div
+          v-if="moderationCase.cover.isHidden"
+          class="moderation-cover-page__removed | d-flex a-center j-between g-20 f-wrap bg-warning-300 p-15 radius-10"
+        >
+          <span>{{ t('moderation_cover_page.hidden') }}</span>
+          <ModerationRestoreButton
+            :contentType="REPORTED_CONTENT_TYPES.COVER"
+            :contentId="moderationCase.cover.id"
+          />
+        </div>
+
+        <figure class="moderation-cover-page__figure | d-flex f-column a-start g-10">
+          <img
+            :src="moderationCase.cover.imageUrl"
+            :alt="
+              t('moderation_cover_page.image_alt', {
+                author: moderationCase.cover.author.username,
+                novel: moderationCase.cover.novel.title,
+              })
+            "
+            class="moderation-cover-page__image | radius-10"
+          />
+          <figcaption class="fs-300 color-neutral-700">
+            {{ t('moderation_cover_page.like_count', moderationCase.cover.likeCount) }}
+          </figcaption>
+        </figure>
+
+        <ModerationReportList :reports="moderationCase.reports" />
+
+        <ModerationSanctionHistory :sanctions="moderationCase.authorSanctions" />
+
+        <ModerationDecisionForm
+          v-if="canDecide"
           :contentType="REPORTED_CONTENT_TYPES.COVER"
           :contentId="moderationCase.cover.id"
+          :resolutions="COVER_RESOLUTIONS"
         />
       </div>
-
-      <figure class="moderation-cover-page__figure | d-flex f-column a-start g-10">
-        <img
-          :src="moderationCase.cover.imageUrl"
-          :alt="
-            t('moderation_cover_page.image_alt', {
-              author: moderationCase.cover.author.username,
-              novel: moderationCase.cover.novel.title,
-            })
-          "
-          class="moderation-cover-page__image | radius-10"
-        />
-        <figcaption class="fs-300 color-neutral-700">
-          {{ t('moderation_cover_page.like_count', moderationCase.cover.likeCount) }}
-        </figcaption>
-      </figure>
-
-      <ModerationReportList :reports="moderationCase.reports" />
-
-      <ModerationSanctionHistory :sanctions="moderationCase.authorSanctions" />
-
-      <ModerationDecisionForm
-        v-if="canDecide"
-        :contentType="REPORTED_CONTENT_TYPES.COVER"
-        :contentId="moderationCase.cover.id"
-        :resolutions="COVER_RESOLUTIONS"
-      />
-    </div>
+    </ModerationDesktopOnly>
   </div>
 </template>
 

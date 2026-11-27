@@ -21,7 +21,7 @@ const buildLocation = (route, profile) => {
   }
 
   return {
-    name: 'profile',
+    name: route.name,
     params: { profileSlug: profile.profileSlug },
     query,
   }

@@ -147,15 +147,15 @@ describe('ChapterReaderPage.vue', () => {
     })
     await flushPromises()
 
-    expect(wrapper.find('.reading-toolbar__branch-label').text()).toBe(
-      t('reading_toolbar.popular_branch'),
+    expect(wrapper.find('.reading-toolbar__badge').text()).toBe(
+      t('reading_branch_badge.main_branch'),
     )
 
     provide[READING_STORE_KEY].setReading({ ...reading, isMainBranch: false })
     await flushPromises()
 
-    expect(wrapper.find('.reading-toolbar__branch-label').text()).toBe(
-      t('reading_toolbar.popular_branch_from_chapter'),
+    expect(wrapper.find('.reading-toolbar__badge').text()).toBe(
+      t('reading_branch_badge.main_branch_from_chapter'),
     )
   })
 
@@ -547,7 +547,9 @@ describe('ChapterReaderPage.vue', () => {
     const article = wrapper.find('.chapter-reader-page__chapter')
     expect(article.classes()).toContain('reading-font-lato')
     expect(article.attributes('style')).toContain('font-size: 24px')
-    expect(article.attributes('style')).toContain('max-width: max(60vw, 320px)')
+    expect(article.attributes('style')).toContain(
+      `max-width: max(60vw, ${ConfigLoader.get('reading.width.minPixels')}px)`,
+    )
   })
 
   it('records the read of the opened chapter under the reading session of the browser', async () => {

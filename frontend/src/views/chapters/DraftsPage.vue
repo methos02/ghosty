@@ -59,12 +59,12 @@ onMounted(load)
     <Header />
 
     <div class="drafts-page__body | w-xl py-40 px-20">
-      <div class="d-flex j-between a-center mb-20">
+      <div class="d-flex j-between a-center f-wrap g-15 mb-20">
         <h1 class="fs-700 fw-700">
           {{ t('drafts.title') }}
         </h1>
 
-        <div class="d-flex g-10">
+        <div class="drafts-page__types | d-flex g-10">
           <button
             type="button"
             @click="draftType = 'chapters'"
@@ -143,12 +143,23 @@ onMounted(load)
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
 .drafts-page {
   min-height: 100vh;
 
   &__body {
     margin: 0 auto;
     max-width: 1200px;
+  }
+
+  @media (max-width: variables.$sm) {
+    &__types {
+      display: grid;
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+      width: 100%;
+    }
   }
 }
 </style>

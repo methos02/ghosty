@@ -60,6 +60,8 @@ defineProps({
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
 .profile-statistics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -68,6 +70,16 @@ defineProps({
 
   dd {
     margin: 0;
+  }
+
+  @media (max-width: variables.$sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+
+    &__item {
+      padding: 10px;
+      text-align: center;
+    }
   }
 }
 </style>

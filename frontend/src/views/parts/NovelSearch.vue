@@ -22,7 +22,7 @@ const clear = async () => {
 <template>
   <form
     @submit.prevent="submit"
-    class="novel-search | d-flex a-center g-10 w-xl px-20 pt-30"
+    class="novel-search | d-flex g-10 w-xl px-20 pt-30"
   >
     <div class="novel-search__field | d-flex a-center flex-1 bg-neutral-200 radius-10 px-15">
       <i class="fas fa-magnifying-glass color-neutral-500"></i>
@@ -46,7 +46,7 @@ const clear = async () => {
 
     <button
       type="submit"
-      class="btn btn-primary"
+      class="novel-search__submit | btn btn-primary"
     >
       {{ t('novel_search.submit') }}
     </button>
@@ -54,14 +54,33 @@ const clear = async () => {
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
 .novel-search {
   margin: 0 auto;
   max-width: 1200px;
+
+  &__field,
+  &__input {
+    min-width: 0;
+  }
 
   &__input {
     border: none;
     background-color: transparent;
     outline: none;
+  }
+
+  @media (max-width: variables.$sm) {
+    gap: 0;
+
+    &__field {
+      border-radius: 10px 0 0 10px;
+    }
+
+    &__submit {
+      border-radius: 0 10px 10px 0;
+    }
   }
 
   &__clear {

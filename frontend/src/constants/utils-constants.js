@@ -17,3 +17,5 @@ export const APP_STATUS = {
   ERROR: 'error',
   ERROR_AUTH: 'error_auth',
 }
+
+export const DATETIME_FORMAT = 'DD/MM/YYYY HH:mm'

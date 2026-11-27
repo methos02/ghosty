@@ -117,7 +117,7 @@ const close = () => {
 <style lang="scss" scoped>
 .login-dialog {
   &__body {
-    width: 100vw;
+    width: calc(100vw - 50px);
     max-width: 450px;
   }
 

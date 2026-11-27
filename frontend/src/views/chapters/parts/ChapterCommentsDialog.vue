@@ -38,6 +38,7 @@ watch(
 <template>
   <DialogComponent
     ref="dialog"
+    :fullscreenOnPhone="true"
     :title="t('chapter_comments_dialog.title', { chapter: commentedChapter?.title ?? '' })"
     @dialog-close="closeChapterComments"
   >
@@ -46,17 +47,27 @@ watch(
         v-if="commentedChapter"
         :key="commentedChapter.id"
         :target="commentTarget"
+        :showTitle="false"
       />
     </div>
   </DialogComponent>
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
 .chapter-comments-dialog {
-  width: 100vw;
+  width: calc(100vw - 50px);
   max-width: 700px;
   max-height: calc(100dvh - 150px);
   overflow-y: auto;
   padding-right: 10px;
+
+  @media (max-width: variables.$sm) {
+    width: 100%;
+    max-width: none;
+    max-height: calc(100dvh - 85px);
+    padding-right: 0;
+  }
 }
 </style>

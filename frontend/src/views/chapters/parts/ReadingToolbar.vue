@@ -3,6 +3,7 @@ import { router, t } from '@/services/shortcuts/services-shortcut.js'
 import DropdownComponent from '@/components/DropdownComponent.vue'
 import PaginatorChapter from '@/components/paginators/PaginatorChapterComponent.vue'
 import ReadingSettingsPanel from '@/views/chapters/parts/ReadingSettingsPanel.vue'
+import ReadingBranchBadge from '@/views/chapters/parts/ReadingBranchBadge.vue'
 import LikeButton from '@/views/chapters/parts/LikeButton.vue'
 import FollowButton from '@/views/chapters/parts/FollowButton.vue'
 import { useReadingStore } from '@/core-vue/stores/chapters/reading-store.js'
@@ -13,7 +14,7 @@ import { useNovelStore } from '@/core-vue/stores/novels/novel-store.js'
 import { useReadingPosition } from '@/core-vue/composables/chapters/use-reading-position.js'
 
 const { selectedNovel } = useNovelStore()
-const { position, branchLength, isMainBranch, chapterIdAt } = useReadingPosition()
+const { position, branchLength, chapterIdAt } = useReadingPosition()
 const { settings, setSetting, persist } = useReadingSettingsStore()
 const { chapter } = useReadingStore()
 const { report } = useReport()
@@ -84,19 +85,7 @@ const print = () => {
         @p-chapter="goToPosition($event.chapter)"
       />
 
-      <span
-        v-if="isMainBranch"
-        class="reading-toolbar__branch-label | badge badge-primary"
-      >
-        {{ t('reading_toolbar.popular_branch') }}
-      </span>
-
-      <span
-        v-if="!isMainBranch"
-        class="reading-toolbar__branch-label | badge badge-info"
-      >
-        {{ t('reading_toolbar.popular_branch_from_chapter') }}
-      </span>
+      <ReadingBranchBadge class="reading-toolbar__badge" />
     </div>
 
     <div class="reading-toolbar__tools | d-flex a-center g-10">
@@ -146,6 +135,8 @@ const print = () => {
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
 .reading-toolbar {
   &__support,
   &__tools {
@@ -154,6 +145,43 @@ const print = () => {
 
   &__tools {
     justify-content: flex-end;
+  }
+
+  @media (max-width: variables.$lg) {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 600px;
+    margin-inline: auto;
+
+    &__support,
+    &__badge,
+    &__print {
+      display: none;
+    }
+
+    &__tools {
+      display: contents;
+    }
+
+    &__night {
+      grid-row: 1;
+      grid-column: 1;
+      justify-self: start;
+    }
+
+    &__branch {
+      grid-row: 1;
+      grid-column: 2;
+    }
+
+    &__tools > .dropdown {
+      grid-row: 1;
+      grid-column: 3;
+      justify-self: end;
+    }
   }
 }
 </style>

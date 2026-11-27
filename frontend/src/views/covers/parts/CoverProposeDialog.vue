@@ -135,7 +135,7 @@ defineExpose({ show })
 
 <style lang="scss" scoped>
 .cover-propose-dialog {
-  width: 100vw;
+  width: calc(100vw - 50px);
   max-width: 480px;
 }
 </style>

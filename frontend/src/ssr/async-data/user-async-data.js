@@ -1,10 +1,12 @@
 export const profileAsyncData = async ({ stores, route }) => {
-  const [{ useUserProfile }, { ajaxHelper }, { profileSlugHelper }, { STATUS }] = await Promise.all([
-    import('@/core-vue/composables/users/use-user-profile.js'),
-    import('@/core/helpers/ajax-helper.js'),
-    import('@/core/helpers/profile-slug-helper.js'),
-    import('@/constants/ajax-constants.js'),
-  ])
+  const [{ useUserProfile }, { ajaxHelper }, { profileSlugHelper }, { STATUS }] = await Promise.all(
+    [
+      import('@/core-vue/composables/users/use-user-profile.js'),
+      import('@/core/helpers/ajax-helper.js'),
+      import('@/core/helpers/profile-slug-helper.js'),
+      import('@/constants/ajax-constants.js'),
+    ],
+  )
   const { userProfile } = useUserProfile({ profileStore: stores.profile })
 
   const response = await userProfile.load(route.params.profileSlug)

@@ -1,5 +1,6 @@
 import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
 import { REPORT_STATUSES } from '@/constants/moderation-constants.js'
+import { DATETIME_FORMAT } from '@/constants/utils-constants.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
 
 const fromList = reports => {
@@ -14,7 +15,7 @@ const fromShow = report => {
     isPending: report.status === REPORT_STATUSES.PENDING,
     reporter: AuthorDto.fromShow(report.reporter),
     resolution: report.resolution ?? undefined,
-    createdAtFormat: dateHelper.formatDateLocal(report.created_at, 'DD/MM/YYYY HH:mm'),
+    createdAtFormat: dateHelper.formatDateLocal(report.created_at, DATETIME_FORMAT),
   }
 }
 

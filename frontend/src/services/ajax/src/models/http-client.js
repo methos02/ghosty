@@ -80,10 +80,7 @@ const rawRequest = async requestConfig => {
   }
 
   const fetchResponse = await fetch(requestConfig.url, options)
-  const response = await internals.normalizeResponse(
-    fetchResponse,
-    requestConfig.responseType,
-  )
+  const response = await internals.normalizeResponse(fetchResponse, requestConfig.responseType)
 
   if (!fetchResponse.ok) {
     throw internals.createHttpError(

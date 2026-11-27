@@ -4,7 +4,7 @@ export const readingConfig = {
     max: 90,
     step: 5,
     default: 50,
-    minPixels: 320,
+    minPixels: 600,
   },
   fontSize: {
     min: 16,

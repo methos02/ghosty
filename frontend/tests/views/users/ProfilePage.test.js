@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
+import { RouterView } from 'vue-router'
 import { createHead } from '@unhead/vue/client'
-import ProfilePage from '@/views/users/ProfilePage.vue'
 import { UserRepository } from '@/apis/users/repositories/user-repository.js'
 import { UserDto } from '@/apis/users/dtos/user-dto.js'
 import { NotificationRepository } from '@/apis/notifications/repositories/notification-repository.js'
@@ -46,9 +46,9 @@ describe('ProfilePage.vue', () => {
     vi.spyOn(UserRepository, 'show').mockResolvedValue(controllerSuccess({ data: profileApi }))
     await router.push({ name: 'profile', params: { profileSlug: profileApi.profile_slug } })
 
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -71,9 +71,9 @@ describe('ProfilePage.vue', () => {
     vi.spyOn(UserRepository, 'show').mockResolvedValue(controllerSuccess({ data: profileApi }))
     await router.push({ name: 'profile', params: { profileSlug: profileApi.profile_slug } })
 
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -95,9 +95,9 @@ describe('ProfilePage.vue', () => {
       params: { profileSlug: userSeeder.getProfileApi().profile_slug },
     })
 
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -115,9 +115,9 @@ describe('ProfilePage.vue', () => {
     vi.spyOn(UserRepository, 'show').mockResolvedValue(controllerSuccess({ data: profileApi }))
     await router.push({ name: 'profile', params: { profileSlug: profileApi.profile_slug } })
 
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -137,14 +137,13 @@ describe('ProfilePage.vue', () => {
       controllerSuccess({ data: userSeeder.getProfileChaptersApi() }),
     )
     await router.push({
-      name: 'profile',
+      name: PROFILE_TABS.CHAPTERS,
       params: { profileSlug: profileApi.profile_slug },
-      query: { tab: PROFILE_TABS.CHAPTERS },
     })
 
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -157,16 +156,19 @@ describe('ProfilePage.vue', () => {
     expect(wrapper.find('.profile-novel-list').exists()).toBe(false)
   })
 
-  it('writes the chosen tab in the address', async () => {
+  it('opens the tab picked from the phone selector without loading the profile again', async () => {
     const profileApi = userSeeder.getProfileApi()
     vi.spyOn(UserRepository, 'show').mockResolvedValue(controllerSuccess({ data: profileApi }))
     vi.spyOn(UserRepository, 'listCovers').mockResolvedValue(
       controllerSuccess({ data: userSeeder.getProfileCoversApi() }),
     )
-    await router.push({ name: 'profile', params: { profileSlug: profileApi.profile_slug } })
-    wrapper = mount(ProfilePage, {
+    await router.push({
+      name: PROFILE_TABS.NOVELS,
+      params: { profileSlug: profileApi.profile_slug },
+    })
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -175,14 +177,13 @@ describe('ProfilePage.vue', () => {
     })
     await flushPromises()
 
-    const coversTab = wrapper
-      .findAll('.profile-page__tabs button')
-      .find(tab => tab.text() === t(`profile_page.tabs.${PROFILE_TABS.COVERS}`))
-    await coversTab.trigger('click')
-    await flushPromises()
+    await wrapper.find('.tabs-layout__select select').setValue(PROFILE_TABS.COVERS)
 
-    expect(router.currentRoute.value.query.tab).toBe(PROFILE_TABS.COVERS)
-    expect(wrapper.find('.profile-cover-list').exists()).toBe(true)
+    await vi.waitFor(() => expect(wrapper.find('.profile-cover-list').exists()).toBe(true), {
+      timeout: 10_000,
+    })
+    expect(router.currentRoute.value.fullPath).toBe(`/users/${profileApi.profile_slug}/covers`)
+    expect(UserRepository.show).toHaveBeenCalledTimes(1)
   })
 
   it('offers no report on the own profile of the reader', async () => {
@@ -191,9 +192,9 @@ describe('ProfilePage.vue', () => {
     vi.spyOn(UserRepository, 'show').mockResolvedValue(controllerSuccess({ data: profileApi }))
     await router.push({ name: 'profile', params: { profileSlug: profileApi.profile_slug } })
 
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -215,9 +216,9 @@ describe('ProfilePage.vue', () => {
     useAuthStore().setUser(userSeeder.getUser())
     vi.spyOn(UserRepository, 'show').mockResolvedValue(controllerSuccess({ data: profileApi }))
     await router.push({ name: 'profile', params: { profileSlug: profileApi.profile_slug } })
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -237,15 +238,17 @@ describe('ProfilePage.vue', () => {
   it('replaces an outdated name in the address and says the pseudonym changed', async () => {
     const profileApi = userSeeder.getProfileApi()
     vi.spyOn(UserRepository, 'show').mockResolvedValue(controllerSuccess({ data: profileApi }))
+    vi.spyOn(UserRepository, 'listChapters').mockResolvedValue(
+      controllerSuccess({ data: userSeeder.getProfileChaptersApi() }),
+    )
     await router.push({
-      name: 'profile',
+      name: PROFILE_TABS.CHAPTERS,
       params: { profileSlug: `${profileApi.slug}-ancien-pseudo` },
-      query: { tab: PROFILE_TABS.NOVELS },
     })
 
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -255,7 +258,7 @@ describe('ProfilePage.vue', () => {
     await flushPromises()
 
     expect(router.currentRoute.value.params.profileSlug).toBe(profileApi.profile_slug)
-    expect(router.currentRoute.value.query.tab).toBe(PROFILE_TABS.NOVELS)
+    expect(router.currentRoute.value.name).toBe(PROFILE_TABS.CHAPTERS)
     expect(wrapper.find('.profile-page__renamed').text()).toBe(t('profile_page.renamed'))
     expect(wrapper.text()).not.toContain('ancien-pseudo')
     expect(UserRepository.show).toHaveBeenCalledTimes(1)
@@ -266,9 +269,9 @@ describe('ProfilePage.vue', () => {
     vi.spyOn(UserRepository, 'show').mockResolvedValue(controllerSuccess({ data: profileApi }))
     await router.push({ name: 'profile', params: { profileSlug: profileApi.slug } })
 
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -286,9 +289,9 @@ describe('ProfilePage.vue', () => {
     vi.spyOn(UserRepository, 'show').mockResolvedValue(controllerSuccess({ data: profileApi }))
     await router.push({ name: 'profile', params: { profileSlug: profileApi.profile_slug } })
 
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: createProfileStore(),
@@ -308,9 +311,9 @@ describe('ProfilePage.vue', () => {
     profileStore.setProfile(UserDto.fromProfile(profileApi))
     await router.push({ name: 'profile', params: { profileSlug: profileApi.profile_slug } })
 
-    wrapper = mount(ProfilePage, {
+    wrapper = mount(RouterView, {
       global: {
-        plugins: [createHead()],
+        plugins: [router, createHead()],
         provide: {
           [NOVEL_STORE_KEY]: createNovelStore(),
           [PROFILE_STORE_KEY]: profileStore,

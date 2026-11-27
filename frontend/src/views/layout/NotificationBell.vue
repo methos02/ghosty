@@ -52,6 +52,7 @@ onUnmounted(() => {
 <template>
   <Dropdown
     orientation="right"
+    classes="overflow notification-bell__dropdown"
     @show="refresh"
   >
     <template #button>
@@ -117,6 +118,18 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
+:deep(.notification-bell__dropdown) {
+  @media (max-width: variables.$sm) {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    left: 10px;
+    min-width: 0;
+  }
+}
+
 .notification-bell {
   position: relative;
   border: none;
@@ -148,6 +161,11 @@ onUnmounted(() => {
 
   &__panel {
     width: min(380px, 90vw);
+
+    @media (max-width: variables.$sm) {
+      width: 100%;
+    }
+
     max-height: 420px;
     overflow-y: auto;
     color: var(--neutral-900);

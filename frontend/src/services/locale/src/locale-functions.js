@@ -19,10 +19,7 @@ const vueTranslate = (message, params) => {
 }
 
 const loadLocaleMessages = async locale => {
-  state.translater.global.setLocaleMessage(
-    locale,
-    await internals.getLocaleMessage(locale),
-  )
+  state.translater.global.setLocaleMessage(locale, await internals.getLocaleMessage(locale))
 }
 
 const init = async locale => {

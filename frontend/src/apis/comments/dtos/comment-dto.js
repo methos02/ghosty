@@ -1,5 +1,6 @@
 import { AuthorDto } from '@/apis/authors/dtos/author-dto.js'
 import { COMMENT_TARGETS } from '@/constants/comment-constants.js'
+import { DATETIME_FORMAT } from '@/constants/utils-constants.js'
 import { dateHelper } from '@/core/helpers/date-helper.js'
 
 const fromCommentCount = commentable => {
@@ -22,7 +23,7 @@ const fromShow = comment => {
     isHidden: comment.is_hidden,
     isReported: comment.is_reported,
     replies: CommentDto.fromList(comment.replies ?? []),
-    createdAtFormat: dateHelper.formatDateLocal(comment.created_at, 'DD/MM/YYYY HH:mm'),
+    createdAtFormat: dateHelper.formatDateLocal(comment.created_at, DATETIME_FORMAT),
   }
 }
 

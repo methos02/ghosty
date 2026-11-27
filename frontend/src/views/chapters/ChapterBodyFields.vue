@@ -20,7 +20,7 @@ const showSection = section => {
 const hasError = section => formService.getError(`${FORM_SCOPE}.${section}`) !== undefined
 
 const revealFirstFailingSection = () => {
-  const failingSection = SECTIONS.find(hasError)
+  const failingSection = SECTIONS.find(section => hasError(section))
   if (failingSection === undefined) {
     return
   }
@@ -90,9 +90,16 @@ const sectionClass = section => {
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
 .chapter-body {
   &__section {
     min-width: 180px;
+
+    @media (max-width: variables.$sm) {
+      flex: 1;
+      min-width: 0;
+    }
   }
 
   :deep(textarea) {

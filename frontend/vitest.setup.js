@@ -3,6 +3,7 @@
  * Exécuté une fois AVANT chaque fichier de test.
  * Reconstitue l'environnement de ssr/app.js : APIs jsdom stubbées + services bootés.
  */
+import { beforeEach } from 'vitest'
 import { createApp } from 'vue'
 import { flushPromises } from '@vue/test-utils'
 import { servicesBoot } from '@/ssr/services-boot.js'

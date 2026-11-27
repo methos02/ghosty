@@ -1,14 +1,11 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import Header from '@/views/layout/HeaderComponent.vue'
-import ProfileBranchList from '@/views/users/parts/ProfileBranchList.vue'
-import ProfileChapterList from '@/views/users/parts/ProfileChapterList.vue'
-import ProfileCoverList from '@/views/users/parts/ProfileCoverList.vue'
-import ProfileNovelList from '@/views/users/parts/ProfileNovelList.vue'
 import ProfileStatistics from '@/views/users/parts/ProfileStatistics.vue'
+import TabsLayout from '@/views/parts/TabsLayout.vue'
 import { route, router, t } from '@/services/shortcuts/services-shortcut.js'
 import { STATUS } from '@/constants/ajax-constants.js'
-import { PROFILE_TABS, USER_ROLES } from '@/constants/user-constants.js'
+import { PROFILE_MENU, USER_ROLES } from '@/constants/user-constants.js'
 import { useProfileHead } from '@/head/use-profile-head.js'
 import { useReport } from '@/core-vue/composables/reports/use-report.js'
 import { useUserProfile } from '@/core-vue/composables/users/use-user-profile.js'
@@ -38,8 +35,6 @@ const profileSlug = computed(() => currentRoute.value.params.profileSlug)
 
 const isRenamed = computed(() => currentRoute.value.query.renamed !== undefined)
 
-const openedTab = computed(() => currentRoute.value.query.tab ?? PROFILE_TABS.NOVELS)
-
 const isOwnProfile = computed(() => authStore.user.value?.id === profile.value?.id)
 
 const displayedRoles = computed(() =>
@@ -47,18 +42,6 @@ const displayedRoles = computed(() =>
 )
 
 useProfileHead(profile)
-
-const tabClasses = tab => {
-  return openedTab.value === tab ? 'btn btn-primary' : 'btn btn-primary-alt'
-}
-
-const openTab = tab => {
-  router.push({
-    name: 'profile',
-    params: { profileSlug: profileSlug.value },
-    query: { tab },
-  })
-}
 
 const load = async () => {
   isNotFound.value = false
@@ -165,35 +148,33 @@ onUnmounted(() => {
 
         <ProfileStatistics :statistics="profile.statistics" />
 
-        <nav class="profile-page__tabs | d-flex f-wrap g-10">
-          <button
-            v-for="tab in PROFILE_TABS"
-            :key="tab"
-            type="button"
-            :class="tabClasses(tab)"
-            :aria-pressed="openedTab === tab"
-            @click="openTab(tab)"
-          >
-            {{ t(`profile_page.tabs.${tab}`) }}
-          </button>
-        </nav>
-
-        <ProfileNovelList v-if="openedTab === PROFILE_TABS.NOVELS" />
-        <ProfileChapterList v-if="openedTab === PROFILE_TABS.CHAPTERS" />
-        <ProfileBranchList v-if="openedTab === PROFILE_TABS.BRANCHES" />
-        <ProfileCoverList v-if="openedTab === PROFILE_TABS.COVERS" />
+        <TabsLayout
+          :items="PROFILE_MENU"
+          labelPath="profile_page.tabs"
+        >
+          <router-view />
+        </TabsLayout>
       </template>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+@use '@/assets/scss/variables';
+
 .profile-page {
   min-height: 100vh;
 
   &__body {
     margin: 0 auto;
     max-width: 1200px;
+  }
+
+  @media (max-width: variables.$sm) {
+    &__body {
+      gap: 15px;
+      padding-top: 20px;
+    }
   }
 
   &__avatar {
